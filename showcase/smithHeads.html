@@ -28,6 +28,7 @@
     <script src="../src/Vertex.js"></script>
     <script src="../src/Shading.js"></script>
     <script src="../src/VertexShaderFunctions.js"></script>
+    <script src="../src/Shader.js"></script>
     <script src="../src/Matrix.js"></script>
     <script src="../src/Geometry.js"></script>
     <script src="../src/Material.js"></script>
@@ -65,9 +66,9 @@
     world.addScene(scene);
     world.setAutoSize(1)
 
-    scene.addChild('camera', camera);
-    scene.addChild('camera2', camera2);
-    scene.addChild('camera3', camera3);
+    scene.addChild( camera);
+    scene.addChild( camera2);
+    scene.addChild( camera3);
     scene.addMaterial('material', material);
     scene.addMaterial('material2', material2);
     scene.addTexture('texture', 'smithHead/Map-COL.jpg');

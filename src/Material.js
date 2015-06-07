@@ -15,7 +15,6 @@ var Material = (function () {
     wireFrame = {},
     wireFrameColor = {},
     count = {},
-    scene = {},
     //shared private
     $setPrivate('Material', {
     }),
@@ -81,10 +80,6 @@ var Material = (function () {
                 }
                 return true;
             }
-        },
-        scene : {
-            get : $getter(scene),
-            set : $setter(scene)
         }
     },
     fn = Material.prototype,

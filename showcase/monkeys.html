@@ -36,10 +36,11 @@
     <script src="../src/Vertex.js"></script>
     <script src="../src/Shading.js"></script>
     <script src="../src/VertexShaderFunctions.js"></script>
+    <script src="../src/Shader.js"></script>
     <script src="../src/Matrix.js"></script>
+    <script src="../src/Texture.js"></script>
     <script src="../src/Geometry.js"></script>
     <script src="../src/Material.js"></script>
-    <script src="../src/Texture.js"></script>
     <script src="../src/Mesh.js"></script>
     <script src="../src/Group.js"></script>
     <script src="../src/Camera.js"></script>
@@ -47,6 +48,7 @@
     <script src="../src/World.js"></script>
 </head>
 <body>
+<img src="monkey/Suzanne.jpg" id="testIMG2" style="position: absolute;top:0px;" width="128" height="128">
 <canvas id="canvas"></canvas>
 <div class="FPS">
     Current FPS: <span id="currentFPS"></span>
@@ -61,15 +63,18 @@
     var divCurrentFPS = document.getElementById('currentFPS');
     var divAverageFPS = document.getElementById('averageFPS');
     var prevTime = 0;
-
-    world.addScene(scene);
+    var material = new Material('#fff')
+    var texture = new Texture()
     world.setAutoSize(1)
-
-    scene.addChild('camera', new Camera());
-    scene.addMaterial('material', new Material());
-    scene.addTexture('texture', 'monkey/Suzanne.jpg');
-    scene.getMaterial('material').addTexture(Texture.diffuse, 'texture');
-    scene.getMaterial('material').setShading(Shading.phong)
+    world.addScene(scene);
+    texture.img = document.getElementById('testIMG2')
+    //
+    var camera = new Camera()
+    scene.addChild(camera);
+//    scene.addMaterial(material.setId('material'));
+    //
+    material.addTexture(Texture.diffuse, texture);
+    material.shading = Shading.phong
 
     var xmlhttp = new XMLHttpRequest();
 
@@ -125,44 +130,44 @@
             index.push(indices[j], indices[j + 1], indices[j + 2]);
         }
 
-        scene.addGeometry('geometry', new Geometry(vertex, index, [Vertex.x, Vertex.y, Vertex.z, Vertex.normalX, Vertex.normalY, Vertex.normalZ, Vertex.u, Vertex.v]));
+        var geo = new Geometry(vertex, index, [Vertex.x, Vertex.y, Vertex.z, Vertex.normalX, Vertex.normalY, Vertex.normalZ, Vertex.u, Vertex.v]).setId('geometry')
 
         var meshes = [];
         var monkey;
         var PI2 = Math.PI * 2;
 
         for (i = 0; i < 500; i++) {
-            monkey = new Mesh('geometry', 'material');
+            monkey = new Mesh(geo, material);
             monkey.x = Math.random() * 50 - 25;
             monkey.y = Math.random() * 50 - 25;
             monkey.z = Math.random() * 50 - 25;
+//            monkey.z = Math.random() * 50 - 25;
             monkey.rotateX = Math.random() * PI2;
             monkey.rotateY = Math.random() * PI2;
             monkey.rotateZ = Math.random() * PI2;
 
-            scene.addChild('monkey' + i, monkey);
-
+            scene.addChild(monkey);
             meshes.push(monkey);
 
 
         }
-        monkey = new Mesh(Primitive.sphere(), 'material');
-        scene.addChild('center', monkey);
-        monkey.setScale(3, 3, 3)
-
-        monkey = new Mesh(Primitive.sphere(), 'material');
-        scene.addChild('center1', monkey);
-        monkey.setScale(2, 2, 2)
-        monkey.setPosition(-3, 0, 0)
-
-        monkey = new Mesh(Primitive.sphere(), 'material');
-        scene.addChild('center2', monkey);
-        monkey.setScale(2, 2, 2)
-        monkey.setPosition(3, 0, 0)
+//        monkey = new Mesh(Primitive.sphere(), material);
+//        scene.addChild(monkey);
+////        monkey.setScale(3, 3, 3)
+//
+//        monkey = new Mesh(Primitive.sphere(), material);
+//        scene.addChild(monkey);
+////        monkey.setScale(2, 2, 2)
+////        monkey.setPosition(-3, 0, 0)
+//
+//        monkey = new Mesh(Primitive.sphere(), material);
+//        scene.addChild(monkey);
+////        monkey.setScale(2, 2, 2)
+////        monkey.setPosition(3, 0, 0)
 
         var sum = 0, count = 1;
 
-        world.addEventListener(World.renderAfter,function(currTime){
+        world.addEventListener(World.renderAfter, function (currTime) {
             var currentFPS = 1000 / ( currTime - prevTime );
             prevTime = currTime;
 
@@ -180,60 +185,60 @@
                 mesh.rotateY += 0.05;
                 mesh.rotateZ += 0.05;
             }
-            scene.getChild('camera').x = Math.sin(count / 50) * 50
-            scene.getChild('camera').y = Math.cos(count / 100) * 50
-            scene.getChild('camera').z = Math.cos(count / 100) * 50 + Math.sin(count / 100) * 50
-            scene.getChild('camera').lookAt(0, 0, 0);
+            camera.x = Math.sin(count / 50) * 50
+            camera.y = Math.cos(count / 100) * 50
+            camera.z = Math.cos(count / 100) * 50 + Math.sin(count / 100) * 50
+            camera.lookAt(0, 0, 0);
         })
 
         world.start()
 
     }
 
-
-    var testMat = scene.getMaterial('material')
-    var params = {
-        color: function () {
-            testMat.removeTexture('texture');
-            testMat.setShading(Shading.none)
-        },
-        toon: function () {
-            testMat.removeTexture('texture');
-            testMat.setShading(Shading.toon)
-        },
-        PhongColor: function () {
-            testMat.removeTexture('texture');
-            testMat.setShading(Shading.phong)
-        },
-        GouraudColor: function () {
-            testMat.removeTexture('texture');
-            testMat.setShading(Shading.gouraud)
-        },
-        GouraudTexture: function () {
-            testMat.removeTexture('texture');
-            testMat.addTexture(Texture.diffuse, 'texture');
-            testMat.setShading(Shading.gouraud)
-        },
-        PhongTexture: function () {
-            testMat.removeTexture('texture');
-            testMat.addTexture(Texture.diffuse, 'texture');
-            testMat.setShading(Shading.phong)
-        },
-        BlinnTexture: function () {
-            testMat.removeTexture('texture');
-            testMat.addTexture(Texture.diffuse, 'texture');
-            testMat.setShading(Shading.blinn)
-        }
-    };
-
-    var gui = new dat.GUI();
-    gui.add(params, 'color');
-    gui.add(params, 'toon');
-    gui.add(params, 'GouraudColor');
-    gui.add(params, 'PhongColor');
-    gui.add(params, 'GouraudTexture');
-    gui.add(params, 'PhongTexture');
-    gui.add(params, 'BlinnTexture');
+    //
+    //    var testMat = scene.getMaterial('material')
+    //    var params = {
+    //        color: function () {
+    //            testMat.removeTexture('texture');
+    //            testMat.setShading(Shading.none)
+    //        },
+    //        toon: function () {
+    //            testMat.removeTexture('texture');
+    //            testMat.setShading(Shading.toon)
+    //        },
+    //        PhongColor: function () {
+    //            testMat.removeTexture('texture');
+    //            testMat.setShading(Shading.phong)
+    //        },
+    //        GouraudColor: function () {
+    //            testMat.removeTexture('texture');
+    //            testMat.setShading(Shading.gouraud)
+    //        },
+    //        GouraudTexture: function () {
+    //            testMat.removeTexture('texture');
+    //            testMat.addTexture(Texture.diffuse, 'texture');
+    //            testMat.setShading(Shading.gouraud)
+    //        },
+    //        PhongTexture: function () {
+    //            testMat.removeTexture('texture');
+    //            testMat.addTexture(Texture.diffuse, 'texture');
+    //            testMat.setShading(Shading.phong)
+    //        },
+    //        BlinnTexture: function () {
+    //            testMat.removeTexture('texture');
+    //            testMat.addTexture(Texture.diffuse, 'texture');
+    //            testMat.setShading(Shading.blinn)
+    //        }
+    //    };
+    //
+    //    var gui = new dat.GUI();
+    //    gui.add(params, 'color');
+    //    gui.add(params, 'toon');
+    //    gui.add(params, 'GouraudColor');
+    //    gui.add(params, 'PhongColor');
+    //    gui.add(params, 'GouraudTexture');
+    //    gui.add(params, 'PhongTexture');
+    //    gui.add(params, 'BlinnTexture');
 
 
 </script>

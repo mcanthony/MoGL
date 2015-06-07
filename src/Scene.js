@@ -4,7 +4,7 @@
 'use strict'
 var Scene = (function () {
     var vertexShaderParser, fragmentShaderParser,
-        children, cameras, textures, materials, geometrys, vertexShaders, fragmentShaders, cvsList,updateList,
+        children, cameras, textures, materials, geometrys, vertexShaders, fragmentShaders, updateList,
         Scene, fn, fnProp;
     //lib
     vertexShaderParser = function vertexShaderParser(source) {
@@ -75,7 +75,6 @@ var Scene = (function () {
     },
 
     //private
-    cvsList = {},
     children = {},
     cameras = {},
     textures = {},
@@ -90,7 +89,6 @@ var Scene = (function () {
 
     Scene = function Scene() {
         // for JS
-        cvsList[this] = null,
         children[this] = {},
         cameras[this] = {},
         textures[this] = {},
@@ -100,7 +98,8 @@ var Scene = (function () {
         fragmentShaders[this] = {},
         updateList[this] = {
             mesh : [],
-            material : []
+            material : [],
+            camera : []
         },
         this.addVertexShader(Shader.colorVertexShader),this.addFragmentShader(Shader.colorFragmentShader)
         this.addVertexShader(Shader.wireFrameVertexShader),this.addFragmentShader(Shader.wireFrameFragmentShader),
@@ -116,10 +115,6 @@ var Scene = (function () {
 
     fn = Scene.prototype,
     fnProp = {
-        cvs: {
-            get: $getter(cvsList),
-            set: $setter(cvsList)
-        },
         updateList: {
             get: $getter(updateList),
         },
@@ -135,22 +130,26 @@ var Scene = (function () {
         if (p[v]) this.error(0);
         if (!(v instanceof Mesh)) this.error(1);
         p[v] = v;
-        updateList[this].mesh.push(v)
-        v.scene = this
+        p2.mesh.push(v)
         mat = v.material
-        mat.addEventListener(Material.changed,function(){
+        mat.addEventListener(Material.load,function(){
+            //console.log(this)
             var t= this.diffuse
             if(t){
                 var i = t.length
                 while(i--){
-                    console.log('로딩체크',t[i].tex.isLoaded)
-                    if(t[i].tex.isLoaded){
+                    //if(t[i].tex.isLoaded){
+                    //
+                    //}
+                    //console.log('로딩완료 및 업데이트 추가',t[i].tex.isLoaded)
+                    if(p2.material.indexOf(t[i].tex)==-1){
                         p2.material.push(t[i].tex)
                     }
+
                 }
             }
         })
-        mat.dispatch(Material.changed,mat)
+        mat.dispatch(Material.load,mat)
         return this;
     },
     fn.addCamera = function(v){
@@ -158,7 +157,7 @@ var Scene = (function () {
         if (p[v]) this.error(0);
         if (!(v instanceof Camera)) this.error(1);
         p[v] = v;
-        v.cvs = cvsList[this]
+        updateList[this].camera.push(v)
         return this;
     },
     fn.addChild = function addChild(v) {
@@ -175,15 +174,17 @@ var Scene = (function () {
         return this;
     },
     fn.addMaterial = function (v) {
-        var p = materials[this],self,i;
+        var p = materials[this];
         if (p[v]) this.error(0);
         if (!(v instanceof Material)) this.error(1);
-        p[v] = v,
-        v.scene = this;
+        p[v] = v
         return this;
     },
-    fn.addTexture = function addTexture(texture/*,resizeType*/) {
-        //TODO
+    fn.addTexture = function addTexture(v) {
+        var p = textures[this];
+        if (p[v]) this.error(0);
+        if (!(v instanceof Texture)) this.error(1);
+        p[v] = v
         return this;
     },
     fn.addFragmentShader = function addFragmentShader(v) {
@@ -267,7 +268,6 @@ var Scene = (function () {
         result = false
         for (k in p) {
             if (p[k].id == id) {
-                p[k].scene = null,
                 delete p[k],
                 result = true
             }

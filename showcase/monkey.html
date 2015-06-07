@@ -34,6 +34,7 @@
     <script src="../src/Vertex.js"></script>
     <script src="../src/Shading.js"></script>
     <script src="../src/VertexShaderFunctions.js"></script>
+    <script src="../src/Shader.js"></script>
     <script src="../src/Matrix.js"></script>
     <script src="../src/Geometry.js"></script>
     <script src="../src/Material.js"></script>
@@ -45,6 +46,7 @@
     <script src="../src/World.js"></script>
 </head>
 <body>
+<img src="monkey/Suzanne.jpg" id="testIMG2" style="position: absolute;top:0px;" width="128" height="128">
 <canvas id="canvas"></canvas>
 <div class="FPS">
     Current FPS: <span id="currentFPS"></span>
@@ -62,22 +64,28 @@
         var divAverageFPS = document.getElementById('averageFPS');
         var prevTime = 0;
 
-        world.addScene( scene);
+        world.addScene(scene);
 
-        scene.addChild('camera', new Camera());
-        scene.addMaterial('material', new Material(1, 1, 1, 0.5));
-        scene.addMaterial('material2', new Material());
-        scene.addMaterial('material3', new Material());
-        scene.addMaterial('material4', new Material());
-        scene.addMaterial('material5', new Material());
-        scene.addMaterial('material6', new Material());
-        scene.addTexture('texture', 'monkey/Suzanne.jpg');
-//        scene.getMaterial('material').addTexture(Texture.diffuse,'texture');
-//        scene.getMaterial('material2').addTexture(Texture.diffuse,'texture');
-//        scene.getMaterial('material3').addTexture(Texture.diffuse,'texture');
-        scene.getMaterial('material4').addTexture(Texture.diffuse, 'texture');
-        scene.getMaterial('material5').addTexture(Texture.diffuse, 'texture');
-        scene.getMaterial('material6').addTexture(Texture.diffuse, 'texture');
+        var camera = new Camera()
+        scene.addChild(camera);
+        var material = new Material(1, 1, 1, 0.5)
+        var material2 = new Material(1, 1, 1, 0.5)
+        var material3 = new Material(1, 1, 1, 0.5)
+        var material4 = new Material(1, 1, 1, 0.5)
+        var material5 = new Material(1, 1, 1, 0.5)
+        var material6 = new Material(1, 1, 1, 0.5)
+
+
+
+//        scene.addTexture(texture, 'monkey/Suzanne.jpg');
+        var texture = new Texture
+        texture.img = document.getElementById('testIMG2')
+//        scene.getMaterial(material').addTexture(Texture.diffuse,texture);
+//        scene.getMaterial(material2').addTexture(Texture.diffuse,texture);
+//        scene.getMaterial(material3').addTexture(Texture.diffuse,texture);
+        material4.addTexture(Texture.diffuse, texture);
+        material5.addTexture(Texture.diffuse, texture);
+        material6.addTexture(Texture.diffuse, texture);
 
 
         var xmlhttp = new XMLHttpRequest();
@@ -134,56 +142,56 @@
                 index.push(indices[j], indices[j + 1], indices[j + 2]);
             }
 
-            scene.addGeometry('geometry', new Geometry(vertex, index, [Vertex.x, Vertex.y, Vertex.z, Vertex.normalX, Vertex.normalY, Vertex.normalZ, Vertex.u, Vertex.v]));
+            var geo = new Geometry(vertex, index, [Vertex.x, Vertex.y, Vertex.z, Vertex.normalX, Vertex.normalY, Vertex.normalZ, Vertex.u, Vertex.v])
+            scene.addGeometry(geo);
 
-            var mesh = new Mesh('geometry', 'material');
+            var mesh = new Mesh(geo, material);
             mesh.z = -5
             mesh.x = -3
             mesh.y = -1
-            scene.addChild('monkey', mesh);
-            mesh.getMaterial().setWireFrame(1)
+            scene.addChild(mesh);
+            material.wireFrame = 1
 
-            var mesh2 = new Mesh('geometry', 'material2');
+            var mesh2 = new Mesh(geo, material2);
 
             mesh2.y = -1
-            scene.addChild('monkey2', mesh2);
+            scene.addChild(mesh2);
 
-            var mesh3 = new Mesh('geometry', 'material3');
+            var mesh3 = new Mesh(geo, material3);
             mesh3.x = 3
             mesh3.y = -1
-            scene.addChild('monkey3', mesh3);
-            mesh3.getMaterial().setShading(Shading.toon)
+            scene.addChild(mesh3);
+//            material3.shading = Shading.toon
 
 
-            var mesh4 = new Mesh('geometry', 'material4');
+            var mesh4 = new Mesh(geo, material4);
 
             mesh4.x = 3
             mesh4.y = 1
-            scene.addChild('monkey4', mesh4);
-            mesh4.getMaterial().setShading(Shading.gouraud)
-            mesh4.getMaterial().setLambert(1.5)
+            scene.addChild(mesh4);
+//            material4.shading = Shading.gouraud
+            material4.lambert = 1.5
 
-            var mesh5 = new Mesh('geometry', 'material5');
+            var mesh5 = new Mesh(geo, material5);
 
             mesh5.x = 0
             mesh5.y = 1
-            scene.addChild('monkey5', mesh5);
-            mesh5.getMaterial().setShading(Shading.phong)
-            mesh5.getMaterial().setLambert(1.5)
+            scene.addChild(mesh5);
+            material5.shading = Shading.phong
+            material5.lambert = 1.5
 
-            var mesh6 = new Mesh('geometry', 'material6');
+            var mesh6 = new Mesh(geo, material6);
             mesh6.x = -3
             mesh6.y = 1
-            scene.addChild('monkey6', mesh6);
-            mesh6.getMaterial().setShading(Shading.blinn)
-            mesh6.getMaterial().setLambert(1.5)
+            scene.addChild(mesh6);
+//            material6.shading = Shading.blinn
+            material6.lambert = 1.5
 
 
-
-            scene.getChild('camera').setAntialias(0);
+//            camera.antialias=1
 
             var sum = 0, count = 1;
-            world.addEventListener(World.renderAfter,function(){
+            world.addEventListener(World.renderAfter, function () {
 
                 mesh.rotateY -= 0.02;
                 mesh2.rotateY -= 0.02;

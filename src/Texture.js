@@ -1,7 +1,7 @@
 var Texture = (function() {
     var imgType, canvas, context, empty, resizer,
         resize, imgs, loaded, isLoaded,
-        Texture, fn, fnProp;
+        _Texture, fn, fnProp;
 
     //lib
     imgType = {'.jpg':1, '.png':1, '.gif':1},
@@ -13,8 +13,8 @@ var Texture = (function() {
     empty.src = canvas.toDataURL(),
 
     resizer = function(resizeType, v){
-        console.log('리사이저처리',resizeType, v)
-        console.log(v.width,v.height)
+        //console.log('리사이저처리',resizeType, v)
+        //console.log(v.width,v.height)
         var tw, th, dw, dh;
         //texture size
         tw = th = 1;
@@ -22,7 +22,7 @@ var Texture = (function() {
         while (v.height > th) th *= 2;
         //fit size
         if (v.width == tw && v.height == th) {}
-        if (resizeType == Texture.zoomOut) {
+        if (resizeType == _Texture.zoomOut) {
             if (v.width < tw) tw /= 2;
             if (v.height < th) th /= 2;
         }
@@ -32,19 +32,19 @@ var Texture = (function() {
         context.clearRect(0, 0, tw, th);
 
         switch(resizeType){
-            case Texture.crop:
+            case _Texture.crop:
                 if (v.width < tw) dw = tw / 2;
                 if (v.height < th) dh = th / 2;
                 context.drawImage(v, 0, 0, tw, th, 0, 0, dw, dh);
                 break;
-            case Texture.addSpace:
+            case _Texture.addSpace:
                 context.drawImage(v, 0, 0, tw, th, 0, 0, tw, th);
                 break;
             default:
                 context.drawImage(v, 0, 0, dw, dh);
         }
         v.src = canvas.toDataURL();
-        console.log('리사이저처리결과', v.width, v.height)
+        //console.log('리사이저처리결과', v.width, v.height)
         return v;
     },
     loaded = function(e){
@@ -61,8 +61,8 @@ var Texture = (function() {
     //shared private
     $setPrivate('Texture', {
     }),
-    Texture = function Texture(){},
-    fn = Texture.prototype,
+    _Texture = function _Texture(){},
+    fn = _Texture.prototype,
     fnProp = {
         resizeType:{
             get:$getter(resize, false, 'zoomOut'),
@@ -108,11 +108,13 @@ var Texture = (function() {
                 if (complete){
                     isLoaded[this] = true,
                     console.log('이미지등록시 로딩완료',img)
+                    img.dataset.cls = Texture
                     img.dataset.texture = this.uuid;
                     imgs[this] = resizer(this.resizeType, img),
                     this.dispatch('load');
                 } else {
                     console.log('이미지등록시 로딩안됨',img)
+                    img.dataset.cls = Texture
                     img.dataset.texture = this.uuid;
                     img.addEventListener('load', loaded);
                 }
@@ -122,8 +124,8 @@ var Texture = (function() {
     (function() {
         (function(){
             var key = 'load,zoomOut,zoomIn,crop,addSpace,diffuse,specular,diffuseWrap,normal,specularNormal'.split(','), i = key.length;
-            while (i--) Texture[key[i]] = key[i];
+            while (i--) _Texture[key[i]] = key[i];
         })();
     })();
-    return MoGL.ext(Texture,fnProp);
+    return MoGL.ext(_Texture,fnProp);
 })();

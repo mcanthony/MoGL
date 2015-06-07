@@ -62,10 +62,14 @@
 
     world.setAutoSize(1)
 
-
+    scene.addTexture(new Texture().setId('sceneTextureTest'));
 
     var texture = new Texture()
-    //    scene.addTexture('texture', 'smithHead/Map-COL.jpg');
+    texture.img = document.getElementById('testIMG')
+    material.addTexture(Texture.diffuse, texture)
+    console.log('재질 텍스쳐 로딩완료 확인',material.isLoaded)
+    console.log('디퓨즈 확인',material.diffuse)
+
     //    scene.getMaterial('material').addTexture(Texture.diffuse, 'texture');
     //    scene.getMaterial('material2').addTexture(Texture.diffuse, 'texture');
     var xmlhttp = new XMLHttpRequest();
@@ -129,16 +133,17 @@
         mesh3.y = -1
         material.shading = Shading.phong
 
-        texture.img = document.getElementById('testIMG')
-        material.addTexture(Texture.diffuse, texture)
-        console.log('재질 텍스쳐 로딩완료 확인',material.isLoaded)
-        console.log('디퓨즈 확인',material.diffuse)
+
+        console.log(scene.getTexture('sceneTextureTest'))
+        scene.getTexture('sceneTextureTest').img = document.getElementById('testIMG2')
 
         setTimeout(function(){
             var texture2 = new Texture()
             texture2.img = document.getElementById('testIMG2')
             material.addTexture(Texture.diffuse, texture2)
+            material2.addTexture(Texture.diffuse, scene.getTexture('sceneTextureTest'))
         },1000)
+
         var tt = function tt() {
             mesh.rotateY -= 0.01;
             mesh2.rotateY -= 0.01;
