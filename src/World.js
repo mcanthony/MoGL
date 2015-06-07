@@ -395,6 +395,7 @@ var World = (function () {
         var tScene, tSceneList, tCameraList, tCamera, tGPU, tGL, tChildren, tCvs;
         var tItem, tMaterial, tProgram, tVBO, tVNBO, tUVBO, tIBO, tFrameBuffer, tCulling,tColor;
         var pVBO, pVNBO, pUVBO, pIBO, pDiffuse, pProgram, pCulling;
+        var tMatUUID;
         tCvs = cvsList[this],
         tSceneList = sceneList[this],
         tGPU = gpu[this]
@@ -460,31 +461,33 @@ var World = (function () {
                         tGL.uniformMatrix4fv(tProgram.uCameraMatrix,false,tCamera.matrix.raw);
                     }
                     tItem = tMaterial = tProgram = tVBO = tIBO = null;
+
                     // 대상 씬의 차일드 루프
-                    var privateGeometry = $getPrivate('Mesh','geometry')
-                    var privateMaterial = $getPrivate('Mesh','material')
-                    var privateCulling = $getPrivate('Mesh','culling')
+                    var priGeo = $getPrivate('Mesh','geometry')
+                    var priMat = $getPrivate('Mesh','material')
+                    var priCull = $getPrivate('Mesh','culling')
 
-                    var privateMaterialColor = $getPrivate('Material','color')
-                    var privateMaterialWireFrame = $getPrivate('Material','wireFrame')
-                    var privateMaterialWireFrameColor = $getPrivate('Material','wireFrameColor')
-                    var privateMaterialShading = $getPrivate('Material','shading')
-                    var privateMaterialLambert = $getPrivate('Material','lambert')
-                    var privateMaterialDiffuse = $getPrivate('Material','diffuse')
+                    var priMatColor = $getPrivate('Material','color')
+                    var priMatWireFrame = $getPrivate('Material','wireFrame')
+                    var priMatWireFrameColor = $getPrivate('Material','wireFrameColor')
+                    var priMatShading = $getPrivate('Material','shading')
+                    var priMatLambert = $getPrivate('Material','lambert')
+                    var priMatDiffuse = $getPrivate('Material','diffuse')
 
-
-                    //var privateMatColor = $getPrivate('Mesh','color')
-
+                    var tg //= tItem.geometry
+                    var tItemUUID
+                    var dLite, useNormalBuffer, useTexture;
+                    var tColor
                     for (k in tChildren) {
                         tItem = tChildren[k]
-                        var tg //= tItem.geometry
-                        tg = privateGeometry[tItem.uuid].uuid;
+                        tItemUUID = tItem.uuid
+                        tg = priGeo[tItemUUID].uuid;
                         tVBO = tGPU.vbo[tg],
                         tVNBO = tGPU.vnbo[tg],
                         tUVBO = tGPU.uvbo[tg],
                         tIBO = tGPU.ibo[tg],
-                        tMaterial = privateMaterial[tItem.uuid]
-                        tCulling = privateCulling[tItem.uuid]
+                        tMaterial = priMat[tItemUUID]
+                        tCulling = priCull[tItemUUID]
 
                         if(tCulling != pCulling){
                             if (tCulling == Mesh.cullingNone) tGL.disable(tGL.CULL_FACE)
@@ -492,19 +495,19 @@ var World = (function () {
                             else if (tCulling == Mesh.cullingFront) tGL.enable(tGL.CULL_FACE), tGL.frontFace(tGL.CW)
                         }
 
-                        var dLite, useNormalBuffer, useTexture;
                         // 라이팅 세팅
                         dLite = [0,-1,-1],
                         useNormalBuffer = 0,
                         useTexture = 0;
 
                         // 쉐이딩 결정
-                        switch(privateMaterialShading[tMaterial.uuid]){
+                        tMatUUID = tMaterial.uuid
+                        switch(priMatShading[tMatUUID]){
                             case  Shading.none :
                              tProgram=tGPU.programs['color'];
                             break
                             case  Shading.phong :
-                                if(privateMaterialDiffuse[tMaterial.uuid]){
+                                if(priMatDiffuse[tMatUUID]){
                                     tProgram=tGPU.programs['bitmapPhong'];
                                     //console.log('들어왔다!')
                                     useTexture =1
@@ -516,23 +519,25 @@ var World = (function () {
                             break
                         }
                         // 쉐이딩 변경시 캐쉬 삭제
-                        if(pProgram != tProgram) pProgram = null ,pVBO = null, pVNBO = null, pUVBO = null, pIBO = null, pDiffuse = null;
-
+                        if(pProgram != tProgram){
+                            pProgram = null ,pVBO = null, pVNBO = null, pUVBO = null, pIBO = null, pDiffuse = null;
+                            tGL.useProgram(tProgram);
+                        }
                         // 정보 밀어넣기
-                        tGL.useProgram(tProgram);
                         if(useNormalBuffer){
                             tVNBO != pVNBO ? tGL.bindBuffer(tGL.ARRAY_BUFFER, tVNBO) : 0,
                             tVNBO != pVNBO ? tGL.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, tGL.FLOAT, false, 0, 0) : 0;
                             tGL.uniform3fv(tProgram.uDLite, dLite);
-                            tGL.uniform1f(tProgram.uLambert,privateMaterialLambert[tMaterial.uuid]);
+                            tGL.uniform1f(tProgram.uLambert,priMatLambert[tMatUUID]);
                         }
 
                         tVBO!=pVBO ? tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO) : 0,
                         tVBO!=pVBO ? tGL.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, tGL.FLOAT, false, 0, 0) : 0,
-                        f4[0] = privateMaterialColor[tMaterial.uuid][0],
-                        f4[1] = privateMaterialColor[tMaterial.uuid][1],
-                        f4[2] = privateMaterialColor[tMaterial.uuid][2],
-                        f4[3] = privateMaterialColor[tMaterial.uuid][3],
+                        tColor =priMatColor[tMatUUID],
+                        f4[0] = tColor[0],
+                        f4[1] = tColor[1],
+                        f4[2] = tColor[2],
+                        f4[3] = tColor[3],
                         tGL.uniform4fv(tProgram.uColor, f4);
 
                         // 텍스쳐 세팅
@@ -561,7 +566,7 @@ var World = (function () {
                         tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0)
 
                          //와이어프레임 그리기
-                        if(privateMaterialWireFrame[tMaterial.uuid]) {
+                        if(priMatWireFrame[tMatUUID]) {
                             tGL.enable(tGL.DEPTH_TEST),
                             tGL.depthFunc(tGL.LEQUAL),
                             tProgram = tGPU.programs['wireFrame'],
@@ -574,10 +579,11 @@ var World = (function () {
                             tGL.uniform3fv(tProgram.uPosition, f3),
                             f3[0] = tItem.scaleX, f3[1] = tItem.scaleY, f3[2] = tItem.scaleZ,
                             tGL.uniform3fv(tProgram.uScale, f3),
-                            f4[0] = privateMaterialWireFrameColor[tMaterial.uuid][0],
-                            f4[1] = privateMaterialWireFrameColor[tMaterial.uuid][1],
-                            f4[2] = privateMaterialWireFrameColor[tMaterial.uuid][2],
-                            f4[3] = privateMaterialWireFrameColor[tMaterial.uuid][3],
+                            tColor = priMatWireFrameColor[tMatUUID]
+                            f4[0] = tColor[0],
+                            f4[1] = tColor[1],
+                            f4[2] = tColor[2],
+                            f4[3] = tColor[3],
                             tGL.uniform4fv(tProgram.uColor, f4),
                             tGL.drawElements(tGL.LINES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0),
                             tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS);
