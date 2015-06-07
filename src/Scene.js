@@ -98,7 +98,8 @@ var Scene = (function () {
         fragmentShaders[this] = {},
         updateList[this] = {
             mesh : [],
-            material : []
+            material : [],
+            camera : []
         },
         this.addVertexShader(Shader.colorVertexShader),this.addFragmentShader(Shader.colorFragmentShader)
         this.addVertexShader(Shader.wireFrameVertexShader),this.addFragmentShader(Shader.wireFrameFragmentShader),
@@ -129,21 +130,26 @@ var Scene = (function () {
         if (p[v]) this.error(0);
         if (!(v instanceof Mesh)) this.error(1);
         p[v] = v;
-        updateList[this].mesh.push(v)
+        p2.mesh.push(v)
         mat = v.material
-        mat.addEventListener(Material.changed,function(){
+        mat.addEventListener(Material.load,function(){
+            //console.log(this)
             var t= this.diffuse
             if(t){
                 var i = t.length
                 while(i--){
-                    console.log('로딩체크',t[i].tex.isLoaded)
-                    if(t[i].tex.isLoaded){
+                    //if(t[i].tex.isLoaded){
+                    //
+                    //}
+                    //console.log('로딩완료 및 업데이트 추가',t[i].tex.isLoaded)
+                    if(p2.material.indexOf(t[i].tex)==-1){
                         p2.material.push(t[i].tex)
                     }
+
                 }
             }
         })
-        mat.dispatch(Material.changed,mat)
+        mat.dispatch(Material.load,mat)
         return this;
     },
     fn.addCamera = function(v){
@@ -151,6 +157,7 @@ var Scene = (function () {
         if (p[v]) this.error(0);
         if (!(v instanceof Camera)) this.error(1);
         p[v] = v;
+        updateList[this].camera.push(v)
         return this;
     },
     fn.addChild = function addChild(v) {

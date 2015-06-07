@@ -223,7 +223,6 @@ var MoGL = (function() {
                     Object.defineProperty(newProto, k, v);
                 }
             }
-
             for (k in statics) {
                 if (statics.hasOwnProperty(k)) {
                     cls[k] = statics[k];
