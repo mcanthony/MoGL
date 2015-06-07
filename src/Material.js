@@ -1,7 +1,7 @@
 var Material = (function () {
     var textureLoaded, texType,
         diffuse, normal, specular, diffuseWrap, specularNormal, 
-        shading, lambert,  wireFrame, wireFrameColor, count,
+        shading, lambert,  wireFrame, wireFrameColor, count,color,
         Material, fn, fnProp,prop;
     
     //private
@@ -15,8 +15,12 @@ var Material = (function () {
     wireFrame = {},
     wireFrameColor = {},
     count = {},
+    color = {},
     //shared private
     $setPrivate('Material', {
+        color:color,
+        wireFrame:wireFrame,
+        wireFrameColor:wireFrameColor
     }),
     prop = {},
     //lib
@@ -34,32 +38,28 @@ var Material = (function () {
     },
 
     Material = function Material() {
-        Object.seal(prop[this] = {
-            color:{'0':1,'1':1,'2':1,'3':1},
-            wireFrameColor:{'0':Math.random(),'1':Math.random(),'2':Math.random(),'3':1}
-        }),
-        Object.seal(prop[this].color),
-        Object.seal(prop[this].wireFrameColor);
+        color[this] = {'0':1,'1':1,'2':1,'3':1}
         if (arguments.length) {
             this.color = arguments.length > 1 ? arguments : arguments[0]
         }
+        wireFrameColor[this] = {'0':1,'1':1,'2':1,'3':1}
         wireFrame[this] = false;
     },
     fnProp = {
         count:$getter(count, false, 0),
         color:{
-            get:$getter(prop,'color',{'0':1,'1':1,'2':1,'3':1}),
+            get:$getter(color),
             set:function colorSet(v) {
-                var p = prop[this].color;
+                var p = color[this];
                 v = $color(v);
                 p[0] = v[0], p[1] = v[1], p[2] = v[2], p[3] = v[3];
            }
         },
         wireFrame:$value(wireFrame),
         wireFrameColor:{
-            get:$getter(prop,'wireFrameColor'),
-            set:function colorSet(v) {
-                var p = prop[this].wireFrameColor;
+            get:$getter(wireFrameColor),
+            set:function wireFrameColorSet(v) {
+                var p = wireFrameColor[this];
                 v = $color(v);
                 p[0] = v[0], p[1] = v[1], p[2] = v[2], p[3] = v[3];
            }
@@ -119,6 +119,7 @@ var Material = (function () {
         }
         //changed이벤트는 무조건 발생함.
         this.dispatch(Material.changed);
+        //console.log('재질에서 텍스쳐 로딩이벤트 완료',this.isLoaded)
         if (this.isLoaded) this.dispatch(Material.load);
         return this;
     },

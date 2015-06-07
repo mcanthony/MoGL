@@ -85,6 +85,7 @@ var Scene = (function () {
     updateList = {},
     //shared private
     $setPrivate('Scene', {
+        children : children
     }),
 
     Scene = function Scene() {
