@@ -48,7 +48,7 @@
     <script src="../src/World.js"></script>
 </head>
 <body>
-<img src="monkey/Suzanne.jpg" id="testIMG2" style="position: absolute;top:0px;" width="128" height="128">
+<img src="monkey/Suzanne.jpg" id="testIMG2" style="position: absolute;top:0px; display:none" width="128" height="128">
 <canvas id="canvas"></canvas>
 <div class="FPS">
     Current FPS: <span id="currentFPS"></span>
@@ -74,7 +74,7 @@
 //    scene.addMaterial(material.setId('material'));
     //
 //    material.addTexture(Texture.diffuse, texture);
-    material.shading = Shading.phong
+//    material.shading = Shading.phong
 
     var xmlhttp = new XMLHttpRequest();
 
@@ -137,7 +137,7 @@
         var PI2 = Math.PI * 2;
 
         for (i = 0; i < 500; i++) {
-            monkey = new Mesh(geo, material);
+            monkey = new Mesh(geo, new Material('#'+(0xffffff*Math.random().toString())));
             monkey.x = Math.random() * 50 - 25;
             monkey.y = Math.random() * 50 - 25;
             monkey.z = Math.random() * 50 - 25;

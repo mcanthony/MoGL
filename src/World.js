@@ -399,6 +399,7 @@ var World = (function () {
         tSceneList = sceneList[this],
         tGPU = gpu[this]
         tGL = tGPU.gl;
+
         i = tSceneList.length
         this.dispatch(World.renderBefore,currentTime)
         while(i--){
@@ -441,7 +442,10 @@ var World = (function () {
                     }else{
                         tGL.viewport(0, 0, tCvs.width, tCvs.height);
                     }
-                    tChildren = tScene.children;
+
+                    var privateScene = $getPrivate('Scene','children')
+                    tChildren = privateScene[tScene.uuid];
+
                     tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS);
                     tGL.enable(tGL.BLEND)
                     tGL.blendFunc(tGL.SRC_ALPHA, tGL.ONE_MINUS_SRC_ALPHA)
@@ -457,14 +461,27 @@ var World = (function () {
                     }
                     tItem = tMaterial = tProgram = tVBO = tIBO = null;
                     // 대상 씬의 차일드 루프
+                    var privateGeometry = $getPrivate('Mesh','geometry')
+                    var privateMaterial = $getPrivate('Mesh','material')
+                    var privateCulling = $getPrivate('Mesh','culling')
+
+                    var privateMaterialColor = $getPrivate('Material','color')
+                    var privateMaterialWireFrame = $getPrivate('Material','wireFrame')
+                    var privateMaterialWireFrameColor = $getPrivate('Material','wireFrameColor')
+
+                    //var privateMatColor = $getPrivate('Mesh','color')
+
                     for (k in tChildren) {
-                        tItem = tChildren[k],
-                        tVBO = tGPU.vbo[tItem.geometry],
-                        tVNBO = tGPU.vnbo[tItem.geometry],
-                        tUVBO = tGPU.uvbo[tItem.geometry],
-                        tIBO = tGPU.ibo[tItem.geometry],
-                        tMaterial = tItem.material,
-                        tCulling = tItem.culling
+                        tItem = tChildren[k]
+                        var tg //= tItem.geometry
+                        tg = privateGeometry[tItem.uuid].uuid;
+                        tVBO = tGPU.vbo[tg],
+                        tVNBO = tGPU.vnbo[tg],
+                        tUVBO = tGPU.uvbo[tg],
+                        tIBO = tGPU.ibo[tg],
+                        tMaterial = privateMaterial[tItem.uuid]
+                        tCulling = privateCulling[tItem.uuid]
+
                         if(tCulling != pCulling){
                             if (tCulling == Mesh.cullingNone) tGL.disable(tGL.CULL_FACE)
                             else if (tCulling == Mesh.cullingBack) tGL.enable(tGL.CULL_FACE), tGL.frontFace(tGL.CCW)
@@ -478,22 +495,22 @@ var World = (function () {
                         useTexture = 0;
 
                         // 쉐이딩 결정
-                        switch(tMaterial.shading){
-                            case  Shading.none :
-                             tProgram=tGPU.programs['color'];
-                            break
-                            case  Shading.phong :
-                                if(tMaterial.diffuse){
-                                    tProgram=tGPU.programs['bitmapPhong'];
-                                    //console.log('들어왔다!')
-                                    useTexture =1
-                                } else {
-                                    tProgram=tGPU.programs['colorPhong'];
-                                }
-                                useNormalBuffer = 1;
-                            break
-                        }
-
+                        //switch(tMaterial.shading){
+                        //    case  Shading.none :
+                        //     tProgram=tGPU.programs['color'];
+                        //    break
+                        //    case  Shading.phong :
+                        //        if(tMaterial.diffuse){
+                        //            tProgram=tGPU.programs['bitmapPhong'];
+                        //            //console.log('들어왔다!')
+                        //            useTexture =1
+                        //        } else {
+                        //            tProgram=tGPU.programs['colorPhong'];
+                        //        }
+                        //        useNormalBuffer = 1;
+                        //    break
+                        //}
+                        tProgram=tGPU.programs['color'];
                         // 쉐이딩 변경시 캐쉬 삭제
                         if(pProgram != tProgram) pProgram = null ,pVBO = null, pVNBO = null, pUVBO = null, pIBO = null, pDiffuse = null;
 
@@ -508,10 +525,10 @@ var World = (function () {
 
                         tVBO!=pVBO ? tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO) : 0,
                         tVBO!=pVBO ? tGL.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, tGL.FLOAT, false, 0, 0) : 0,
-                        f4[0] = tMaterial.color[0],
-                        f4[1] = tMaterial.color[1],
-                        f4[2] = tMaterial.color[2],
-                        f4[3] = tMaterial.color[3],
+                        f4[0] = privateMaterialColor[tMaterial.uuid][0],
+                        f4[1] = privateMaterialColor[tMaterial.uuid][1],
+                        f4[2] = privateMaterialColor[tMaterial.uuid][2],
+                        f4[3] = privateMaterialColor[tMaterial.uuid][3],
                         tGL.uniform4fv(tProgram.uColor, f4);
 
                         // 텍스쳐 세팅
@@ -539,8 +556,8 @@ var World = (function () {
                         tIBO != pIBO ? tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO) : 0,
                         tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0)
 
-                        // 와이어프레임 그리기
-                        if(tMaterial.wireFrame) {
+                         //와이어프레임 그리기
+                        if(privateMaterialWireFrame[tMaterial.uuid]) {
                             tGL.enable(tGL.DEPTH_TEST),
                             tGL.depthFunc(tGL.LEQUAL),
                             tProgram = tGPU.programs['wireFrame'],
@@ -553,16 +570,16 @@ var World = (function () {
                             tGL.uniform3fv(tProgram.uPosition, f3),
                             f3[0] = tItem.scaleX, f3[1] = tItem.scaleY, f3[2] = tItem.scaleZ,
                             tGL.uniform3fv(tProgram.uScale, f3),
-                            f4[0] = tMaterial.wireFrameColor[0],
-                            f4[1] = tMaterial.wireFrameColor[1],
-                            f4[2] = tMaterial.wireFrameColor[2],
-                            f4[3] = tMaterial.wireFrameColor[3],
+                            f4[0] = privateMaterialWireFrameColor[tMaterial.uuid][0],
+                            f4[1] = privateMaterialWireFrameColor[tMaterial.uuid][1],
+                            f4[2] = privateMaterialWireFrameColor[tMaterial.uuid][2],
+                            f4[3] = privateMaterialWireFrameColor[tMaterial.uuid][3],
                             tGL.uniform4fv(tProgram.uColor, f4),
                             tGL.drawElements(tGL.LINES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0),
                             tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS);
                         }
 
-                        pProgram = tProgram , pVBO = tVBO, pVNBO = useNormalBuffer ? tVNBO : null, pUVBO = tUVBO, pIBO = tIBO, pCulling = tCulling, pDiffuse = textureObj;
+                        pProgram = tProgram , pVBO = tVBO, pVNBO = useNormalBuffer ? tVNBO : null, pUVBO = tUVBO, pIBO = tIBO, pCulling = tCulling//, pDiffuse = textureObj;
                     }
                     //gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture);
                     //gl.bindTexture(gl.TEXTURE_2D, null);

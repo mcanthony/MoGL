@@ -8,6 +8,9 @@ var Mesh = (function () {
     culling = {};
     //shared private
     $setPrivate('Mesh', {
+        geometry : geometry,
+        material : material,
+        culling : culling
     }),
     
     Mesh = function Mesh(geometry, material) {
