@@ -132,23 +132,23 @@ var Scene = (function () {
         p[v] = v;
         p2.mesh.push(v)
         mat = v.material
-        mat.addEventListener(Material.load,function(){
-            //
-            //var t= this.diffuse
-            //if(t){
-            //    var i = t.length
-            //    while(i--){
-            //        //if(t[i].tex.isLoaded){
-            //        //
-            //        //}
-            //        //console.log('로딩완료 및 업데이트 추가',t[i].tex.isLoaded)
-            //        if(p2.material.indexOf(t[i].tex)==-1){
-            //            p2.material.push(t[i].tex)
-            //        }
-            //
-            //    }
-            //}
-        })
+        //mat.addEventListener(Material.load,function(){
+        //    //
+        //    //var t= this.diffuse
+        //    //if(t){
+        //    //    var i = t.length
+        //    //    while(i--){
+        //    //        //if(t[i].tex.isLoaded){
+        //    //        //
+        //    //        //}
+        //    //        //console.log('로딩완료 및 업데이트 추가',t[i].tex.isLoaded)
+        //    //        if(p2.material.indexOf(t[i].tex)==-1){
+        //    //            p2.material.push(t[i].tex)
+        //    //        }
+        //    //
+        //    //    }
+        //    //}
+        //})
         mat.dispatch(Material.load,mat)
         return this;
     },
