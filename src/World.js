@@ -468,6 +468,10 @@ var World = (function () {
                     var privateMaterialColor = $getPrivate('Material','color')
                     var privateMaterialWireFrame = $getPrivate('Material','wireFrame')
                     var privateMaterialWireFrameColor = $getPrivate('Material','wireFrameColor')
+                    var privateMaterialShading = $getPrivate('Material','shading')
+                    var privateMaterialLambert = $getPrivate('Material','lambert')
+                    var privateMaterialDiffuse = $getPrivate('Material','diffuse')
+
 
                     //var privateMatColor = $getPrivate('Mesh','color')
 
@@ -495,22 +499,22 @@ var World = (function () {
                         useTexture = 0;
 
                         // 쉐이딩 결정
-                        //switch(tMaterial.shading){
-                        //    case  Shading.none :
-                        //     tProgram=tGPU.programs['color'];
-                        //    break
-                        //    case  Shading.phong :
-                        //        if(tMaterial.diffuse){
-                        //            tProgram=tGPU.programs['bitmapPhong'];
-                        //            //console.log('들어왔다!')
-                        //            useTexture =1
-                        //        } else {
-                        //            tProgram=tGPU.programs['colorPhong'];
-                        //        }
-                        //        useNormalBuffer = 1;
-                        //    break
-                        //}
-                        tProgram=tGPU.programs['color'];
+                        switch(privateMaterialShading[tMaterial.uuid]){
+                            case  Shading.none :
+                             tProgram=tGPU.programs['color'];
+                            break
+                            case  Shading.phong :
+                                if(privateMaterialDiffuse[tMaterial.uuid]){
+                                    tProgram=tGPU.programs['bitmapPhong'];
+                                    //console.log('들어왔다!')
+                                    useTexture =1
+                                } else {
+                                    tProgram=tGPU.programs['colorPhong'];
+
+                                }
+                                useNormalBuffer = 1;
+                            break
+                        }
                         // 쉐이딩 변경시 캐쉬 삭제
                         if(pProgram != tProgram) pProgram = null ,pVBO = null, pVNBO = null, pUVBO = null, pIBO = null, pDiffuse = null;
 
@@ -520,7 +524,7 @@ var World = (function () {
                             tVNBO != pVNBO ? tGL.bindBuffer(tGL.ARRAY_BUFFER, tVNBO) : 0,
                             tVNBO != pVNBO ? tGL.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, tGL.FLOAT, false, 0, 0) : 0;
                             tGL.uniform3fv(tProgram.uDLite, dLite);
-                            tGL.uniform1f(tProgram.uLambert,tMaterial.lambert);
+                            tGL.uniform1f(tProgram.uLambert,privateMaterialLambert[tMaterial.uuid]);
                         }
 
                         tVBO!=pVBO ? tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO) : 0,
@@ -641,7 +645,7 @@ var World = (function () {
             }
         }
         this.dispatch(World.renderAfter,currentTime)
-        //gl.finish();
+        //tGL.flush();
     }
     World.renderBefore = 'WORLD_RENDER_BEFORE',
     World.renderAfter = 'WORLD_RENDER_AFTER'
