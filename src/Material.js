@@ -20,7 +20,10 @@ var Material = (function () {
     $setPrivate('Material', {
         color:color,
         wireFrame:wireFrame,
-        wireFrameColor:wireFrameColor
+        wireFrameColor:wireFrameColor,
+        shading:shading,
+        lambert:lambert,
+        diffuse:diffuse
     }),
     prop = {},
     //lib
@@ -44,6 +47,8 @@ var Material = (function () {
         }
         wireFrameColor[this] = {'0':1,'1':1,'2':1,'3':1}
         wireFrame[this] = false;
+        lambert[this] = 1
+        shading[this] = Shading.none
     },
     fnProp = {
         count:$getter(count, false, 0),
@@ -64,8 +69,8 @@ var Material = (function () {
                 p[0] = v[0], p[1] = v[1], p[2] = v[2], p[3] = v[3];
            }
         },
-        shading:$value(shading, false, Shading.none),
-        lambert:$value(lambert, false, 1),
+        shading:$value(shading),
+        lambert:$value(lambert),
         diffuse:$value(diffuse),
         isLoaded:{
             get:function(mat) {
