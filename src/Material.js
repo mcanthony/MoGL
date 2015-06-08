@@ -41,11 +41,11 @@ var Material = (function () {
     },
 
     Material = function Material() {
-        color[this] = {'0':1,'1':1,'2':1,'3':1}
+        color[this] = [1,1,1,1]
         if (arguments.length) {
             this.color = arguments.length > 1 ? arguments : arguments[0]
         }
-        wireFrameColor[this] = {'0':1,'1':1,'2':1,'3':1}
+        wireFrameColor[this] = [1,1,1,1]
         wireFrame[this] = false;
         lambert[this] = 1
         shading[this] = Shading.none
@@ -124,7 +124,6 @@ var Material = (function () {
         }
         //changed이벤트는 무조건 발생함.
         this.dispatch(Material.changed);
-        //console.log('재질에서 텍스쳐 로딩이벤트 완료',this.isLoaded)
         if (this.isLoaded) this.dispatch(Material.load);
         return this;
     },

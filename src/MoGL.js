@@ -30,7 +30,7 @@
     }
 })();
 //전역에서 사용하는 공통함수
-var $setPrivate, $getPrivate, $writable, $readonly, $value, $getter, $setter, $color,
+var $setPrivate, $getPrivate, $writable, $readonly, $value, $getter, $setter, $color, $md,
     GLMAT_EPSILON, SIN, COS, TAN, ATAN, ATAN2, ASIN, SQRT, CEIL, ABS, PIH, PERPI;
 
 (function() {
@@ -115,13 +115,315 @@ $color = (function(){
 GLMAT_EPSILON = 0.000001,
 SIN = Math.sin, COS = Math.cos, TAN = Math.tan, ATAN = Math.atan, ATAN2 = Math.atan2, ASIN = Math.asin,
 SQRT = Math.sqrt, CEIL = Math.ceil, ABS = Math.abs, PI = Math.PI, PIH = PI * 0.5, PERPI = 180 / PI;
-
+//markdown
+$md = function(classes){
+    var param, exception, sample, description, ret, mk, sort;
+    exception = function(f){
+        var temp, i, j, k;
+        f = Function.prototype.toString.call(f);
+        temp = [],
+        k = 0;
+        if (f.substring(8, f.indexOf('(')).trim().indexOf('error') == -1) {
+            while ((i = f.indexOf('this.error(', k)) > -1) {
+                k = i + 'this.error('.length;
+                temp[temp.length] = f.substring(k, f.indexOf(')', k));
+            }
+        }
+        return temp;
+    },
+    mk = function(keyword, isJoin){
+        var len;
+        keyword = '/*' + keyword;
+        len = keyword.length;
+        return function(f){
+            var i, space;
+            f = Function.prototype.toString.call(f);
+            if ((i = f.indexOf(keyword)) > -1) {
+                f = f.substring(i + len, f.indexOf('*/', i)).split('\n');
+                f.shift(), f.pop();
+                space = f[0].match(/^[ ]*/)[0].length;
+                i = f.length;
+                while (i--) f[i] = f[i].substr(space);
+                if(isJoin) f = f.join('\n');
+            } else {
+                f = '';
+            }
+            return f;
+        };
+    };
+    sample = mk('sample', 1);
+    description = mk('description', 1);
+    param = mk('param');
+    ret = mk('return');
+    sort = function(a,b){
+        return a.name < b.name;
+    };
+    return function(){
+        var md = ['#' + this.className], ref, temp, i, j, k, l, m, n,
+            parents, constructor, field, method, consts, event, static, inherited;
+        ref = classes[this.className];
+        //constructor
+        temp = Function.prototype.toString.call(ref.construct);
+        constructor = {
+            description:description(ref.construct, 'Constructor of ' + this.className),
+            param:param(ref.construct),
+            exception:param(ref.construct),
+            sample:sample(ref.construct)
+        };
+        //method
+        method = [],
+        temp = ref.proto;
+        for (k in temp) {
+            method[method.length] = {
+                name:k,
+                description:description(temp[k], 'Method of ' + this.className),
+                param:param(temp[k]),
+                exception:exception(temp[k]),
+                sample:sample(temp[k]),
+                ret:ret(temp[k])
+            };
+        }
+        //field
+        if (ref.prop) {
+            field = [];
+            for (k in ref.prop) {
+                if (typeof ref.prop[k].value == 'function') {
+                    method[method.length] = {
+                        name:k,
+                        description:description(ref.prop[k].value, 'Method of ' + this.className),
+                        param:param(ref.prop[k].value),
+                        exception:exception(ref.prop[k].value),
+                        sample:sample(ref.prop[k].value)
+                    };
+                } else {
+                    field[field.length] = {
+                        name:k,
+                        writable:ref.prop[k].writable || ref.prop[k].set ? true : false, 
+                        enumerable:ref.prop[k].enumerable ? true : false, 
+                        configurable:ref.prop[k].configurable ? true : false,
+                        defaultValue:'defaultValue' in ref.prop[k] ? ref.prop[k].defaultValue : 'value'  in ref.prop[k] ? ref.prop[k].value : 'none', 
+                        description:ref.prop[k].description || 'Field of ' + this.className,
+                        sample:ref.prop[k].sample || ''
+                    };
+                }
+            }
+            
+        }
+        //static
+        static = [], 
+        consts = [], 
+        temp = ref.cls;
+        for (k in temp) {
+            if (typeof temp[k] == 'function') {
+                static[static.length] = {
+                    name:k,
+                    description:description(temp[k], 'Static Method of ' + this.className),
+                    param:param(temp[k]),
+                    exception:exception(temp[k]),
+                    sample:sample(temp[k]),
+                    ret:ret(temp[k])
+                }
+            } else if(k.substr(0, 2) != '__') {
+                consts[consts.length] = {
+                    name:k,
+                    description:'Const of ' + this.className,
+                    value:temp[k]
+                }
+                    
+            }
+        }
+        //parent
+        if (ref.parent) {
+            parents = [];
+            temp = ref.parent;
+            while (temp) {
+                parents[parents.length] = '[' + temp.className + '](' + temp.className + '.md)';
+                temp = classes[temp.className].parent;
+            }
+            md[md.length] = '* parent : ' + parents.join(' < ');
+        }
+        
+        //children
+        temp = [];
+        for (k in classes) {
+            if (classes[k].parent == this) {
+                temp[temp.length] = '[' + k + '](' + k + '.md)';
+            }
+        }
+        if (temp.length) {
+            temp.sort(sort);
+            md[md.length] = '* children : ' + temp.join(', ');
+        }
+        md[md.length] = '* [constructor](#constructor)\n';
+        if (field.length) {
+            field.sort(sort);
+            md[md.length] = '\n**field**\n';
+            for (i = 0, j = field.length; i < j; i++){
+                md[md.length] = '* [' + field[i].name + '](#' + field[i].name + ')';
+            }
+        }
+        if (method.length) {
+            method.sort(sort);
+            md[md.length] = '\n**method**\n';
+            for (i = 0, j = method.length; i < j; i++){
+                md[md.length] = '* [' + method[i].name + '](#' + method[i].name + ')';
+            }
+        }
+        if (consts.length) {
+            consts.sort(sort);
+            md[md.length] = '\n**const**\n';
+            for (i = 0, j = consts.length; i < j; i++){
+                md[md.length] = '* [' + this.className + '.' + consts[i].name + '](#' + this.className + '.' +consts[i].name + ')';
+            }
+        }
+        if (static.length) {
+            static.sort(function(a,b){
+                return a.name < b.name;
+            }),
+            md[md.length] = '\n**static**\n';
+            for (i = 0, j = static.length; i < j; i++){
+                md[md.length] = '* [' + this.className + '.' + static[i].name + '](#' + this.className + '.' +static[i].name + ')';
+            }
+        }
+        md[md.length] = '\n[top](#)';
+        md[md.length] = '\n[constructor]:constructor';
+        md[md.length] = '##Constructor';
+        md[md.length] = '\n**description**\n';
+        md[md.length] = constructor.description;
+        md[md.length] = '\n**param**\n';
+        md[md.length] = constructor.param.length ? '* ' + constructor.param.join('\n* ') : 'none';
+        md[md.length] = '\n**exception**\n';
+        md[md.length] = constructor.exception.length ? '* ' + constructor.exception.join('\n* ') : 'none';
+        md[md.length] = '\n**sample**\n';
+        md[md.length] = '```javascript';
+        md[md.length] = constructor.sample;
+        md[md.length] = '```';
+     
+        if (field.length) {
+            for (i = 0, j = field.length; i < j; i++){
+                k = field[i];
+                md[md.length] = '\n[top](#)';
+                md[md.length] = '\n<a name="'+k.name + '"></a>';
+                md[md.length] = '##'+k.name;
+                md[md.length] = '\n**description**\n';
+                md[md.length] = k.description;
+                md[md.length] = '\n**setting**\n';
+                md[md.length] = '*writable*:' + k.writable + ', *enumerable*:' + k.enumerable + ', *configurable*:' + k.configurable;
+                md[md.length] = '\n**defaultValue**\n';
+                md[md.length] = k.defaultValue;
+                md[md.length] = '\n**sample**\n';
+                md[md.length] = '```javascript';
+                md[md.length] = k.sample;
+                md[md.length] = '```';
+            }
+        }
+        if (method.length) {
+            for (i = 0, j = method.length; i < j; i++){
+                k = method[i];
+                md[md.length] = '\n[top](#)';
+                md[md.length] = '\n<a name="'+k.name + '"></a>';
+                l = [];
+                if (k.param) {
+                    for(m = 0, n = k.param.length; m < n ; m++){
+                        l[l.length] = k.param[m].split('-')[0].trim();
+                    }
+                }
+                md[md.length] = '##'+k.name + '(' + l.join(', ') + ')';
+                md[md.length] = '\n**description**\n';
+                md[md.length] = k.description;
+                md[md.length] = '\n**param**\n';
+                if (k.param) {
+                    for(m = 0, n = k.param.length; m < n ; m++){
+                        md[md.length] = (m + 1) + '. ' + k.param[m];
+                    }
+                } else {
+                    md[md.length] = 'none';
+                }
+                md[md.length] = '\n**exception**\n';
+                if (k.exception.length){
+                    for(m = 0, n = k.exception.length; m < n ; m++){
+                        md[md.length] = this.className + '.' + k.name + ':' + k.param[m];
+                    }
+                } else {
+                    md[md.length] = 'none';
+                }
+                md[md.length] = '\n**return**\n';
+                md[md.length] = k.ret.length ? k.ret.join('\n').replace('this', 'this - 메소드체이닝을 위해 자신을 반환함') : 'none';
+                md[md.length] = '\n**sample**\n';
+                md[md.length] = '```javascript';
+                md[md.length] = k.sample;
+                md[md.length] = '```';
+            }
+        }
+        if (consts.length) {
+            for (i = 0, j = consts.length; i < j; i++){
+                k = consts[i];
+                 md[md.length] = '\n[top](#)';
+                md[md.length] = '\n<a name="'+this.className+'.'+k.name + '"></a>';
+                md[md.length] = '##'+this.className+'.'+k.name;
+                md[md.length] = '\n**description**\n';
+                md[md.length] = k.description;
+                md[md.length] = '\n**value**\n';
+                md[md.length] = k.value;
+            }
+        }
+        if (static.length) {
+            for (i = 0, j = static.length; i < j; i++){
+                k = static[i];
+                md[md.length] = '\n[top](#)';
+                md[md.length] = '\n<a name="'+this.className+'.'+k.name + '"></a>';
+                l = [];
+                if (k.param) {
+                    for(m = 0, n = k.param.length; m < n ; m++){
+                        l[l.length] = k.param[m].split('-')[0].trim();
+                    }
+                }
+                md[md.length] = '##'+this.className+'.'+k.name + '(' + l.join(', ') + ')';
+                md[md.length] = '\n**description**\n';
+                md[md.length] = k.description;
+                md[md.length] = '\n**param**\n';
+                if (k.param) {
+                    for(m = 0, n = k.param.length; m < n ; m++){
+                        md[md.length] = (m + 1) + '. ' + k.param[m];
+                    }
+                } else {
+                    md[md.length] = 'none';
+                }
+                md[md.length] = '\n**exception**\n';
+                if (k.exception.length){
+                    for(m = 0, n = k.exception.length; m < n ; m++){
+                        md[md.length] = this.className + '.' + k.name + ':' + k.param[m];
+                    }
+                } else {
+                    md[md.length] = 'none';
+                }
+                md[md.length] = '\n**return**\n';
+                md[md.length] = k.ret.length ? k.ret.join('\n').replace('this', 'this - 메소드체이닝을 위해 자신을 반환함') : 'none';
+                md[md.length] = '\n**sample**\n';
+                md[md.length] = '```javascript';
+                md[md.length] = k.sample;
+                md[md.length] = '```';
+            }
+        }
+        return md.join('\n');
+    };
+};
 var MoGL = (function() {
-    var wrapper, method, prev,
+    var wrapper, method, prev, md,
         uuid, counter, totalCount,
-        listener, ids, updated, allInst, classInst, classes,
-        MoGL, mock, fn, fnProp;
+        listener, ids, updated, allInst, classInst, classes, ease, 
+        MoGL, mock, fn, fnProp, fnOrigin;
+    uuid = 0,//모든 인스턴스는 고유한 uuid를 갖게 됨.
+    totalCount = 0, //생성된 인스턴스의 갯수를 관리함
+    counter = {}, //클래스별로 관리
+    //private
+    ids = {},
+    listener = {},
+    updated = {},
+    allInst = {},
+    classes = {},
     //lib
+    md = $md(classes),
     prev = [], //스택구조의 이전 함수이름의 배열
     wrapper = (function(){
         var wrap, statics,  isFactory, isSuperChain;
@@ -158,13 +460,17 @@ var MoGL = (function() {
                 return counter[this.uuid];
             },
             error:function error(method, id) { //정적함수용 에러보고함수
-                throw new Error(this.name + '.' + method + ':' + id);
+                throw new Error(this.className + '.' + method + ':' + id);
             },
             ext:function ext(child, prop) { //상속하는 자식클래스를 만들어냄.
-                var cls, self;
+                var cls, self, f, origin, k;
+                origin = {};
+                for (k in child.prototype) {
+                    if (child.prototype.hasOwnProperty(k)) origin[k] = child.prototype[k];
+                }
                 self = this;
                 if (!(self.prototype instanceof MoGL) && self !== MoGL) self.error('ext', 0);
-                classes[child.name] = cls = function() {
+                cls = function() {
                     var arg, arg0 = arguments[0], result;
                     prev[prev.length] = method,
                     method = 'constructor';
@@ -186,9 +492,18 @@ var MoGL = (function() {
                     }
                     method = prev.pop();
                     return result;
+                },
+                
+                
+                classes[child.name] = {cls:cls,
+                    construct:child,
+                    proto:origin,
+                    parent:this,
+                    prop:prop
                 };
                 return wrapper(cls, Object.create(self.prototype), child, prop);
-            }
+            },
+            getMD:md
         };
         return function(cls, newProto, f, prop, notFreeze) {
             var k, v;
@@ -198,10 +513,16 @@ var MoGL = (function() {
                     cls[k] = f[k];
                 }
             }
+            //정적 상속속성을 복사
+            for (k in statics) {
+                if (statics.hasOwnProperty(k)) {
+                    cls[k] = statics[k];
+                }
+            }
             //프로토타입레벨에서 클래스의 id와 이름을 정의해줌.
             $readonly.value = cls.uuid = 'uuid:' + (uuid++),
             Object.defineProperty(newProto, 'classId', $readonly);
-            $readonly.value = f.name,
+            $readonly.value = cls.className = f.name,
             Object.defineProperty(newProto, 'className', $readonly);
             if(!(cls.uuid in counter)) counter[cls.uuid] = 0;
             f = f.prototype;
@@ -223,11 +544,6 @@ var MoGL = (function() {
                     Object.defineProperty(newProto, k, v);
                 }
             }
-            for (k in statics) {
-                if (statics.hasOwnProperty(k)) {
-                    cls[k] = statics[k];
-                }
-            }
             //새롭게 프로토타입을 정의함
             cls.prototype = newProto,
             Object.freeze(cls);
@@ -235,17 +551,11 @@ var MoGL = (function() {
             return cls;
         };
     })(),
-    uuid = 0,//모든 인스턴스는 고유한 uuid를 갖게 됨.
-    totalCount = 0, //생성된 인스턴스의 갯수를 관리함
-    counter = {}, //클래스별로 관리
-    //private
-    ids = {},
-    listener = {},
-    updated = {},
-    allInst = {},
-    classes = {},
     //MoGL정의
     MoGL = function MoGL() {
+        /*description
+        MoGL 라이브러리의 모든 클래스는 MoGL을 상속함. 보통 직접적으로 MoGL 클래스를 사용하는 경우는 없음.
+        */
         $readonly.value = 'uuid:' + (uuid++),
         Object.defineProperty(this, 'uuid', $readonly), //객체고유아이디
         allInst[this] = this,
@@ -253,6 +563,9 @@ var MoGL = (function() {
         Object.defineProperty(this, 'isAlive', $writable),//활성화상태초기화 true
         counter[this.classId]++, //클래스별 인스턴스 수 증가
         totalCount++; //전체 인스턴스 수 증가
+        /*sample
+        var instance = new MoGL();
+        */
     },
     fnProp = {
         id:{
@@ -277,7 +590,14 @@ var MoGL = (function() {
                     ids[this.classId][this] = v;
                     ids[this.classId].ref[v] = this.uuid;
                 }
-            }
+            },
+            defaultValue:'null', 
+            description:'사용자가 임의로 정의한 id',
+            sample: [
+                "var scene = new Scene();",
+                "scene.id = 'test1';",
+                "console.log( scene.id ); //'test1'"
+            ].join('\n')
         },
         isUpdated:{
             get:function isUpdatedGet() {
@@ -285,11 +605,29 @@ var MoGL = (function() {
             },
             set:function isUpdatedSet(v) {
                 this.dispatch( 'updated', updated[this] = v ); //set과 동시에 디스패치
-            }
+            },
+            defaultValue:'false', 
+            description:'현재 인스턴스의 업데이트여부를 관리하는 플래그.\n\n* 상태가 바뀌면 MoGL.updated 이벤트가 발생함',
+            sample: [
+                "var scene = new Scene();",
+                "scene.addEventListener( 'updated', function(v){",
+                "  console.log(v); //2. 리스너가 발동함 - true",
+                "} );",
+                "console.log( scene.isUpdated ); //false",
+                "scene.isUpdated = true; //1. 값을 바꾸면",
+            ].join('\n')
         }
     },
     fn = MoGL.prototype,
-    fn.destroy = function destroy() { //파괴자
+    fnOrigin = {},
+    fnOrigin.destroy = fn.destroy = function destroy() { //파괴자
+        /*description
+        해당 event의 리스너들에게 이벤트를 통지함. 추가인자를 기술하면 그 인자도 전달됨.
+        */
+        /*sample
+        var city1 = Scene();
+        city1.destroy();
+        */
         var key;
         for (key in this) {
             if (this.hasOwnProperty(key)) this[key] = null;
@@ -305,27 +643,24 @@ var MoGL = (function() {
         counter[this.classId]--, //클래스별인스턴스감소
         totalCount--; //전체인스턴스감소
     },
-    fn.setId = function setId(v) { //id setter
+    fnOrigin.setId = fn.setId = function setId(v) {
+        /*param
+        id:string - 설정할 id값. null로 설정시 삭제됨.
+        */
+        /*description
+        id는 본래 속성값이나 메서드체이닝목적으로 사용하는 경우 setId를 쓰면 편리함.
+        */
+        /*return
+        this
+        */
+        /*sample
+        var city1 = Scene().setId('city1');
+        */
         this.id = v;
         return this;
     },
-    fn.setProperties = (function(){
-        var loopstart, loop, ease, target, aid = 0;
-		ease = {
-            linear:function(a,c,b){return b*a+c},
-            backIn:function(a,c,b){return b*a*a*(2.70158*a-1.70158)+c},
-            backOut:function(a,c,b){a-=1;return b*(a*a*(2.70158*a+1.70158)+1)+c},
-            backInOut:bio = function(a,c,b){a*=2;if(1>a)return 0.5*b*a*a*(3.5949095*a-2.5949095)+c;a-=2;return 0.5*b*(a*a*(3.70158*a+2.70158)+2)+c},
-            bounceOut:function(a,c,b){if(0.363636>a)return 7.5625*b*a*a+c;if(0.727272>a)return a-=0.545454,b*(7.5625*a*a+0.75)+c;if(0.90909>a)return a-=0.818181,b*(7.5625*a*a+0.9375)+c;a-=0.95454;return b*(7.5625*a*a+0.984375)+c},
-            sineIn:function(a,c,b){return -b*Math.cos(a*PIH)+b+c},
-            sineOut:function(a,c,b){return b*Math.sin(a*PIH)+c},
-            sineInOut:function(a,c,b){return 0.5*-b*(Math.cos(PI*a)-1)+c},
-            circleIn:function(a,c,b){return -b*(Math.sqrt(1-a*a)-1)+c},
-            circleOut:function(a,c,b){a-=1;return b*Math.sqrt(1-a*a)+c},
-            circleInOut:function(a,c,b){a*=2;if(1>a)return 0.5*-b*(Math.sqrt(1-a*a)-1)+c;a-=2;return 0.5*b*(Math.sqrt(1-a*a)+1)+c},
-            quadraticIn:function(a,c,b){return b*a*a+c},
-            quadraticOut:function(a,c,b){return -b*a*(a-2)+c}
-        },
+    fnOrigin.setProperties = fn.setProperties = (function(){
+        var loopstart, loop, target, aid = 0;
         loop = function loop(t){
             var k0, k1, ani, inst, prop, init, rate;
             for (k0 in target) {
@@ -363,6 +698,30 @@ var MoGL = (function() {
         },
         target = {};
         return function setProperties(v) {
+            /*param
+            vo:Object - 키,값 쌍으로 되어있는 설정용 객체(delay time ease repeat yoyo 등의 상수키를 포함할 수 있음)
+            */
+            /*description
+            vo로 넘어온 속성을 일시에 설정함.
+            * vo에 MoGL.time이 포함되면 애니메이션으로 간주하여 보간애니메이션으로 처리됨.
+            */
+            /*return
+            this
+            */
+            /*sample
+            var mat = Matrix();
+            //즉시반영
+            mat.setProperties( {x:10, y:20, z:30} );
+            
+            //보간애니메이션실행
+            var vo = {x:0, y:0, z:0};
+            vo[MoGL.time] = 1;
+            vo[MoGL.delay] = 2;
+            vo[MoGL.repeat] = 1;
+            vo[MoGL.ease] = MoGL.easing.sineOut;
+            mat.setProperties( vo );
+            */
+            
             var k, ani, start, end, term;
             if (MoGL.time in v) {
                 ani = {};
@@ -372,7 +731,7 @@ var MoGL = (function() {
                 }
                 ani.term = v[MoGL.time] * 1000,
                 ani.end = ani.start + ani.term,
-                ani.ease = ease[v[MoGL.ease]] || ease.linear,
+                ani.ease = v[MoGL.ease] || ease.linear,
                 ani.repeat = v[MoGL.repeat] || 0,
                 ani.yoyo = v[MoGL.yoyo] || false;
                 delete v[MoGL.delay],
@@ -398,7 +757,30 @@ var MoGL = (function() {
         };
     })(),
     //이벤트시스템
-    fn.addEventListener = function(ev, f/*, context, arg1*/) {
+    fnOrigin.addEventListener = fn.addEventListener = function(ev, f) {
+        /*param
+        event:string - 이벤트타입, 
+        listener:function - 등록할 리스너,
+        ?context:* - this에 매핑될 컨텍스트(false무시),
+        ?...arg - 추가적인 인자(dispatch시점의 인자 뒤에 붙음)
+        */
+        /*description
+        해당 이벤트에 리스너를 추가함.
+        */
+        /*return
+        this
+        */
+        /*sample
+        var city1 = Scene();
+        city1.addEventListener( 'updated', function(v){
+          console.log(v);
+        });
+        var city2 = Scene();
+        city1.addEventListener( 'updated', function(v, added){
+          this == city2
+          added == 10
+        }, city2, 10);
+        */
         var target
         //private저장소에 this용 공간 초기화
         if (!listener[this]) listener[this] = {};
@@ -413,7 +795,21 @@ var MoGL = (function() {
         };
         return this;
     },
-    fn.removeEventListener = function(ev, f) {
+    fnOrigin.removeEventListener = fn.removeEventListener = function(ev, f) {
+        /*param
+        event:string - 이벤트타입
+        ?listener:string or function - 삭제할 리스너. string인 경우는 함수의 이름으로 탐색하고 생략시 해당 이벤트리스너전부를 제거함
+        */
+        /*description
+        해당 이벤트로부터 리스너를 제거함.
+        */
+        /*return
+        this
+        */
+        /*sample
+        var scene = new Scene();
+        scene.removeEventListener(MoGL.updated, listener);
+        */
         var target, i;
         if( f ){
             if (listener[this] && listener[this][ev]) {
@@ -432,7 +828,21 @@ var MoGL = (function() {
         }
         return this;
     },
-    fn.dispatch = function(ev){
+    fnOrigin.dispatch = fn.dispatch = function(ev){
+        /*param
+        event:string - 이벤트타입
+        ?...arg - 추가적으로 보낼 인자
+        */
+        /*description
+        해당 event의 리스너들에게 이벤트를 통지함. 추가인자를 기술하면 그 인자도 전달됨.
+        */
+        /*return
+        this
+        */
+        /*sample
+        var city1 = Scene();
+        city1.dispatch( 'updated', city.isUpdated );
+        */
         var target, arg, i, j, k, l;
         if (listener[this] && listener[this][ev]) {
             //만약 추가로 보낸 인자가 있다면 리스너에게 apply해줌.
@@ -456,16 +866,44 @@ var MoGL = (function() {
         }
         return this;
     },
-    MoGL.classes = function classes(context){
+    MoGL.classes = function(context){
+        /*param
+        context:Object - 클래스를 복사할 객체. 생략시 빈 오브젝트가 생성됨.
+        */
+        /*description
+        MoGL로 생성된 모든 서브클래스를 해당 객체에 키로 복사함.
+        * new MoGL.Mesh 등의 코드가 길고 귀찮은 경우 임의의 네임스페이스나 window에 복사하는 기능.
+        */
+        /*return
+        Object - 인자로보낸 context 또는 생략시 임의로 생성된 오브젝트
+        */
+        /*sample
+        //특정객체로 복사
+        var $ = MoGL.classes();
+        var scene = new $.Scene();
+        
+        //전역에 복사
+        MoGL.classes(window);
+        var scene = new Scene();
+        */
         var i;
         if (!context) context = {};
         for (k in classes) {
-            if (classes.hasOwnProperty(k)) context[k] = classes[k];
+            if (classes.hasOwnProperty(k)) context[k] = classes[k].cls;
         }
         return context;
     },
-    MoGL.totalCount = function count() { //인스턴스의 갯수를 알아냄
-        return totalCount; //전체 인스턴스 수
+    MoGL.totalCount = function count() {
+        /*description
+        전체 인스턴스의 수를 반환함
+        */
+        /*return
+        int - 활성화된 인스턴스의 수
+        */
+        /*sample
+        console.log( MoGL.count() );
+        */
+        return totalCount;
     },
     MoGL.updated = 'updated',
     MoGL.propertyChanged = 'propertyChanged',
@@ -474,15 +912,61 @@ var MoGL = (function() {
     MoGL.repeat = '__REPEAT__',
     MoGL.time = '__TIME__',
     MoGL.yoyo = '__YOYO__',
-
+    
+    MoGL.easing = ease = {
+        linear:function(a,c,b){return b*a+c},
+        backIn:function(a,c,b){return b*a*a*(2.70158*a-1.70158)+c},
+        backOut:function(a,c,b){a-=1;return b*(a*a*(2.70158*a+1.70158)+1)+c},
+        backInOut:bio = function(a,c,b){a*=2;if(1>a)return 0.5*b*a*a*(3.5949095*a-2.5949095)+c;a-=2;return 0.5*b*(a*a*(3.70158*a+2.70158)+2)+c},
+        bounceOut:function(a,c,b){if(0.363636>a)return 7.5625*b*a*a+c;if(0.727272>a)return a-=0.545454,b*(7.5625*a*a+0.75)+c;if(0.90909>a)return a-=0.818181,b*(7.5625*a*a+0.9375)+c;a-=0.95454;return b*(7.5625*a*a+0.984375)+c},
+        sineIn:function(a,c,b){return -b*Math.cos(a*PIH)+b+c},
+        sineOut:function(a,c,b){return b*Math.sin(a*PIH)+c},
+        sineInOut:function(a,c,b){return 0.5*-b*(Math.cos(PI*a)-1)+c},
+        circleIn:function(a,c,b){return -b*(Math.sqrt(1-a*a)-1)+c},
+        circleOut:function(a,c,b){a-=1;return b*Math.sqrt(1-a*a)+c},
+        circleInOut:function(a,c,b){a*=2;if(1>a)return 0.5*-b*(Math.sqrt(1-a*a)-1)+c;a-=2;return 0.5*b*(Math.sqrt(1-a*a)+1)+c},
+        quadraticIn:function(a,c,b){return b*a*a+c},
+        quadraticOut:function(a,c,b){return -b*a*(a-2)+c}
+    },
+    Object.freeze(ease),
     wrapper(MoGL, fn, MoGL, fnProp, true);
     fn = MoGL.prototype;
-    fn.error = function error(id) { //error처리기는 method를 통해 래핑하지 않음
+    fnOrigin.error = fn.error = function error(id) {
+        /*param
+        id:int - 예외의 고유 식별번호
+        */
+        /*description
+        MoGL 표준 예외처리를 함.
+        주어진 인자에 따라 className + '.' + methodName + ':' + id 형태로 예외메세지가 출력됨.
+        클래스의 메서드 내에서 사용함.
+        */
+        /*sample
+        fn.action = function(a){
+            if(!a) this.error(0);
+        }
+        */
         throw new Error(this.className + '.' + method + ':' + id);
     },    
-    fn.toString = function(){//toString상황에서 uuid를 반환함.
+    fnOrigin.toString = fn.toString = function(){//toString상황에서 uuid를 반환함.
+        /*description
+        MoGL을 상속하는 모든 인스턴스는 toString상황에서 'uuid:고유번호' 형태의 문자열을 반환함.
+        */
+        /*return
+        string - this.uuid에 해당되는 'uuid:고유번호' 형태의 문자열
+        */
+        /*sample
+        var mat = new Matrix();
+        console.log( mat + '' ); // 'uuid:22'
+        */
         return this.uuid;
     },
-    Object.freeze(fn);
+    Object.freeze(fn),
+    classes['MoGL'] = {
+        cls:MoGL,
+        construct:MoGL,
+        proto:fnOrigin,
+        parent:null,
+        prop:fnProp
+    };
     return MoGL;
 })();
