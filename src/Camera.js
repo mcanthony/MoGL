@@ -14,7 +14,7 @@ var Camera = (function () {
     Camera = function Camera() {
         Object.seal(prop[this] = {
             r:0, g:0, b:0, a:1,
-            fov:55, near:0.1, far:1000000,
+            fov:55, near:0.1, far:10000,
             fog:false, fogColor:null, fogNear:0, fogFar:0,
             visible:true,
             antialias:false,

@@ -13,8 +13,6 @@ var Texture = (function() {
     empty.src = canvas.toDataURL(),
 
     resizer = function(resizeType, v){
-        //console.log('리사이저처리',resizeType, v)
-        //console.log(v.width,v.height)
         var tw, th, dw, dh;
         //texture size
         tw = th = 1;
@@ -44,7 +42,7 @@ var Texture = (function() {
                 context.drawImage(v, 0, 0, dw, dh);
         }
         v.src = canvas.toDataURL();
-        //console.log('리사이저처리결과', v.width, v.height)
+        console.log('리사이저처리결과', v.src,v.width, v.height)
         return v;
     },
     loaded = function(e){
@@ -107,13 +105,13 @@ var Texture = (function() {
                 }
                 if (complete){
                     isLoaded[this] = true,
-                    console.log('이미지등록시 로딩완료',img)
+                    //console.log('이미지등록시 로딩완료',img)
                     img.dataset.cls = Texture
                     img.dataset.texture = this.uuid;
                     imgs[this] = resizer(this.resizeType, img),
                     this.dispatch('load');
                 } else {
-                    console.log('이미지등록시 로딩안됨',img)
+                    //console.log('이미지등록시 로딩안됨',img)
                     img.dataset.cls = Texture
                     img.dataset.texture = this.uuid;
                     img.addEventListener('load', loaded);

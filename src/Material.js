@@ -124,7 +124,6 @@ var Material = (function () {
         }
         //changed이벤트는 무조건 발생함.
         this.dispatch(Material.changed);
-        //console.log('재질에서 텍스쳐 로딩이벤트 완료',this.isLoaded)
         if (this.isLoaded) this.dispatch(Material.load);
         return this;
     },

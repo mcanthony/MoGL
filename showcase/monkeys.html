@@ -12,7 +12,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=high-dpi "/>
     <style>
-        body {
+        html,body {
             background-color: #000;
             margin: 0;
             padding: 0;
@@ -48,11 +48,10 @@
 <body>
 <img src="monkey/Suzanne.jpg" id="testIMG2" style="position: absolute;top:0px; display:none" width="128" height="128">
 <canvas id="canvas"></canvas>
-<div class="FPS" style="position: absolute;top:0px; " >
+<div class="FPS" style="position: absolute;top:0px;" >
     Current FPS: <span id="currentFPS"></span>
     Average FPS: <span id="averageFPS"></span>
 </div>
-
 <script>
     'use strict';
 
@@ -136,6 +135,7 @@
 
         for (i = 0; i < 500; i++) {
             var a = new Material('#'+(0xffffff*Math.random().toString()))
+            if(i%5==0) a.addTexture(Texture.diffuse,texture)
             monkey = new Mesh(geo, a);
             a.shading = Shading.phong
             monkey.x = Math.random() * 50 - 25;
@@ -175,11 +175,11 @@
             divCurrentFPS.textContent = currentFPS.toFixed(2);
             divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
 
-            var i = 0;
-            var j = meshes.length;
+            var i = meshes.length;
+
             var mesh;
 
-            for (; i < j; i++) {
+            while(i--){
                 mesh = meshes[i];
                 mesh.rotateX += 0.05;
                 mesh.rotateY += 0.05;
@@ -270,8 +270,6 @@
     //    gui.add(params, 'GouraudTexture');
     //    gui.add(params, 'PhongTexture');
     //    gui.add(params, 'BlinnTexture');
-
-
 </script>
 </body>
 </html>
