@@ -15,6 +15,7 @@
     </style>
 </head>
 <body>
+<div id="s"></div>
 <textarea id="doc" style="display:block;width:100%;height:100%"></textarea>
 <script src="../src/MoGL.js"></script>
 <script src="../src/BlendMode.js"></script>
@@ -34,7 +35,15 @@
 <script src="../src/World.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
 <script>
-document.getElementById('doc').value = MoGL.getMD();
+var k, str;
+str = '<select id="target" style="font-size:18px">';
+for(k in MoGL.classes()){
+    str += '<option value="'+k+'">'+k+'</option>';
+}
+document.getElementById('s').innerHTML = str + '</select>';
+document.getElementById('target').onchange = function(){
+    document.getElementById('doc').value = window[this.value].getMD();
+};
 
 </script>
 </body>
