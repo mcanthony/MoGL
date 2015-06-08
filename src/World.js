@@ -359,15 +359,15 @@ var World = (function () {
         if (isRequestAnimationFrame) {
             if (p[1]) return p[1]
             else {
-                return p[1] = function (currentTime) {
+                return p[1] = function requestAni(currentTime) {
                     self.render(currentTime);
-                    started[this] = requestAnimationFrame(p[1]);
+                    started[self.uuid] = requestAnimationFrame(p[1]);
                 }
             }
         } else {
             if (p[0]) return p[0]
             else{
-                p[0] = function (currentTime) {
+                p[0] = function intervalAni(currentTime) {
                     self.render(currentTime)
                 }
                 return p[0]
@@ -376,11 +376,11 @@ var World = (function () {
     },
     fn.start = function start(){
         var renderFunc = this.getRenderer(1)
-        started[this] = requestAnimationFrame(renderFunc);
+        started[this.uuid] = requestAnimationFrame(renderFunc);
         return this;
     },
     fn.stop = function stop(){
-        cancelAnimationFrame(started[this])
+        cancelAnimationFrame(started[this.uuid])
         return this;
     },
     fn.removeScene = function removeScene(sceneID) {
@@ -677,11 +677,10 @@ var World = (function () {
                 }
             }
             this.dispatch(World.renderAfter,currentTime)
-            tGL.flush();
+            //tGL.flush();
         }
     })()
     World.renderBefore = 'WORLD_RENDER_BEFORE',
     World.renderAfter = 'WORLD_RENDER_AFTER'
     return MoGL.ext(World);
 })();
-console.log(Object.isExtensible(World))
