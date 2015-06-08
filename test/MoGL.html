@@ -319,6 +319,23 @@
     );
 })(),
 (function(){
+    var a = function(){}
+    a.test = function(){return 3;}
+    a = MoGL.ext(a);
+    var test = new a();
+    bsTest( 'static copied',
+        function(){
+            return a.test();
+        }, 3
+    );
+    bsTest( 'static inherited',
+        function(){
+            return a.count();
+        }, 1
+    );
+})();
+
+(function(){
     var a= function(){
         this.x = 0;
         this.y = 0;
@@ -379,6 +396,7 @@
         );
     }, 1010 );
 })();
+        
 </script>
 </body>
 </html>

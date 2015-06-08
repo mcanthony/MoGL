@@ -198,6 +198,12 @@ var MoGL = (function() {
                     cls[k] = f[k];
                 }
             }
+            //정적 상속속성을 복사
+            for (k in statics) {
+                if (statics.hasOwnProperty(k)) {
+                    cls[k] = statics[k];
+                }
+            }
             //프로토타입레벨에서 클래스의 id와 이름을 정의해줌.
             $readonly.value = cls.uuid = 'uuid:' + (uuid++),
             Object.defineProperty(newProto, 'classId', $readonly);
@@ -221,11 +227,6 @@ var MoGL = (function() {
                     if (v.get) v.get = wrap(v.get, k + 'Get');
                     if (v.set) v.set = wrap(v.set, k + 'Set');
                     Object.defineProperty(newProto, k, v);
-                }
-            }
-            for (k in statics) {
-                if (statics.hasOwnProperty(k)) {
-                    cls[k] = statics[k];
                 }
             }
             //새롭게 프로토타입을 정의함
