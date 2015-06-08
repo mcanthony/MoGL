@@ -124,7 +124,8 @@ var MoGL = (function() {
     //lib
     prev = [], //스택구조의 이전 함수이름의 배열
     wrapper = (function(){
-        var wrap, statics,  isFactory, isSuperChain;
+        var wrap, statics,  isFactory, isSuperChain,
+            param, sample, description;
         isFactory = {factory:1},//팩토리 함수용 식별상수
         isSuperChain = {superChain:1},//생성자체인용 상수
         wrap = function wrap(f, key) { //생성할 이름과 메서드
@@ -137,6 +138,39 @@ var MoGL = (function() {
                 method = prev.pop(); //스택을 되돌림
                 return result;
             };
+        },
+        param = (function(){
+            var each;
+            each = function(el, idx){
+                temp[idx] = el.trim();
+            };
+            return function(type, f){
+                var i, j, k;
+                temp = [];
+                f = Function.prototype.toString.call(f);
+                if (f.indexOf('//'+type) > -1) {
+                    k = 0,
+                    temp = [];
+                    while ((i = f.indexOf('//'+type, k)) > -1) {
+                        temp[temp.length] = f.substring(i + 3, j = f.indexOf('\n', i));
+                        k = j;
+                    }
+                } else {
+                    temp = f.substring(f.indexOf('(') + 1, f.indexOf(')')).split(',');
+                }
+                temp.forEach(each);
+                return temp;
+            };
+        })(),
+        description = function(f, v){
+            var i;
+            f = Function.prototype.toString.call(f);
+            return (i = f.indexOf('//d')) > -1 ? f.substring(i + 3, f.indexOf('\n', i)).trim() : v;
+        },
+        sample = function(f){
+            var i;
+            f = Function.prototype.toString.call(f);
+            return (i = f.indexOf('/*s')) > -1 ? f.substring(i + 3, f.indexOf('*/', i)).trim() : '';
         },
         statics = {
             getInstance:function getInstance(v){
@@ -158,13 +192,13 @@ var MoGL = (function() {
                 return counter[this.uuid];
             },
             error:function error(method, id) { //정적함수용 에러보고함수
-                throw new Error(this.name + '.' + method + ':' + id);
+                throw new Error(this.className + '.' + method + ':' + id);
             },
             ext:function ext(child, prop) { //상속하는 자식클래스를 만들어냄.
                 var cls, self;
                 self = this;
                 if (!(self.prototype instanceof MoGL) && self !== MoGL) self.error('ext', 0);
-                classes[child.name] = cls = function() {
+                cls = function() {
                     var arg, arg0 = arguments[0], result;
                     prev[prev.length] = method,
                     method = 'constructor';
@@ -186,8 +220,144 @@ var MoGL = (function() {
                     }
                     method = prev.pop();
                     return result;
+                },
+                classes[child.name] = {cls:cls,
+                    construct:child,
+                    parent:parent,
+                    prop:prop
                 };
                 return wrapper(cls, Object.create(self.prototype), child, prop);
+            },
+            getMD:function(){
+                var md = ['#' + this.className], ref, temp, i, j, k,
+                    parents, constructor, field, method, consts, event, static, inherited;
+                ref = classes[this.className];
+                //constructor
+                temp = Function.prototype.toString.call(ref.construct);
+                constructor = {
+                    code:this.className + temp.substring(temp.indexOf('('), temp.indexOf(')') - 1).trim(),
+                    description:description(ref.construct, 'Constructor of ' + this.className),
+                    param:param('p', ref.construct),
+                    exception:param('e', ref.construct),
+                    sample:sample(ref.construct)
+                };
+                //method
+                method = [],
+                temp = ref.cls.prototype;
+                for (k in temp) {
+                    method[method.length] = {
+                        name:k,
+                        description:description(temp[k], 'Method of ' + this.className),
+                        param:param('p', temp[k]),
+                        exception:param('e', temp[k]),
+                        sample:sample(temp[k])
+                    };
+                }
+                //field
+                if (ref.prop) {
+                    field = [];
+                    for (k in ref.prop) {
+                        if (typeof ref.prop[k].value == 'function') {
+                            method[method.length] = {
+                                name:k,
+                                description:description(ref.prop[k].value, 'Method of ' + this.className),
+                                param:param('p', ref.prop[k].value),
+                                exception:param('e', ref.prop[k].value),
+                                sample:sample(ref.prop[k].value)
+                            };
+                        } else {
+                            field[field.length] = {
+                                name:k,
+                                writable:ref.prop[k].writable || ref.prop[k].set, 
+                                enumerable:ref.prop[k].enumerable, 
+                                configurable:ref.prop[k].configurable,
+                                defaultValue:'defaultValue'  in ref.prop[k] ? ref.prop[k].defaultValue : 'value'  in ref.prop[k] ? ref.prop[k].value : 'none', 
+                                description:ref.prop[k].description || 'Field of ' + this.className,
+                                sample:ref.prop[k].sample || ''
+                            };
+                        }
+                    }
+                    
+                }
+                //static
+                static = [], 
+                consts = [], 
+                temp = ref.cls;
+                for (k in temp) {
+                    if (typeof temp[k] == 'function') {
+                        static[static.length] = {
+                            name:k,
+                            description:description(temp[k], 'Static Method of ' + this.className),
+                            param:param('p', temp[k]),
+                            exception:param('e', temp[k]),
+                            sample:sample(temp[k])
+                        }
+                    } else if(temp[k].substr(0, 2) != '__') {
+                        consts[consts.length] = {
+                            name:k,
+                            description:'Const of ' + this.className,
+                            value:temp[k]
+                        }
+                            
+                    }
+                }
+                //parent
+                if (ref.parent) {
+                    parents = [];
+                    while (ref.parent) {
+                        parents[parents.length] = '[' + ref.parent.className + '](' + ref.parent.className + '.md)';
+                    }
+                    md[md.length] = '* parent : ' + parents.join(' < ');
+                }
+                //children
+                temp = [];
+                for (k in classes) {
+                    if (classes[k].parent == this) {
+                        temp[temp.length] = '[' + k + '](' + k + '.md)';
+                    }
+                }
+                if (temp.length) {
+                    temp.sort();
+                    md[md.length] = '* children : ' + temp.join(', ');
+                }
+                md[md.length] = '* [constructor](#constructor)';
+                if (field.length) {
+                    field.sort(function(a,b){
+                        return a.name > b.name;
+                    });
+                    md[md.length] = '\n**field**\n';
+                    for (i = 0, j = field.length; i < j; i++){
+                        md[md.length] = '[' + field[i].name + '](#' + field[i].name + ')';
+                    }
+                }
+                if (method.length) {
+                    method.sort(function(a,b){
+                        return a.name > b.name;
+                    });
+                    md[md.length] = '\n**method**\n';
+                    for (i = 0, j = method.length; i < j; i++){
+                        md[md.length] = '[' + method[i].name + '](#' + method[i].name + ')';
+                    }
+                }
+                if (consts.length) {
+                    consts.sort(function(a,b){
+                        return a.name > b.name;
+                    });
+                    md[md.length] = '\n**const**\n';
+                    for (i = 0, j = consts.length; i < j; i++){
+                        md[md.length] = '[' + this.className + '.' + consts[i].name + '](#' + consts[i].name + ')';
+                    }
+                }
+                if (static.length) {
+                    static.sort(function(a,b){
+                        return a.name > b.name;
+                    }),
+                    md[md.length] = '\n**static**\n';
+                    for (i = 0, j = static.length; i < j; i++){
+                        md[md.length] = '[' + this.className + '.' + static[i].name + '](#' + static[i].name + ')';
+                    }
+                }
+                return md.join('\n');
             }
         };
         return function(cls, newProto, f, prop, notFreeze) {
@@ -207,7 +377,7 @@ var MoGL = (function() {
             //프로토타입레벨에서 클래스의 id와 이름을 정의해줌.
             $readonly.value = cls.uuid = 'uuid:' + (uuid++),
             Object.defineProperty(newProto, 'classId', $readonly);
-            $readonly.value = f.name,
+            $readonly.value = cls.className = f.name,
             Object.defineProperty(newProto, 'className', $readonly);
             if(!(cls.uuid in counter)) counter[cls.uuid] = 0;
             f = f.prototype;
@@ -461,7 +631,7 @@ var MoGL = (function() {
         var i;
         if (!context) context = {};
         for (k in classes) {
-            if (classes.hasOwnProperty(k)) context[k] = classes[k];
+            if (classes.hasOwnProperty(k)) context[k] = classes[k].cls;
         }
         return context;
     },
@@ -475,7 +645,12 @@ var MoGL = (function() {
     MoGL.repeat = '__REPEAT__',
     MoGL.time = '__TIME__',
     MoGL.yoyo = '__YOYO__',
-
+    classes['MoGL'] = {
+        cls:MoGL,
+        construct:MoGL,
+        parent:null,
+        prop:fnProp
+    },
     wrapper(MoGL, fn, MoGL, fnProp, true);
     fn = MoGL.prototype;
     fn.error = function error(id) { //error처리기는 method를 통해 래핑하지 않음
