@@ -45,7 +45,7 @@ var Material = (function () {
         if (arguments.length) {
             this.color = arguments.length > 1 ? arguments : arguments[0]
         }
-        wireFrameColor[this] = [1,1,1,1]
+        wireFrameColor[this] = [Math.random(),Math.random(),Math.random(),1]
         wireFrame[this] = false;
         lambert[this] = 1
         shading[this] = Shading.none

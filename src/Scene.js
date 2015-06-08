@@ -4,7 +4,7 @@
 'use strict'
 var Scene = (function () {
     var vertexShaderParser, fragmentShaderParser,
-        children, cameras, textures, materials, geometrys, vertexShaders, fragmentShaders, updateList,
+        children,childrenArray, cameras, textures, materials, geometrys, vertexShaders, fragmentShaders, updateList,
         Scene, fn, fnProp;
     //lib
     vertexShaderParser = function vertexShaderParser(source) {
@@ -76,6 +76,7 @@ var Scene = (function () {
 
     //private
     children = {},
+    childrenArray = {},
     cameras = {},
     textures = {},
     materials = {},
@@ -85,12 +86,14 @@ var Scene = (function () {
     updateList = {},
     //shared private
     $setPrivate('Scene', {
-        children : children
+        children : children,
+        childrenArray : childrenArray
     }),
 
     Scene = function Scene() {
         // for JS
         children[this] = {},
+        childrenArray[this] = [],
         cameras[this] = {},
         textures[this] = {},
         materials[this] = {},
@@ -134,7 +137,7 @@ var Scene = (function () {
         p2.mesh.push(v)
         mat = v.material
         mat.addEventListener(Material.load,function(){
-            console.log('메쉬의 재질이 변경되었다!')
+            //console.log('메쉬의 재질이 변경되었다!')
             var t= this.diffuse
             if(t){
                 var i = t.length
@@ -147,6 +150,10 @@ var Scene = (function () {
             }
         })
         mat.dispatch(Material.load,mat)
+
+        if(childrenArray[this].indexOf(v)==-1){
+            childrenArray[this].push(v)
+        }
         return this;
     },
     fn.addCamera = function(v){
@@ -265,10 +272,12 @@ var Scene = (function () {
         result = false
         for (k in p) {
             if (p[k].id == id) {
+                childrenArray.splice(childrenArray[this].indexOf(p[k]),1)
                 delete p[k],
                 result = true
             }
         }
+
         return result;
     },
     fn.removeGeometry = function removeGeometry(id) {
