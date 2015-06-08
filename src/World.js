@@ -49,7 +49,6 @@ var World = (function () {
         buffer.numItem = data.length / stride,
         gpu.vbo[geo] = buffer,
         console.log('VBO생성', gpu.vbo[geo]);
-        return gpu.vbo[geo];
     },
     makeVNBO = function makeVNBO(gpu, geo, data, stride) {
         var gl, buffer;
@@ -69,7 +68,6 @@ var World = (function () {
         buffer.numItem = data.length / stride,
         gpu.vnbo[geo] = buffer,
         console.log('VNBO생성', gpu.vnbo[geo]);
-        return gpu.vnbo[geo];
     },
     makeIBO = function makeIBO(gpu, geo, data, stride) {
         var gl, buffer;
@@ -89,7 +87,6 @@ var World = (function () {
         buffer.numItem = data.length / stride,
         gpu.ibo[geo] = buffer,
         console.log('IBO생성', gpu.ibo[geo]);
-        return gpu.ibo[geo];
     },
     makeUVBO = function makeUVBO(gpu, geo, data, stride) {
         var gl, buffer;
@@ -109,7 +106,6 @@ var World = (function () {
         buffer.numItem = data.length / stride,
         gpu.uvbo[geo] = buffer,
         console.log('UVBO생성', gpu.uvbo[geo]);
-        return gpu.uvbo[geo];
     },
     makeProgram = function makeProgram(gpu, name, vSource, fSource) {
         var gl, vShader, fShader, program, i, len, tList;
@@ -150,7 +146,6 @@ var World = (function () {
             program[tList[i]] = gl.getUniformLocation(program, tList[i]);
         }
         gpu.programs[name] = program;
-        return program;
     },
     makeTexture = function makeTexture(gpu, texture) {
         //console.log('이걸재련해야됨', texture.img)
@@ -167,7 +162,6 @@ var World = (function () {
         glTexture.textrue = texture,
         gpu.textures[texture] = glTexture,
         gl.bindTexture(gl.TEXTURE_2D, null);
-        return gpu.textures[texture];
     },
     // TODO 일단은 카메라 프레임버퍼 전용
     makeFrameBuffer = function makeFrameBuffer(gpu, camera) {
@@ -213,21 +207,21 @@ var World = (function () {
     },
     baseUpdate = function (gpu) {
         // TODO 기초 버퍼들도 씬이 월드에서 등록될떄 해야겠음..
-        gpu.vbo['null'] = makeVBO(gpu, 'null', [0.0, 0.0, 0.0], 3);
+        makeVBO(gpu, 'null', [0.0, 0.0, 0.0], 3);
         if (!gpu.vbo['_FRAMERECT_']) {
-            gpu.vbo['_FRAMERECT_'] = makeVBO(gpu, '_FRAMERECT_', [
+           makeVBO(gpu, '_FRAMERECT_', [
                 -1.0, 1.0, 0.0,
                  1.0, 1.0, 0.0,
                 -1.0, -1.0, 0.0,
                 1.0, -1.0, 0.0
             ], 3),
-            gpu.uvbo['_FRAMERECT_'] = makeUVBO(gpu, '_FRAMERECT_', [
+            makeUVBO(gpu, '_FRAMERECT_', [
                 0.0, 0.0,
                 1.0, 0.0,
                 0.0, 1.0,
                 1.0, 1.0
             ], 2),
-            gpu.ibo['_FRAMERECT_'] = makeIBO(gpu, '_FRAMERECT_', [0, 1, 2, 1, 2, 3], 1);
+           makeIBO(gpu, '_FRAMERECT_', [0, 1, 2, 1, 2, 3], 1);
         }
 
     },
@@ -381,7 +375,8 @@ var World = (function () {
         }
     },
     fn.start = function start(){
-        started[this] = requestAnimationFrame(this.getRenderer(1));
+        var renderFunc = this.getRenderer(1)
+        started[this] = requestAnimationFrame(renderFunc);
         return this;
     },
     fn.stop = function stop(){
@@ -465,10 +460,10 @@ var World = (function () {
                     geo = updateItem.geometry
                     if (geo) {
                         if (!tGPU.vbo[geo]) {
-                            tGPU.vbo[geo] = makeVBO(tGPU, geo, geo.position, 3),
-                            tGPU.vnbo[geo] = makeVNBO(tGPU, geo, geo.normal, 3),
-                            tGPU.uvbo[geo] = makeUVBO(tGPU, geo, geo.uv, 2),
-                            tGPU.ibo[geo] = makeIBO(tGPU, geo, geo.index, 1);
+                            makeVBO(tGPU, geo, geo.position, 3),
+                            makeVNBO(tGPU, geo, geo.normal, 3),
+                            makeUVBO(tGPU, geo, geo.uv, 2),
+                            makeIBO(tGPU, geo, geo.index, 1);
                         }
                     }
                 }
