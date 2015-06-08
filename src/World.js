@@ -360,8 +360,8 @@ var World = (function () {
             if (p[1]) return p[1]
             else {
                 return p[1] = function requestAni(currentTime) {
+                    started[self.uuid] = requestAnimationFrame(p[1],gpu[self].gl);
                     self.render(currentTime);
-                    started[self.uuid] = requestAnimationFrame(p[1]);
                 }
             }
         } else {
@@ -424,11 +424,9 @@ var World = (function () {
         var tColor
 
         privateScene = $getPrivate('Scene','children')
-
         priGeo = $getPrivate('Mesh','geometry')
         priMat = $getPrivate('Mesh','material')
         priCull = $getPrivate('Mesh','culling')
-
         priMatColor = $getPrivate('Material','color')
         priMatWireFrame = $getPrivate('Material','wireFrame')
         priMatWireFrameColor = $getPrivate('Material','wireFrameColor')
@@ -437,16 +435,14 @@ var World = (function () {
         priMatDiffuse = $getPrivate('Material','diffuse')
 
         return function render(currentTime) {
-            len = 0
-            pProgram = null ,pVBO = null, pVNBO = null, pUVBO = null, pIBO = null, pDiffuse = null;
-            tCvs = cvsList[this],
-            tSceneList = sceneList[this],
-            tGPU = gpu[this]
-            tGL = tGPU.gl;
-
-            i = tSceneList.length
+            len = 0, pProgram = null , pVBO = null, pVNBO = null, pUVBO = null, pIBO = null, pDiffuse = null,
+            tCvs = cvsList[this.uuid],
+            tSceneList = sceneList[this.uuid],
+            tGPU = gpu[this.uuid]
+            tGL = tGPU.gl,
             tCvsW = tCvs.width,
             tCvsH = tCvs.height,
+            i = tSceneList.length,
             this.dispatch(World.renderBefore,currentTime)
             while(i--){
                 tScene = tSceneList[i]
@@ -470,6 +466,7 @@ var World = (function () {
                 j = tScene.updateList.material.length
                 while(j--){
                     makeTexture(tGPU,tScene.updateList.material[i])
+                    //console.log('업뎃대상',tGPU,tScene.updateList.material[i])
                 }
                 if(tScene.updateList.camera.length) cameraRenderAreaUpdate(this)
                 tScene.updateList.mesh.length= 0
@@ -496,12 +493,14 @@ var World = (function () {
                         tColor = tCamera.backgroundColor
                         tGL.clearColor(tColor[0],tColor[1],tColor[2],tColor[3]);
                         tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
+                        var tProjectionMtx = tCamera.projectionMatrix.raw
+                        var tCameraMtx = tCamera.matrix.raw
                         for(k in tGPU.programs){
                             tProgram = tGPU.programs[k];
                             tGL.useProgram(tProgram);
                             //tCamera.cvs = tCvs
-                            tGL.uniformMatrix4fv(tProgram.uPixelMatrix,false,tCamera.projectionMatrix.raw);
-                            tGL.uniformMatrix4fv(tProgram.uCameraMatrix,false,tCamera.matrix.raw);
+                            tGL.uniformMatrix4fv(tProgram.uPixelMatrix,false,tProjectionMtx);
+                            tGL.uniformMatrix4fv(tProgram.uCameraMatrix,false,tCameraMtx);
                         }
                         tItem = tMaterial = tProgram = tVBO = tIBO = null;
 
@@ -552,18 +551,18 @@ var World = (function () {
                                 tGL.useProgram(tProgram);
                             }
                             // 정보 밀어넣기
-                            if(useNormalBuffer){
-                                tVNBO != pVNBO ? tGL.bindBuffer(tGL.ARRAY_BUFFER, tVNBO) : 0,
-                                tVNBO != pVNBO ? tGL.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, tGL.FLOAT, false, 0, 0) : 0;
-                                tGL.uniform3fv(tProgram.uDLite, dLite);
-                                tGL.uniform1f(tProgram.uLambert,priMatLambert[tMatUUID]);
-                            }
 
                             tVBO!=pVBO ? tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO) : 0,
                             tVBO!=pVBO ? tGL.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, tGL.FLOAT, false, 0, 0) : 0,
                             tColor =priMatColor[tMatUUID],
                             tGL.uniform4fv(tProgram.uColor, tColor);
 
+                            if(useNormalBuffer){
+                                tVNBO != pVNBO ? tGL.bindBuffer(tGL.ARRAY_BUFFER, tVNBO) : 0,
+                                tVNBO != pVNBO ? tGL.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, tGL.FLOAT, false, 0, 0) : 0,
+                                tGL.uniform3fv(tProgram.uDLite, dLite);
+                                tGL.uniform1f(tProgram.uLambert,priMatLambert[tMatUUID]);
+                            }
                             // 텍스쳐 세팅
                             if(useTexture){
                                 tUVBO != pUVBO ? tGL.bindBuffer(tGL.ARRAY_BUFFER, tUVBO) : 0,
@@ -585,7 +584,6 @@ var World = (function () {
                             tGL.uniform3fv(tProgram.uPosition, f3),
                             f3[0] = tItem.scaleX,f3[1] = tItem.scaleY,f3[2] = tItem.scaleZ,
                             tGL.uniform3fv(tProgram.uScale, f3),
-
                             tIBO != pIBO ? tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO) : 0,
                             tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0)
 
@@ -678,6 +676,7 @@ var World = (function () {
             }
             this.dispatch(World.renderAfter,currentTime)
             //tGL.flush();
+            //tGL.finish()
         }
     })()
     World.renderBefore = 'WORLD_RENDER_BEFORE',

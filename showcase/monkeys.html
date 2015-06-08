@@ -65,11 +65,11 @@
     var texture = new Texture()
     world.setAutoSize(1)
     world.addScene(scene);
-//    texture.img = document.getElementById('testIMG2')
+    texture.img = document.getElementById('testIMG2')
     //
     var camera = new Camera()
     scene.addChild(camera);
-//    scene.addMaterial(material.setId('material'));
+    scene.addMaterial(material.setId('material'));
     //
 //    material.addTexture(Texture.diffuse, texture);
 //    material.shading = Shading.phong
@@ -167,7 +167,7 @@
 
         var sum = 0, count = 1;
 
-        world.addEventListener(World.renderAfter, function (currTime) {
+        world.addEventListener(World.renderBefore, function (currTime) {
             var currentFPS = 1000 / ( currTime - prevTime );
             prevTime = currTime;
 
@@ -179,12 +179,12 @@
             var j = meshes.length;
             var mesh;
 
-//            for (; i < j; i++) {
-//                mesh = meshes[i];
-//                mesh.rotateX += 0.05;
-//                mesh.rotateY += 0.05;
-//                mesh.rotateZ += 0.05;
-//            }
+            for (; i < j; i++) {
+                mesh = meshes[i];
+                mesh.rotateX += 0.05;
+                mesh.rotateY += 0.05;
+                mesh.rotateZ += 0.05;
+            }
             camera.x = Math.sin(count / 50) * 50
             camera.y = Math.cos(count / 100) * 50
             camera.z = Math.cos(count / 100) * 50 + Math.sin(count / 100) * 50
@@ -193,7 +193,37 @@
 
 
         world.start()
+//        setTimeout(  function(){
+//            console.log(world.stop)
+//            world.stop()
+//        },1000)
 
+//        function aa(currTime) {
+//            var currentFPS = 1000 / ( currTime - prevTime );
+//            prevTime = currTime;
+//
+//            count++
+//            divCurrentFPS.textContent = currentFPS.toFixed(2);
+//            divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
+//
+//            var i = 0;
+//            var j = meshes.length;
+//            var mesh;
+//
+////            for (; i < j; i++) {
+////                mesh = meshes[i];
+////                mesh.rotateX += 0.05;
+////                mesh.rotateY += 0.05;
+////                mesh.rotateZ += 0.05;
+////            }
+//            camera.x = Math.sin(count / 50) * 50
+//            camera.y = Math.cos(count / 100) * 50
+//            camera.z = Math.cos(count / 100) * 50 + Math.sin(count / 100) * 50
+//            camera.lookAt(0, 0, 0);
+//            requestAnimationFrame(aa)
+//        }
+//
+//        requestAnimationFrame(aa)
     }
 
     //

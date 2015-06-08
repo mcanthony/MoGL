@@ -41,11 +41,11 @@ var Material = (function () {
     },
 
     Material = function Material() {
-        color[this] = new Float32Array([1,1,1,1])
+        color[this] = [1,1,1,1]
         if (arguments.length) {
             this.color = arguments.length > 1 ? arguments : arguments[0]
         }
-        wireFrameColor[this] = new Float32Array([1,1,1,1])
+        wireFrameColor[this] = [1,1,1,1]
         wireFrame[this] = false;
         lambert[this] = 1
         shading[this] = Shading.none
