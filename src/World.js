@@ -422,6 +422,8 @@ var World = (function () {
         var priMatLambert
         var priMatDiffuse
 
+        var priTextureIMGs
+
         var tGeo
         var tItemUUID
         var dLite, useNormalBuffer, useTexture;
@@ -438,6 +440,7 @@ var World = (function () {
         priMatShading = $getPrivate('Material', 'shading')
         priMatLambert = $getPrivate('Material', 'lambert')
         priMatDiffuse = $getPrivate('Material', 'diffuse')
+        priTextureIMGs = $getPrivate('Texture', 'imgs')
 
         return function render(currentTime) {
             len = 0,
@@ -574,7 +577,7 @@ var World = (function () {
                                 tGL.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, tGL.FLOAT, false, 0, 0)
                             }
                             tColor = priMatColor[tMatUUID],
-                                tGL.uniform4fv(tProgram.uColor, tColor);
+                            tGL.uniform4fv(tProgram.uColor, tColor);
                             if (useNormalBuffer) {
                                 if (tVNBO != pVNBO) {
                                     tGL.bindBuffer(tGL.ARRAY_BUFFER, tVNBO),
@@ -592,7 +595,7 @@ var World = (function () {
                                 var imsi = priMatDiffuse[tMatUUID]
                                 if (imsi.length) {
                                     tGL.activeTexture(tGL.TEXTURE0);
-                                    tDiffuseID = imsi[imsi.length - 1].tex.img
+                                    tDiffuseID = priTextureIMGs[imsi[imsi.length - 1].tex.uuid]
                                     tDiffuseID = tGPU.textures[tDiffuseID]
                                     if (tDiffuseID != pDiffuseID) {
                                         tGL.bindTexture(tGL.TEXTURE_2D, tDiffuseID)
