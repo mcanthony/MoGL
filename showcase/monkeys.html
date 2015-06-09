@@ -47,7 +47,7 @@
     <script src="../src/World.js"></script>
 </head>
 <body>
-<img src="monkey/Suzanne.jpg" id="testIMG2" style="position: absolute;top:0px; display:none" width="128" height="128">
+<img src="monkey/Suzanne.jpg" id="testIMG2" style="position: absolute;top:0px; display:none" width="256" height="256">
 <canvas id="canvas"></canvas>
 <div class="FPS" style="position: absolute;top:0px;">
     Current FPS: <span id="currentFPS"></span>
@@ -134,7 +134,7 @@
         var monkey;
         var PI2 = Math.PI * 2;
 
-        for (i = 0; i < 350; i++) {
+        for (i = 0; i < 500; i++) {
             var a = new Material('#' + (0xffffff * Math.random().toString()))
             if (i % 5 == 0) a.addTexture(Texture.diffuse, texture)
 //            a.addTexture(Texture.diffuse,texture)
@@ -170,7 +170,7 @@
         var prevTime = 0;
         var sum = 0, count = 1;
 
-        world.addEventListener(World.renderBefore, function (currTime) {
+        world.addEventListener(World.renderBefore, function addRenderBefore(currTime) {
 
             var currentFPS = 1000 / ( currTime - prevTime );
             prevTime = currTime;

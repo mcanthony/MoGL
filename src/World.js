@@ -442,7 +442,7 @@ var World = (function () {
         priMatDiffuse = $getPrivate('Material', 'diffuse')
         priTextureIMGs = $getPrivate('Texture', 'imgs')
 
-        return function render(currentTime) {
+        return function (currentTime) {
             len = 0,
             pProgram = null,
             pCulling = null,
@@ -458,6 +458,7 @@ var World = (function () {
             tCvsW = tCvs.width,
             tCvsH = tCvs.height,
             i = tSceneList.length,
+
             this.dispatch(World.renderBefore, currentTime)
             while (i--) {
                 tScene = tSceneList[i]
@@ -467,7 +468,7 @@ var World = (function () {
                 while (j--) {
                     // 버퍼 업데이트
                     var updateItem, geo;
-                    updateItem = tScene.updateList.mesh[i]
+                    updateItem = tScene.updateList.mesh[j]
                     geo = updateItem.geometry
                     if (geo) {
                         if (!tGPU.vbo[geo]) {
@@ -480,8 +481,7 @@ var World = (function () {
                 }
                 j = tScene.updateList.material.length
                 while (j--) {
-                    makeTexture(tGPU, tScene.updateList.material[i])
-                    //console.log('업뎃대상',tGPU,tScene.updateList.material[i])
+                    makeTexture(tGPU, tScene.updateList.material[j])
                 }
                 if (tScene.updateList.camera.length) cameraRenderAreaUpdate(this)
                 tScene.updateList.mesh.length = 0
@@ -594,7 +594,7 @@ var World = (function () {
                                 }
                                 var imsi = priMatDiffuse[tMatUUID]
                                 if (imsi.length) {
-                                    tGL.activeTexture(tGL.TEXTURE0);
+                                    //tGL.activeTexture(tGL.TEXTURE0);
                                     tDiffuseID = priTextureIMGs[imsi[imsi.length - 1].tex.uuid]
                                     tDiffuseID = tGPU.textures[tDiffuseID]
                                     if (tDiffuseID != pDiffuseID) {
