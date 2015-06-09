@@ -362,8 +362,8 @@ var World = (function () {
             if (p[1]) return p[1]
             else {
                 return p[1] = function requestAni(currentTime) {
-                    self.render(currentTime);
-                    started[self.uuid] = requestAnimationFrame(p[1]);
+                        self.render(currentTime);
+                        started[self.uuid] = requestAnimationFrame(p[1]);
                 }
             }
         } else {
@@ -457,7 +457,7 @@ var World = (function () {
             tGL = tGPU.gl,
             tCvsW = tCvs.width,
             tCvsH = tCvs.height,
-            i = tSceneList.length,
+            i = tSceneList.length
 
             this.dispatch(World.renderBefore, currentTime)
             while (i--) {
