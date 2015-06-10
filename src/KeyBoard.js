@@ -1,8 +1,3 @@
-/**
- * Created by redcamel on 2015-05-21.
- * description
-
- */
 var KeyBoard = (function () {
     var W, KeyBoard;
     W = window,

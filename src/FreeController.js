@@ -2,36 +2,34 @@
  * Created by redcamel on 2015-05-22.
  */
 var FreeController = (function () {
-    var FreeController, fn,MAT1,MAT2;
-    MAT1 = Matrix(), MAT2 = Matrix(),
-    FreeController = function FreeController(camera) {
+    var MAT1 = Matrix(), MAT2 = Matrix();
+    return MoGL.extend(function FreeController(camera) {
         if(!(camera instanceof Camera)) this.error(0);
         this._camera = camera;
         this._displacement = [0,0,0];
         this._speed = 1000.0;
         this._smoothDelay = 0.1;
         this._desirePosition=this._camera.position;
-    },
-    fn = FreeController.prototype,
-    fn.autoBindKey = function(){
+    })
+    .method('autoBindKey', function autoBindKey() {
         //TODO 기본 조작키를 세팅하자..c
-    },
-    fn.bindKey = function(){
+    })
+    .method('bindKey', function bindKey() {
         //TODO 전후좌우 로테이션등의 키를 바인딩할수있게 개선
-    },
-    fn.setSpeed = function setSpeed(value){
+    })
+    .method('setSpeed', function setSpeed(value){
         this._speed = value;
-    },
-    fn.setSmoothDelay = function setSmoothDelay(value){
+    })
+    .method('setSmoothDelay', function setSmoothDelay(value){
         this._smoothDelay = value > 0.5 ? 0.5 : value;
-    },
-    fn.getSpeed = function getSpeed(){
+    })
+    .method('getSpeed', function getSpeed(){
          return this._speed;
-    },
-    fn.getSmoothDelay = function getSmoothDelay(){
+    })
+    .method('getSmoothDelay', function getSmoothDelay(){
         return this._smoothDelay;
-    },
-    fn.update = function update(){
+    })
+    .method('update', function update(){
         var forward = false, back = false, up = false, down = false, left = false, right = false;
         var updateRotateX,updateRotateY,updateRotateZ,speed;
         var downKey, tCamera;
@@ -51,7 +49,6 @@ var FreeController = (function () {
         if (downKey[KeyBoard.E]) updateRotateY = 0.01 * speed;
         if (downKey[KeyBoard.T]) updateRotateX = -0.01 * speed;
         if (downKey[KeyBoard.G]) updateRotateX = 0.01 * speed;
-
 
         this._displacement[0] = right ? -speed : (left ? speed : 0),
         this._displacement[1] = up ? -speed : (down ? speed : 0),
@@ -79,7 +76,6 @@ var FreeController = (function () {
         this._displacement[2]=0,
         updateRotateX = 0,
         updateRotateY = 0;
-
-    }
-    return MoGL.ext(FreeController);
+    })
+    .build();
 })();
