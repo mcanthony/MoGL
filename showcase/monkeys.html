@@ -10,9 +10,10 @@
     <meta name="format-detection" content="telephone=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=high-dpi "/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=high-dpi "/>
     <style>
-        html,body {
+        html, body {
             background-color: #000;
             margin: 0;
             padding: 0;
@@ -46,9 +47,9 @@
     <script src="../src/World.js"></script>
 </head>
 <body>
-<img src="monkey/Suzanne.jpg" id="testIMG2" style="position: absolute;top:0px; display:none" width="128" height="128">
+<img src="monkey/Suzanne.jpg" id="testIMG2" style="position: absolute;top:0px; display:none" width="256" height="256">
 <canvas id="canvas"></canvas>
-<div class="FPS" style="position: absolute;top:0px;" >
+<div class="FPS" style="position: absolute;top:0px;">
     Current FPS: <span id="currentFPS"></span>
     Average FPS: <span id="averageFPS"></span>
 </div>
@@ -59,7 +60,7 @@
     var scene = new Scene();
     var divCurrentFPS = document.getElementById('currentFPS');
     var divAverageFPS = document.getElementById('averageFPS');
-    var prevTime = 0;
+
     var material = new Material('#fff')
     var texture = new Texture()
     world.setAutoSize(1)
@@ -70,8 +71,8 @@
     scene.addChild(camera);
     scene.addMaterial(material.setId('material'));
     //
-//    material.addTexture(Texture.diffuse, texture);
-//    material.shading = Shading.phong
+    //    material.addTexture(Texture.diffuse, texture);
+    //    material.shading = Shading.phong
 
     var xmlhttp = new XMLHttpRequest();
 
@@ -134,8 +135,9 @@
         var PI2 = Math.PI * 2;
 
         for (i = 0; i < 500; i++) {
-            var a = new Material('#'+(0xffffff*Math.random().toString()))
-            if(i%5==0) a.addTexture(Texture.diffuse,texture)
+            var a = new Material('#' + (0xffffff * Math.random().toString()))
+            if (i % 5 == 0) a.addTexture(Texture.diffuse, texture)
+//            a.addTexture(Texture.diffuse,texture)
             monkey = new Mesh(geo, a);
             a.shading = Shading.phong
             monkey.x = Math.random() * 50 - 25;
@@ -165,11 +167,14 @@
 ////        monkey.setScale(2, 2, 2)
 ////        monkey.setPosition(3, 0, 0)
 
+        var prevTime = 0;
         var sum = 0, count = 1;
 
-        world.addEventListener(World.renderBefore, function (currTime) {
+        world.addEventListener(World.renderBefore, function addRenderBefore(currTime) {
+
             var currentFPS = 1000 / ( currTime - prevTime );
             prevTime = currTime;
+
 
             count++
             divCurrentFPS.textContent = currentFPS.toFixed(2);
@@ -179,7 +184,7 @@
 
             var mesh;
 
-            while(i--){
+            while (i--) {
                 mesh = meshes[i];
                 mesh.rotateX += 0.05;
                 mesh.rotateY += 0.05;
@@ -191,14 +196,11 @@
             camera.lookAt(0, 0, 0);
         })
 
-
         world.start()
-//        setTimeout(  function(){
-//            console.log(world.stop)
-//            world.stop()
-//        },1000)
 
-//        function aa(currTime) {
+//        function aa() {
+//            var currTime = Date.now()
+//
 //            var currentFPS = 1000 / ( currTime - prevTime );
 //            prevTime = currTime;
 //
@@ -210,66 +212,22 @@
 //            var j = meshes.length;
 //            var mesh;
 //
-////            for (; i < j; i++) {
-////                mesh = meshes[i];
-////                mesh.rotateX += 0.05;
-////                mesh.rotateY += 0.05;
-////                mesh.rotateZ += 0.05;
-////            }
+//            for (; i < j; i++) {
+//                mesh = meshes[i];
+//                mesh.rotateX += 0.05;
+//                mesh.rotateY += 0.05;
+//                mesh.rotateZ += 0.05;
+//            }
 //            camera.x = Math.sin(count / 50) * 50
 //            camera.y = Math.cos(count / 100) * 50
 //            camera.z = Math.cos(count / 100) * 50 + Math.sin(count / 100) * 50
 //            camera.lookAt(0, 0, 0);
-//            requestAnimationFrame(aa)
+//            world.render()
 //        }
 //
-//        requestAnimationFrame(aa)
+//        setInterval(aa, 16)
     }
 
-    //
-    //    var testMat = scene.getMaterial('material')
-    //    var params = {
-    //        color: function () {
-    //            testMat.removeTexture('texture');
-    //            testMat.setShading(Shading.none)
-    //        },
-    //        toon: function () {
-    //            testMat.removeTexture('texture');
-    //            testMat.setShading(Shading.toon)
-    //        },
-    //        PhongColor: function () {
-    //            testMat.removeTexture('texture');
-    //            testMat.setShading(Shading.phong)
-    //        },
-    //        GouraudColor: function () {
-    //            testMat.removeTexture('texture');
-    //            testMat.setShading(Shading.gouraud)
-    //        },
-    //        GouraudTexture: function () {
-    //            testMat.removeTexture('texture');
-    //            testMat.addTexture(Texture.diffuse, 'texture');
-    //            testMat.setShading(Shading.gouraud)
-    //        },
-    //        PhongTexture: function () {
-    //            testMat.removeTexture('texture');
-    //            testMat.addTexture(Texture.diffuse, 'texture');
-    //            testMat.setShading(Shading.phong)
-    //        },
-    //        BlinnTexture: function () {
-    //            testMat.removeTexture('texture');
-    //            testMat.addTexture(Texture.diffuse, 'texture');
-    //            testMat.setShading(Shading.blinn)
-    //        }
-    //    };
-    //
-    //    var gui = new dat.GUI();
-    //    gui.add(params, 'color');
-    //    gui.add(params, 'toon');
-    //    gui.add(params, 'GouraudColor');
-    //    gui.add(params, 'PhongColor');
-    //    gui.add(params, 'GouraudTexture');
-    //    gui.add(params, 'PhongTexture');
-    //    gui.add(params, 'BlinnTexture');
 </script>
 </body>
 </html>

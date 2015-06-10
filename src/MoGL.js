@@ -40,7 +40,7 @@ var $setPrivate, $getPrivate, $writable, $readonly, $value, $getter, $setter, $c
         Object.defineProperty(VAR, cls, $readonly);
     },
     $getPrivate = function $getPrivate(cls) { //공용private읽기
-        if (arguments.length == 2 ) {
+        if (arguments.length == 2) {
             return VAR[cls][arguments[1]];
         } else {
             return VAR[cls];
@@ -92,7 +92,7 @@ $color = (function(){
     return function(v){
         if (typeof v == 'string' && v.charAt(0) == '#') {
             if (v.length == 4) {
-                v += v.substr(1,3)
+                v += v.substr(1,3);
             }
             co[0] = parseInt(v.substr(1, 2), 16) / 255,
             co[1] = parseInt(v.substr(3, 2), 16) / 255,
@@ -116,9 +116,9 @@ GLMAT_EPSILON = 0.000001,
 SIN = Math.sin, COS = Math.cos, TAN = Math.tan, ATAN = Math.atan, ATAN2 = Math.atan2, ASIN = Math.asin,
 SQRT = Math.sqrt, CEIL = Math.ceil, ABS = Math.abs, PI = Math.PI, PIH = PI * 0.5, PERPI = 180 / PI;
 //markdown
-$md = function(classes){
+$md = function $md(classes){
     var param, exception, sample, description, ret, mk, sort;
-    exception = function(f){
+    exception = function exception(f) {
         var temp, i, j, k;
         f = Function.prototype.toString.call(f);
         temp = [],
@@ -131,7 +131,7 @@ $md = function(classes){
         }
         return temp;
     },
-    mk = function(keyword, isJoin){
+    mk = function mk(keyword, isJoin){
         var len;
         keyword = '/*' + keyword;
         len = keyword.length;
@@ -155,7 +155,7 @@ $md = function(classes){
     description = mk('description', 1);
     param = mk('param');
     ret = mk('return');
-    sort = function(a,b){
+    sort = function sort(a,b){
         return a.name < b.name;
     };
     return function(){
@@ -222,13 +222,13 @@ $md = function(classes){
                     exception:exception(temp[k]),
                     sample:sample(temp[k]),
                     ret:ret(temp[k])
-                }
+                };
             } else if(k.substr(0, 2) != '__') {
                 consts[consts.length] = {
                     name:k,
                     description:'Const of ' + this.className,
                     value:temp[k]
-                }
+                };
                     
             }
         }
@@ -484,8 +484,8 @@ var MoGL = (function() {
                             arg = arguments;
                         }
                         self.call(this, isSuperChain, arg),
-                        child.apply(this, arg)
-                        Object.seal(this)
+                        child.apply(this, arg),
+                        Object.seal(this),
                         result = this;
                     } else {
                         result = cls.call(Object.create(cls.prototype), isFactory, arguments);
@@ -781,7 +781,7 @@ var MoGL = (function() {
           added == 10
         }, city2, 10);
         */
-        var target
+        var target;
         //private저장소에 this용 공간 초기화
         if (!listener[this]) listener[this] = {};
         target = listener[this];

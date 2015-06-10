@@ -58,6 +58,7 @@ var Texture = (function() {
     isLoaded = {},
     //shared private
     $setPrivate('Texture', {
+        imgs : imgs
     }),
     _Texture = function _Texture(){},
     fn = _Texture.prototype,
