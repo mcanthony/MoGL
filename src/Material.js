@@ -1,8 +1,7 @@
 var Material = (function () {
     var textureLoaded, texType,
         diffuse, normal, specular, diffuseWrap, specularNormal, 
-        shading, lambert,  wireFrame, wireFrameColor, count,color,
-        Material, fn, fnProp,prop;
+        shading, lambert,  wireFrame, wireFrameColor, count,color;
     
     //private
     shading = {},
@@ -25,7 +24,6 @@ var Material = (function () {
         lambert:lambert,
         diffuse:diffuse
     }),
-    prop = {},
     //lib
     textureLoaded = function(mat){
         this.removeEventListener(Texture.load, textureLoaded),
@@ -38,57 +36,53 @@ var Material = (function () {
         diffuseWrap:diffuseWrap,
         normal:normal,
         specularNormal:specularNormal
-    },
-
-    Material = function Material() {
-        color[this] = new Float32Array([1,1,1,1])
+    };
+    return MoGL.extend(function Material() {
+        color[this] = [1,1,1,1]
         if (arguments.length) {
             this.color = arguments.length > 1 ? arguments : arguments[0]
         }
-        wireFrameColor[this] = new Float32Array([1,1,1,1])
+        wireFrameColor[this] = [Math.random(),Math.random(),Math.random(),1]
         wireFrame[this] = false;
         lambert[this] = 1
         shading[this] = Shading.none
-    },
-    fnProp = {
-        count:$getter(count, false, 0),
-        color:{
-            get:$getter(color),
-            set:function colorSet(v) {
-                var p = color[this];
-                v = $color(v);
-                p[0] = v[0], p[1] = v[1], p[2] = v[2], p[3] = v[3];
-           }
-        },
-        wireFrame:$value(wireFrame),
-        wireFrameColor:{
-            get:$getter(wireFrameColor),
-            set:function wireFrameColorSet(v) {
-                var p = wireFrameColor[this];
-                v = $color(v);
-                p[0] = v[0], p[1] = v[1], p[2] = v[2], p[3] = v[3];
-           }
-        },
-        shading:$value(shading),
-        lambert:$value(lambert),
-        diffuse:$value(diffuse),
-        isLoaded:{
-            get:function(mat) {
-                var type, tex, i;
-                for (type in texType) {
-                    if (tex = texType[type][mat]) {
-                        i = tex.length;
-                        while (i--) {
-                            if(!tex[i].tex.isLoaded) return false;
-                        }
+    })
+    .field('count', $getter(count, false, 0))
+    .field('color', {
+        get:$getter(color),
+        set:function colorSet(v) {
+            var p = color[this];
+            v = $color(v);
+            p[0] = v[0], p[1] = v[1], p[2] = v[2], p[3] = v[3];
+       }
+    })
+    .field('wireFrame', $value(wireFrame))
+    .field('wireFrameColor', {
+        get:$getter(wireFrameColor),
+        set:function wireFrameColorSet(v) {
+            var p = wireFrameColor[this];
+            v = $color(v);
+            p[0] = v[0], p[1] = v[1], p[2] = v[2], p[3] = v[3];
+       }
+    })
+    .field('shading', $value(shading))
+    .field('lambert', $value(lambert))
+    .field('diffuse', $value(diffuse))
+    .field('isLoaded', {
+        get:function(mat) {
+            var type, tex, i;
+            for (type in texType) {
+                if (tex = texType[type][mat]) {
+                    i = tex.length;
+                    while (i--) {
+                        if(!tex[i].tex.isLoaded) return false;
                     }
                 }
-                return true;
             }
+            return true;
         }
-    },
-    fn = Material.prototype,
-    fn.addTexture = function addTexture(type, texture/*,index,blendMode*/) {
+    })
+    .method('addTexture', function addTexture(type, texture/*,index,blendMode*/) {
         var p;
         if (!texType[type]) this.error(0);
         if (!(texture instanceof Texture)) this.error(1);
@@ -124,11 +118,10 @@ var Material = (function () {
         }
         //changed이벤트는 무조건 발생함.
         this.dispatch(Material.changed);
-        //console.log('재질에서 텍스쳐 로딩이벤트 완료',this.isLoaded)
         if (this.isLoaded) this.dispatch(Material.load);
         return this;
-    },
-    fn.removeTexture = function removeTexture(type, texture){
+    })
+    .method('removeTexture', function removeTexture(type, texture){
         var p, key, i;
         if (texType[type]) {
             p = texType[type][this];
@@ -149,7 +142,7 @@ var Material = (function () {
         }
         this.dispatch(Material.changed);
         return this;
-    },
-    Material.changed = 'changed';
-    return MoGL.ext(Material, fnProp);
+    })
+    .event('changed', 'changed')
+    .build();
 })();

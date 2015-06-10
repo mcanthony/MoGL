@@ -1,11 +1,22 @@
-/**
- * Created by redcamel on 2015-05-05.
- */
 'use strict'
 var Scene = (function () {
     var vertexShaderParser, fragmentShaderParser,
-        children, cameras, textures, materials, geometrys, vertexShaders, fragmentShaders, updateList,
-        Scene, fn, fnProp;
+        children,childrenArray, cameras, textures, materials, geometrys, vertexShaders, fragmentShaders, updateList;
+    //private
+    children = {},
+    childrenArray = {},
+    cameras = {},
+    textures = {},
+    materials = {},
+    geometrys = {},
+    vertexShaders = {},
+    fragmentShaders = {},
+    updateList = {},
+    //shared private
+    $setPrivate('Scene', {
+        children : children,
+        childrenArray : childrenArray
+    }),
     //lib
     vertexShaderParser = function vertexShaderParser(source) {
         var i, temp, str, resultObject, code;
@@ -72,25 +83,11 @@ var Scene = (function () {
         str += '}\n'
         resultObject.shaderStr = str
         return resultObject;
-    },
-
-    //private
-    children = {},
-    cameras = {},
-    textures = {},
-    materials = {},
-    geometrys = {},
-    vertexShaders = {},
-    fragmentShaders = {},
-    updateList = {},
-    //shared private
-    $setPrivate('Scene', {
-        children : children
-    }),
-
-    Scene = function Scene() {
+    };
+    return MoGL.extend(function Scene() {
         // for JS
         children[this] = {},
+        childrenArray[this] = [],
         cameras[this] = {},
         textures[this] = {},
         materials[this] = {},
@@ -112,97 +109,87 @@ var Scene = (function () {
         this.addVertexShader(Shader.bitmapVertexShaderPhong),this.addFragmentShader(Shader.bitmapFragmentShaderPhong),
         this.addVertexShader(Shader.bitmapVertexShaderBlinn),this.addFragmentShader(Shader.bitmapFragmentShaderBlinn),
         this.addVertexShader(Shader.postBaseVertexShader),this.addFragmentShader(Shader.postBaseFragmentShader);
-    };
-
-    fn = Scene.prototype,
-    fnProp = {
-        updateList: {
-            get: $getter(updateList),
-        },
-        vertexShaders: {get: $getter(vertexShaders)},
-        fragmentShaders: {get: $getter(fragmentShaders)},
-        cameras: {get: $getter(cameras)},
-        children: {
-            get: $getter(children)
-        }
-    },
-    fn.addMesh = function(v){
+    })
+    .field('updateList', {get:$getter(updateList)})
+    .field('vertexShaders', {get:$getter(vertexShaders)})
+    .field('fragmentShaders', {get:$getter(fragmentShaders)})
+    .field('cameras', {get:$getter(cameras)})
+    .field('children', {get:$getter(children)})
+    .method('addMesh', function(v){
         var p = children[this], p2 = updateList[this], mat;
         if (p[v]) this.error(0);
         if (!(v instanceof Mesh)) this.error(1);
         p[v] = v;
         p2.mesh.push(v)
         mat = v.material
-        //mat.addEventListener(Material.load,function(){
-        //    //
-        //    //var t= this.diffuse
-        //    //if(t){
-        //    //    var i = t.length
-        //    //    while(i--){
-        //    //        //if(t[i].tex.isLoaded){
-        //    //        //
-        //    //        //}
-        //    //        //console.log('로딩완료 및 업데이트 추가',t[i].tex.isLoaded)
-        //    //        if(p2.material.indexOf(t[i].tex)==-1){
-        //    //            p2.material.push(t[i].tex)
-        //    //        }
-        //    //
-        //    //    }
-        //    //}
-        //})
+        mat.addEventListener(Material.load,function(){
+            //console.log('메쉬의 재질이 변경되었다!')
+            var t= this.diffuse
+            if(t){
+                var i = t.length
+                while(i--){
+                    if(p2.material.indexOf(t[i].tex)==-1){
+                        p2.material.push(t[i].tex)
+                        //console.log('새로운 텍스쳐 업데이트 추가',t[i].tex.isLoaded)
+                    }
+                }
+            }
+        })
         mat.dispatch(Material.load,mat)
+    
+        if(childrenArray[this].indexOf(v)==-1){
+            childrenArray[this].push(v)
+        }
         return this;
-    },
-    fn.addCamera = function(v){
+    })
+    .method('addCamera', function(v){
         var p = cameras[this];
         if (p[v]) this.error(0);
         if (!(v instanceof Camera)) this.error(1);
         p[v] = v;
         updateList[this].camera.push(v)
         return this;
-    },
-    fn.addChild = function addChild(v) {
+    })
+    .method('addChild', function addChild(v) {
         if(v instanceof Mesh)  this.addMesh(v)
         else if(v instanceof Camera)  this.addCamera(v)
         else this.error(0)
         return this;
-    },
-    fn.addGeometry = function (v) {
+    })
+    .method('addGeometry', function (v) {
         var p = geometrys[this];
         if (p[v]) this.error(0);
         if (!(v instanceof Geometry)) this.error(1);
         p[v] = v;
         return this;
-    },
-    fn.addMaterial = function (v) {
+    })
+    .method('addMaterial', function (v) {
         var p = materials[this];
         if (p[v]) this.error(0);
         if (!(v instanceof Material)) this.error(1);
         p[v] = v
         return this;
-    },
-    fn.addTexture = function addTexture(v) {
+    })
+    .method('addTexture', function addTexture(v) {
         var p = textures[this];
         if (p[v]) this.error(0);
         if (!(v instanceof Texture)) this.error(1);
         p[v] = v
         return this;
-    },
-    fn.addFragmentShader = function addFragmentShader(v) {
+    })
+    .method('addFragmentShader', function addFragmentShader(v) {
         var p = fragmentShaders[this];
         if (p[v.id]) this.error(0);
         p[v.id] = fragmentShaderParser(v);;
         return this
-    },
-    fn.addVertexShader = function addVertexShader(v) {
+    })
+    .method('addVertexShader', function addVertexShader(v) {
         var p = vertexShaders[this];
         if (p[v.id]) this.error(0);
         p[v.id] = vertexShaderParser(v);
         return this
-    },
-    ///////////////////////////////////////////////////////////////////////////
-    // Get
-    fn.getMesh = function (id) {
+    })
+    .method('getMesh',function (id) {
         var p = children[this],k;
         for(k in p){
             if(p[k].id == id){
@@ -210,8 +197,8 @@ var Scene = (function () {
             }
         }
         return null
-    },
-    fn.getCamera = function (id) {
+    })
+    .method('getCamera', function (id) {
         var p = cameras[this],k;
         for(k in p){
             if(p[k].id == id){
@@ -219,14 +206,14 @@ var Scene = (function () {
             }
         }
         return null
-    },
-    fn.getChild = function (id) {
+    })
+    .method('getChild', function (id) {
         var t;
         if(t = this.getMesh(id)) return t
         if(t = this.getCamera(id)) return t
         return null
-    },
-    fn.getGeometry = function (id) {
+    })
+    .method('getGeometry', function (id) {
         var p = geometrys[this],k;
         for(k in p){
             if(p[k].id == id){
@@ -234,8 +221,8 @@ var Scene = (function () {
             }
         }
         return null
-    },
-    fn.getMaterial = function (id) {
+    })
+    .method('getMaterial', function (id) {
         var p = materials[this],k;
         for(k in p){
             if(p[k].id == id){
@@ -243,8 +230,8 @@ var Scene = (function () {
             }
         }
         return null
-    },
-    fn.getTexture = function (id) {
+    })
+    .method('getTexture', function (id) {
         var p = textures[this],k;
         for(k in p){
             if(p[k].id == id){
@@ -252,30 +239,22 @@ var Scene = (function () {
             }
         }
         return null
-    },
-    //fn.getFragmentShader = function (id) {
-    //    // TODO 마일스톤0.5
-    //    return this._fragmentShaders[id];
-    //},
-    //fn.getVertexShader = function (id) {
-    //    // TODO 마일스톤0.5
-    //    return this._vertexShaders[id];
-    //},
-    ///////////////////////////////////////////////////////////////////////////
-    // Remove
-    fn.removeChild = function removeChild(id) {
+    })
+    .method('removeChild', function removeChild(id) {
         var p, k, result;
         p = children[this],
         result = false
         for (k in p) {
             if (p[k].id == id) {
+                childrenArray.splice(childrenArray[this].indexOf(p[k]),1)
                 delete p[k],
                 result = true
             }
         }
+    
         return result;
-    },
-    fn.removeGeometry = function removeGeometry(id) {
+    })
+    .method('removeGeometry', function removeGeometry(id) {
         var p, k, result;
         p = geometrys[this],
         result = false
@@ -286,8 +265,8 @@ var Scene = (function () {
             }
         }
         return result;
-    },
-    fn.removeMaterial = function removeMaterial(id) {
+    })
+    .method('removeMaterial', function removeMaterial(id) {
         var p, k, result;
         p = materials[this],
             result = false
@@ -298,8 +277,8 @@ var Scene = (function () {
             }
         }
         return result;
-    },
-    fn.removeTexture = function removeTexture(id) {
+    })
+    .method('removeTexture', function removeTexture(id) {
         var p, result;
         p = textures[this],
         result = false
@@ -308,14 +287,24 @@ var Scene = (function () {
             result = true
         }
         return result;
-    }
-    //fn.removeFragmentShader = function removeFragmentShader() {
-    //    // TODO 마일스톤0.5
-    //    return this;
-    //},
-    //fn.removeVertexShader = function VertexShader() {
-    //    // TODO 마일스톤0.5
-    //    return this;
-    //}
-    return MoGL.ext(Scene, fnProp);
+    })
+    .build();
+//fn.getFragmentShader = function (id) {
+//    // TODO 마일스톤0.5
+//    return this._fragmentShaders[id];
+//},
+//fn.getVertexShader = function (id) {
+//    // TODO 마일스톤0.5
+//    return this._vertexShaders[id];
+//},
+///////////////////////////////////////////////////////////////////////////
+// Remove
+//fn.removeFragmentShader = function removeFragmentShader() {
+//    // TODO 마일스톤0.5
+//    return this;
+//},
+//fn.removeVertexShader = function VertexShader() {
+//    // TODO 마일스톤0.5
+//    return this;
+//}
 })();

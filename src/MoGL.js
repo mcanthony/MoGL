@@ -42,7 +42,6 @@ var MoGL = (function() {
         var wrap, method, prev, methodSet, fieldSet, readonly, writable, isFactory, isSuperChain,
             inheritedStatic, md,
             uuid, allInstance, ids, counter, total, classes;
-        
         uuid = 0,
         allInstance = {},
         ids = {},
