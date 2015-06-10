@@ -10,13 +10,12 @@ var Mesh = (function () {
         material : material,
         culling : culling
     });
-    return Matrix.extend(function Mesh(geometry, material) {
-        this.geometry = geometry
-        this.material = material
-        culling[this] = Mesh.cullingNone;
+    return Matrix.extend('Mesh', function(geometry, material) {
+        this.geometry = geometry;
+        this.material = material;
     })
     .field('culling', {
-        get:$getter(culling, false, Mesh.cullingNone),
+        get:$getter(culling, false, 'cullingNone'),
         set:function cullingSet(v) {
             if (Mesh[v]) {
                 culling[this] = v;

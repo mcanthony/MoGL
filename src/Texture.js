@@ -25,7 +25,7 @@ var Texture = (function() {
         while (v.height > th) th *= 2;
         //fit size
         if (v.width == tw && v.height == th) {}
-        if (resizeType == _Texture.zoomOut) {
+        if (resizeType == Texture.zoomOut) {
             if (v.width < tw) tw /= 2;
             if (v.height < th) th /= 2;
         }
@@ -35,12 +35,12 @@ var Texture = (function() {
         context.clearRect(0, 0, tw, th);
 
         switch(resizeType){
-            case _Texture.crop:
+            case Texture.crop:
                 if (v.width < tw) dw = tw / 2;
                 if (v.height < th) dh = th / 2;
                 context.drawImage(v, 0, 0, tw, th, 0, 0, dw, dh);
                 break;
-            case _Texture.addSpace:
+            case Texture.addSpace:
                 context.drawImage(v, 0, 0, tw, th, 0, 0, tw, th);
                 break;
             default:
