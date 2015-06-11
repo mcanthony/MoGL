@@ -1,6 +1,5 @@
 var Geometry = (function () {
-    var position, vertexCount, triangleCount, vertexShaders, normal,index, uv, color, volume, key,
-        Geometry, fn, fnProp;
+    var position, vertexCount, triangleCount, vertexShaders, normal,index, uv, color, volume, key;
 
     //private
     position = {}, normal = {}, uv = {}, color = {},index = {},
@@ -8,9 +7,9 @@ var Geometry = (function () {
     volume = {};
     //shared private
     $setPrivate('Geometry', {
-    }),
+    });
   
-    Geometry = (function(){
+    return MoGL.extend((function(){
         var calcNormal, infoCheck, pos, nm, tUV, tCo;
         calcNormal = (function(){
             var sqr, v1, v2;
@@ -100,36 +99,33 @@ var Geometry = (function () {
             color[this] = new Float32Array(tCo),
             index[this] = tIndex instanceof Uint16Array ? tIndex : new Uint16Array(tIndex);
         };
-    })(),
-    fn = Geometry.prototype,
-    fnProp = {
-        vertexCount:{get:$getter(vertexCount)},
-        triangleCount:{get:$getter(triangleCount)},
-        volume:{
-            get:function volumeGet() {
-                var minX, minY, minZ, maxX, maxY, maxZ, t0, t1, t2, t, i;
-                if (!volume[this]) {
-                    minX = minY = minZ = maxX = maxY = maxZ = 0,
-                    t = position[this], i = t.length;
-                    while (i--) {
-                        t0 = i * 3, t1 = t0 + 1, t2 = t0 + 2,
-                        minX = t[t0] < minX ? t[t0] : minX,
-                        maxX = t[t0] > maxX ? t[t0] : maxX,
-                        minY = t[t1] < minY ? t[t1] : minY,
-                        maxY = t[t1] > maxY ? t[t1] : maxY,
-                        minZ = t[t2] < minZ ? t[t2] : minZ,
-                        maxZ = t[t2] > maxZ ? t[t2] : maxZ;
-                    }
-                    volume[this] = [maxX - minX, maxY - minY, maxZ - minZ];
+    })())
+    .field('vertexCount', {get:$getter(vertexCount)})
+    .field('triangleCount', {get:$getter(triangleCount)})
+    .field('volume', {
+        get:function volumeGet() {
+            var minX, minY, minZ, maxX, maxY, maxZ, t0, t1, t2, t, i;
+            if (!volume[this]) {
+                minX = minY = minZ = maxX = maxY = maxZ = 0,
+                t = position[this], i = t.length;
+                while (i--) {
+                    t0 = i * 3, t1 = t0 + 1, t2 = t0 + 2,
+                    minX = t[t0] < minX ? t[t0] : minX,
+                    maxX = t[t0] > maxX ? t[t0] : maxX,
+                    minY = t[t1] < minY ? t[t1] : minY,
+                    maxY = t[t1] > maxY ? t[t1] : maxY,
+                    minZ = t[t2] < minZ ? t[t2] : minZ,
+                    maxZ = t[t2] > maxZ ? t[t2] : maxZ;
                 }
-                return volume[this];
+                volume[this] = [maxX - minX, maxY - minY, maxZ - minZ];
             }
-        },
-        position: {get: $getter(position)},
-        normal: {get: $getter(normal)},
-        uv: {get: $getter(uv)},
-        color: {get: $getter(color)},
-        index: {get: $getter(index)}
-    };
-    return MoGL.ext(Geometry, fnProp);
+            return volume[this];
+        }
+    })
+    .field('position', {get: $getter(position)})
+    .field('normal', {get: $getter(normal)})
+    .field('uv', {get: $getter(uv)})
+    .field('color', {get: $getter(color)})
+    .field('index', {get: $getter(index)})
+    .build();
 })();

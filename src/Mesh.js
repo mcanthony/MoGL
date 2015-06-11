@@ -1,7 +1,5 @@
 var Mesh = (function () {
-    var geometry, material, culling,
-        Mesh, fn, fnProp;
-    
+    var geometry, material, culling;
     //private
     geometry = {},
     material = {},
@@ -11,49 +9,43 @@ var Mesh = (function () {
         geometry : geometry,
         material : material,
         culling : culling
-    }),
-    
-    Mesh = function Mesh(geometry, material) {
-        this.geometry = geometry
-        this.material = material
-        culling[this] = Mesh.cullingNone;
-    },
-    fn = Mesh.prototype,
-    fnProp = {
-        culling:{
-            get:$getter(culling, false, Mesh.cullingNone),
-            set:function cullingSet(v) {
-                if (Mesh[v]) {
-                    culling[this] = v;
-                } else {
-                    this.error(0);
-                }
-            }
-        },
-        geometry:{
-            get:$getter(geometry),
-            set:function geometrySet(v) {
-                if (v instanceof Geometry) {
-                    geometry[this] = v;
-                } else {
-                    this.error(0);
-                }
-            }
-        },
-        material:{
-            get:$getter(material),
-            set:function materialSet(v) {
-                if (v instanceof Material) {
-                    material[this] = v;
-                } else {
-                    this.error(0);
-                }
+    });
+    return Matrix.extend('Mesh', function(geometry, material) {
+        this.geometry = geometry;
+        this.material = material;
+    })
+    .field('culling', {
+        get:$getter(culling, false, 'cullingNone'),
+        set:function cullingSet(v) {
+            if (Mesh[v]) {
+                culling[this] = v;
+            } else {
+                this.error(0);
             }
         }
-    },
-    (function(){
-        var key = 'cullingNone,cullingFront,cullingBack'.split(','), i = key.length;
-        while (i--) Mesh[key[i]] = key[i];
-    })();
-    return Matrix.ext(Mesh, fnProp);
+    })
+    .field('geometry', {
+        get:$getter(geometry),
+        set:function geometrySet(v) {
+            if (v instanceof Geometry) {
+                geometry[this] = v;
+            } else {
+                this.error(0);
+            }
+        }
+    })
+    .field('material', {
+        get:$getter(material),
+        set:function materialSet(v) {
+            if (v instanceof Material) {
+                material[this] = v;
+            } else {
+                this.error(0);
+            }
+        }
+    })
+    .static('cullingNone', 'cullingNone')
+    .static('cullingFront', 'cullingFront')
+    .static('cullingBack', 'cullingBack')
+    .build();
 })();

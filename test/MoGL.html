@@ -14,33 +14,35 @@
 <div id="stage"></div>
 <div id="result"></div>
 <div id="test"></div>
+<script src="../src/$.js"></script>
 <script src="../src/MoGL.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
 <script>
 (function(){
-	var parent = function parent( a, b ){ 
-		this.a = a;
-		this.b = b;
-	};
-	parent.prototype.printA = function(){
-		return this.a;
-	};
-	parent.prototype.printB = function(){
-		return this.b;
-	};
-	parent = MoGL.ext(parent);
-
-	var child = function child( a, b, c ){
-		this.c = c;
-	};
-	child.prototype.printC = function(){
-		return this.c;
-	};
-	child.prototype.errorTest = function(){
-		this.error(1);
-	};
-	child = parent.ext(child);
-
+	var parent = MoGL.extend(function parent( a, b ){ 
+            this.a = a;
+            this.b = b;
+        })
+        .field('a')
+        .field('b')
+        .method('printA', function(){
+            return this.a;
+        })
+        .method('printB', function(){
+            return this.b;
+        })
+        .build();
+	var child = parent.extend(function child( a, b, c ){
+            this.c = c;
+        })
+        .field('c')
+        .method('printC', function(){
+            return this.c;
+        })
+        .method('errorTest', function(){
+            this.error(1);
+        })
+        .build();
 
 	var instance1 = new child( 1, 2, 3 );
 
@@ -132,28 +134,26 @@
             instance3.id = 2;
             return instance3.id;
         }, 2
-	);
-
-	bsTest( 'ext',
+	),
+	bsTest( 'extend',
         function(){
-            var Parent = function(){}, Child = function(){}, parent, child;
+            var Parent, Child, parent, child;
 
-            Parent = MoGL.ext( Parent );
-            Child = Parent.ext( Child );
+            Parent = MoGL.extend(function Parent(){}).build();
+            Child = Parent.extend(function Child(){}).build();
 
             parent = new Parent();
             child = new Child();
 
             return parent.constructor === MoGL && child.constructor === MoGL;
         }, true
-	);
-	
+	),
 	bsTest( 'constructError',
 		function(){
-			var test = function test(){
+			var test, result = '';
+			test = MoGL.extend(function test(){
 				this.error(1);
-			}, result = '';
-			test = MoGL.ext(test);
+			}).build();
 			try{
 				var a = new test()
 			}catch(e){
@@ -167,15 +167,15 @@
     var a = function(){
         this.a = 3;
     };
-    a = MoGL.ext(a);
+    a = MoGL.extend(a).build();
     var b = function(){
         this.b = 5;
     };
-    b = a.ext(b);
+    b = a.extend(b).build();
     var c = function(){
         this.c = 7;
     };
-    c = b.ext(c);
+    c = b.extend(c).build();
     var grandchild = new c();
     bsTest( 'grandChild',
         function(){
@@ -191,7 +191,7 @@
 })();
 (function(){
     var a = function(){}
-    a = MoGL.ext(a);
+    a = MoGL.extend(a).build();
     var k = new a();
     k.id = 'aaaa';
     k.addEventListener( 'some', function(a,b){
@@ -233,20 +233,19 @@
     k.isUpdated = true;
 })();
 (function(){
-    var a = function(){}, aa;
-    a = MoGL.ext(a,{
-        a:{
+    var a, aa, b, bb;
+    a = MoGL.extend(function a(){})
+        .field('a',{
             get:function(){return aa;},
             set:function(v){aa = v;}
-        }
-    });
-    var b = function(){}, bb;
-    b = a.ext(b, {
-        b:{
+        })
+        .build();
+    b = a.extend(function b(){})
+        .field('b', {
             get:function(){return bb;},
             set:function(v){bb = v;}
-        }
-    });
+        })
+        .build();
     var ins = new b();
     bsTest( 'property',
         function(){
@@ -264,23 +263,22 @@
             return ins.a;
         }, 5
     );
-    
 })();
 (function(){
-    var a = function(){};
-    a.prototype.actionA = function(){
-        this.actionB();
-    },
-    a.prototype.actionB = function(){
-        this.error(0);
-    };
-    a.prototype.actionC = function(){
-        this.actionD();
-        this.error(0);
-    },
-    a.prototype.actionD = function(){};
-    
-    a = MoGL.ext(a);
+    var a;
+    a = MoGL.extend(function a(){})
+        .method('actionA', function(){
+            this.actionB();
+        })
+        .method('actionB', function(){
+            this.error(0);
+        })
+        .method('actionC', function(){
+            this.actionD();
+            this.error(0);
+        })
+        .method('actionD', function(){})
+        .build();
     var inst = new a();
     bsTest( 'errorStack',
         function(){
@@ -291,7 +289,7 @@
                 result = e.toString();
             };
             return result;
-        }, 'Error: undefined.actionB:0',
+        }, 'Error: a.actionB:0',
         function(){
             var result = '';
             try{
@@ -300,12 +298,12 @@
                 result = e.toString();
             };
             return result;
-        }, 'Error: undefined.actionC:0'
+        }, 'Error: a.actionC:0'
     );
-})(),
+})();
 (function(){
-    var a = function(){};
-    a = MoGL.ext(a);
+    var a;
+    a = MoGL.extend(function a(){}).build();
     var inst = new a();
     var uuid = inst.uuid;
     inst.id = 'test';
@@ -317,11 +315,12 @@
             return a.getInstance('test').uuid;
         }, uuid
     );
-})(),
+})();
 (function(){
-    var a = function(){}
-    a.test = function(){return 3;}
-    a = MoGL.ext(a);
+    var a;
+    a = MoGL.extend(function a(){})
+        .static('test', function(){return 3;})
+        .build();
     var test = new a();
     bsTest( 'static copied',
         function(){
@@ -334,14 +333,13 @@
         }, 1
     );
 })();
-
 (function(){
-    var a= function(){
-        this.x = 0;
-        this.y = 0;
-        this.z = 0;
-    };
-    a = MoGL.ext(a);
+    var a;
+    a = MoGL.extend(function a(){
+            this.x = 0;
+            this.y = 0;
+            this.z = 0;
+        }).build();
     var test = new a();
     test.setProperties({x:10, y:20, z:30});
     bsTest( 'setProperty no ani',
@@ -355,9 +353,7 @@
             return test.z;
         }, 30
     );
-    var prop = {x:0, y:0, z:0};
-    prop[MoGL.time] = 1;
-    test.setProperties(prop);
+    test.setProperties({x:0, y:0, z:0},{time:1});
     bsTest( 'setProperty ani start',
         function(){
             return test.x;
@@ -395,8 +391,7 @@
             }, 0
         );
     }, 1010 );
-})();
-        
+})();   
 </script>
 </body>
 </html>

@@ -1,7 +1,3 @@
-/**
- * Created by redcamel on 2015-05-10.
- */
-
 var VertexShader = {
     baseFunction: "mat4 positionMTX(vec3 t)" +
     "{\n" +

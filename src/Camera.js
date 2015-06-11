@@ -1,7 +1,6 @@
 var Camera = (function () {
     var PERPIR, value, getter,
-        prop,
-        Camera, fn, fnProp;
+        prop;
 
     //lib
     PERPIR = PI / 180 * .5,
@@ -9,9 +8,8 @@ var Camera = (function () {
     prop = {},
     //shared private
     $setPrivate('Camera', {
-    }),
-    
-    Camera = function Camera() {
+    });
+    return Matrix.extend( function Camera() {
         Object.seal(prop[this] = {
             r:0, g:0, b:0, a:1,
             fov:55, near:0.1, far:10000,
@@ -26,123 +24,120 @@ var Camera = (function () {
         }),
         this.z =10,
         this.lookAt(0,0,0);
-    },
-    fn = Camera.prototype,
-    fnProp = {
-        clipPlaneNear:$value(prop, 'near'),
-        clipPlaneFar:$value(prop, 'far'),
-        visible: {
-            get: $getter(prop, 'visible'),
-            set: function visibleSet(v) {
-                if(typeof v =='number'){
-                    v = v ? true : false
-                }
-                prop[this].visible =v
+    })
+    .field('clipPlaneNear', $value(prop, 'near'))
+    .field('clipPlaneFar', $value(prop, 'far'))
+    .field('visible', {
+        get: $getter(prop, 'visible'),
+        set: function visibleSet(v) {
+            if(typeof v =='number'){
+                v = v ? true : false
             }
-        },
-        antialias: {
-            get: $getter(prop, 'antialias'),
-            set: function antialiasSet(v) {
-                if(typeof v =='number'){
-                    v = v ? true : false
-                }
-                prop[this].antialias =v
+            prop[this].visible =v
+        }
+    })
+    .field('antialias', {
+        get: $getter(prop, 'antialias'),
+        set: function antialiasSet(v) {
+            if(typeof v =='number'){
+                v = v ? true : false
             }
-        },
-        fogColor:{
-            get:$getter(prop, 'fogColor'),
-            set:function fogColorSet(v){
-                var p = prop[this];
-                p.fogColor = $color(v).slice(0),
-                p.fog = true;
-            }
-        },
-        fogNear:{
-            get:$getter(prop, 'fogNear'),
-            set:function fogNearSet(v){
-                var p = prop[this];
-                p.fogNear = v,
-                p.fog = true;
-            }
-        },
-        fogFar:{
-            get:$getter(prop, 'fogFar'),
-            set:function fogFarSet(v){
-                var p = prop[this];
-                p.fogFar = v,
-                p.fog = true;
-            }
-        },
-        fov:{
-            get:$getter(prop, 'fov'),
-            set:function fovSet(v){
-                var p = prop[this];
-                if (typeof v == 'number') {
-                    p.fov = v;
-                } else if ('0' in v && '1' in v) {
-                    p.fov = CEIL(2 * ATAN(TAN(v[2] * PERPIR) * (v[1] / v[0])) * PERPI);
-                }
-            }
-        },
-        backgroundColor:{
-            get:(function(){
-                var a = [];
-                return function backgroundColorGet() {
-                    var p = prop[this];
-                    a[0] = p.r, a[1] = p.g, a[2] = p.b, a[3] = p.a
-                    return a;
-                };
-            })(),
-            set:function backgroundColorSet(v) {
-                var p = prop[this];
-                v = $color(v);
-                p.r = v[0], p.g = v[1], p.b = v[2], p.a = v[3];
-           }
-        },
-        fog:{
-            get:function fogGet(){
-                return prop[this].fog ? true : false;
-            }
-        },
-        mode:{
-            get:$getter(prop, 'mode'),
-            set:function modeSet(v) {
-                if (Camera[v]) {
-                    prop[this].mode = v;
-                } else {
-                    this.error(0);
-                }
-            }
-        },
-        cvs:{
-            get:$getter(prop, 'cvs'),
-            set:function modeSet(v) {
-                prop[this].cvs = v;
-            }
-        },
-        renderArea : {
-            get: $getter(prop, 'renderArea'),
-            set: function renderAreaSet(v) {
-                var tw, th,c;
-                c = prop[this].cvs,
-                tw = c.width,
-                th = c.height,
-                //console.log(typeof x == 'string' ? tw * x.replace('%', '') : x);
-                prop[this].renderArea = [
-                    typeof v[0] == 'string' ? tw * v[0].replace('%', '') * 0.01 : v[0],
-                    typeof v[1] == 'string' ? th * v[1].replace('%', '') * 0.01 : v[1],
-                    typeof v[2] == 'string' ? tw * v[2].replace('%', '') * 0.01 : v[2],
-                    typeof v[3] == 'string' ? th * v[3].replace('%', '') * 0.01 : v[3],
-                ];
-            }
-        },
-        projectionMatrix : {
-            get : function projectionMatrixGet(){
-                return prop[this].projectionMatrix
+            prop[this].antialias =v
+        }
+    })
+    .field('fogColor', {
+        get:$getter(prop, 'fogColor'),
+        set:function fogColorSet(v){
+            var p = prop[this];
+            p.fogColor = $color(v).slice(0),
+            p.fog = true;
+        }
+    })
+    .field('fogNear', {
+        get:$getter(prop, 'fogNear'),
+        set:function fogNearSet(v){
+            var p = prop[this];
+            p.fogNear = v,
+            p.fog = true;
+        }
+    })
+    .field('fogFar', {
+        get:$getter(prop, 'fogFar'),
+        set:function fogFarSet(v){
+            var p = prop[this];
+            p.fogFar = v,
+            p.fog = true;
+        }
+    })
+    .field('fov', {
+        get:$getter(prop, 'fov'),
+        set:function fovSet(v){
+            var p = prop[this];
+            if (typeof v == 'number') {
+                p.fov = v;
+            } else if ('0' in v && '1' in v) {
+                p.fov = CEIL(2 * ATAN(TAN(v[2] * PERPIR) * (v[1] / v[0])) * PERPI);
             }
         }
-    },
-    fn.resetProjectionMatrix = function resetProjectionMatrix(){
+    })
+    .field('backgroundColor', {
+        get:(function(){
+            var a = [];
+            return function backgroundColorGet() {
+                var p = prop[this];
+                a[0] = p.r, a[1] = p.g, a[2] = p.b, a[3] = p.a
+                return a;
+            };
+        })(),
+        set:function backgroundColorSet(v) {
+            var p = prop[this];
+            v = $color(v);
+            p.r = v[0], p.g = v[1], p.b = v[2], p.a = v[3];
+       }
+    })
+    .field('fog', {
+        get:function fogGet(){
+            return prop[this].fog ? true : false;
+        }
+    })
+    .field('mode', {
+        get:$getter(prop, 'mode'),
+        set:function modeSet(v) {
+            if (Camera[v]) {
+                prop[this].mode = v;
+            } else {
+                this.error(0);
+            }
+        }
+    })
+    .field('cvs', {
+        get:$getter(prop, 'cvs'),
+        set:function modeSet(v) {
+            prop[this].cvs = v;
+        }
+    })
+    .field('renderArea', {
+        get: $getter(prop, 'renderArea'),
+        set: function renderAreaSet(v) {
+            var tw, th,c;
+            c = prop[this].cvs,
+            tw = c.width,
+            th = c.height,
+            //console.log(typeof x == 'string' ? tw * x.replace('%', '') : x);
+            prop[this].renderArea = [
+                typeof v[0] == 'string' ? tw * v[0].replace('%', '') * 0.01 : v[0],
+                typeof v[1] == 'string' ? th * v[1].replace('%', '') * 0.01 : v[1],
+                typeof v[2] == 'string' ? tw * v[2].replace('%', '') * 0.01 : v[2],
+                typeof v[3] == 'string' ? th * v[3].replace('%', '') * 0.01 : v[3],
+            ];
+        }
+    })
+    .field('projectionMatrix', {
+        get : function projectionMatrixGet(){
+            return prop[this].projectionMatrix
+        }
+    })
+    .method('resetProjectionMatrix', function resetProjectionMatrix(){
         var tMatrix, tArea,p;
         p = prop[this]
         tMatrix = p.projectionMatrix,
@@ -159,7 +154,11 @@ var Camera = (function () {
             else tMatrix.matPerspective(p.fov, p.cvs.width/p.cvs.height, p.near, p.far);
         }
         return this;
-    },
+    })
+    .static('resize', 'resize')
+    .static('othogonal', 'othogonal')
+    .static('perspective', 'perspective')
+    .build();
     /*마일스톤0.5
     fn.getFilters = function getFilters(){
         var result = [],t = this._filters;
@@ -289,10 +288,5 @@ var Camera = (function () {
         return this;
     },
     */
-    (function(){
-        var key = 'resize,othogonal,perspective'.split(','), i = key.length;
-        while (i--) Camera[key[i]] = key[i];
-    })();
-    return Matrix.ext(Camera, fnProp);
 })();
 

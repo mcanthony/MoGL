@@ -2,8 +2,8 @@
  * Created by redcamel on 2015-05-22.
  */
 var OrbitController = (function () {
-    var OrbitController, fn,self;
-    var HD_down, HD_move, HD_up,HD_downTouch, HD_moveTouch, HD_upTouch;
+    var HD_down, HD_move, HD_up,HD_downTouch, HD_moveTouch, HD_upTouch,
+        self;
     HD_down = function HD_down(e) {
         self._mouseInfo.downed = 1,
         self._mouseInfo.startX0 = e.screenX,
@@ -55,8 +55,8 @@ var OrbitController = (function () {
         self._mouseInfo.downed = false;
         self._mouseInfo.zoom = false;
         e.preventDefault();
-    },
-    OrbitController = function OrbitController(camera) {
+    };
+    return MoGL.extend(function OrbitController(camera) {
         if(!(camera instanceof Camera)) this.error(0);
         this._camera = camera,
         this._camera.x = 0.1,
@@ -91,45 +91,44 @@ var OrbitController = (function () {
             document.body.addEventListener('mousemove',HD_move,false);
             document.body.addEventListener('mouseup',HD_up,false);
         }
-    },
-    fn = OrbitController.prototype,
-    fn.setSpeed = function setSpeed(value){
+    })
+    .method('setSpeed', function setSpeed(value){
         this._speed = value;
-    },
-    fn.setSmoothDelay = function setSmoothDelay(value){
+    })
+    .method('setSmoothDelay', function setSmoothDelay(value){
         this._smoothDelay = value > 0.5 ? 0.5 : value;
-    },
-    fn.setMinDistance = function setMinDistance(value){
+    })
+    .method('setMinDistance', function setMinDistance(value){
         this._minDistance = value < 1 ? 1 : value;
-    },
-    fn.setMaxDistance = function setMaxDistance(value){
+    })
+    .method('setMaxDistance', function setMaxDistance(value){
         this._maxDistance = value;
-    },
-    fn.setDistance = function setDistance(value){
+    })
+    .method('setDistance', function setDistance(value){
         this._distance = value;
-    },
-    fn.getSpeed = function getSpeed(){
+    })
+    .method('getSpeed', function getSpeed(){
          return this._speed;
-    },
-    fn.getSmoothDelay = function getSmoothDelay(){
+    })
+    .method('getSmoothDelay', function getSmoothDelay(){
         return this._smoothDelay;
-    },
-    fn.getMinDistance = function getMinDistance(){
+    })
+    .method('getMinDistance', function getMinDistance(){
         return this._minDistance;
-    },
-    fn.getMaxDistance = function getMaxDistance(){
+    })
+    .method('getMaxDistance', function getMaxDistance(){
         return this._maxDistance;
-    },
-    fn.getDistance = function getDistance(){
+    })
+    .method('getDistance', function getDistance(){
         return this._distance;
-    },
-    fn.getPan = function getPan(){
+    })
+    .method('getPan', function getPan(){
         return this._pan;
-    },
-    fn.getTilt = function getTilt(){
+    })
+    .method('getTilt', function getTilt(){
         return this._tilt;
-    },
-    fn.update = function update(){
+    })
+    .method('update', function update(){
         if(this._mouseInfo.zoom){
             this._distance *= self._mouseInfo.distStart/self._mouseInfo.dist;
             if(this._distance<this._minDistance) this._distance = this._minDistance;
@@ -145,10 +144,10 @@ var OrbitController = (function () {
             this._camera.z += (Math.cos(this._pan )*this._distance- this._camera.z)*this._smoothDelay,
             this._camera.lookAt(0,0,0);
         }
-
+    
         this._mouseInfo.dx = 0,
         this._mouseInfo.dy = 0;
-
-    };
-    return MoGL.ext(OrbitController);
+    
+    })
+    .build();
 })();

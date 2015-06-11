@@ -1,5 +1,5 @@
 var World = (function () {
-    var getGL, glSetting, glContext, World, fn, rectMatrix = Matrix();
+    var getGL, glSetting, glContext, rectMatrix = Matrix();
     var canvas, context, makeVBO, makeVNBO, makeIBO, makeUVBO, makeProgram, makeTexture, makeFrameBuffer;
     var baseUpdate, baseShaderUpdate, cameraRenderAreaUpdate;
     glSetting = {
@@ -10,24 +10,22 @@ var World = (function () {
         premultipliedAlpha: true,
         preserveDrawingBuffer: false
     },
-        getGL = function (canvas) {
-            var gl, keys, i;
-            if (glContext) {
-                gl = canvas.getContext(glContext, glSetting);
-            } else {
-                keys = 'experimental-webgl,webgl,webkit-3d,moz-webgl,3d'.split(','), i = keys.length;
-                while (i--) {
-                    if (gl = canvas.getContext(keys[i], glSetting)) {
-                        glContext = keys[i];
-                        break;
-                    }
+    getGL = function (canvas) {
+        var gl, keys, i;
+        if (glContext) {
+            gl = canvas.getContext(glContext, glSetting);
+        } else {
+            keys = 'experimental-webgl,webgl,webkit-3d,moz-webgl,3d'.split(','), i = keys.length;
+            while (i--) {
+                if (gl = canvas.getContext(keys[i], glSetting)) {
+                    glContext = keys[i];
+                    break;
                 }
             }
-            return gl;
-        };
+        }
+        return gl;
+    };
     var renderList = {}, sceneList = [], cvsList = {}, autoSizer = {}, started = {}, gpu = {};
-
-    ///////////////////////////////
     // 씬에서 이사온놈들
     canvas = document.createElement('canvas');
     context = canvas.getContext('2d');
@@ -267,8 +265,8 @@ var World = (function () {
             }
 
         }
-    },
-    World = function World(id) {
+    };
+    return MoGL.extend(function World(id) {
         if (!id) this.error(0);
         cvsList[this] = document.getElementById(id);
         // for GPU
@@ -290,9 +288,8 @@ var World = (function () {
         } else {
             this.error(2);
         }
-    },
-    fn = World.prototype,
-    fn.setAutoSize = function setAutoSize(isAutoSize) {
+    })
+    .method('setAutoSize', function setAutoSize(isAutoSize) {
         var canvas, scenes, self;
         if (isAutoSize) {
             if (!this._autoSizer) {
@@ -321,8 +318,8 @@ var World = (function () {
             window.removeEventListener('orientationchange', autoSizer[this]);
         }
         return this;
-    },
-    fn.addScene = function addScene(scene) {
+    })
+    .method('addScene', function addScene(scene) {
         var tSceneList, i;
         tSceneList = sceneList[this], i = tSceneList.length;
         if (!(scene instanceof Scene )) this.error(1);
@@ -337,8 +334,8 @@ var World = (function () {
         //scene등록시 현재 갖고 있는 모든 카메라 중 visible이 카메라 전부 등록
         //이후부터는 scene에 카메라의 변화가 생기면 자신의 world에게 알려야함
         return this;
-    },
-    fn.getScene = function getScene(sceneID) {
+    })
+    .method('getScene', function getScene(sceneID) {
         var i, tSceneList;
         tSceneList = sceneList[this],
             i = tSceneList.length;
@@ -349,8 +346,8 @@ var World = (function () {
             }
         }
         return null;
-    },
-    fn.getRenderer = function (isRequestAnimationFrame) {
+    })
+    .method('getRenderer', function (isRequestAnimationFrame) {
         var p, self;
         p = renderList[this];
         if (!p) {
@@ -375,17 +372,17 @@ var World = (function () {
                 return p[0]
             }
         }
-    },
-    fn.start = function start() {
+    })
+    .method('start', function start() {
         var renderFunc = this.getRenderer(1)
         started[this.uuid] = requestAnimationFrame(renderFunc);
         return this;
-    },
-    fn.stop = function stop() {
+    })
+    .method('stop', function stop() {
         cancelAnimationFrame(started[this.uuid])
         return this;
-    },
-    fn.removeScene = function removeScene(sceneID) {
+    })
+    .method('removeScene', function removeScene(sceneID) {
         var i, tSceneList;
         tSceneList = sceneList[this],
         i = tSceneList.length;
@@ -398,8 +395,8 @@ var World = (function () {
             }
         }
         this.error('0')
-    },
-    fn.render = (function () {
+    })
+    .method('render', (function () {
         var i,i2, j, k, len = 0;
         var f3 = new Float32Array(3), f4 = new Float32Array(4);
         var tScene, tSceneList, tCameraList, tCamera, tGPU, tGL, tChildren,tChildrenArray;
@@ -408,27 +405,27 @@ var World = (function () {
         var tProgram, tCulling, tVBO, tVNBO, tUVBO, tIBO, tDiffuseID, tFrameBuffer;
         var pProgram, pCulling, pVBO, pVNBO, pUVBO, pIBO, pDiffuseID;
         var tMatUUID;
-
+    
         var privateChildren
         var privateChildrenArray
         var priGeo
         var priMat
         var priCull
-
+    
         var priMatColor
         var priMatWireFrame
         var priMatWireFrameColor
         var priMatShading
         var priMatLambert
         var priMatDiffuse
-
+    
         var priTextureIMGs
-
+    
         var tGeo
         var tItemUUID
         var dLite, useNormalBuffer, useTexture;
         var tColor
-
+    
         privateChildren = $getPrivate('Scene', 'children')
         privateChildrenArray = $getPrivate('Scene', 'childrenArray')
         priGeo = $getPrivate('Mesh', 'geometry')
@@ -441,7 +438,7 @@ var World = (function () {
         priMatLambert = $getPrivate('Material', 'lambert')
         priMatDiffuse = $getPrivate('Material', 'diffuse')
         priTextureIMGs = $getPrivate('Texture', 'imgs')
-
+    
         return function (currentTime) {
             len = 0,
             pProgram = null,
@@ -458,7 +455,7 @@ var World = (function () {
             tCvsW = tCvs.width,
             tCvsH = tCvs.height,
             i = tSceneList.length
-
+    
             this.dispatch(World.renderBefore, currentTime)
             while (i--) {
                 tScene = tSceneList[i]
@@ -502,14 +499,14 @@ var World = (function () {
                         }
                         tChildren = privateChildren[tScene.uuid];
                         tChildrenArray = privateChildrenArray[tScene.uuid];
-
+    
                         tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS),
                         tGL.enable(tGL.BLEND),
                         tGL.blendFunc(tGL.SRC_ALPHA, tGL.ONE_MINUS_SRC_ALPHA),
-
+    
                         //tGL.enable(tGL.SCISSOR_TEST);
                         //tGL.scissor(0, 0,  tCvsW, tCvsH);
-
+    
                         tColor = tCamera.backgroundColor,
                         tGL.clearColor(tColor[0], tColor[1], tColor[2], tColor[3]),
                         tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
@@ -523,7 +520,7 @@ var World = (function () {
                             tGL.uniformMatrix4fv(tProgram.uCameraMatrix, false, tCameraMtx)
                         }
                         tItem = tMaterial = tProgram = tVBO = tIBO = null;
-
+    
                         // 대상 씬의 차일드 루프
                         i2 = tChildrenArray.length
                         while(i2--){
@@ -536,18 +533,18 @@ var World = (function () {
                             tIBO = tGPU.ibo[tGeo],
                             tMaterial = priMat[tItemUUID],
                             tCulling = priCull[tItemUUID]
-
+    
                             if (tCulling != pCulling) {
                                 if (tCulling == Mesh.cullingNone) tGL.disable(tGL.CULL_FACE)
                                 else if (tCulling == Mesh.cullingBack) tGL.enable(tGL.CULL_FACE), tGL.frontFace(tGL.CCW)
                                 else if (tCulling == Mesh.cullingFront) tGL.enable(tGL.CULL_FACE), tGL.frontFace(tGL.CW)
                             }
-
+    
                             // 라이팅 세팅
                             dLite = [0, -1, -1],
                             useNormalBuffer = 0,
                             useTexture = 0;
-
+    
                             // 쉐이딩 결정
                             tMatUUID = tMaterial.uuid
                             switch (priMatShading[tMatUUID]) {
@@ -561,7 +558,7 @@ var World = (function () {
                                         useTexture = 1
                                     } else {
                                         tProgram = tGPU.programs['colorPhong'];
-
+    
                                     }
                                     useNormalBuffer = 1;
                                     break
@@ -603,7 +600,7 @@ var World = (function () {
                                     tGL.uniform1i(tProgram.uSampler, 0);
                                 }
                             }
-
+    
                             f3[0] = tItem.rotateX, f3[1] = tItem.rotateY, f3[2] = tItem.rotateZ,
                             tGL.uniform3fv(tProgram.uRotate, f3),
                             f3[0] = tItem.x, f3[1] = tItem.y, f3[2] = tItem.z,
@@ -612,7 +609,7 @@ var World = (function () {
                             tGL.uniform3fv(tProgram.uScale, f3),
                             tIBO != pIBO ? tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO) : 0,
                             tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0)
-
+    
                             //와이어프레임 그리기
                             if (priMatWireFrame[tMatUUID]) {
                                 tGL.enable(tGL.DEPTH_TEST),
@@ -636,7 +633,7 @@ var World = (function () {
                                 tGL.drawElements(tGL.LINES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0),
                                 tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS);
                             }
-
+    
                             pProgram = tProgram , pCulling = tCulling,
                             pVBO = tVBO, pVNBO = tVNBO, pUVBO = tUVBO, pIBO = tIBO, pDiffuseID = tDiffuseID;
                         }
@@ -824,8 +821,8 @@ var World = (function () {
             //tGL.flush();
             //tGL.finish()
         }
-    })(),
-    World.renderBefore = 'WORLD_RENDER_BEFORE',
-    World.renderAfter = 'WORLD_RENDER_AFTER'
-    return MoGL.ext(World);
+    })())
+    .static('renderBefore', 'WORLD_RENDER_BEFORE')
+    .static('renderAfter', 'WORLD_RENDER_AFTER')
+    .build();
 })();
