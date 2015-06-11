@@ -155,9 +155,9 @@ var Camera = (function () {
         }
         return this;
     })
-    .static('resize', 'resize')
-    .static('othogonal', 'othogonal')
-    .static('perspective', 'perspective')
+    .constant('resize', 'resize')
+    .constant('othogonal', 'othogonal')
+    .constant('perspective', 'perspective')
     .build();
     /*마일스톤0.5
     fn.getFilters = function getFilters(){

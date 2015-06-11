@@ -113,15 +113,15 @@ var Texture = (function() {
             }
         }
     })
-    .static('load', 'load')
-    .static('zoomOut', 'zoomOut')
-    .static('zoomIn', 'zoomIn')
-    .static('crop', 'crop')
-    .static('addSpace', 'addSpace')
-    .static('diffuse', 'diffuse')
-    .static('specular', 'specular')
-    .static('diffuseWrap', 'diffuseWrap')
-    .static('normal', 'normal')
-    .static('specularNormal', 'specularNormal')
+    .constant('load', 'load')
+    .constant('zoomOut', 'zoomOut')
+    .constant('zoomIn', 'zoomIn')
+    .constant('crop', 'crop')
+    .constant('addSpace', 'addSpace')
+    .constant('diffuse', 'diffuse')
+    .constant('specular', 'specular')
+    .constant('diffuseWrap', 'diffuseWrap')
+    .constant('normal', 'normal')
+    .constant('specularNormal', 'specularNormal')
     .build();
 })();

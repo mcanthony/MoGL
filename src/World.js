@@ -822,7 +822,7 @@ var World = (function () {
             //tGL.finish()
         }
     })())
-    .static('renderBefore', 'WORLD_RENDER_BEFORE')
-    .static('renderAfter', 'WORLD_RENDER_AFTER')
+    .constant('renderBefore', 'WORLD_RENDER_BEFORE')
+    .constant('renderAfter', 'WORLD_RENDER_AFTER')
     .build();
 })();
