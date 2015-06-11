@@ -28,17 +28,19 @@
             position: absolute
         }
     </style>
+    <script src="../src/$.js"></script>
     <script src="../src/MoGL.js"></script>
     <script src="../src/BlendMode.js"></script>
     <script src="../src/Filter.js"></script>
+    <script src="../src/Primitive.js"></script>
     <script src="../src/Vertex.js"></script>
     <script src="../src/Shading.js"></script>
     <script src="../src/VertexShaderFunctions.js"></script>
     <script src="../src/Shader.js"></script>
     <script src="../src/Matrix.js"></script>
+    <script src="../src/Texture.js"></script>
     <script src="../src/Geometry.js"></script>
     <script src="../src/Material.js"></script>
-    <script src="../src/Texture.js"></script>
     <script src="../src/Mesh.js"></script>
     <script src="../src/Group.js"></script>
     <script src="../src/Camera.js"></script>
@@ -69,11 +71,11 @@
         var camera = new Camera()
         scene.addChild(camera);
         var material = new Material(Math.random(), Math.random(), Math.random(), 1)
-        var material2 = new Material(1, 1, 1, 0.5)
-        var material3 = new Material(1, 1, 1, 0.5)
-        var material4 = new Material(1, 1, 1, 0.5)
-        var material5 = new Material(1, 1, 1, 0.5)
-        var material6 = new Material(1, 1, 1, 0.5)
+        var material2 = new Material(1, 1, 1, 1)
+        var material3 = new Material(1, 1, 1, 1)
+        var material4 = new Material(1, 1, 1, 1)
+        var material5 = new Material(1, 1, 1, 1)
+        var material6 = new Material(1, 1, 1, 1)
 
 
 
@@ -161,7 +163,7 @@
             mesh3.x = 3
             mesh3.y = -1
             scene.addChild(mesh3);
-//            material3.shading = Shading.toon
+            material3.shading = Shading.toon
 
 
             var mesh4 = new Mesh(geo, material4);
@@ -169,8 +171,8 @@
             mesh4.x = 3
             mesh4.y = 1
             scene.addChild(mesh4);
-//            material4.shading = Shading.gouraud
-            material4.lambert = 1.5
+            material4.shading = Shading.gouraud
+
 
             var mesh5 = new Mesh(geo, material5);
 
@@ -178,14 +180,14 @@
             mesh5.y = 1
             scene.addChild(mesh5);
             material5.shading = Shading.phong
-            material5.lambert = 1.5
+
 
             var mesh6 = new Mesh(geo, material6);
             mesh6.x = -3
             mesh6.y = 1
             scene.addChild(mesh6);
-//            material6.shading = Shading.blinn
-            material6.lambert = 1.5
+            material6.shading = Shading.blinn
+
 
 
 //            camera.antialias=1

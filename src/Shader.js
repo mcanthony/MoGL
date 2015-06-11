@@ -86,7 +86,7 @@ var Shader = (function () {
             main: ['' +
             ' mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
             ' gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
-            ' vec3 N = normalize(mv * vec4(aVertexNormal, 0.0)).xyz;\n' +
+            ' vec3 N = (mv * vec4(aVertexNormal, 0.0)).xyz;\n' +
             ' vec3 LD = normalize(vec4(uDLite, 0.0)).xyz;\n' +
             ' float df = max(0.1,dot(N,-LD)*uLambert);\n' +
             ' vColor = uColor*df;' +
@@ -114,7 +114,7 @@ var Shader = (function () {
             main: ['' +
             ' mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
             ' gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
-            ' vec3 N = normalize(mv * vec4(aVertexNormal, 0.0)).xyz;\n' +
+            ' vec3 N = (mv * vec4(aVertexNormal, 0.0)).xyz;\n' +
             ' vec3 LD = normalize(vec4(uDLite, 0.0)).xyz;\n' +
             ' float df = max(0.1,dot(N,-LD)*uLambert);\n' +
             ' vLight = vec4(1.0,1.0,1.0,1.0)*df;\n' +

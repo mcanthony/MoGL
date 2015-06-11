@@ -299,11 +299,7 @@ var MoGL = (function() {
                 };
             } else {
                 if (!isdoc) {
-                    if(v['value']){
-                        this[type][k] = {value:v.value}
-                    }else{
-                        this[type][k] = {value:v}
-                    }
+                    this[type][k] = {value:v.value}
                     this._info[type][k] = {
                         description:v.description,
                         param:v.param,

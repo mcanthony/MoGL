@@ -44,8 +44,8 @@ var Mesh = (function () {
             }
         }
     })
-    .static('cullingNone', 'cullingNone')
-    .static('cullingFront', 'cullingFront')
-    .static('cullingBack', 'cullingBack')
+    .constant('cullingNone', 'cullingNone')
+    .constant('cullingFront', 'cullingFront')
+    .constant('cullingBack', 'cullingBack')
     .build();
 })();

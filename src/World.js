@@ -239,7 +239,7 @@ var World = (function () {
         makeProgram(gpu, 'colorPhong', vS.colorVertexShaderPhong, fS.colorFragmentShaderPhong);
         makeProgram(gpu, 'toonPhong', vS.toonVertexShaderPhong, fS.toonFragmentShaderPhong);
         makeProgram(gpu, 'bitmapPhong', vS.bitmapVertexShaderPhong, fS.bitmapFragmentShaderPhong);
-        makeProgram(gpu, 'bitmapBlind', vS.bitmapVertexShaderBlinn, fS.bitmapFragmentShaderBlinn);
+        makeProgram(gpu, 'bitmapBlinn', vS.bitmapVertexShaderBlinn, fS.bitmapFragmentShaderBlinn);
         makeProgram(gpu, 'postBase', vS.postBaseVertexShader, fS.postBaseFragmentShader);
     },
     cameraRenderAreaUpdate = function (self) {
@@ -402,30 +402,30 @@ var World = (function () {
         var tScene, tSceneList, tCameraList, tCamera, tGPU, tGL, tChildren,tChildrenArray;
         var tCvs, tCvsW, tCvsH;
         var tItem, tMaterial;
-        var tProgram, tCulling, tVBO, tVNBO, tUVBO, tIBO, tDiffuseID, tFrameBuffer;
+        var tProgram, tCulling, tVBO, tVNBO, tUVBO, tIBO, tDiffuseID, tFrameBuffer, tShading;
         var pProgram, pCulling, pVBO, pVNBO, pUVBO, pIBO, pDiffuseID;
         var tMatUUID;
-    
+
         var privateChildren
         var privateChildrenArray
         var priGeo
         var priMat
         var priCull
-    
+
         var priMatColor
         var priMatWireFrame
         var priMatWireFrameColor
         var priMatShading
         var priMatLambert
         var priMatDiffuse
-    
+
         var priTextureIMGs
-    
+
         var tGeo
         var tItemUUID
         var dLite, useNormalBuffer, useTexture;
         var tColor
-    
+
         privateChildren = $getPrivate('Scene', 'children')
         privateChildrenArray = $getPrivate('Scene', 'childrenArray')
         priGeo = $getPrivate('Mesh', 'geometry')
@@ -438,7 +438,7 @@ var World = (function () {
         priMatLambert = $getPrivate('Material', 'lambert')
         priMatDiffuse = $getPrivate('Material', 'diffuse')
         priTextureIMGs = $getPrivate('Texture', 'imgs')
-    
+
         return function (currentTime) {
             len = 0,
             pProgram = null,
@@ -501,12 +501,15 @@ var World = (function () {
                         tChildrenArray = privateChildrenArray[tScene.uuid];
     
                         tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS),
+                        // TODO 이놈도 상황에 따라 캐쉬해야겠군
                         tGL.enable(tGL.BLEND),
                         tGL.blendFunc(tGL.SRC_ALPHA, tGL.ONE_MINUS_SRC_ALPHA),
-    
+
                         //tGL.enable(tGL.SCISSOR_TEST);
                         //tGL.scissor(0, 0,  tCvsW, tCvsH);
-    
+
+                        // 라이팅 세팅
+                        dLite = [0, -1, -1],
                         tColor = tCamera.backgroundColor,
                         tGL.clearColor(tColor[0], tColor[1], tColor[2], tColor[3]),
                         tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
@@ -518,9 +521,12 @@ var World = (function () {
                             //tCamera.cvs = tCvs
                             tGL.uniformMatrix4fv(tProgram.uPixelMatrix, false, tProjectionMtx),
                             tGL.uniformMatrix4fv(tProgram.uCameraMatrix, false, tCameraMtx)
+                            if(tProgram['uDLite']) {
+                                tGL.uniform3fv(tProgram.uDLite, dLite)
+                            }
                         }
                         tItem = tMaterial = tProgram = tVBO = tIBO = null;
-    
+
                         // 대상 씬의 차일드 루프
                         i2 = tChildrenArray.length
                         while(i2--){
@@ -540,16 +546,33 @@ var World = (function () {
                                 else if (tCulling == Mesh.cullingFront) tGL.enable(tGL.CULL_FACE), tGL.frontFace(tGL.CW)
                             }
     
-                            // 라이팅 세팅
-                            dLite = [0, -1, -1],
                             useNormalBuffer = 0,
                             useTexture = 0;
     
                             // 쉐이딩 결정
                             tMatUUID = tMaterial.uuid
-                            switch (priMatShading[tMatUUID]) {
+                            tShading = priMatShading[tMatUUID]
+                            switch (tShading) {
                                 case  Shading.none :
-                                    tProgram = tGPU.programs['color'];
+                                    if(priMatDiffuse[tMatUUID]){
+                                        tProgram = tGPU.programs['bitmap'],
+                                        useTexture = 1
+                                    }else{
+                                        tProgram = tGPU.programs['color'];
+                                    }
+                                    break
+                                case  Shading.gouraud :
+                                    if(priMatDiffuse[tMatUUID]){
+                                        tProgram = tGPU.programs['bitmapGouraud'],
+                                        useTexture = 1
+                                    }else{
+                                        tProgram = tGPU.programs['colorGouraud'];
+                                    }
+                                    useNormalBuffer = 1;
+                                    break
+                                case  Shading.toon :
+                                    tProgram = tGPU.programs['toonPhong'];
+                                    useNormalBuffer = 1;
                                     break
                                 case  Shading.phong :
                                     if (priMatDiffuse[tMatUUID]) {
@@ -558,9 +581,14 @@ var World = (function () {
                                         useTexture = 1
                                     } else {
                                         tProgram = tGPU.programs['colorPhong'];
-    
                                     }
                                     useNormalBuffer = 1;
+                                    break
+                                case  Shading.blinn :
+                                    tProgram = tGPU.programs['bitmapBlinn'];
+                                    //console.log('들어왔다!')
+                                    useNormalBuffer = 1;
+                                    useTexture = 1
                                     break
                             }
                             // 쉐이딩 변경시 캐쉬 삭제
@@ -580,7 +608,6 @@ var World = (function () {
                                     tGL.bindBuffer(tGL.ARRAY_BUFFER, tVNBO),
                                     tGL.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, tGL.FLOAT, false, 0, 0)
                                 }
-                                tGL.uniform3fv(tProgram.uDLite, dLite);
                                 tGL.uniform1f(tProgram.uLambert, priMatLambert[tMatUUID]);
                             }
                             // 텍스쳐 세팅
@@ -625,10 +652,6 @@ var World = (function () {
                                 f3[0] = tItem.scaleX, f3[1] = tItem.scaleY, f3[2] = tItem.scaleZ,
                                 tGL.uniform3fv(tProgram.uScale, f3),
                                 tColor = priMatWireFrameColor[tMatUUID],
-                                //f4[0] = tColor[0],
-                                //f4[1] = tColor[1],
-                                //f4[2] = tColor[2],
-                                //f4[3] = tColor[3],
                                 tGL.uniform4fv(tProgram.uColor, tColor),
                                 tGL.drawElements(tGL.LINES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0),
                                 tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS);
@@ -822,7 +845,7 @@ var World = (function () {
             //tGL.finish()
         }
     })())
-    .static('renderBefore', 'WORLD_RENDER_BEFORE')
-    .static('renderAfter', 'WORLD_RENDER_AFTER')
+    .constant('renderBefore', 'WORLD_RENDER_BEFORE')
+    .constant('renderAfter', 'WORLD_RENDER_AFTER')
     .build();
 })();
