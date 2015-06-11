@@ -257,13 +257,13 @@ var MoGL = (function() {
                 return result;
             },
             classes[this._construct.value.name] = {cls:cls, define:this};
-            
+
             if (parent) {
                 fn = Object.create(parent.prototype);
             } else {
                 fn = cls.prototype;
             }
-            
+
             readonly.value = cls.uuid = 'uuid:' + (uuid++),
             Object.defineProperty(fn, 'classId', readonly);
             
@@ -271,8 +271,9 @@ var MoGL = (function() {
             Object.defineProperty(fn, 'className', readonly);
             
             if(!(cls.uuid in counter)) counter[cls.uuid] = 0;
-            
+
             for (k in inheritedStatic) {
+
                 this.static(k, inheritedStatic[k]);
             }
             
@@ -297,13 +298,19 @@ var MoGL = (function() {
                     ret:'?'
                 };
             } else {
-                if (!isdoc) this[type][k] = {value:v.value},
-                this._info[type][k] = {
-                    description:v.description,
-                    param:v.param,
-                    ret:v.ret,
-                    sample:v.sample
-                };
+                if (!isdoc) {
+                    if(v['value']){
+                        this[type][k] = {value:v.value}
+                    }else{
+                        this[type][k] = {value:v}
+                    }
+                    this._info[type][k] = {
+                        description:v.description,
+                        param:v.param,
+                        ret:v.ret,
+                        sample:v.sample
+                    };
+                }
             }
             return this;
         }};
