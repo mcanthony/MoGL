@@ -1,459 +1,367 @@
-# Mesh
-* parent : [Matrix](Matrix.md)
-* children : [Camera](Camera.md), [Light](Light.md)
-* [Constructor](#constructor)
+#Mesh
+* parent : [Matrix](Matrix.md) < [MoGL](MoGL.md)
+* [constructor](#constructor)
 
-**const**
-
-1. Mesh.cullingNone = 'CULLING_NONE'  : Mesh Face Culling을 하지 않음.
-2. Mesh.cullingFront = 'CULLING_FRONT' : Mesh FrontFace를 그리지 않음.
-3. Mesh.cullingBack = 'CULLING_BACK' : Mesh BackFace를 그리지않음
 
 **field**
-* [rotateX, rotateY, rotateZ](#rotatex-rotatey-rotatez)
-* [scaleX, scaleY, scaleZ](#scalex-scaley-scalez)
-* [x, y, z](#x-y-z)
 
-**method**
+* [material](#material) - Field of Mesh
+* [geometry](#geometry) - Field of Mesh
+* [culling](#culling) - Field of Mesh
 
-* [getGeometry](#getgeometry)
-* [getMaterial](#getmaterial)
-* [getMatrix](#getmatrix)
-* [getParent](#getparent)
-* [getPosition](#getposition)
-* [getRotate](#getrotate)
-* [getScale](#getscale)
-* [setGeometry](#setgeometry-geometry-)
-* [setMaterial](#setmaterial-material-)
-* [setMatrix](#setmatrix-matrix-)
-* [setPosition](#setposition-positionarray-)
-* [setRotate](#setrotate-rotatearray-)
-* [setScale](#setscale-scalearray-)
-* [setCulling](#setculling-valuestring-)
+**static**
+
+* [getMD](#getMD) - 해당 클래스를 마크다운 형식으로 문서...
+* [getInstance](#getInstance) - uuid 또는 id를 기반으로 인스턴...
+* [extend](#extend) - 이 클래스를 상속하는 자식클래스를 만...
+* [error](#error) - 정적함수에서 표준화된 예외를 처리함(...
+* [count](#count) - 이 클래스로 부터 만들어져 활성화된...
+
+**constant**
+
+* [cullingNone](#cullingNone) - Const of Mesh
+* [cullingFront](#cullingFront) - Const of Mesh
+* [cullingBack](#cullingBack) - Const of Mesh
 
 [top](#)
-## Constructor
 
-```javascript
-Mesh( geometry:*, material:* )
-```
+<a name="constructor"></a>
+##Constructor
 
 **description**
 
-기하구조와 재질을 포함할 수 있는 하나의 렌더링 단위인 Mesh를 생성함.
-Mesh는 장면 내에 아핀변환에 대응하는 행렬정보를 갖음.
-이에 따라 비가시객체인 [Camera](Camera.md) 등도 Mesh를 상속하게 됨.
-* id를 인자로 지정하면 [Scene](Scene.md)에 [addChild](Scene.md#addchild-idstring-meshmesh-)하는 순간 id를 바인딩하며 실패하면 등록되지 않음.
-* 객체를 인자로 지정하면 [Scene](Scene.md)에 [addChild](Scene.md#addchild-idstring-meshmesh-)하는 순간 Mesh내부의 [Geometry](Geometry.md)나 [Material](Material.md)이 임의의 id로 자동등록되며, shader Id가 존재하지 않으면 예외가 발생함( [addChild](Scene.md#addchild-idstring-meshmesh-) 참조 )
+Constructor of Mesh
 
 **param**
 
-1. geometry:* - 기하구조체를 받으며 다음과 같은 형식이 올 수 있음.
-    * string - Mesh가 등록될 [Scene](Scene.md)에 이미 등록되어있는 [Geometry](Geometry.md)의 id를 지정함.
-    * [Geometry](Geometry.md) - 직접 [Geometry](Geometry.md)객체를 지정함.
-    * null - null로 지정되면 [Scene](Scene.md)의 렌더링 대상에서 제외됨.
-2. material:* - 해당 기하구조에 적용할 재질을 받으며 다음과 같은 형식이 올 수 있음.
-    * string - Mesh가 등록될 [Scene](Scene.md)에 이미 등록되어있는 [Material](Material.md)의 id를 지정함.
-    * [Material](Material.md) - 직접 [Material](Material.md) 객체를 지정함.
-    * null - null로 지정되면 [Scene](Scene.md)의 렌더링 대상에서 제외됨.
-
-**sample**
-
-```javascript
-var mesh1 = new Mesh( 'cube', 'mat1' );
-var mesh2 = new Mesh(
-    new Geometry( vertex, index ),
-    new Material('#f00')
-);
-
-//팩토리함수로도 사용가능
-var mesh3 = Mesh();
-```
-
-[top](#)
-## rotateX, rotateY, rotateZ
-
-**description**
-
-X, Y, Z축 회전각. 기본값은 모두 0이며 단위는 angle을 기본으로 함.
-
-**sample**
-```javascript
-scene.getChild('cube').rotateX += 30;
-scene.getChild('cube').rotateY += 20;
-scene.getChild('cube').rotateZ += 50;
-```
-
-[top](#)
-## scaleX, scaleY, scaleZ
-
-**description**
-
-X, Y, Z축 확대축소값. 기본값은 모두 1.
-
-**sample**
-```javascript
-scene.getChild('cube').scaleX = 1.5;
-scene.getChild('cube').scaleY = 1.5;
-scene.getChild('cube').scaleZ = 1.5;
-```
-
-[top](#)
-## x, y, z
-
-**description**
-
-X, Y, Z축의 좌표.
-
-**sample**
-```javascript
-scene.getChild('cube').x = 130;
-scene.getChild('cube').y = 200;
-scene.getChild('cube').z = 0;
-```
-
-[top](#)
-## getGeometry()
-
-**description**
-
-Mesh에 지정된 [Geometry](Geometry.md)를 반환함.
-id로 지정되고 아직 [addChild](Scene.md#addchild-idstring-meshmesh-) 전이라면 null이 반환됨.
-
-**param**
-
-없음.
-
-**return**
-
-[Geometry](Geometry.md) - Mesh에 지정된 [Geometry](Geometry.md) 또는 null.
-
-**sample**
-
-```javascript
-var geo = world.getScene('lobby').getChild('cube').getGeometry();
-```
-
-[top](#)
-## getMaterial()
-
-**description**
-
-Mesh에 지정된 [Material](Material.md)을 반환함.
-만약 id로 지정되고 아직 [addChild](Scene.md#addchild-idstring-meshmesh-) 전이라면 null이 반환됨.
-
-**param**
-
-없음.
-
-**return**
-
-[Material](Material.md) - Mesh에 지정된 [Material](Material.md) 또는 null.
-
-**sample**
-
-```javascript
-var mat = world.getScene('lobby').getChild('cube').getMaterial();
-```
-
-[top](#)
-## getMatrix()
-
-**description**
-
-현재의 좌표, 회전, 확대 정보를 포함하는 [Matrix](Matrix.md)객체를 반환함.
-
-**param**
-
-없음
-
-**return**
-
-[Matrix](Matrix.md) - 현재 상태를 나타내는 행렬객체.
-
-**sample**
-
-```javascript
-var matrix = world.getScene('lobby').getChild('cube').getMatrix();
-```
-
-[top](#)
-## getParent()
-
-**description**
-
-자신의 부모를 반환함. 부모는 [Scene](Scene.md) 또는 [Group](Group.md) 이 될 수 있음.
-
-**param**
-
-없음
-
-**return**
-
-[Scene](Scene.md) or [Group](Group.md) - 부모로 지정된 객체. 없는 경우는 null을 반환함.
-
-**sample**
-
-```javascript
-var parent = world.getScene('lobby').getChild('cube').getParent();
-parent === world.getScene('lobby')
-```
-
-[top](#)
-## getPosition()
-
-**description**
-
-현재의 위치를 나타내는 [x, y, z] 배열.
-* 매번 새로운 객체를 반환하는 것이 아니라 동일한 배열을 반환함.
-* 배열을 값을 수정해도 실제 x, y, z가 수정되는 것은 아니므로 읽기 전용임.
-
-**param**
-
-없음.
-
-**return**
-
-Float32Array - 타입드어레이 형식으로 [x,y,z]를 반환함.
-
-**sample**
-
-```javascript
-var x = world.getScene('lobby').getChild('cube').getPosition()[0];
-```
-
-[top](#)
-## getRotate()
-
-**description**
-
-현재의 회전을 나타내는 [rx, ry, rz] 배열.
-* 매번 새로운 객체를 반환하는 것이 아니라 동일한 배열을 반환함.
-* 배열을 값을 수정해도 실제 rx, ry, rz가 수정되는 것은 아니므로 읽기 전용임.
-
-**param**
-
-없음.
-
-**return**
-
-Float32Array - 타입드어레이 형식으로 [rx,ry,rz]를 반환함.
-
-**sample**
-
-```javascript
-var rotateX = world.getScene('lobby').getChild('cube').getRotate()[0];
-```
-
-[top](#)
-## getScale()
-
-**description**
-
-현재의 확대를 나타내는 [sx, sy, sz] 배열.
-* 매번 새로운 객체를 반환하는 것이 아니라 동일한 배열을 반환함.
-* 배열을 값을 수정해도 실제 sx, sy, sz가 수정되는 것은 아니므로 읽기 전용임.
-
-**param**
-
-없음.
-
-**return**
-
-Float32Array - 타입드어레이 형식으로 [sx,sy,sz]를 반환함.
-
-**sample**
-
-```javascript
-var scaleX = world.getScene('lobby').getChild('cube').getScale()[0];
-```
-
-[top](#)
-## setGeometry( geometry:* )
-
-**description**
-
-이 Mesh의 기하구조체를 교체함.
-* [addChild](Scene.md#addchild-idstring-meshmesh-) 이전이라면 id계열의 객체가 [Scene](Scene.md)에 존재하는지 검사하지 않고, 이후라면 즉시 검사함.
+geometry
+material
 
 **exception**
 
-* 'Mesh.setGeometry:0' - id값이나 지오메트리가 아닐때.
-
-**param**
-
-1. geometry:* - 기하구조체를 받으며 다음과 같은 형식이 올 수 있음.
-    * string - Mesh가 등록될 [Scene](Scene.md)에 이미 등록되어있는 [Geometry](Geometry.md)의 id를 지정함.
-    * Geometry - 직접 Geometry 객체를 지정함.
-    * null - null로 지정되면 [Scene](Scene.md)의 렌더링 대상에서 제외됨(그룹, 카메라 등에서 사용)
-
-**return**
-
-this - 메서드체이닝을 위해 자신을 반환함.
+none
 
 **sample**
 
 ```javascript
-var mesh = world.getScene('lobby').getChild('cube');
-mesh.setGeometry( 'sphere' );
-mesh.setGeometry( new Geometry( vertex, index, 'baseShader' ) );
+//none
 ```
 
 [top](#)
-## setMatrix( [matrix:*] )
+
+<a name="material"></a>
+###material
+
+_field_
+
 
 **description**
 
-좌표, 회전, 확대를 일시에 적용하는 행렬정보를 전달함.
-* 인자를 보내지 않으면 초기화됨(좌표 0점, 회전 0, 확대 1)
+Field of Mesh
 
-**param**
+**setting**
 
-1. ?matrix:* - 지정될 행렬 정보로 다음과 같은 값이 올 수 있음.
-    * Array or TypedArray - 16개의 원소로 이루어진 배열로 4x4행렬의 각 요소에 대응함.
-    * [Matrix](Matrix.md) - [Matrix](Matrix.md) 객체가 오면 그 정보를 바탕으로 처리됨.
+*writable*:true, *enumerable*:false, *configurable*:false
 
-**return**
+**defaultValue**
 
-this - 메서드체이닝을 위해 자신을 반환함.
+none
 
 **sample**
 
 ```javascript
-var mesh = world.getScene('lobby').getChild('cube');
-mesh.setMatrix( new Matrix() );
-mesh.setMatrix( [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1] );
+//none
 ```
 
 [top](#)
-## setMaterial( material:* )
+
+<a name="geometry"></a>
+###geometry
+
+_field_
+
 
 **description**
 
-이 Mesh의 재질을 반환함.
-* [addChild](Scene.md#addchild-idstring-meshmesh-) 이전이라면 id계열의 객체가 [Scene](Scene.md)에 존재하는지 검사하지 않고, 이후라면 즉시 검사함.
+Field of Mesh
+
+**setting**
+
+*writable*:true, *enumerable*:false, *configurable*:false
+
+**defaultValue**
+
+none
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="culling"></a>
+###culling
+
+_field_
+
+
+**description**
+
+Field of Mesh
+
+**setting**
+
+*writable*:true, *enumerable*:false, *configurable*:false
+
+**defaultValue**
+
+none
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="getMD"></a>
+###getMD()
+
+_static_
+
+
+**description**
+
+해당 클래스를 마크다운 형식으로 문서화하여 출력함
+
+**param**
+
 
 **exception**
 
-* 'Mesh.setMaterial:0' - id값이나 재질이 아닐때.
-
-**param**
-
-1. material:* - 해당 기하구조에 적용할 재질을 받으며 다음과 같은 형식이 올 수 있음.
-    * string - Mesh가 등록될 [Scene](Scene.md)에 이미 등록되어있는 [Material](Material.md)의 id를 지정함.
-    * [Material](Material.md) - 직접 [Material](Material.md)객체를 지정함.
-    * null - null로 지정되면 [Scene](Scene.md)의 렌더링 대상에서 제외됨(그룹, 카메라등에서 사용)
+none
 
 **return**
 
-this - 메서드체이닝을 위해 자신을 반환함.
+string - 클래스에 대한 문서 마크다운
 
 **sample**
 
 ```javascript
-var mesh = world.getScene('lobby').getChild('cube');
-mesh.setMaterial( 'white' );
-mesh.setMaterial( new Material('#f00') );
+//none
 ```
 
 [top](#)
-### setPosition( [position:Array] )
-   └ setPosition( x:number, y:number, z:number )
+
+<a name="getInstance"></a>
+###getInstance(uuid:string)
+
+_static_
+
 
 **description**
 
-현재 Mesh의 좌표를 재설정함. 인자를 생략하면 0점으로 초기화됨.
+uuid 또는 id를 기반으로 인스턴스를 얻어냄
 
 **param**
 
-1. ?position:Array or TypedArray - [x, y, z] 형태의 배열.
-2. x:number, y:number, z:number - 각각의 x, y, z 좌표값.
+1. uuid:string
+
+**exception**
+
+undefined.getInstance:u
 
 **return**
 
-this - 메서드체이닝을 위해 자신을 반환함.
+Object - 해당되는 인스턴스
 
 **sample**
 
 ```javascript
-var mesh = world.getScene('lobby').getChild('cube');
-mesh.setPosition( 20, 5, 6 );
-mesh.setPosition( [20,5, 6] );
+//none
 ```
 
 [top](#)
-### setRotate( [rotate:Array] )
-   └ setRotate( rx:number, ry:number, rz:number )
+
+<a name="extend"></a>
+###extend(className:string, constructor:function)
+
+_static_
+
 
 **description**
 
-현재 Mesh의 회전을 재설정함. 인자를 생략하면 0으로 초기화됨.
+이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Defineder)를 얻음
+
+**Defineder class의 메소드**
+
+* 각 메서드는 체이닝됨
+* Matrix = MoGL.extend('Matrix', function(){..}).static(..).field(..).build(); 형태로 사용
+* field('x',{value:30}) - 속성을 정의함
+* method('rotate',{value:function(){}}) - 메서드를 정의함
+* constant('normalX',{value:'normalX'}) - 상수를 정의함
+* event('updated',{value:'updated'}) - 이벤트를 정의함
+* static('toString',{value:function(){}}) - 정적메서드를 정의함
+* build() - 입력된 결과를 종합하여 클래스를 생성함
 
 **param**
 
-1. ?rotate:Array or TypedArray - [rx, ry, rz] 형태의 배열.
-2. rx:number, ry:number, rz:number - 각각의 x, y, z 회전값.
+1. className:string
+2. constructor:function
+
+**exception**
+
+none
 
 **return**
 
-this - 메서드체이닝을 위해 자신을 반환함.
+Defineder - 클래스를 정의할 수 있는 생성전용객체
 
 **sample**
 
 ```javascript
-var mesh = world.getScene('lobby').getChild('cube');
-mesh.setRotate( 20, 180, 0 );
-mesh.setRotate( [20, 180, 6] );
+//none
 ```
 
 [top](#)
-### setScale( [scale:Array] )
-   └ setScale( sx:number, sy:number, sz:number )
+
+<a name="error"></a>
+###error(method:string, id:int)
+
+_static_
+
 
 **description**
 
-현재 Mesh의 확대를 재설정함. 인자를 생략하면 1로 초기화됨.
+정적함수에서 표준화된 예외를 처리함(정적함수 내부에서 사용)
 
 **param**
 
-1. ?scale:Array or TypedArray - [sx, sy, sz] 형태의 배열.
-2. sx:number, sy:number, sz:number - 각각의 x, y, z 확대값.
+1. method:string
+2. id:int
+
+**exception**
+
+none
 
 **return**
 
-this - 메서드체이닝을 위해 자신을 반환함.
+none
 
 **sample**
 
 ```javascript
-var mesh = world.getScene('lobby').getChild('cube');
-mesh.setScale( 1, 2.5, 0.8 );
-mesh.setScale( [1, 2.5, 0.8] );
+//none
 ```
 
 [top](#)
-### setCulling( value:String )
+
+<a name="count"></a>
+###count()
+
+_static_
+
 
 **description**
 
-현재 Mesh의 Face Culling을 지정함
+이 클래스로 부터 만들어져 활성화된 인스턴스의 수
 
 **param**
 
-1. value:String - Mesh.cullingNone or Mesh.cullingFront or Mesh.cullingBack 
+
+**exception**
+
+none
 
 **return**
 
-this - 메서드체이닝을 위해 자신을 반환함.
+int - 활성화된 인스턴스의 수
 
 **sample**
 
 ```javascript
-var mesh = world.getScene('lobby').getChild('cube');
-mesh.setCulling(Mesh.cullingNone) // 페이스 컬링을 하지않음
-mesh.setCulling(Mesh.cullingFront) // 앞면 페이스 컬링을 함
-mesh.setCulling(Mesh.cullingBack) // 뒷면 페이스 컬링을 함
+//none
 ```
 
 [top](#)
 
+<a name="cullingNone"></a>
+###cullingNone
+
+_const_
+
+
+**description**
+
+Const of Mesh
+
+**setting**
+
+*writable*:false, *enumerable*:false, *configurable*:false
+
+**value**
+
+cullingNone
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="cullingFront"></a>
+###cullingFront
+
+_const_
+
+
+**description**
+
+Const of Mesh
+
+**setting**
+
+*writable*:false, *enumerable*:false, *configurable*:false
+
+**value**
+
+cullingFront
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="cullingBack"></a>
+###cullingBack
+
+_const_
+
+
+**description**
+
+Const of Mesh
+
+**setting**
+
+*writable*:false, *enumerable*:false, *configurable*:false
+
+**value**
+
+cullingBack
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
