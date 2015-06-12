@@ -1,194 +1,419 @@
-# Geometry
-* [Constructor](#constructor)
+#Geometry
+* parent : [MoGL](MoGL.md)
+* [constructor](#constructor)
 
-**method**
 
-* [addVertexShader](#addvertexshader-idstring-)
-* [getVertexCount](#getvertexcount)
-* [getTriangleCount](#gettrianglecount)
-* [getVolume](#getvolume)
-* [removeVertexShader](#removevertexshader-idstring-)
+**field**
+
+* [volume](#volume) - Field of Geometry
+* [vertexCount](#vertexCount) - Field of Geometry
+* [uv](#uv) - Field of Geometry
+* [triangleCount](#triangleCount) - Field of Geometry
+* [position](#position) - Field of Geometry
+* [normal](#normal) - Field of Geometry
+* [index](#index) - Field of Geometry
+* [color](#color) - Field of Geometry
+
+**static**
+
+* [getMD](#getMD) - 해당 클래스를 마크다운 형식으로 문서...
+* [getInstance](#getInstance) - uuid 또는 id를 기반으로 인스턴...
+* [extend](#extend) - 이 클래스를 상속하는 자식클래스를 만...
+* [error](#error) - 정적함수에서 표준화된 예외를 처리함(...
+* [count](#count) - 이 클래스로 부터 만들어져 활성화된...
 
 [top](#)
-## Constructor
 
-```javascript
-Geometry( vertexBuffer:Array, indexBuffer:Array[, vertexInfo:Array]  )
-```
+<a name="constructor"></a>
+##Constructor
 
 **description**
 
-정점배열과 인덱스 배열을 이용하여 기하구조를 정의함.
-* 생성자에서 지정된 버퍼 및 정보는 변경불가로 생성 이후는 읽기만 가능함.
+Constructor of Geometry
+
+**param**
+
+vertex
+tIndex
+info
 
 **exception**
 
-* 'Geometry.constructor:0' - vertexBuffer가 Array이나 Float32Array가 아닐때.
-* 'Geometry.constructor:1' - indexBuffer가 Array이나 Uint16Array or Uint32Array가 아닐때
-* 'Geometry.constructor:2' - 버텍스 구성정보와 버텍스 배열의 길이가 안맞을때
-* 'Geometry.constructor:3' - vertexInfo가 undefined가 아니면서, 배열이 아닐 때
-* 'Geometry.constructor:4' - vertexInfo가 배열이면서, 배열의 원소가 Vertex의 속성이 아닐 때
-* 
-**param**
-
-1. vertexBuffer:Array or TypedArray - 정점 배열.
-2. indexBuffer:Array or TypedArray - 인덱스배열.
-3. ?vertexInfo:Array - 정점하나에 대한 정의. 생략시에는 ['x', 'y', 'z']로 정의됨. 다음과 같은 상수항을 사용할 수 있음.
-    * [Vertex.x](Vertex.md#vertexx) or 'x' - x좌표.
-    * [Vertex.y](Vertex.md#vertexy) or 'y' - y좌표.
-    * [Vertex.z](Vertex.md#vertexz) or 'z' - z좌표.
-    * [Vertex.r](Vertex.md#vertexr) or 'r' - 색상Red값.
-    * [Vertex.g](Vertex.md#vertexg) or 'g' - 색상Green값.
-    * [Vertex.b](Vertex.md#vertexb) or 'b' - 색상Blue값.
-    * [Vertex.a](Vertex.md#vertexa) or 'a' - 색상Alpha값.
-    * [Vertex.normalX](Vertex.md#vertexnormalx) or 'nx' - 법선벡터의 x값.
-    * [Vertex.normalY](Vertex.md#vertexnormaly) or 'ny' - 법선벡터의 y값.
-    * [Vertex.normalZ](Vertex.md#vertexnormalz) or 'nz' - 법선벡터의 z값.
-    * [Vertex.u](Vertex.md#vertexu) or 'u' - uv좌표의 u값.
-    * [Vertex.v](Vertex.md#vertexv) or 'v' - uv좌표의 v값.
+0,1,3,4,2
 
 **sample**
 
 ```javascript
-var cube = new Geometry( 
-    //vertexBuffer
-    [1,0,0, 0,0,1, 0,1,1,
-     1,0,0, 0,0,1, 0,1,1, 
-     1,0,0, 0,0,1, 0,1,1],
-    //indexBuffer
-    [0,1,2, 2,3,4, 4,5,6],
-    //vertextInfo
-    [Geometry.x, Geometry.y, Geometry.z]
-);
-
-//팩토리함수로도 작동함.
-var cube2 = Geometry( v, i );
+//none
 ```
 
 [top](#)
-## addVertexShader( id:string )
+
+<a name="volume"></a>
+###volume
+
+_field_
+
 
 **description**
 
-[Mesh](Mesh.md)를 통해 최종적으로 포함될 [Scene](Scene.md)에 등록된 shader를 사용함.
-* [Scene](Scene.md)에 직접 등록되는 경우는 id를 [addGeometry](Scene.md#addgeometry-idstring-geomertygeometry) 시점에 평가함.
-* [Mesh](Mesh.md)에서 직접 생성하여 삽입하는 경우는 [addChild](Scene.md#addchild-idstring-meshmesh-)시점에 평가함.
-* 이미 직간접적으로 [Scene](Scene.md)에 포함된 경우는 메서드호출시점에 평가함.
+Field of Geometry
 
-**param**
+**setting**
 
-1. id:string - 최종 포함될 Scene에 등록된 vertex shader의 id.
+*writable*:false, *enumerable*:false, *configurable*:false
 
-**return**
+**defaultValue**
 
-this - 메서드체이닝을 위해 자신을 반환함.
+none
 
 **sample**
 
 ```javascript
-var lobby = world.getScene('lobby');
-
-// waffle shader등록
-lobby.addVertexShader( 'waffle', vshader );
-
-// Geometry 생성 및 Scene 등록
-var cube = lobby.addGeometry( 'cube', new Geometry( v1, i1 ) );
-
-//이미 Scene에 등록된 Geometry므로 메서드 호출시점에 평가
-cube.addVertexShader( 'waffle' )  //waffle shader가 존재하지 않으면 에러
-
-//미등록된 Geometry
-var sample = new Geometry( v2, i2, info2 );
-sample.addVertexShader('aaa')  //미등록객체는 무조건 통과됨
+//none
 ```
 
 [top](#)
-## getVertexCount()
+
+<a name="vertexCount"></a>
+###vertexCount
+
+_field_
+
 
 **description**
 
-Geometry에 정의된 정점의 갯수.
+Field of Geometry
 
-**param**
+**setting**
 
-없음.
+*writable*:false, *enumerable*:false, *configurable*:false
 
-**return**
+**defaultValue**
 
-number - Geometry에 정의된 정점의 갯수.
+none
 
 **sample**
 
 ```javascript
-var cube = world.getScene('lobby').getGeometry('cube');
-var vcount = cube.getVertexCount();
+//none
 ```
 
 [top](#)
-## getTriangleCount()
+
+<a name="uv"></a>
+###uv
+
+_field_
+
 
 **description**
 
-Geometry에 정의된 삼각면의 갯수.
+Field of Geometry
 
-**param**
+**setting**
 
-없음
+*writable*:false, *enumerable*:false, *configurable*:false
 
-**return**
+**defaultValue**
 
-number - Geometry에 정의된 삼각면의 갯수.
+none
 
 **sample**
 
 ```javascript
-var cube = world.getScene('lobby').getGeometry('cube');
-var tcount = cube.getTriangleCount();
+//none
 ```
 
 [top](#)
-## getVolume()
+
+<a name="triangleCount"></a>
+###triangleCount
+
+_field_
+
 
 **description**
 
-x,y,z축 기준의 크기를 배열로 반환함.
+Field of Geometry
 
-**param**
+**setting**
 
-없음
+*writable*:false, *enumerable*:false, *configurable*:false
 
-**return**
+**defaultValue**
 
-TypedArray - [x크기, y크기, z크기] 형태의 배열. 매번 같은 객체를 반환하고 수정해도 반영되지 않는 읽기 전용.
+none
 
 **sample**
 
 ```javascript
-var cube = world.getScene('lobby').getGeometry('cube');
-var sizeX = cube.getVolume()[0];
+//none
 ```
 
 [top](#)
-## removeVertexShader( id:string )
+
+<a name="position"></a>
+###position
+
+_field_
+
 
 **description**
 
-addVertexShader를 통해 등록한 shader를 제거함.
+Field of Geometry
 
-**param**
+**setting**
 
-1. id:string - addVertexShader에서 지정한 id.
+*writable*:false, *enumerable*:false, *configurable*:false
 
-**return**
+**defaultValue**
 
-this - 메서드 체이닝을 위해 자신을 반환함.
+none
 
 **sample**
 
 ```javascript
-var cube = lobby.addGeometry( 'cube', new Geometry( v1, i1 ) );
-cube.addVertexShader('waffle').removeVertexShader('waffle');
+//none
 ```
 
 [top](#)
 
+<a name="normal"></a>
+###normal
+
+_field_
+
+
+**description**
+
+Field of Geometry
+
+**setting**
+
+*writable*:false, *enumerable*:false, *configurable*:false
+
+**defaultValue**
+
+none
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="index"></a>
+###index
+
+_field_
+
+
+**description**
+
+Field of Geometry
+
+**setting**
+
+*writable*:false, *enumerable*:false, *configurable*:false
+
+**defaultValue**
+
+none
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="color"></a>
+###color
+
+_field_
+
+
+**description**
+
+Field of Geometry
+
+**setting**
+
+*writable*:false, *enumerable*:false, *configurable*:false
+
+**defaultValue**
+
+none
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="getMD"></a>
+###getMD()
+
+_static_
+
+
+**description**
+
+해당 클래스를 마크다운 형식으로 문서화하여 출력함
+
+**param**
+
+
+**exception**
+
+none
+
+**return**
+
+string - 클래스에 대한 문서 마크다운
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="getInstance"></a>
+###getInstance(uuid:string)
+
+_static_
+
+
+**description**
+
+uuid 또는 id를 기반으로 인스턴스를 얻어냄
+
+**param**
+
+1. uuid:string
+
+**exception**
+
+undefined.getInstance:u
+
+**return**
+
+Object - 해당되는 인스턴스
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="extend"></a>
+###extend(className:string, constructor:function)
+
+_static_
+
+
+**description**
+
+이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Defineder)를 얻음
+
+**Defineder class의 메소드**
+
+* 각 메서드는 체이닝됨
+* Matrix = MoGL.extend('Matrix', function(){..}).static(..).field(..).build(); 형태로 사용
+* field('x',{value:30}) - 속성을 정의함
+* method('rotate',{value:function(){}}) - 메서드를 정의함
+* constant('normalX',{value:'normalX'}) - 상수를 정의함
+* event('updated',{value:'updated'}) - 이벤트를 정의함
+* static('toString',{value:function(){}}) - 정적메서드를 정의함
+* build() - 입력된 결과를 종합하여 클래스를 생성함
+
+**param**
+
+1. className:string
+2. constructor:function
+
+**exception**
+
+none
+
+**return**
+
+Defineder - 클래스를 정의할 수 있는 생성전용객체
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="error"></a>
+###error(method:string, id:int)
+
+_static_
+
+
+**description**
+
+정적함수에서 표준화된 예외를 처리함(정적함수 내부에서 사용)
+
+**param**
+
+1. method:string
+2. id:int
+
+**exception**
+
+none
+
+**return**
+
+none
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="count"></a>
+###count()
+
+_static_
+
+
+**description**
+
+이 클래스로 부터 만들어져 활성화된 인스턴스의 수
+
+**param**
+
+
+**exception**
+
+none
+
+**return**
+
+int - 활성화된 인스턴스의 수
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
