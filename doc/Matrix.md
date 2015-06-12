@@ -1,304 +1,823 @@
-# Matrix
-* parent : MoGL
-* [Constructor](#constructor)
+#Matrix
+* parent : [MoGL](MoGL.md)
+* [constructor](#constructor)
+
 
 **field**
 
+* [scale](#scale) - Field of Matrix
+* [rotate](#rotate) - Field of Matrix
+* [raw](#raw) - Field of Matrix
+* [position](#position) - Field of Matrix
+* [matrix](#matrix) - Field of Matrix
+
 **method**
-* [matClone](#matclone)
-* [matCopy](#matcopytargetmatrixmatrix)
-* [matIdentity](#matidentity-1)
-* [matMultiply](#matmultiplytargetmatrixmatrix)
-* [matTranslate](#mattranslatexnumberynumberznumber)
-* [matScale](#matscalexnumberynumberznumber)
-* [matRotate](#matrotateradnumber-axisarrayxyz)
-* [matRotateX](#matrotatexradnumber)
-* [matRotateY](#matrotateyradnumber)
-* [matRotateZ](#matrotatezradnumber)
-* [matRotate](#matrotateradnumber-axisarrayxyz)
-* [matPerspective](#matperspectivefovnumberaspectnumbernearnumberfarnumber)
-* [matLookAt](#matlookateyearrayxyzcenterarrayxyzuparrayxyz)
-* [matStr](mat#str)
 
-[top][#]
-## Constructor
+* [matRotateX](#matRotateX) - Method of Matrix
+* [matStr](#matStr) - Method of Matrix
+* [matTranslate](#matTranslate) - Method of Matrix
+* [matRotateZ](#matRotateZ) - Method of Matrix
+* [matCopy](#matCopy) - Method of Matrix
+* [matLookAt](#matLookAt) - Method of Matrix
+* [matScale](#matScale) - Method of Matrix
+* [matIdentity](#matIdentity) - Method of Matrix
+* [matRotateY](#matRotateY) - Method of Matrix
+* [matMultiply](#matMultiply) - Method of Matrix
+* [matRotate](#matRotate) - Method of Matrix
+* [matPerspective](#matPerspective) - Method of Matrix
+* [matClone](#matClone) - Method of Matrix
+* [lookAt](#lookAt) - Method of Matrix
+* [_frustum](#_frustum) - Method of Matrix
 
-**description**
+**static**
 
-1. 행렬연산을 cpu측에서 수행하기 위한 헬퍼객체. 
-2. 생성과 함께 identyty를 실행
-3. this._rowData에 Float32Array형식의 초기 배열이 생김
-4. 4x4형식의 행렬을 다룸
-
-**param**
-
-없음.
-
-**return**
-
-this
-
-**sample**
-```javascript
-var matrix1 = new Matrix()
-var matrix2 = Matrix() // 팩토리로도 생성가능!
-```
+* [getMD](#getMD) - 해당 클래스를 마크다운 형식으로 문서...
+* [getInstance](#getInstance) - uuid 또는 id를 기반으로 인스턴...
+* [extend](#extend) - 이 클래스를 상속하는 자식클래스를 만...
+* [error](#error) - 정적함수에서 표준화된 예외를 처리함(...
+* [count](#count) - 이 클래스로 부터 만들어져 활성화된...
 
 [top](#)
-## matIdentity()
+
+<a name="constructor"></a>
+##Constructor
 
 **description**
 
-본인(this._rowData)를 초기화
+Constructor of Matrix
 
 **param**
 
-없음
 
-**return**
 
-this
+**exception**
 
-**sample**
-```javascript
-var matrix = new Matrix()
-matrix.matIdentity()
-```
-
-[top](#)
-## matClone()
-
-**description**
-
-matrix를 복제
-
-**param**
-
-없음
-
-**return**
-
-복제한 새로운 행렬 객체를 반환
+none
 
 **sample**
+
 ```javascript
-var matrix = new Matrix()
-var cloneMatrix = matrix.matClone() // 새로운 행렬 객체가 반환!
-```
-
-[top](#)
-## matCopy(targetMatrix:Matrix)
-
-**description**
-
-targetMatrix에 matrix를 복사
-
-**param**
-
-1. targetMatrix : 복제대상 매트릭스 객체
-
-**return**
-
-this
-
-**sample**
-```javascript
-var mat1 = new Matrix()
-var mat2 = new Matrix()
-mat1.copy(mat2) // mat1의 _rowData가 mat2 _rowData에 적용, mat1이 반환!
-```
-
-[top](#)
-## matMultiply(targetMatrix:Matrix)
-
-**description**
-자신읜 _rowData와 target Matrix의 _rowData를 곱
-
-**param**
-
-1. targetMatrix : 곱할 matrix 객체
-
-**return**
-
-this
-
-**sample**
-```javascript
-var matrix1 = new Matrix()
-var matrix2 = new Matrix()
-matrix1.matMultiply(matrix2) // matrix1에 곰셈결과가 반영된체 반환
-```
-
-[top](#)
-## matTranslate(x:Number,y:Number,z:Number)
-
-**description**
-자신의 _rowData를 x, y, z 방향으로 평행이동 시킴
-
-**param**
-
-1. x : x 평행이동 값
-2. y : y 평행이동 값
-3. z : z 평행이동 값
-
-**return**
-
-this
-
-**sample**
-```javascript
-var matrix = new Matrix()
-matrix.matTranslate(10,20,30) // matrix에 결과값이 반영된체 반환
-```
-
-[top](#)
-## matScale(x:Number,y:Number,z:Number)
-
-**description**
-x,y,z축 방향으로 행렬을 확장시킴
-
-**param**
-
-1. x : x 확대 값
-2. y : y 확대 값
-3. z : z 확대 값
-
-**return**
-
-this
-
-**sample**
-```javascript
-var matrix = new Matrix()
-matrix.matScale(10,20,30) // matrix에 결과값이 반영된체 반환
-```
-
-[top](#)
-## matRotateX(rad:Number)
-
-**description**
-x축 방향으로 행렬을 회전 시킨 행렬을 반환
-
-**param**
-
-1. rad : 회전 라디안 값
-
-**return**
-
-this
-
-**sample**
-```javascript
-var matrix = new Matrix()
-matrix.matRotateX(0.1) // matrix에 결과값이 반영된체 반환
-```
-
-[top](#)
-## matRotateY(rad:Number)
-
-**description**
-y축 방향으로 행렬을 회전 시킨 행렬을 반환
-
-**param**
-
-1. rad : 회전 라디안 값
-
-**return**
-
-this
-
-**sample**
-```javascript
-var matrix = new Matrix()
-matrix.matRotateY(0.1) // matrix에 결과값이 반영된체 반환
-```
-
-[top](#)
-## matRotateZ(rad:Number)
-
-**description**
-z축 방향으로 행렬을 회전 시킨 행렬을 반환
-
-**param**
-
-1. rad : 회전 라디안 값
-
-**return**
-
-this
-
-**sample**
-```javascript
-var matrix = new Matrix()
-matrix.matRotateZ(0.1) // matrix에 결과값이 반영된체 반환
-```
-
-[top](#)
-## matRotate(rad:Number, axis:Array[x,y,z])
-
-**description**
-axis를 기준으로 한 증분회전
-
-**param**
-
-1. rad : 회전 라디안 값
-2. axis : 기준축
-
-**return**
-
-this
-
-**sample**
-```javascript
-var matrix = new Matrix()
-matrix.matRotate(0.1,[1,2,3]) // matrix에 결과값이 반영된체 반환
-```
-
-[top](#)
-## matPerspective(fov:number,aspect::number,near::number,far:number)
-
-**description**
-퍼스펙티브 행렬을 생성
-
-**return**
-
-this
-
-**param**
-
-1. fov : fov
-2. aspect : width/height
-3. near : 절단면의 최소z (0<값)
-4. far : 절단면의 최대z
-
-**sample**
-```javascript
-var matrix = new Matrix()
-matrix.matPerspective(45, 2/1,0.1,100000) // matrix에 결과값이 반영된체 반환
-```
-
-[top](#)
-## matLookAt(eye:Array[x,y,z],center:Array[x,y,z],up:Array[x,y,z])
-
-**description**
-eye 벡터가 center 벡터를 바라보는 회전 행렬 생성
-
-**param**
-
-1. eye : 대상객체의 포지션
-2. center : 바라볼 포지션
-3. up : 업벡터
-
-
-**return**
-
-this
-
-**sample**
-```javascript
-var matrix = new Matrix()
-matrix.matLookAt([100,100,100],[0,0,0],[0,1,0]) // matrix에 결과값이 반영된체 반환
+//none
 ```
 
 [top](#)
 
+<a name="scale"></a>
+###scale
+
+_field_
+
+
+**description**
+
+Field of Matrix
+
+**setting**
+
+*writable*:true, *enumerable*:false, *configurable*:false
+
+**defaultValue**
+
+none
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="rotate"></a>
+###rotate
+
+_field_
+
+
+**description**
+
+Field of Matrix
+
+**setting**
+
+*writable*:true, *enumerable*:false, *configurable*:false
+
+**defaultValue**
+
+none
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="raw"></a>
+###raw
+
+_field_
+
+
+**description**
+
+Field of Matrix
+
+**setting**
+
+*writable*:false, *enumerable*:false, *configurable*:false
+
+**defaultValue**
+
+none
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="position"></a>
+###position
+
+_field_
+
+
+**description**
+
+Field of Matrix
+
+**setting**
+
+*writable*:true, *enumerable*:false, *configurable*:false
+
+**defaultValue**
+
+none
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="matrix"></a>
+###matrix
+
+_field_
+
+
+**description**
+
+Field of Matrix
+
+**setting**
+
+*writable*:false, *enumerable*:false, *configurable*:false
+
+**defaultValue**
+
+none
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="matRotateX"></a>
+###matRotateX(rad)
+
+_method_
+
+
+**description**
+
+Method of Matrix
+
+**param**
+
+1. rad
+
+**exception**
+
+none
+
+**return**
+
+?
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="matStr"></a>
+###matStr()
+
+_method_
+
+
+**description**
+
+Method of Matrix
+
+**param**
+
+none
+
+**exception**
+
+none
+
+**return**
+
+?
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="matTranslate"></a>
+###matTranslate(x, y, z)
+
+_method_
+
+
+**description**
+
+Method of Matrix
+
+**param**
+
+1. x
+2. y
+3. z
+
+**exception**
+
+none
+
+**return**
+
+?
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="matRotateZ"></a>
+###matRotateZ(rad)
+
+_method_
+
+
+**description**
+
+Method of Matrix
+
+**param**
+
+1. rad
+
+**exception**
+
+none
+
+**return**
+
+?
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="matCopy"></a>
+###matCopy(t)
+
+_method_
+
+
+**description**
+
+Method of Matrix
+
+**param**
+
+1. t
+
+**exception**
+
+none
+
+**return**
+
+?
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="matLookAt"></a>
+###matLookAt(eye, center, up)
+
+_method_
+
+
+**description**
+
+Method of Matrix
+
+**param**
+
+1. eye
+2. center
+3. up
+
+**exception**
+
+none
+
+**return**
+
+?
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="matScale"></a>
+###matScale(x, y, z)
+
+_method_
+
+
+**description**
+
+Method of Matrix
+
+**param**
+
+1. x
+2. y
+3. z
+
+**exception**
+
+none
+
+**return**
+
+?
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="matIdentity"></a>
+###matIdentity()
+
+_method_
+
+
+**description**
+
+Method of Matrix
+
+**param**
+
+none
+
+**exception**
+
+none
+
+**return**
+
+?
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="matRotateY"></a>
+###matRotateY(rad)
+
+_method_
+
+
+**description**
+
+Method of Matrix
+
+**param**
+
+1. rad
+
+**exception**
+
+none
+
+**return**
+
+?
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="matMultiply"></a>
+###matMultiply(t)
+
+_method_
+
+
+**description**
+
+Method of Matrix
+
+**param**
+
+1. t
+
+**exception**
+
+none
+
+**return**
+
+?
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="matRotate"></a>
+###matRotate(rad, axis)
+
+_method_
+
+
+**description**
+
+Method of Matrix
+
+**param**
+
+1. rad
+2. axis
+
+**exception**
+
+none
+
+**return**
+
+?
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="matPerspective"></a>
+###matPerspective(fov, aspect, near, far)
+
+_method_
+
+
+**description**
+
+Method of Matrix
+
+**param**
+
+1. fov
+2. aspect
+3. near
+4. far
+
+**exception**
+
+none
+
+**return**
+
+?
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="matClone"></a>
+###matClone()
+
+_method_
+
+
+**description**
+
+Method of Matrix
+
+**param**
+
+none
+
+**exception**
+
+none
+
+**return**
+
+?
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="lookAt"></a>
+###lookAt(x, y, z)
+
+_method_
+
+
+**description**
+
+Method of Matrix
+
+**param**
+
+1. x
+2. y
+3. z
+
+**exception**
+
+none
+
+**return**
+
+?
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="_frustum"></a>
+###_frustum(a, b, c, d, e, g)
+
+_method_
+
+
+**description**
+
+Method of Matrix
+
+**param**
+
+1. a
+2. b
+3. c
+4. d
+5. e
+6. g
+
+**exception**
+
+none
+
+**return**
+
+?
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="getMD"></a>
+###getMD()
+
+_static_
+
+
+**description**
+
+해당 클래스를 마크다운 형식으로 문서화하여 출력함
+
+**param**
+
+none
+
+**exception**
+
+none
+
+**return**
+
+string - 클래스에 대한 문서 마크다운
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="getInstance"></a>
+###getInstance(uuid:string)
+
+_static_
+
+
+**description**
+
+uuid 또는 id를 기반으로 인스턴스를 얻어냄
+
+**param**
+
+1. uuid:string
+
+**exception**
+
+undefined.getInstance:u
+
+**return**
+
+Object - 해당되는 인스턴스
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="extend"></a>
+###extend(className:string, constructor:function)
+
+_static_
+
+
+**description**
+
+이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Defineder)를 얻음
+
+**Defineder class의 메소드**
+
+* 각 메서드는 체이닝됨
+* Matrix = MoGL.extend('Matrix', function(){..}).static(..).field(..).build(); 형태로 사용
+* field('x',{value:30}) - 속성을 정의함
+* method('rotate',{value:function(){}}) - 메서드를 정의함
+* constant('normalX',{value:'normalX'}) - 상수를 정의함
+* event('updated',{value:'updated'}) - 이벤트를 정의함
+* static('toString',{value:function(){}}) - 정적메서드를 정의함
+* build() - 입력된 결과를 종합하여 클래스를 생성함
+
+**param**
+
+1. className:string
+2. constructor:function
+
+**exception**
+
+none
+
+**return**
+
+Defineder - 클래스를 정의할 수 있는 생성전용객체
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="error"></a>
+###error(method:string, id:int)
+
+_static_
+
+
+**description**
+
+정적함수에서 표준화된 예외를 처리함(정적함수 내부에서 사용)
+
+**param**
+
+1. method:string
+2. id:int
+
+**exception**
+
+none
+
+**return**
+
+none
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="count"></a>
+###count()
+
+_static_
+
+
+**description**
+
+이 클래스로 부터 만들어져 활성화된 인스턴스의 수
+
+**param**
+
+none
+
+**exception**
+
+none
+
+**return**
+
+int - 활성화된 인스턴스의 수
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
