@@ -1,13 +1,16 @@
 var MoGL = (function() {
     var Defineder, build, func, keys, val, init, param, checker,
-        MoGL, idProp, destroy, totalCount, error;
+        MoGL, idProp, destroy, classGet, totalCount, error;
     checker = {};
     param = function(v){
         var i;
         v = Function.prototype.toString.call(v),
-        v = v.substring(8, v.indexOf('(')).trim().split(','),
+        v = v.substring(v.indexOf('(')+1, v.indexOf(')')).trim().split(','),
         i = v.length;
-        while (i--) v[i] = v[i].trim();
+        if (i) {
+            while (i--) v[i] = v[i].trim();
+            return v;
+        }
     },
     Defineder = function(k, v, parent, check){
         var p, i;
@@ -214,6 +217,14 @@ var MoGL = (function() {
             counter[this.classId]--,//클래스별인스턴스감소
             total--;//전체인스턴스감소
         },
+        classGet = function classGet(context) {
+            var i;
+            if (!context) context = {};
+            for (k in classes) {
+                if (classes.hasOwnProperty(k)) context[k] = classes[k].cls;
+            }
+            return context;
+        },
         totalCount = function totalCount() {
             return total;
         },
@@ -293,20 +304,20 @@ var MoGL = (function() {
             if (typeof v == 'function') {
                 if (!isdoc) this[type][k] = {value:v},
                 this._info[type][k] = {
-                    description:(type == '_static' ? 'Static method' : 'Method') + ' of ' + this._construct.value.name.name,
+                    description:(type == '_static' ? 'Static method' : 'Method') + ' of ' + this._construct.value.name,
                     param:param(v),
                     ret:'?'
                 };
             } else {
                 if (!isdoc) {
-                    this[type][k] = {value:v.value}
-                    this._info[type][k] = {
-                        description:v.description,
-                        param:v.param,
-                        ret:v.ret,
-                        sample:v.sample
-                    };
+                    this[type][k] = {value:v.value};
                 }
+                this._info[type][k] = {
+                    description:v.description,
+                    param:v.param || (!isdoc ? param(v.value) : ''),
+                    ret:v.ret,
+                    sample:v.sample
+                };
             }
             return this;
         }};
@@ -340,11 +351,12 @@ var MoGL = (function() {
                 }
                 this._info[type][k] = {
                     type:v.type,
-                    description:v.description,
+                    description:v.description || (type == '_constant' ? 'Const' : type == '_event' ? 'Event' : 'Field') + ' of ' + this._construct.value.name,
                     defaultValue:v.defaultValue,
                     sample:v.sample
                 };
             }
+            if (!isdoc && 'value' in this[type][k]) this._info[type][k].value = this[type][k].value;
             return this;
         }};
     },
@@ -652,14 +664,7 @@ var MoGL = (function() {
                 "MoGL.classes(window);",
                 "var scene = new Scene();"
             ],
-            value:function classes(context) {
-                var i;
-                if (!context) context = {};
-                for (k in classes) {
-                    if (classes.hasOwnProperty(k)) context[k] = classes[k].cls;
-                }
-                return context;
-            }
+            value:classGet
         })
         .static('totalCount', {
             description:'전체 인스턴스의 수를 반환함',

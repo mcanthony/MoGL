@@ -38,6 +38,7 @@
 <script>
 var k, str;
 str = '<select id="target" style="font-size:18px">';
+console.log(MoGL.classes());
 for(k in MoGL.classes()){
     str += '<option value="'+k+'">'+k+'</option>';
 }
@@ -45,6 +46,7 @@ document.getElementById('s').innerHTML = str + '</select>';
 document.getElementById('target').onchange = function(){
     document.getElementById('doc').value = window[this.value].getMD();
 };
+document.getElementById('doc').value = window.MoGL.getMD();
 
 </script>
 </body>

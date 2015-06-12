@@ -10,7 +10,7 @@ var Mesh = (function () {
         material : material,
         culling : culling
     });
-    return Matrix.extend('Mesh', function(geometry, material) {
+    return Matrix.extend('Mesh', function Mesh(geometry, material) {
         this.geometry = geometry;
         this.material = material;
     })
