@@ -56,9 +56,7 @@
 </div>
 <script>
     'use strict';
-//        for(var k in World){
-//            console.log(k, World[k])
-//        }
+
     var world = new World('canvas');
     var scene = new Scene();
     var divCurrentFPS = document.getElementById('currentFPS');
@@ -156,6 +154,7 @@
 
 
         }
+
 //        monkey = new Mesh(Primitive.sphere(), material);
 //        scene.addChild(monkey);
 ////        monkey.setScale(3, 3, 3)
@@ -173,49 +172,21 @@
         var prevTime = 0;
         var sum = 0, count = 1;
 
-        world.addEventListener(World.renderBefore, function addRenderBefore(currTime) {
-
-            var currentFPS = 1000 / ( currTime - prevTime );
-            prevTime = currTime;
-
-
-            count++
-            divCurrentFPS.textContent = currentFPS.toFixed(2);
-            divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
-
-            var i = meshes.length;
-
-            var mesh;
-
-            while (i--) {
-                mesh = meshes[i];
-                mesh.rotateX += 0.05;
-                mesh.rotateY += 0.05;
-                mesh.rotateZ += 0.05;
-            }
-            camera.x = Math.sin(count / 50) * 50
-            camera.y = Math.cos(count / 100) * 50
-            camera.z = Math.cos(count / 100) * 50 + Math.sin(count / 100) * 50
-            camera.lookAt(0, 0, 0);
-        })
-
-        world.start()
-
-//        function aa() {
-//            var currTime = Date.now()
+//        world.addEventListener(World.renderBefore, function addRenderBefore(currTime) {
 //
 //            var currentFPS = 1000 / ( currTime - prevTime );
 //            prevTime = currTime;
+//
 //
 //            count++
 //            divCurrentFPS.textContent = currentFPS.toFixed(2);
 //            divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
 //
-//            var i = 0;
-//            var j = meshes.length;
+//            var i = meshes.length;
+//
 //            var mesh;
 //
-//            for (; i < j; i++) {
+//            while (i--) {
 //                mesh = meshes[i];
 //                mesh.rotateX += 0.05;
 //                mesh.rotateY += 0.05;
@@ -225,10 +196,40 @@
 //            camera.y = Math.cos(count / 100) * 50
 //            camera.z = Math.cos(count / 100) * 50 + Math.sin(count / 100) * 50
 //            camera.lookAt(0, 0, 0);
-//            world.render()
-//        }
+//        })
 //
-//        setInterval(aa, 16)
+//        world.start()
+
+        function aa(currTime) {
+
+
+            var currentFPS = 1000 / ( currTime - prevTime );
+            prevTime = currTime;
+
+            count++
+            divCurrentFPS.textContent = currentFPS.toFixed(2);
+            divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
+
+            var i = meshes.length;
+            var mesh;
+
+            while(i--){
+                mesh = meshes[i];
+                mesh.rotateX += 0.05;
+                mesh.rotateY += 0.05;
+                mesh.rotateZ += 0.05;
+            }
+            camera.x = Math.sin(count / 50) * 50
+            camera.y = Math.cos(count / 100) * 50
+            camera.z = Math.cos(count / 100) * 50 + Math.sin(count / 100) * 50
+            camera.lookAt(0, 0, 0);
+            requestAnimationFrame(aa)
+        }
+
+        requestAnimationFrame(aa)
+
+
+        world.start()
     }
 
 </script>
