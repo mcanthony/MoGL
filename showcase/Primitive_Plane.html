@@ -24,17 +24,19 @@
 <div id="result"></div>
 <div id="test"></div>
 
+<script src="../src/$.js"></script>
 <script src="../src/MoGL.js"></script>
 <script src="../src/BlendMode.js"></script>
 <script src="../src/Filter.js"></script>
-<script src="../src/Shading.js"></script>
+<script src="../src/Primitive.js"></script>
 <script src="../src/Vertex.js"></script>
+<script src="../src/Shading.js"></script>
 <script src="../src/VertexShaderFunctions.js"></script>
+<script src="../src/Shader.js"></script>
 <script src="../src/Matrix.js"></script>
+<script src="../src/Texture.js"></script>
 <script src="../src/Geometry.js"></script>
 <script src="../src/Material.js"></script>
-<script src="../src/Texture.js"></script>
-<script src="../src/Primitive.js"></script>
 <script src="../src/Mesh.js"></script>
 <script src="../src/Group.js"></script>
 <script src="../src/Camera.js"></script>
@@ -43,6 +45,7 @@
 <script src="http://js.bsapi.co/test/"></script>
 <script>
 </script>
+<img src="../asset/geodesicTest.jpg" id="testIMG2" style="position: absolute;top:0px; display:none" width="256">
 <canvas id='plane1_1'></canvas>
 <script>
 
@@ -53,9 +56,11 @@
 
     world.setAutoSize(1)
     world.addScene(scene);
-    scene.addChild('camera', camera);
-    scene.addTexture('texture', '../asset/geodesicTest.jpg');
-    testMat.addTexture(Texture.diffuse, 'texture')
+    scene.addChild(camera);
+    var texture = new Texture
+    texture.img = document.getElementById('testIMG2')
+    scene.addTexture(texture);
+    testMat.addTexture(Texture.diffuse, texture)
 
     var plane1_1 = Primitive.plane()
     var plane2_2 = Primitive.plane(2, 2)
@@ -68,11 +73,11 @@
     var plane10_10Mesh = new Mesh(plane10_10, testMat);
 
 
-    testMat.setWireFrame(1)
-    scene.addChild('plane1_1Mesh', plane1_1Mesh);
-    scene.addChild('plane2_2Mesh', plane2_2Mesh);
-    scene.addChild('plane2_3Mesh', plane2_3Mesh);
-    scene.addChild('plane10_10Mesh', plane10_10Mesh);
+    testMat.wireFrame = 1
+    scene.addChild(plane1_1Mesh);
+    scene.addChild(plane2_2Mesh);
+    scene.addChild(plane2_3Mesh);
+    scene.addChild(plane10_10Mesh);
 
 
     plane1_1Mesh.rotateX = Math.PI / 2
@@ -87,9 +92,9 @@
     plane1_1Mesh.y = plane2_2Mesh.y = plane2_3Mesh.y = plane10_10Mesh.y = -1
 
     var testMesh = new Mesh(Primitive.plane(), testMat)
-    scene.addChild('testMesh', testMesh)
+    scene.addChild(testMesh)
     testMesh.rotateX = Math.PI / 2
-    testMesh.setScale(2, 2, 2)
+    testMesh.scale = [2, 2, 2]
     testMesh.y = 1
 
 
@@ -99,43 +104,33 @@
     var shadingParams = {
         WireFrame: true,
         plane: function () {
-            scene.removeChild('testMesh')
-            testMesh = new Mesh(Primitive.plane(), testMat)
-            scene.addChild('testMesh', testMesh)
+            testMesh.geometry = Primitive.plane()
             testMesh.rotateX = Math.PI / 2
-            testMesh.setScale(2, 2, 2)
+            testMesh.scale = [2, 2, 2]
             testMesh.y = 1
         },
         plane2_2: function () {
-            scene.removeChild('testMesh')
-            testMesh = new Mesh(Primitive.plane(2, 2), testMat)
-            scene.addChild('testMesh', testMesh)
+            testMesh.geometry = Primitive.plane(2, 2)
             testMesh.rotateX = Math.PI / 2
-            testMesh.setScale(2, 2, 2)
+            testMesh.scale = [2, 2, 2]
             testMesh.y = 1
         },
         plane3_3: function () {
-            scene.removeChild('testMesh')
-            testMesh = new Mesh(Primitive.plane(3, 3), testMat)
-            scene.addChild('testMesh', testMesh)
+            testMesh.geometry = Primitive.plane(3, 3)
             testMesh.rotateX = Math.PI / 2
-            testMesh.setScale(2, 2, 2)
+            testMesh.scale = [2, 2, 2]
             testMesh.y = 1
         },
         plane10_10: function () {
-            scene.removeChild('testMesh')
-            testMesh = new Mesh(Primitive.plane(10, 10), testMat)
-            scene.addChild('testMesh', testMesh)
+            testMesh.geometry = Primitive.plane(10, 10)
             testMesh.rotateX = Math.PI / 2
-            testMesh.setScale(2, 2, 2)
+            testMesh.scale = [2, 2, 2]
             testMesh.y = 1
         },
         plane6_2: function () {
-            scene.removeChild('testMesh')
-            testMesh = new Mesh(Primitive.plane(6, 2), testMat)
-            scene.addChild('testMesh', testMesh)
+            testMesh.geometry = Primitive.plane(6, 2)
             testMesh.rotateX = Math.PI / 2
-            testMesh.setScale(2, 2, 2)
+            testMesh.scale = [2, 2, 2]
             testMesh.y = 1
         }
     };
@@ -148,6 +143,20 @@
     shading.add(shadingParams, 'plane6_2');
     shading.open()
     world.start()
+
+    world.addEventListener(World.renderBefore, function () {
+        plane1_1Mesh.rotateY += 0.01
+        plane2_2Mesh.rotateY += 0.01
+        plane2_3Mesh.rotateY += 0.01
+        plane10_10Mesh.rotateY += 0.01
+        plane1_1Mesh.rotateX += 0.01
+        plane2_2Mesh.rotateX += 0.01
+        plane2_3Mesh.rotateX += 0.01
+        plane10_10Mesh.rotateX += 0.01
+
+        testMesh.rotateY += 0.01
+        testMesh.rotateX += 0.01
+    })
 </script>
 <hr/>
 

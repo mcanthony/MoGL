@@ -58,6 +58,7 @@ var Mesh = (function () {
         set:function geometrySet(v) {
             if (v instanceof Geometry) {
                 geometry[this] = v;
+                this.dispatch('changed')
             } else {
                 this.error(0);
             }
@@ -76,6 +77,7 @@ var Mesh = (function () {
         set:function materialSet(v) {
             if (v instanceof Material) {
                 material[this] = v;
+                this.dispatch('changed')
             } else {
                 this.error(0);
             }
@@ -84,5 +86,6 @@ var Mesh = (function () {
     .constant('cullingNone', 'cullingNone')
     .constant('cullingFront', 'cullingFront')
     .constant('cullingBack', 'cullingBack')
+    .event('changed', 'changed')
     .build();
 })();

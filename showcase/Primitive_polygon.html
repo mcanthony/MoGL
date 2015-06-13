@@ -22,17 +22,21 @@
 <div id="stage"></div>
 <div id="result"></div>
 <div id="test"></div>
+<img src="../asset/honey1.png" id="testIMG2" style="position: absolute;top:0px; display:none" width="256">
 <canvas id="polygon2"></canvas>
+<script src="../src/$.js"></script>
 <script src="../src/MoGL.js"></script>
 <script src="../src/BlendMode.js"></script>
 <script src="../src/Filter.js"></script>
+<script src="../src/Primitive.js"></script>
 <script src="../src/Vertex.js"></script>
+<script src="../src/Shading.js"></script>
 <script src="../src/VertexShaderFunctions.js"></script>
+<script src="../src/Shader.js"></script>
 <script src="../src/Matrix.js"></script>
+<script src="../src/Texture.js"></script>
 <script src="../src/Geometry.js"></script>
 <script src="../src/Material.js"></script>
-<script src="../src/Texture.js"></script>
-<script src="../src/Primitive.js"></script>
 <script src="../src/Mesh.js"></script>
 <script src="../src/Group.js"></script>
 <script src="../src/Camera.js"></script>
@@ -43,19 +47,25 @@
 
     var world = new World('polygon2'), scene = new Scene(), camera = new Camera()
     world.addScene(scene);
-    scene.addChild('camera', camera);
-    scene.addTexture('texture1', '../asset/honey1.png');
+    scene.addChild(camera);
+    var texture = new Texture()
+    texture.img = document.getElementById('testIMG2')
     world.setAutoSize(1)
 
     var prevN = 3
+    var newMesh;
+
+    var mat = new Material('#FFF')
+    newMesh = new Mesh(Primitive.polygon(3), mat)
+    mat.addTexture(Texture.diffuse, texture).wireFrame = 1
+
+    scene.addChild(newMesh);
+
+    newMesh.z = -5
     var setMesh = function (n) {
-        var polygon, newMesh;
-        polygon = Primitive.polygon(n),
-                newMesh = new Mesh(polygon, new Material().addTexture(Texture.diffuse, 'texture1').setWireFrame(1));
-        scene.removeChild('polygon' + prevN);
-        scene.addChild('polygon' + n, newMesh);
+
+        newMesh.geometry = Primitive.polygon(n)
         prevN = n
-        newMesh.z = -5
     };
 
     var start = 3, end = 30, intervalId;

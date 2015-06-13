@@ -135,8 +135,11 @@ var Scene = (function () {
                 }
             }
         })
+        v.addEventListener(Mesh.changed,function(){
+            p2.mesh.push(v)
+        })
         mat.dispatch(Material.load,mat)
-    
+
         if(childrenArray[this].indexOf(v)==-1){
             childrenArray[this].push(v)
         }
