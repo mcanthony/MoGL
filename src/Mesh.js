@@ -11,20 +11,12 @@ var Mesh = (function () {
         culling : culling
     });
     return Matrix.extend('Mesh', {
-        description: [
-            "±âÇÏ±¸Á¶¿Í ÀçÁúÀ» Æ÷ÇÔÇÒ ¼ö ÀÖ´Â ÇÏ³ªÀÇ ·»´õ¸µ ´ÜÀ§ÀÎ Mesh¸¦ »ı¼ºÇÔ.",
-            "* id¸¦ ÀÎÀÚ·Î ÁöÁ¤ÇÏ¸é [Scene](Scene.md)¿¡ [addChild](Scene.md#addchild-idstring-meshmesh-)ÇÏ´Â ¼ø°£ id¸¦ ¹ÙÀÎµùÇÏ¸ç ½ÇÆĞÇÏ¸é µî·ÏµÇÁö ¾ÊÀ½.",
-            "* °´Ã¼¸¦ ÀÎÀÚ·Î ÁöÁ¤ÇÏ¸é [Scene](Scene.md)¿¡ [addChild](Scene.md#addchild-idstring-meshmesh-)ÇÏ´Â ¼ø°£ Mesh³»ºÎÀÇ [Geometry](Geometry.md)³ª [Material](Material.md)ÀÌ ÀÓÀÇÀÇ id·Î ÀÚµ¿µî·ÏµÇ¸ç, shader Id°¡ Á¸ÀçÇÏÁö ¾ÊÀ¸¸é ¿¹¿Ü°¡ ¹ß»ıÇÔ( [addChild](Scene.md#addchild-idstring-meshmesh-) ÂüÁ¶ )"
-        ],
+        description: "ê¸°í•˜êµ¬ì¡°ì™€ ì¬ì§ˆì„ í¬í•¨í•  ìˆ˜ ìˆëŠ” í•˜ë‚˜ì˜ ë Œë”ë§ ë‹¨ìœ„ì¸ Meshë¥¼ ìƒì„±í•¨.",
         param: [
-            "1. geometry:* - ±âÇÏ±¸Á¶Ã¼¸¦ ¹ŞÀ¸¸ç ´ÙÀ½°ú °°Àº Çü½ÄÀÌ ¿Ã ¼ö ÀÖÀ½.",
-            "   * string - Mesh°¡ µî·ÏµÉ [Scene](Scene.md)¿¡ ÀÌ¹Ì µî·ÏµÇ¾îÀÖ´Â [Geometry](Geometry.md)ÀÇ id¸¦ ÁöÁ¤ÇÔ.",
-            "   * [Geometry](Geometry.md) - Á÷Á¢ [Geometry](Geometry.md)°´Ã¼¸¦ ÁöÁ¤ÇÔ.",
-            "   * null - null·Î ÁöÁ¤µÇ¸é [Scene](Scene.md)ÀÇ ·»´õ¸µ ´ë»ó¿¡¼­ Á¦¿ÜµÊ.",
-            "2. material:* - ÇØ´ç ±âÇÏ±¸Á¶¿¡ Àû¿ëÇÒ ÀçÁúÀ» ¹ŞÀ¸¸ç ´ÙÀ½°ú °°Àº Çü½ÄÀÌ ¿Ã ¼ö ÀÖÀ½.",
-            "   * string - Mesh°¡ µî·ÏµÉ [Scene](Scene.md)¿¡ ÀÌ¹Ì µî·ÏµÇ¾îÀÖ´Â [Material](Material.md)ÀÇ id¸¦ ÁöÁ¤ÇÔ.",
-            "   * [Material](Material.md) - Á÷Á¢ [Material](Material.md) °´Ã¼¸¦ ÁöÁ¤ÇÔ.",
-            "   * null - null·Î ÁöÁ¤µÇ¸é [Scene](Scene.md)ÀÇ ·»´õ¸µ ´ë»ó¿¡¼­ Á¦¿ÜµÊ."
+            "1. geometry:* - ê¸°í•˜êµ¬ì¡°ì²´ë¥¼ ë°›ìœ¼ë©° ë‹¤ìŒê³¼ ê°™ì€ í˜•ì‹ì´ ì˜¬ ìˆ˜ ìˆìŒ.",
+            "   * [Geometry](Geometry.md) - ì§ì ‘ [Geometry](Geometry.md)ê°ì²´ë¥¼ ì§€ì •í•¨.",
+            "2. material:* - í•´ë‹¹ ê¸°í•˜êµ¬ì¡°ì— ì ìš©í•  ì¬ì§ˆì„ ë°›ìœ¼ë©° ë‹¤ìŒê³¼ ê°™ì€ í˜•ì‹ì´ ì˜¬ ìˆ˜ ìˆìŒ.",
+            "   * [Material](Material.md) - ì§ì ‘ [Material](Material.md) ê°ì²´ë¥¼ ì§€ì •í•¨.",
         ],
         sample: [
             "var mesh1 = new Mesh(",
@@ -32,10 +24,10 @@ var Mesh = (function () {
             "   new Material('#f00')",
             ");",
             "",
-            "// ¾À¿¡ µî·ÏµÈ Geometry, Material »ç¿ë",
+            "// ì”¬ì— ë“±ë¡ëœ Geometry, Material ì‚¬ìš©",
             "var mesh2 = new Mesh( scene.getGeometry(geometryID), scene.getMaterial(materialID) )",
             "",
-            "//ÆÑÅä¸®ÇÔ¼ö·Îµµ »ç¿ë°¡´É",
+            "//íŒ©í† ë¦¬í•¨ìˆ˜ë¡œë„ ì‚¬ìš©ê°€ëŠ¥",
             "var mesh3 = Mesh( scene.getGeometry(geometryID), scene.getMaterial(materialID) );"
         ],
         value:function Mesh(geometry, material) {
@@ -54,12 +46,12 @@ var Mesh = (function () {
         }
     })
     .field('geometry', {
-        description: "ÀÌ MeshÀÇ ±âÇÏ±¸Á¶ Á¤º¸¸¦ °¡Áö´Â [Geometry](Geometry.md) °´Ã¼",
+        description: "ì´ Meshì˜ ê¸°í•˜êµ¬ì¡° ì •ë³´ë¥¼ ê°€ì§€ëŠ” [Geometry](Geometry.md) ê°ì²´",
         sample: [
-            "// ¾À¿¡ µî·ÏµÈ ±âÇÏ±¸Á¶·Î ±³Ã¼ÇÒ¼ö ÀÖÀ½ - set",
+            "// ì”¬ì— ë“±ë¡ëœ ê¸°í•˜êµ¬ì¡°ë¡œ êµì²´í• ìˆ˜ ìˆìŒ - set",
             "mesh1.geometry = scene.getGeometry(geometryID);",
             "",
-            "// ´Ù¸¥ Mesh¿¡ ±âÇÏ±¸Á¶ °´Ã¼¸¦ ¾Ë·ÁÁÙ¼ö ÀÖÀ½ - get",
+            "// ë‹¤ë¥¸ Meshì— ê¸°í•˜êµ¬ì¡° ê°ì²´ë¥¼ ì•Œë ¤ì¤„ìˆ˜ ìˆìŒ - get",
             "mesh2.geometry = mesh1.geometry;"
         ],
         get:$getter(geometry),
@@ -72,12 +64,12 @@ var Mesh = (function () {
         }
     })
     .field('material', {
-        description: "ÀÌ MeshÀÇ ÀçÁúÀ» Ç¥ÇöÇÏ´Â [Material](Material.md) °´Ã¼",
+        description: "ì´ Meshì˜ ì¬ì§ˆì„ í‘œí˜„í•˜ëŠ” [Material](Material.md) ê°ì²´",
         sample: [
-            "// ¾À¿¡ µî·ÏµÈ ÀçÁú·Î ±³Ã¼ÇÒ¼ö ÀÖÀ½ - set",
+            "// ì”¬ì— ë“±ë¡ëœ ì¬ì§ˆë¡œ êµì²´í• ìˆ˜ ìˆìŒ - set",
             "mesh1.material = scene.getMaterial(materialID);",
             "",
-            "// ´Ù¸¥ Mesh¿¡ ÀçÁú °´Ã¼¸¦ ¾Ë·ÁÁÙ¼ö ÀÖÀ½ - get",
+            "// ë‹¤ë¥¸ Meshì— ì¬ì§ˆ ê°ì²´ë¥¼ ì•Œë ¤ì¤„ìˆ˜ ìˆìŒ - get",
             "mesh2.material = mesh1.material;"
         ],
         get:$getter(material),
