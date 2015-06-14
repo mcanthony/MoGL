@@ -236,9 +236,14 @@ $md = function(classes){
                 md[md.length] = k.description;
                 md[md.length] = '\n**param**\n';
                 if (k.param != 'none' && n) {
-                    
                     for(m = 0; m < n ; m++){
-                        if (l[m].trim()) md[md.length] = (m + 1) + '. ' + l[m].trim();
+                        if (l[m] = l[m].trim()){
+                            if (l[m].charAt(0) == '*' || /[0-9]/.test(l[m].charAt(0))) {
+                                md[md.length] = '    ' + l[m];
+                            } else {
+                                md[md.length] = (m + 1) + '. ' + l[m];
+                            }
+                        }
                     }
                 } else {
                     md[md.length] = 'none';
