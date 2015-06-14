@@ -226,7 +226,7 @@ $md = function(classes){
                     o = [];
                     l = k.param.split('\n');
                     for(m = 0, n = l.length; m < n ; m++){
-                        if(l[m].charAt(0) != '*'){
+                        if(l[m].charAt(0) != '*' || /[0-9]/.test(l[m].charAt(0))){
                             o.push(l[m].split('-')[0].trim());
                         }
                     }
