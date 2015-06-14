@@ -110,13 +110,29 @@ var Material = (function () {
         ],
         param:[
             'type:string - 해당 텍스쳐가 어떠한 타입에 포함될 것인가를 결정함. 다음의 값이 올 수 있음.',
+                "* [Texture.diffuse](Texture.md#diffuse) or 'diffuse' - 디퓨즈 맵으로 등록함.",
+                "* [Texture.specular](Texture.md#specular) or 'specular' - 스페큘러 맵으로 등록함.",
+                "* [Texture.diffuseWrap](Texture.md#diffusewrap) or 'diffuseWrap' - 디퓨즈랩 맵으로 등록함.",
+                "* [Texture.normal](Texture.md#normal) or 'normal' - 노말 맵으로 등록함.",
+                "* [Texture.specularNormal](Texture.md#specularNormal) or 'diffuse' - 스페큘러노말 맵으로 등록함.",
             'textureId:string - 최종 포함될 [Scene](Scene.md)에 등록된 texture의 id.',
             '?index:int - 중첩되는 이미지의 경우 순번을 정의함. 생략하거나 null 이면 마지막 인덱스 + 1.',
-            '?blendMode:string - 중첩되는 이미지의 경우 아래의 이미지와 합성되는 속성을 정의함. 첫번째 텍스쳐는 적용되지 않고 기본값은 \'alpha\' 이고 다음과 같은 값이 올 수 있음.'
-        ],
+            '?blendMode:string - 중첩되는 이미지의 경우 아래의 이미지와 합성되는 속성을 정의함. 첫번째 텍스쳐는 적용되지 않고 기본값은 \'alpha\' 이고 다음과 같은 값이 올 수 있음.',
+                "* [BlendMode.add](BlendMode.md#add) or 'add' -  전면색을 배경색에 더하고 올림값 0xFF를 적용.",
+                "* [BlendMode.alpha](BlendMode.md#alpha) or 'alpha' - 전면색의 알파값에 따라 배경색을 덮어가는 가장 일반적인 중첩.",
+                "* [BlendMode.darken](BlendMode.md#darken) or 'darken' - 전면색과 배경색 중 보다 어두운 색상(값이 작은 색상)을 선택.",
+                "* [BlendMode.difference](BlendMode.md#difference)or 'difference' - 전면색과 배경색을 비교하여 둘 중 밝은 색상 값에서 어두운 색상 값을 뺌.",
+                "* [BlendMode.erase](BlendMode.md#erase) or 'erase' - 전면색의 알파만 적용하여 배경색을 지움.",
+                "* [BlendMode.hardlight](BlendMode.md#hardlight) or 'hardlight' - 전면색의 어두운 정도를 기준으로 배경색을 조정.",
+                "* [BlendMode.invert](BlendMode.md#invert) or 'invert' - 전면색을 이용하여 배경색을 반전시킴.",
+                "* [BlendMode.lighten](BlendMode.md#lighten) or 'lighten' - 전면색과 배경색 중 보다 밝은 색(값이 큰 색상)으로 선택.",
+                "* [BlendMode.multiply](BlendMode.md#multiply) or 'multiply' -  전면색에 배경색을 곱하고 0xFF로 나누어 정규화하여 보다 어두운 색을 만듬.",
+                "* [BlendMode.screen](BlendMode.md#screen) or 'screen' - 전면색의 보수(역수)에 배경색 보수를 곱하여 표백 효과를 냄.",
+                "* [BlendMode.subtract](BlendMode.md#subtract) or 'subtract' - 전면색의 값을 배경색에서 빼고 내림값 0을"
+    ],
         exception:[
-            '* \'Material.addTexture:0\' - 이미 등록된 경우 [Scene](Scene.md)에 존재하지 않는 textureId를 지정.',
-            '* \'Material.addTexture:1\' - 이미 등록된 textureId를 다시 등록하려고 시도하는 경우.'
+            "* 'Material.addTexture:0' - 이미 등록된 경우 [Scene](Scene.md)에 존재하지 않는 textureId를 지정.",
+            "* 'Material.addTexture:1' - 이미 등록된 textureId를 다시 등록하려고 시도하는 경우."
         ],
         ret:[
             'this - 메서드체이닝을 위해 자신을 반환함.'
