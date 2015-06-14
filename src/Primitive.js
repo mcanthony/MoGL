@@ -61,7 +61,6 @@ var Primitive = (function () {
                 }
             }
             var result = new Geometry(vs, is, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]);
-            result._key = 'cube' + ( arguments[0] || 1) + '_' + (arguments[1] || 1);
             return result;
         },
         geodesic: function geodesic(/*split*/) {
@@ -124,7 +123,7 @@ var Primitive = (function () {
                 }
             }
             var result = new Geometry(_vertices, _indices, [Vertex.x, Vertex.y, Vertex.z,Vertex.u,Vertex.v]);
-            result.setId('geodesic' + ( arguments[0] || 1))
+
             return result;
         },
         line: function line(x1, y1, z1, x2, y2, z2 /*,width*/) {
@@ -153,7 +152,7 @@ var Primitive = (function () {
                 }
             }
             var result = new Geometry(vs, is, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]);
-            result._key = 'plane_' + _segmentsW + '_' + _segmentsH;
+
             return result;
         },
         point: function point(/*width*/) {
@@ -194,7 +193,7 @@ var Primitive = (function () {
                 }
             }
             var result = new Geometry(vs, is, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]);
-            result._key = 'sphere_' + ( arguments[0] || 1);
+
             return result;
         },
         skybox: function skybox(/*splitX, splitY, splitZ*/) {
@@ -225,7 +224,7 @@ var Primitive = (function () {
                 }
             }
             result = new Geometry(vs, is, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]);
-            result._key = 'polygon_' + (arguments[0] || 1);
+
             return result;
         }
     }
