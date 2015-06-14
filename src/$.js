@@ -216,18 +216,21 @@ $md = function(classes){
         }
     },
     methodDetail = function(type, v, md){
-        var i, j, k, l, m, n;
+        var i, j, k, l, m, n, o;
         if (v.length) {
             for (i = 0, j = v.length; i < j; i++){
                 k = v[i];
                 md[md.length] = '\n[top](#)';
                 md[md.length] = '\n<a name="' + k.name + '"></a>';
                 if (k.param != 'none') {
+                    o = [];
                     l = k.param.split('\n');
                     for(m = 0, n = l.length; m < n ; m++){
-                        l[m] = l[m].split('-')[0].trim();
+                        if(l[m].charAt(0) != '*'){
+                            o.push(l[m].split('-')[0].trim());
+                        }
                     }
-                    md[md.length] = '###' + k.name + '(' + l.join(', ') + ')';
+                    md[md.length] = '###' + k.name + '(' + o.join(', ') + ')';
                 } else {
                     md[md.length] = '###' + k.name + '()';
                 }
