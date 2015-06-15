@@ -29,7 +29,7 @@
     }
 })();
 //전역에서 사용하는 공통함수
-var $setPrivate, $getPrivate, $writable, $readonly, $value, $getter, $setter, $color, $md, $ease,
+var $setPrivate, $getPrivate, $writable, $readonly, $getter, $setter, $color, $md, $ease,
     GLMAT_EPSILON, SIN, COS, TAN, ATAN, ATAN2, ASIN, SQRT, CEIL, ABS, PIH, PERPI;
 
 (function() {
@@ -49,19 +49,6 @@ var $setPrivate, $getPrivate, $writable, $readonly, $value, $getter, $setter, $c
 //defineProperty용 헬퍼
 $writable = {value:true, writable:true},
 $readonly = {value:null},
-$value = function(prop, key){
-    if (arguments.length == 3) {
-        return {
-            get:$getter(prop, key, arguments[2]),
-            set:$setter(prop, key)
-        };
-    } else {
-        return {
-            get:$getter(prop, key),
-            set:$setter(prop, key)
-        };
-    }
-},
 $getter = function(prop, key){
     var defaultValue = arguments.length == 3 ? arguments[2] : null;
     if (key) {

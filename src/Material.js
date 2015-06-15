@@ -75,7 +75,10 @@ var Material = (function () {
             p[0] = v[0], p[1] = v[1], p[2] = v[2], p[3] = v[3];
        }
     })
-    .field('wireFrame', $value(wireFrame))
+    .field('wireFrame', {
+        get:$getter(wireFrame),
+        set:$setter(wireFrame)
+    })
     .field('wireFrameColor', {
         get:$getter(wireFrameColor),
         set:function wireFrameColorSet(v) {
@@ -84,9 +87,18 @@ var Material = (function () {
             p[0] = v[0], p[1] = v[1], p[2] = v[2], p[3] = v[3];
        }
     })
-    .field('shading', $value(shading))
-    .field('lambert', $value(lambert))
-    .field('diffuse', $value(diffuse))
+    .field('shading', {
+        get:$getter(shading),
+        set:$setter(shading)
+    })
+    .field('lambert', {
+        get:$getter(lambert),
+        set:$setter(lambert)
+    })
+    .field('diffuse', {
+        get:$getter(diffuse),
+        set:$setter(diffuse)
+    })
     .field('isLoaded', {
         get:function(mat) {
             var type, tex, i;
@@ -129,7 +141,7 @@ var Material = (function () {
                 "* [BlendMode.multiply](BlendMode.md#multiply) or 'multiply' -  전면색에 배경색을 곱하고 0xFF로 나누어 정규화하여 보다 어두운 색을 만듬.",
                 "* [BlendMode.screen](BlendMode.md#screen) or 'screen' - 전면색의 보수(역수)에 배경색 보수를 곱하여 표백 효과를 냄.",
                 "* [BlendMode.subtract](BlendMode.md#subtract) or 'subtract' - 전면색의 값을 배경색에서 빼고 내림값 0을"
-    ],
+        ],
         exception:[
             "* 'Material.addTexture:0' - 이미 등록된 경우 [Scene](Scene.md)에 존재하지 않는 textureId를 지정.",
             "* 'Material.addTexture:1' - 이미 등록된 textureId를 다시 등록하려고 시도하는 경우."

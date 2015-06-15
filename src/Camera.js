@@ -25,8 +25,14 @@ var Camera = (function () {
         this.z =10,
         this.lookAt(0,0,0);
     })
-    .field('clipPlaneNear', $value(prop, 'near'))
-    .field('clipPlaneFar', $value(prop, 'far'))
+    .field('clipPlaneNear', {
+        get:$getter(prop, 'near'),
+        set:$setter(prop, 'near')
+    })
+    .field('clipPlaneFar', {
+        get:$getter(prop, 'far'),
+        set:$setter(prop, 'far')
+    })
     .field('visible', {
         get: $getter(prop, 'visible'),
         set: function visibleSet(v) {
