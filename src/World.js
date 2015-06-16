@@ -420,8 +420,6 @@ var World = (function () {
         var priMatLambert
         var priMatDiffuse
 
-        var priTextureIMGs
-
         var tGeo
         var tItemUUID
         var dLite, useNormalBuffer, useTexture;
@@ -438,7 +436,6 @@ var World = (function () {
         priMatShading = $getPrivate('Material', 'shading')
         priMatLambert = $getPrivate('Material', 'lambert')
         priMatDiffuse = $getPrivate('Material', 'diffuse')
-        priTextureIMGs = $getPrivate('Texture', 'imgs')
 
         return function (currentTime) {
             len = 0,
@@ -553,19 +550,20 @@ var World = (function () {
                             // 쉐이딩 결정
                             tMatUUID = tMaterial.uuid
                             tShading = priMatShading[tMatUUID]
+                            if(priMatDiffuse[tMatUUID]){
+                                useTexture=1
+                            }
                             switch (tShading) {
                                 case  Shading.none :
-                                    if(priMatDiffuse[tMatUUID]){
-                                        tProgram = tGPU.programs['bitmap'],
-                                        useTexture = 1
+                                    if(useTexture){
+                                        tProgram = tGPU.programs['bitmap']
                                     }else{
                                         tProgram = tGPU.programs['color'];
                                     }
                                     break
                                 case  Shading.gouraud :
-                                    if(priMatDiffuse[tMatUUID]){
-                                        tProgram = tGPU.programs['bitmapGouraud'],
-                                        useTexture = 1
+                                    if(useTexture){
+                                        tProgram = tGPU.programs['bitmapGouraud']
                                     }else{
                                         tProgram = tGPU.programs['colorGouraud'];
                                     }
@@ -576,20 +574,17 @@ var World = (function () {
                                     useNormalBuffer = 1;
                                     break
                                 case  Shading.phong :
-                                    if (priMatDiffuse[tMatUUID]) {
-                                        tProgram = tGPU.programs['bitmapPhong'];
-                                        //console.log('들어왔다!')
-                                        useTexture = 1
+                                    if (useTexture) {
+                                        tProgram = tGPU.programs['bitmapPhong']
                                     } else {
                                         tProgram = tGPU.programs['colorPhong'];
                                     }
                                     useNormalBuffer = 1;
                                     break
                                 case  Shading.blinn :
-                                    tProgram = tGPU.programs['bitmapBlinn'];
+                                    tProgram = tGPU.programs['bitmapBlinn'],
                                     //console.log('들어왔다!')
                                     useNormalBuffer = 1;
-                                    useTexture = 1
                                     break
                             }
                             // 쉐이딩 변경시 캐쉬 삭제
