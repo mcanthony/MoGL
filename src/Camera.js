@@ -1,5 +1,5 @@
 var Camera = (function () {
-    var PERPIR, value, getter,
+    var PERPIR,
         prop;
 
     //lib
@@ -118,7 +118,7 @@ var Camera = (function () {
     })
     .field('cvs', {
         get:$getter(prop, 'cvs'),
-        set:function modeSet(v) {
+        set:function cvsSet(v) {
             prop[this].cvs = v;
         }
     })
