@@ -3,15 +3,19 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>MoGL Test Suite - drawTriangle By ParserShader</title>
+    <script src="../src/$.js"></script>
     <script src="../src/MoGL.js"></script>
     <script src="../src/BlendMode.js"></script>
     <script src="../src/Filter.js"></script>
+    <script src="../src/Primitive.js"></script>
     <script src="../src/Vertex.js"></script>
+    <script src="../src/Shading.js"></script>
     <script src="../src/VertexShaderFunctions.js"></script>
+    <script src="../src/Shader.js"></script>
     <script src="../src/Matrix.js"></script>
+    <script src="../src/Texture.js"></script>
     <script src="../src/Geometry.js"></script>
     <script src="../src/Material.js"></script>
-    <script src="../src/Texture.js"></script>
     <script src="../src/Mesh.js"></script>
     <script src="../src/Group.js"></script>
     <script src="../src/Camera.js"></script>
@@ -36,26 +40,27 @@
 
     var w = new World('firstTest');
     w.setAutoSize(1)
-    w.addScene(new Scene().setId('s0'));
-    w.getScene('s0').addGeometry('tri', new Geometry([-1, 0, 0, 1, 0, 0, 0, 1, 0], [0, 1, 2]));
-    w.getScene('s0').addGeometry('rect', new Geometry([
+    var scene = new Scene()
+    w.addScene(scene)
+    scene.addGeometry(new Geometry([-1, 0, 0, 1, 0, 0, 0, 1, 0], [0, 1, 2]).setId('tri'));
+    scene.addGeometry(new Geometry([
         0.5, 0.5, 0.0, 0.0, 0.0,
         -0.5, 0.5, 0.0, 1.0, 0.0,
         0.5, -0.5, 0.0, 0.0, 1.0,
         -0.5, -0.5, 0.0, 1.0, 1.0
-    ], [0, 1, 2, 1, 2, 3], [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]));
-    w.getScene('s0').addMaterial('white', new Material('#fff'));
-    w.getScene('s0').addChild('tri', new Mesh('tri', new Material('#ff2244')));
+    ], [0, 1, 2, 1, 2, 3], [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]).setId('rect'));
+    scene.addMaterial(new Material('#fff').setId('white'));
+    scene.addChild(new Mesh(scene.getGeometry('tri'), new Material('#ff2244')).setId('tri'));
 
     var bitmapMaterial = new Material(Math.random(), Math.random(), Math.random())
-    w.getScene('s0').addTexture('bitmapTextureTest', '../src/ohno.png')
-    bitmapMaterial.addTexture(Texture.diffuse, 'bitmapTextureTest')
-    w.getScene('s0').addMaterial('bitmapMaterial', bitmapMaterial)
+    //    scene.addTexture('bitmapTextureTest', '../src/ohno.png')
+    //    bitmapMaterial.addTexture(Texture.diffuse, 'bitmapTextureTest')
+    scene.addMaterial(bitmapMaterial.setId('bitmapMaterial'))
 
     var list = []
     for (var i = 0; i < 100; i++) {
-        w.getScene('s0').addChild('tri' + i, new Mesh('tri', new Material(Math.random(), Math.random(), Math.random())));
-        var a = w.getScene('s0').getChild('tri' + i)
+        scene.addChild(new Mesh(scene.getGeometry('tri'), new Material(Math.random(), Math.random(), Math.random())).setId('tri' + i));
+        var a = scene.getChild('tri' + i)
         a.x = Math.random() * 50 - 25
         a.y = Math.random() * 50 - 25
         a.z = Math.random() * 50 - 25
@@ -67,8 +72,8 @@
 
     }
     for (var i = 0; i < 100; i++) {
-        w.getScene('s0').addChild('rect' + i, new Mesh('rect', 'bitmapMaterial'));
-        var a = w.getScene('s0').getChild('rect' + i)
+        scene.addChild(new Mesh(scene.getGeometry('rect'), scene.getMaterial('bitmapMaterial')).setId('rect' + i));
+        var a = scene.getChild('rect' + i)
         a.x = Math.random() * 50 - 25
         a.y = Math.random() * 50 - 25
         a.z = Math.random() * 50 - 25
@@ -79,55 +84,24 @@
         list.push(a)
     }
 
-    w.getScene('s0').addChild('rect', new Mesh('rect', 'bitmapMaterial'));
-    w.getScene('s0').addChild('camera1', new Camera());
-    w.getScene('s0').addChild('camera2', new Camera());
-    w.getScene('s0').addChild('camera3', new Camera());
-    w.getScene('s0')._update = 1
-    //    w.getScene('s0').addChild('camera2', new Camera());
+    //    scene.addChild('rect', new Mesh('rect', 'bitmapMaterial'));
+    scene.addChild(new Camera().setId('camera1'));
+    scene.addChild(new Camera().setId('camera2'));
+    scene.addChild(new Camera().setId('camera3'));
 
-    console.log(w.getScene('s0')._children)
-    console.log(w.getScene('s0')._cameras)
-    console.log(w)
-
-
-    w.getScene('s0').getChild('camera2').setRenderArea(512 - 128 - 10, 10, 256, 256)
-    w.getScene('s0').getChild('camera3').setRenderArea(10, 10, 128, 128)
+    scene.getChild('camera1').backgroundColor = '#333333'
+    scene.getChild('camera2').backgroundColor = '#55dd33'
+    scene.getChild('camera3').backgroundColor = '#aaee33'
+    scene.getChild('camera2').renderArea = [512 - 128 - 10, 10, 256, 256]
+    scene.getChild('camera3').renderArea = [10, 10, 128, 128]
 
     w.start()
 
-
-    w.getScene('s0').getChild('camera1').setBackgroundColor('#333333')
-    w.getScene('s0').getChild('camera2').setBackgroundColor('#55dd33')
-    w.getScene('s0').getChild('camera3').setBackgroundColor('#aaee33')
-    //    w.getScene('s0').getChild('camera3').setVisible(false)
-
-
-    var c2 = w.getScene('s0').getChild('camera2')
-    console.log(c2)
-    c2.rotateX = 10
-    c2.rotateY = 20
-    c2.z = 1
 
 
     var t = 0
     var t2 = 0
     w.addEventListener(World.renderAfter, function () {
-        w.getScene('s0').getChild('rect').rotateZ += 0.01
-        w.getScene('s0').getChild('rect').setScale(0.1, 0.1, 0.1)
-        w.getScene('s0').getChild('tri').rotateX += 0.01
-        w.getScene('s0').getChild('tri').rotateY += 0.01
-        w.getScene('s0').getChild('tri').rotateZ += 0.01
-        w.getScene('s0').getChild('tri').scaleX = w.getScene('s0').getChild('tri').scaleY = w.getScene('s0').getChild('tri').scaleZ = Math.sin(w.getScene('s0').getChild('tri').rotateZ) / 2 + 0.5
-        w.getScene('s0').getChild('tri').x = Math.sin(w.getScene('s0').getChild('tri').rotateZ) / 2
-        w.getScene('s0').getChild('tri').y = Math.cos(w.getScene('s0').getChild('tri').rotateZ) / 2
-        t += 0.01
-        t2 += 0.02
-        var c1 = w.getScene('s0').getChild('camera1')
-        c1.z = Math.cos(t)
-        c1.rotateZ = t2
-        c1.rotateY = t2
-
         for (var i = 0; i < list.length; i++) {
             var a = list[i]
             a.rotateX += 0.01
