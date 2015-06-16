@@ -29,7 +29,7 @@
     }
 })();
 //전역에서 사용하는 공통함수
-var $setPrivate, $getPrivate, $writable, $readonly, $value, $getter, $setter, $color, $md, $ease,
+var $setPrivate, $getPrivate, $writable, $readonly, $getter, $setter, $color, $md, $ease,
     GLMAT_EPSILON, SIN, COS, TAN, ATAN, ATAN2, ASIN, SQRT, CEIL, ABS, PIH, PERPI;
 
 (function() {
@@ -49,19 +49,6 @@ var $setPrivate, $getPrivate, $writable, $readonly, $value, $getter, $setter, $c
 //defineProperty용 헬퍼
 $writable = {value:true, writable:true},
 $readonly = {value:null},
-$value = function(prop, key){
-    if (arguments.length == 3) {
-        return {
-            get:$getter(prop, key, arguments[2]),
-            set:$setter(prop, key)
-        };
-    } else {
-        return {
-            get:$getter(prop, key),
-            set:$setter(prop, key)
-        };
-    }
-},
 $getter = function(prop, key){
     var defaultValue = arguments.length == 3 ? arguments[2] : null;
     if (key) {
@@ -116,294 +103,216 @@ SIN = Math.sin, COS = Math.cos, TAN = Math.tan, ATAN = Math.atan, ATAN2 = Math.a
 SQRT = Math.sqrt, CEIL = Math.ceil, ABS = Math.abs, PI = Math.PI, PIH = PI * 0.5, PERPI = 180 / PI;
 //markdown
 $md = function(classes){
-    var param, exception, sample, description, ret, mk, sort;
+    var exception, list, val, func, sort, toStr, fieldDetail, methodDetail;
     exception = function(f){
         var temp, i, j, k;
         f = Function.prototype.toString.call(f);
         temp = [],
         k = 0;
-        if (f.substring(8, f.indexOf('(')).trim().indexOf('error') == -1) {
-            while ((i = f.indexOf('this.error(', k)) > -1) {
-                k = i + 'this.error('.length;
-                temp[temp.length] = f.substring(k, f.indexOf(')', k));
-            }
+        while ((i = f.indexOf('this.error(', k)) > -1) {
+            k = i + 'this.error('.length;
+            temp[temp.length] = f.substring(k, f.indexOf(')', k));
         }
+        if (!temp.length) temp[temp.length] = 'none';
         return temp;
     },
-    mk = function(keyword, isJoin){
-        var len;
-        keyword = '/*' + keyword;
-        len = keyword.length;
-        return function(f){
-            var i, space;
-            f = Function.prototype.toString.call(f);
-            if ((i = f.indexOf(keyword)) > -1) {
-                f = f.substring(i + len, f.indexOf('*/', i)).split('\n');
-                f.shift(), f.pop();
-                space = f[0].match(/^[ ]*/)[0].length;
-                i = f.length;
-                while (i--) f[i] = f[i].substr(space);
-                if(isJoin) f = f.join('\n');
-            } else {
-                f = '';
-            }
-            return f;
-        };
-    };
-    sample = mk('sample', 1);
-    description = mk('description', 1);
-    param = mk('param');
-    ret = mk('return');
     sort = function(a,b){
         return a.name < b.name;
+    },
+    list = function(type, md, v){
+        var i, j;
+        if (v.length) {
+            v.sort(sort);
+            md[md.length] = '\n**' + type + '**\n';
+            for (i = 0, j = v.length; i < j; i++){
+                md[md.length] = '* [' + v[i].name + '](#' + v[i].name + ') - ' + v[i].description.substr(0, 20).trim() + (v[i].description.length > 20 ? '...' : '');
+            }
+        }
+    },
+    toStr = function(v){
+        if (Array.isArray(v)) {
+            return v.join('\n');
+        }else if (!v) {
+            return '';
+        }
+        return v;
+    },
+    val = function(type, md, ref){
+            var v = [], temp = ref._info['_'+type], temp1 = ref['_'+type], k;
+            for (k in temp) {
+                temp[k].name = k,
+                temp[k].type = temp[k].type || '?',
+                temp[k].defaultValue = temp[k].defaultValue || 'none', 
+                temp[k].sample = toStr(temp[k].sample || '//none'),
+                temp[k].description = toStr(temp[k].description),
+                temp[k].enumerable = temp1[k] && temp1[k].enumerable ? true : false, 
+                temp[k].configurable = temp1[k] && temp1[k].configurable ? true : false;
+                if (temp1[k]){
+                    if ('writable' in temp1[k]) {
+                        temp[k].writable = temp1[k].writable ? true : false;
+                    } else if ('set' in temp1[k]) {
+                        temp[k].writable = true;
+                    } else {
+                        temp[k].writable = false;
+                    }
+                }
+                v[v.length] = temp[k];
+            }
+            list(type, md, v);
+            return v;
+    }
+    func = function(type, md, ref){
+        var v = [], temp = ref._info['_'+type], temp1 = ref['_'+type], k;
+        for (k in temp) {
+            temp[k].name = k,
+            temp[k].param = toStr(temp[k].param || 'none'), 
+            temp[k].ret = toStr(temp[k].ret || 'none'), 
+            temp[k].sample = toStr(temp[k].sample || '//none'),
+            temp[k].exception = temp1[k] && k != 'toString' ? exception(temp1[k].value) : '',
+            temp[k].description = toStr(temp[k].description),
+            v[v.length] = temp[k];
+        }
+        list(type, md, v);
+        return v;
+    },
+    fieldDetail = function(type, v, md) {
+        var i, j, k;
+        if (v.length) {
+            for (i = 0, j = v.length; i < j; i++){
+                k = v[i];
+                md[md.length] = '\n[top](#)';
+                md[md.length] = '\n<a name="' + k.name + '"></a>';
+                md[md.length] = '###' + k.name;
+                md[md.length] = '\n_' + type + '_\n';
+                md[md.length] = '\n**description**\n';
+                md[md.length] = k.description;
+                md[md.length] = '\n**setting**\n';
+                md[md.length] = '*writable*:' + k.writable + ', *enumerable*:' + k.enumerable + ', *configurable*:' + k.configurable;
+                if ('value' in k) {
+                    md[md.length] = '\n**value**\n';
+                    md[md.length] = k.value;
+                } else if ('defaultValue' in k) {
+                    md[md.length] = '\n**defaultValue**\n';
+                    md[md.length] = k.defaultValue;
+                }
+                md[md.length] = '\n**sample**\n';
+                md[md.length] = '```javascript';
+                md[md.length] = k.sample;
+                md[md.length] = '```';
+            }
+        }
+    },
+    methodDetail = function(type, v, md){
+        var i, j, k, l, m, n, o;
+        if (v.length) {
+            for (i = 0, j = v.length; i < j; i++){
+                k = v[i];
+                md[md.length] = '\n[top](#)';
+                md[md.length] = '\n<a name="' + k.name + '"></a>';
+                if (k.param != 'none') {
+                    o = [];
+                    l = k.param.split('\n');
+                    for(m = 0, n = l.length; m < n ; m++){
+                        if(l[m].charAt(0) != '*' || /[0-9]/.test(l[m].charAt(0))){
+                            o.push(l[m].split('-')[0].trim());
+                        }
+                    }
+                    md[md.length] = '###' + k.name + '(' + o.join(', ') + ')';
+                } else {
+                    md[md.length] = '###' + k.name + '()';
+                }
+                md[md.length] = '\n_' + type + '_\n';
+                md[md.length] = '\n**description**\n';
+                md[md.length] = k.description;
+                md[md.length] = '\n**param**\n';
+                if (k.param != 'none' && n) {
+                    for(m = 0; m < n ; m++){
+                        if (l[m] = l[m].trim()){
+                            if (l[m].charAt(0) == '*' || /[0-9]/.test(l[m].charAt(0))) {
+                                md[md.length] = '    ' + l[m];
+                            } else {
+                                md[md.length] = (m + 1) + '. ' + l[m];
+                            }
+                        }
+                    }
+                } else {
+                    md[md.length] = 'none';
+                }
+                md[md.length] = '\n**exception**\n';
+                if (k.exception != 'none'){
+                    for(m = 0, n = k.exception.length; m < n ; m++){
+                        md[md.length] = this.className + '.' + k.name + ':' + k.param[m];
+                    }
+                } else {
+                    md[md.length] = 'none';
+                }
+                md[md.length] = '\n**return**\n';
+                md[md.length] = k.ret.length ? k.ret.replace('this', 'this - 메소드체이닝을 위해 자신을 반환함') : 'none';
+                md[md.length] = '\n**sample**\n';
+                md[md.length] = '```javascript';
+                md[md.length] = k.sample;
+                md[md.length] = '```';
+            }
+        }
     };
     return function(){
-        var md = ['#' + this.className], ref, temp, i, j, k, l, m, n,
-            parents, constructor, field, method, consts, event, static, inherited;
-        ref = classes[this.className];
-        //constructor
-        temp = Function.prototype.toString.call(ref.construct);
-        constructor = {
-            description:description(ref.construct, 'Constructor of ' + this.className),
-            param:param(ref.construct),
-            exception:param(ref.construct),
-            sample:sample(ref.construct)
-        };
-        //method
-        method = [],
-        temp = ref.proto;
-        for (k in temp) {
-            method[method.length] = {
-                name:k,
-                description:description(temp[k], 'Method of ' + this.className),
-                param:param(temp[k]),
-                exception:exception(temp[k]),
-                sample:sample(temp[k]),
-                ret:ret(temp[k])
-            };
-        }
-        //field
-        if (ref.prop) {
-            field = [];
-            for (k in ref.prop) {
-                if (typeof ref.prop[k].value == 'function') {
-                    method[method.length] = {
-                        name:k,
-                        description:description(ref.prop[k].value, 'Method of ' + this.className),
-                        param:param(ref.prop[k].value),
-                        exception:exception(ref.prop[k].value),
-                        sample:sample(ref.prop[k].value)
-                    };
-                } else {
-                    field[field.length] = {
-                        name:k,
-                        writable:ref.prop[k].writable || ref.prop[k].set ? true : false, 
-                        enumerable:ref.prop[k].enumerable ? true : false, 
-                        configurable:ref.prop[k].configurable ? true : false,
-                        defaultValue:'defaultValue' in ref.prop[k] ? ref.prop[k].defaultValue : 'value'  in ref.prop[k] ? ref.prop[k].value : 'none', 
-                        description:ref.prop[k].description || 'Field of ' + this.className,
-                        sample:ref.prop[k].sample || ''
-                    };
-                }
-            }
-            
-        }
-        //static
-        static = [], 
-        consts = [], 
-        temp = ref.cls;
-        for (k in temp) {
-            if (typeof temp[k] == 'function') {
-                static[static.length] = {
-                    name:k,
-                    description:description(temp[k], 'Static Method of ' + this.className),
-                    param:param(temp[k]),
-                    exception:exception(temp[k]),
-                    sample:sample(temp[k]),
-                    ret:ret(temp[k])
-                }
-            } else if(k.substr(0, 2) != '__') {
-                consts[consts.length] = {
-                    name:k,
-                    description:'Const of ' + this.className,
-                    value:temp[k]
-                }
-                    
-            }
-        }
-        //parent
+        var md, ref, temp, temp1, i, j, k, l, m, n,
+            parents, children, fields, methods, constants, events, statics, inherited;
+        ref = classes[this.className].define;
+//제목
+        md = ['#' + this.className];
+
+//상단리스트영역생성-----------------------
+//부모
         if (ref.parent) {
             parents = [];
             temp = ref.parent;
             while (temp) {
                 parents[parents.length] = '[' + temp.className + '](' + temp.className + '.md)';
-                temp = classes[temp.className].parent;
+                temp = classes[temp.className].define.parent;
             }
             md[md.length] = '* parent : ' + parents.join(' < ');
         }
-        
-        //children
-        temp = [];
+//자식
+        children = [];
         for (k in classes) {
             if (classes[k].parent == this) {
-                temp[temp.length] = '[' + k + '](' + k + '.md)';
+                children[children.length] = '[' + k + '](' + k + '.md)';
             }
         }
-        if (temp.length) {
-            temp.sort(sort);
+        if (children.length) {
+            children.sort(sort);
             md[md.length] = '* children : ' + temp.join(', ');
         }
+//생성자
         md[md.length] = '* [constructor](#constructor)\n';
-        if (field.length) {
-            field.sort(sort);
-            md[md.length] = '\n**field**\n';
-            for (i = 0, j = field.length; i < j; i++){
-                md[md.length] = '* [' + field[i].name + '](#' + field[i].name + ')';
-            }
-        }
-        if (method.length) {
-            method.sort(sort);
-            md[md.length] = '\n**method**\n';
-            for (i = 0, j = method.length; i < j; i++){
-                md[md.length] = '* [' + method[i].name + '](#' + method[i].name + ')';
-            }
-        }
-        if (consts.length) {
-            consts.sort(sort);
-            md[md.length] = '\n**const**\n';
-            for (i = 0, j = consts.length; i < j; i++){
-                md[md.length] = '* [' + this.className + '.' + consts[i].name + '](#' + this.className + '.' +consts[i].name + ')';
-            }
-        }
-        if (static.length) {
-            static.sort(function(a,b){
-                return a.name < b.name;
-            }),
-            md[md.length] = '\n**static**\n';
-            for (i = 0, j = static.length; i < j; i++){
-                md[md.length] = '* [' + this.className + '.' + static[i].name + '](#' + this.className + '.' +static[i].name + ')';
-            }
-        }
+//서브항목        
+        fields = val('field', md, ref);
+        methods = func('method', md, ref);
+        statics = func('static', md, ref);
+        constants = val('constant', md, ref);
+        events = val('event', md, ref);
+//본문------------------------------
+        temp = ref._construct;
         md[md.length] = '\n[top](#)';
-        md[md.length] = '\n[constructor]:constructor';
+        md[md.length] = '\n<a name="constructor"></a>';
         md[md.length] = '##Constructor';
         md[md.length] = '\n**description**\n';
-        md[md.length] = constructor.description;
+        md[md.length] = toStr(temp.description);
         md[md.length] = '\n**param**\n';
-        md[md.length] = constructor.param.length ? '* ' + constructor.param.join('\n* ') : 'none';
+        md[md.length] = toStr(temp.param || 'none'),
         md[md.length] = '\n**exception**\n';
-        md[md.length] = constructor.exception.length ? '* ' + constructor.exception.join('\n* ') : 'none';
+        md[md.length] = exception(temp.value);
         md[md.length] = '\n**sample**\n';
         md[md.length] = '```javascript';
-        md[md.length] = constructor.sample;
+        md[md.length] = toStr(temp.sample || '//none');
         md[md.length] = '```';
-     
-        if (field.length) {
-            for (i = 0, j = field.length; i < j; i++){
-                k = field[i];
-                md[md.length] = '\n[top](#)';
-                md[md.length] = '\n<a name="'+k.name + '"></a>';
-                md[md.length] = '##'+k.name;
-                md[md.length] = '\n**description**\n';
-                md[md.length] = k.description;
-                md[md.length] = '\n**setting**\n';
-                md[md.length] = '*writable*:' + k.writable + ', *enumerable*:' + k.enumerable + ', *configurable*:' + k.configurable;
-                md[md.length] = '\n**defaultValue**\n';
-                md[md.length] = k.defaultValue;
-                md[md.length] = '\n**sample**\n';
-                md[md.length] = '```javascript';
-                md[md.length] = k.sample;
-                md[md.length] = '```';
-            }
-        }
-        if (method.length) {
-            for (i = 0, j = method.length; i < j; i++){
-                k = method[i];
-                md[md.length] = '\n[top](#)';
-                md[md.length] = '\n<a name="'+k.name + '"></a>';
-                l = [];
-                if (k.param) {
-                    for(m = 0, n = k.param.length; m < n ; m++){
-                        l[l.length] = k.param[m].split('-')[0].trim();
-                    }
-                }
-                md[md.length] = '##'+k.name + '(' + l.join(', ') + ')';
-                md[md.length] = '\n**description**\n';
-                md[md.length] = k.description;
-                md[md.length] = '\n**param**\n';
-                if (k.param) {
-                    for(m = 0, n = k.param.length; m < n ; m++){
-                        md[md.length] = (m + 1) + '. ' + k.param[m];
-                    }
-                } else {
-                    md[md.length] = 'none';
-                }
-                md[md.length] = '\n**exception**\n';
-                if (k.exception.length){
-                    for(m = 0, n = k.exception.length; m < n ; m++){
-                        md[md.length] = this.className + '.' + k.name + ':' + k.param[m];
-                    }
-                } else {
-                    md[md.length] = 'none';
-                }
-                md[md.length] = '\n**return**\n';
-                md[md.length] = k.ret.length ? k.ret.join('\n').replace('this', 'this - 메소드체이닝을 위해 자신을 반환함') : 'none';
-                md[md.length] = '\n**sample**\n';
-                md[md.length] = '```javascript';
-                md[md.length] = k.sample;
-                md[md.length] = '```';
-            }
-        }
-        if (consts.length) {
-            for (i = 0, j = consts.length; i < j; i++){
-                k = consts[i];
-                 md[md.length] = '\n[top](#)';
-                md[md.length] = '\n<a name="'+this.className+'.'+k.name + '"></a>';
-                md[md.length] = '##'+this.className+'.'+k.name;
-                md[md.length] = '\n**description**\n';
-                md[md.length] = k.description;
-                md[md.length] = '\n**value**\n';
-                md[md.length] = k.value;
-            }
-        }
-        if (static.length) {
-            for (i = 0, j = static.length; i < j; i++){
-                k = static[i];
-                md[md.length] = '\n[top](#)';
-                md[md.length] = '\n<a name="'+this.className+'.'+k.name + '"></a>';
-                l = [];
-                if (k.param) {
-                    for(m = 0, n = k.param.length; m < n ; m++){
-                        l[l.length] = k.param[m].split('-')[0].trim();
-                    }
-                }
-                md[md.length] = '##'+this.className+'.'+k.name + '(' + l.join(', ') + ')';
-                md[md.length] = '\n**description**\n';
-                md[md.length] = k.description;
-                md[md.length] = '\n**param**\n';
-                if (k.param) {
-                    for(m = 0, n = k.param.length; m < n ; m++){
-                        md[md.length] = (m + 1) + '. ' + k.param[m];
-                    }
-                } else {
-                    md[md.length] = 'none';
-                }
-                md[md.length] = '\n**exception**\n';
-                if (k.exception.length){
-                    for(m = 0, n = k.exception.length; m < n ; m++){
-                        md[md.length] = this.className + '.' + k.name + ':' + k.param[m];
-                    }
-                } else {
-                    md[md.length] = 'none';
-                }
-                md[md.length] = '\n**return**\n';
-                md[md.length] = k.ret.length ? k.ret.join('\n').replace('this', 'this - 메소드체이닝을 위해 자신을 반환함') : 'none';
-                md[md.length] = '\n**sample**\n';
-                md[md.length] = '```javascript';
-                md[md.length] = k.sample;
-                md[md.length] = '```';
-            }
-        }
+        fieldDetail('field', fields, md);
+        methodDetail('method', methods, md);
+        methodDetail('static', statics, md);
+        fieldDetail('const', constants, md);
+        fieldDetail('event', events, md);
+        md[md.length] = '\n[top](#)';
         return md.join('\n');
     };
 },

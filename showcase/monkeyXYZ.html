@@ -28,16 +28,19 @@
             position: absolute
         }
     </style>
+    <script src="../src/$.js"></script>
     <script src="../src/MoGL.js"></script>
     <script src="../src/BlendMode.js"></script>
     <script src="../src/Filter.js"></script>
+    <script src="../src/Primitive.js"></script>
     <script src="../src/Vertex.js"></script>
     <script src="../src/Shading.js"></script>
     <script src="../src/VertexShaderFunctions.js"></script>
+    <script src="../src/Shader.js"></script>
     <script src="../src/Matrix.js"></script>
+    <script src="../src/Texture.js"></script>
     <script src="../src/Geometry.js"></script>
     <script src="../src/Material.js"></script>
-    <script src="../src/Texture.js"></script>
     <script src="../src/Mesh.js"></script>
     <script src="../src/Group.js"></script>
     <script src="../src/Camera.js"></script>
@@ -55,10 +58,9 @@
     var testMat = new Material()
     world.addScene(scene);
     world.setAutoSize(1)
-    scene.addChild('camera', new Camera());
-    scene.addMaterial('material', testMat);
-    scene.addTexture('texture', 'monkey/Suzanne.jpg');
-    scene.getMaterial('material').addTexture(Texture.diffuse, 'texture');
+    scene.addChild(new Camera());
+    //    scene.addTexture('texture', 'monkey/Suzanne.jpg');
+    //    scene.getMaterial('material').addTexture(Texture.diffuse, 'texture');
 
 
     var xmlhttp = new XMLHttpRequest();
@@ -105,13 +107,11 @@
             j = i * 3;
             index.push(indices[j], indices[j + 1], indices[j + 2]);
         }
-        scene.addGeometry('geometry', new Geometry(vertex, index, [Vertex.x, Vertex.y, Vertex.z, Vertex.normalX, Vertex.normalY, Vertex.normalZ, Vertex.u, Vertex.v]));
 
-        var mesh = new Mesh('geometry', 'material');
-        scene.addChild('monkey', mesh);
-        mesh.getMaterial().setShading(Shading.phong)
-        mesh.getMaterial().setLambert(2)
-
+        var mesh = new Mesh(new Geometry(vertex, index, [Vertex.x, Vertex.y, Vertex.z, Vertex.normalX, Vertex.normalY, Vertex.normalZ, Vertex.u, Vertex.v]), testMat);
+        scene.addChild(mesh);
+        mesh.material.shading = Shading.phong
+        mesh.material.lambert = 1.5
         mesh.rotateY = Math.PI
 
 

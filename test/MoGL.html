@@ -164,6 +164,31 @@
 	);
 })();
 (function(){
+    var a = MoGL.extend(function a(){})
+        .constant('aaa','aaa').build();
+    var b = a.extend(function b(){})
+        .constant('bbb','bbb').build();
+    var c = b.extend(function c(){})
+        .constant('ccc',{value:'ccc'}).build();
+    var d = c.extend(function b(){})
+        .constant('ddd',{get:function(){return 'ddd';}}).build();
+    bsTest( 'constant',
+        function(){
+            return a.aaa;
+        }, 'aaa',
+        function(){
+            return b.bbb;
+        }, 'bbb',
+        function(){
+            return c.ccc;
+        }, 'ccc',
+        function(){
+            return d.ddd;
+        }, 'ddd'
+
+     );
+})();
+(function(){
     var a = function(){
         this.a = 3;
     };

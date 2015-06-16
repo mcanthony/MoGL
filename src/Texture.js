@@ -12,7 +12,7 @@ var Texture = (function() {
     //lib
     imgType = {'.jpg':1, '.png':1, '.gif':1},
     canvas = document.createElement('canvas'),
-	context = canvas.getContext('2d'),
+    context = canvas.getContext('2d'),
     canvas.width = canvas.height = 2,
     context.clearRect(0, 0, 2, 2),
     empty = document.createElement('img'),
@@ -25,15 +25,14 @@ var Texture = (function() {
         while (v.height > th) th *= 2;
         //fit size
         if (v.width == tw && v.height == th) {}
+
         if (resizeType == Texture.zoomOut) {
             if (v.width < tw) tw /= 2;
             if (v.height < th) th /= 2;
         }
-        //canvas init
         canvas.width = dw = tw,
         canvas.height = dh = th,
         context.clearRect(0, 0, tw, th);
-
         switch(resizeType){
             case Texture.crop:
                 if (v.width < tw) dw = tw / 2;
@@ -47,7 +46,7 @@ var Texture = (function() {
                 context.drawImage(v, 0, 0, dw, dh);
         }
         v.src = canvas.toDataURL();
-        console.log('리사이저처리결과', v.src,v.width, v.height)
+        //console.log('리사이저처리결과', v.src,dw,dh)
         return v;
     },
     loaded = function(e){
@@ -59,17 +58,31 @@ var Texture = (function() {
     };
     return MoGL.extend(function Texture(){})
     .field('resizeType', {
+        description:'resize type get/set field.',
+        type:'string',
+        defaultValue:'null',
+        sample: [""],
         get:$getter(resize, false, 'zoomOut'),
         set:function resizeTypeSet(v){
-            if (Texture[type]) {
-                resize[this] = type;
+            if (Texture[v]) {
+                resize[this] = v;
             } else {
                 this.error(0);
             }
         }
     })
-    .field('isLoaded', {get:$getter(isLoaded, false, false)})
+    .field('isLoaded', {
+        description:'Load check field.',
+        type:'string',
+        defaultValue:'null',
+        sample: [""],
+        get:$getter(isLoaded, false, false)
+    })
     .field('img', {
+        description:'Image get/set field.',
+        type:'string',
+        defaultValue:'null',
+        sample: [""],
         get:$getter(imgs, false, empty),
         set:function imgSet(v){
             var complete, img, w, h;
@@ -113,15 +126,45 @@ var Texture = (function() {
             }
         }
     })
-    .constant('load', 'load')
-    .constant('zoomOut', 'zoomOut')
-    .constant('zoomIn', 'zoomIn')
-    .constant('crop', 'crop')
-    .constant('addSpace', 'addSpace')
-    .constant('diffuse', 'diffuse')
-    .constant('specular', 'specular')
-    .constant('diffuseWrap', 'diffuseWrap')
-    .constant('normal', 'normal')
-    .constant('specularNormal', 'specularNormal')
+    .event('load', {
+        description: 'load event',
+        value: 'load'
+    })
+    .constant('zoomOut', {
+        description : 'zoom out constant',
+        value : 'zoomOut'
+    })
+    .constant('zoomIn', {
+        description : 'zoom in constant',
+        value : 'zoomIn'
+    })
+    .constant('crop', {
+        description : 'crop constant',
+        value : 'crop'
+    })
+    .constant('addSpace',{
+        description : 'addSpace constant',
+        value : 'addSpace'
+    })
+    .constant('diffuse', {
+        description : 'diffuse constant',
+        value : 'diffuse'
+    })
+    .constant('specular', {
+        description : 'specular constant',
+        value : 'specular'
+    })
+    .constant('diffuseWrap', {
+        description : 'diffuseWrap constant',
+        value : 'diffuseWrap'
+    })
+    .constant('normal', {
+        description : 'normal constant',
+        value : 'normal'
+    })
+    .constant('specularNormal', {
+        description : 'specularNormal constant',
+        value : 'specularNormal'
+    })
     .build();
 })();

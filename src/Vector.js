@@ -22,7 +22,12 @@ var Vector = MoGL.extend(function Vector(x, y, z) {
         var a = this;
         a.x += (x || 0), a.y += (y || 0), a.z += (z || 0);
         return this;
-    }
+    },
+    param:[
+        'x:number - x값',
+        'y:number - y값',
+        'z:number - z값'
+    ]
 })
 .method('subtract', {
     description:"현재 Vector 객체의 x, y 및 z 요소 값을 다른 Vector 객체의 x, y 및 z 요소 값에서 뺍니다.",

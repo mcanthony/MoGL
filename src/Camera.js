@@ -1,5 +1,5 @@
 var Camera = (function () {
-    var PERPIR, value, getter,
+    var PERPIR,
         prop;
 
     //lib
@@ -25,8 +25,14 @@ var Camera = (function () {
         this.z =10,
         this.lookAt(0,0,0);
     })
-    .field('clipPlaneNear', $value(prop, 'near'))
-    .field('clipPlaneFar', $value(prop, 'far'))
+    .field('clipPlaneNear', {
+        get:$getter(prop, 'near'),
+        set:$setter(prop, 'near')
+    })
+    .field('clipPlaneFar', {
+        get:$getter(prop, 'far'),
+        set:$setter(prop, 'far')
+    })
     .field('visible', {
         get: $getter(prop, 'visible'),
         set: function visibleSet(v) {
@@ -112,7 +118,7 @@ var Camera = (function () {
     })
     .field('cvs', {
         get:$getter(prop, 'cvs'),
-        set:function modeSet(v) {
+        set:function cvsSet(v) {
             prop[this].cvs = v;
         }
     })
