@@ -160,7 +160,8 @@ var World = (function () {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR),
         gl.generateMipmap(gl.TEXTURE_2D),
         glTexture.textrue = texture,
-        gpu.textures[texture.img] = glTexture,
+        gpu.textures[texture] = glTexture,
+            //console.log(gpu.textures)
         gl.bindTexture(gl.TEXTURE_2D, null);
     },
     // TODO 일단은 카메라 프레임버퍼 전용
@@ -620,8 +621,7 @@ var World = (function () {
                                 var imsi = priMatDiffuse[tMatUUID]
                                 if (imsi.length) {
                                     //tGL.activeTexture(tGL.TEXTURE0);
-                                    tDiffuseID = priTextureIMGs[imsi[imsi.length - 1].tex.uuid]
-                                    tDiffuseID = tGPU.textures[tDiffuseID]
+                                    tDiffuseID = tGPU.textures[imsi[imsi.length - 1].tex.uuid]
                                     if (tDiffuseID != pDiffuseID) {
                                         tGL.bindTexture(tGL.TEXTURE_2D, tDiffuseID)
                                     }

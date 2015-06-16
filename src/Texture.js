@@ -25,15 +25,14 @@ var Texture = (function() {
         while (v.height > th) th *= 2;
         //fit size
         if (v.width == tw && v.height == th) {}
+
         if (resizeType == Texture.zoomOut) {
             if (v.width < tw) tw /= 2;
             if (v.height < th) th /= 2;
         }
-        //canvas init
         canvas.width = dw = tw,
         canvas.height = dh = th,
         context.clearRect(0, 0, tw, th);
-
         switch(resizeType){
             case Texture.crop:
                 if (v.width < tw) dw = tw / 2;
@@ -47,7 +46,7 @@ var Texture = (function() {
                 context.drawImage(v, 0, 0, dw, dh);
         }
         v.src = canvas.toDataURL();
-        console.log('리사이저처리결과', v.src,v.width, v.height)
+        //console.log('리사이저처리결과', v.src,dw,dh)
         return v;
     },
     loaded = function(e){
@@ -65,8 +64,8 @@ var Texture = (function() {
         sample: [""],
         get:$getter(resize, false, 'zoomOut'),
         set:function resizeTypeSet(v){
-            if (Texture[type]) {
-                resize[this] = type;
+            if (Texture[v]) {
+                resize[this] = v;
             } else {
                 this.error(0);
             }

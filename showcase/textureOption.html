@@ -28,6 +28,7 @@
             position: absolute;
         }
     </style>
+    <script src="../src/$.js"></script>
     <script src="../src/MoGL.js"></script>
     <script src="../src/BlendMode.js"></script>
     <script src="../src/Filter.js"></script>
@@ -35,10 +36,11 @@
     <script src="../src/Vertex.js"></script>
     <script src="../src/Shading.js"></script>
     <script src="../src/VertexShaderFunctions.js"></script>
+    <script src="../src/Shader.js"></script>
     <script src="../src/Matrix.js"></script>
+    <script src="../src/Texture.js"></script>
     <script src="../src/Geometry.js"></script>
     <script src="../src/Material.js"></script>
-    <script src="../src/Texture.js"></script>
     <script src="../src/Mesh.js"></script>
     <script src="../src/Group.js"></script>
     <script src="../src/Camera.js"></script>
@@ -46,6 +48,12 @@
     <script src="../src/World.js"></script>
 </head>
 <body>
+<img src="monkey/Suzanne.jpg" id="testIMG" style="position: absolute;top:0px;">
+<img src="monkey/Suzanne.jpg" id="testIMG2" style="position: absolute;top:0px;">
+<img src="monkey/Suzanne.jpg" id="testIMG3" style="position: absolute;top:0px;">
+<img src="monkey/Suzanne.jpg" id="testIMG4" style="position: absolute;top:0px;">
+<img src="monkey/Suzanne.jpg" id="testIMG5" style="position: absolute;top:0px;">
+
 <canvas id="canvas"></canvas>
 <script>
     'use strict';
@@ -56,30 +64,52 @@
     world.setAutoSize(1)
     world.addScene(scene);
 
-    scene.addChild('camera', new Camera());
-    scene.getChild('camera').setBackgroundColor('#fff')
-    scene.addMaterial('material', new Material());
-    scene.addMaterial('materialZoomout', new Material());
-    scene.addMaterial('materialZoomIn', new Material());
-    scene.addMaterial('materialCrop', new Material());
-    scene.addMaterial('materialAddSpace', new Material());
+    scene.addChild(new Camera().setId('camera'));
+    scene.getChild('camera').backgroundColor = '#fff'
+    scene.addMaterial(new Material().setId('material'));
+    scene.addMaterial(new Material().setId('materialZoomout'));
+    scene.addMaterial(new Material().setId('materialZoomIn'));
+    scene.addMaterial(new Material().setId('materialCrop'));
+    scene.addMaterial(new Material().setId('materialAddSpace'));
 
-    scene.addTexture('textureZoomout', 'monkey/Suzanne.jpg', Texture.zoomIn);
-    scene.addTexture('textureZoomIn', 'monkey/Suzanne.jpg', Texture.zoomOut);
-    scene.addTexture('textureCrop', 'monkey/Suzanne.jpg', Texture.crop);
-    scene.addTexture('textureAddSpace', 'monkey/Suzanne.jpg', Texture.addSpace);
+    var t1 = new Texture()
+    var t2 = new Texture()
+    var t3 = new Texture()
+    var t4 = new Texture()
+    var t5 = new Texture()
 
-    scene.getMaterial('materialZoomout').addTexture(Texture.diffuse, 'textureZoomout');
-    scene.getMaterial('materialZoomIn').addTexture(Texture.diffuse, 'textureZoomIn');
-    scene.getMaterial('materialCrop').addTexture(Texture.diffuse, 'textureCrop');
-    scene.getMaterial('materialAddSpace').addTexture(Texture.diffuse, 'textureAddSpace');
+    t1.resizeType = Texture.zoomOut
+    t2.resizeType = Texture.zoomIn
+    t3.resizeType = Texture.crop
+    t4.resizeType = Texture.addSpace
 
 
-    var meshZoomout = new Mesh(Primitive.plane(), 'materialZoomout')
-    var meshZoomIn = new Mesh(Primitive.plane(), 'materialZoomIn')
-    var meshCrop = new Mesh(Primitive.plane(), 'materialCrop')
-    var meshAddSpace = new Mesh(Primitive.plane(), 'materialAddSpace')
-    var mesh = new Mesh(Primitive.plane(), 'material')
+    t1.img = document.getElementById('testIMG')
+    t2.img = document.getElementById('testIMG2')
+    t3.img = document.getElementById('testIMG3')
+    t4.img = document.getElementById('testIMG4')
+    t5.img = document.getElementById('testIMG5')
+
+
+    scene.addTexture(t1);
+    scene.addTexture(t2);
+    scene.addTexture(t3);
+    scene.addTexture(t4);
+    scene.addTexture(t5);
+
+
+    scene.getMaterial('materialZoomout').addTexture(Texture.diffuse, t1);
+    scene.getMaterial('materialZoomIn').addTexture(Texture.diffuse, t2);
+    scene.getMaterial('materialCrop').addTexture(Texture.diffuse, t3);
+    scene.getMaterial('materialAddSpace').addTexture(Texture.diffuse, t4);
+    scene.getMaterial('material').addTexture(Texture.diffuse, t5);
+
+
+    var meshZoomout = new Mesh(Primitive.plane(), scene.getMaterial('materialZoomout'))
+    var meshZoomIn = new Mesh(Primitive.plane(), scene.getMaterial('materialZoomIn'))
+    var meshCrop = new Mesh(Primitive.plane(), scene.getMaterial('materialCrop'))
+    var meshAddSpace = new Mesh(Primitive.plane(), scene.getMaterial('materialAddSpace'))
+    var mesh = new Mesh(Primitive.plane(), scene.getMaterial('material'))
 
     meshZoomout.rotateX = Math.PI / 2
     meshZoomIn.rotateX = Math.PI / 2
@@ -87,11 +117,11 @@
     meshAddSpace.rotateX = Math.PI / 2
     mesh.rotateX = Math.PI / 2
 
-    scene.addChild('meshZoomout', meshZoomout)
-    scene.addChild('meshZoomIn', meshZoomIn)
-    scene.addChild('mesh', mesh)
-    scene.addChild('meshCrop', meshCrop)
-    scene.addChild('meshAddSpace', meshAddSpace)
+    scene.addChild(meshZoomout)
+    scene.addChild(meshZoomIn)
+    scene.addChild(mesh)
+    scene.addChild(meshCrop)
+    scene.addChild(meshAddSpace)
 
     meshZoomout.x = -2.2
     meshZoomIn.x = -1.1
