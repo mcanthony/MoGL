@@ -209,10 +209,13 @@ var Material = (function () {
             }
             //인덱스 제공 여부에 따라 텍스쳐리스트에 삽입
             if (arguments.length > 2 && typeof arguments[2] !== 'number') {
-                p.splice(arguments[2], 0, texture);
-            }else{
+                //p.splice(arguments[2], 0, texture);
                 p[p.length] = texture;
+            }else{
+                //p[p.length] = texture;
+                p.splice(arguments[2], 0, texture);
             }
+            console.log('텍스쳐추가',p)
             //changed이벤트는 무조건 발생함.
             this.dispatch(Material.changed);
             if (this.isLoaded) this.dispatch(Material.load);
@@ -239,12 +242,15 @@ var Material = (function () {
                     i = p.length;
 
                     p.splice(p.indexOf(texture), 1);
+                    delete p[texture]
+                    console.log('여기가실행되는건가?',p)
                 }
             } else {
                 for (key in texType) {
                     p = texType[key][this];
                     if (p[texture]) {
                         p[texture] = 0;
+
                         p.splice(p.indexOf(texture), 1);
                     }
                 }

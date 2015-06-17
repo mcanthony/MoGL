@@ -150,7 +150,7 @@ var World = (function () {
         var gl, glTexture;
         gl = gpu.gl
 
-        if (gpu.textures[texture]) return ;
+        //if (gpu.textures[texture]) return ;
         glTexture = gl.createTexture(),
         gl.bindTexture(gl.TEXTURE_2D, glTexture),
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.img),
@@ -614,9 +614,10 @@ var World = (function () {
                                     tGL.vertexAttribPointer(tProgram.aUV, tUVBO.stride, tGL.FLOAT, false, 0, 0)
                                 }
                                 var imsi = priMatDiffuse[tMatUUID]
+
                                 if (imsi.length) {
                                     //tGL.activeTexture(tGL.TEXTURE0);
-                                    tDiffuseID = tGPU.textures[imsi[imsi.length - 1].tex.uuid]
+                                    tDiffuseID = tGPU.textures[imsi[0].tex.uuid]
                                     if (tDiffuseID != pDiffuseID) {
                                         tGL.bindTexture(tGL.TEXTURE_2D, tDiffuseID)
                                     }
