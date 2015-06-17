@@ -7,8 +7,9 @@
     <meta name="format-detection" content="telephone=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,target densitydpi=high-dpi"/>
-    <link rel="stylesheet" type="text/css" href="css.css" />
+    <meta name="viewport"
+          content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,target densitydpi=high-dpi"/>
+    <link rel="stylesheet" type="text/css" href="css.css"/>
 </head>
 <body>
 <img src="../src/ohno.png"/>
@@ -22,12 +23,15 @@
 <script src="../src/MoGL.js"></script>
 <script src="../src/BlendMode.js"></script>
 <script src="../src/Filter.js"></script>
+<script src="../src/Primitive.js"></script>
 <script src="../src/Vertex.js"></script>
+<script src="../src/Shading.js"></script>
 <script src="../src/VertexShaderFunctions.js"></script>
+<script src="../src/Shader.js"></script>
 <script src="../src/Matrix.js"></script>
+<script src="../src/Texture.js"></script>
 <script src="../src/Geometry.js"></script>
 <script src="../src/Material.js"></script>
-<script src="../src/Texture.js"></script>
 <script src="../src/Mesh.js"></script>
 <script src="../src/Group.js"></script>
 <script src="../src/Camera.js"></script>
@@ -37,9 +41,9 @@
 <script>
     var world = new World('canvasTest');
     var world2 = World('canvasTest2');
-    var camera = new Camera(new Geometry([],[]),new Material());
+    var camera = new Camera(new Geometry([], []), new Material());
     var sceneTest1 = new Scene();
-    sceneTest1.addChild('cameraTest', camera);
+    sceneTest1.addChild(camera.setId('cameraTest'));
     var sceneTest2 = new Scene();
     var sceneTest3 = new Scene();
 
@@ -50,20 +54,20 @@
             function () {
                 return world2.isAlive;
             }, true,
-            function(){
+            function () {
                 var test = '';
-                try{
+                try {
                     new World();
-                }catch(e){
+                } catch (e) {
                     test = e.toString();
                 }
                 return test == '';
             }, false,
-            function(){
+            function () {
                 var test = '';
-                try{
-                    new World( 'empty' );
-                }catch(e){
+                try {
+                    new World('empty');
+                } catch (e) {
                     test = e.toString();
                 }
                 return test == '';
@@ -72,39 +76,14 @@
 
     bsTest('add/get/remove ',
             function () {
-                world.addScene('lobby', sceneTest1);
+                world.addScene(sceneTest1.setId('lobby'))
                 return world.getScene('lobby');
             }, sceneTest1,
             function () {
-                // 렌더러 추가
-                world.addRender('lobby', 'cameraTest');
-                return world._renderList[0].uuid;
-            }, 'lobby_cameraTest',
-            function () {
-                var test = '';
-                // 존재하지않는 카메라 추가
-                try{
-                    world.addRender('lobby', 'cameraTestNull')
-                }catch(e){
-                    test = e.toString();
-                }
-                return test;
-            }, 'Error: World.addRender:2',
-            function () {
                 // 씬추가
-                world.addScene('room', sceneTest2);
+                world.addScene(sceneTest2.setId('room'));
                 return world.getScene('room');
             }, sceneTest2,
-            function () {
-                var test = '';
-                try {
-                    //중복된 id등록 시도
-                    world.addScene('room', sceneTest3);
-                } catch (e) {
-                    test = e.toString();
-                }
-                return test;
-            }, 'Error: World.addScene:0',
             function () {
                 var test = '';
                 try {
@@ -119,193 +98,89 @@
                 // 씬삭제
                 world.removeScene('room');
                 return world.getScene('room');
-            }, null,
-            function () {
-                // 렌더러 삭제
-                world.removeRender('lobby', 'cameraTest');
-                return world._renderList[0];
-            }, undefined
+            }, null
     );
-
+    //
     world.destroy();
     world2.destroy();
-
+    //
     bsTest('destroy',
             function () {
                 return world.isAlive;
             }, false,
             function () {
-                var test = '';
+                var test = 1;
                 try {
                     // 파괴된 객체 매서드 실행
-                    world.addScene('room', sceneTest3);
+                    world.addScene(sceneTest3);
                 } catch (e) {
-                    test = e.toString();
+                    test = 0
                 }
                 return test;
-            }, 'Error: Destroyed Object:[object Object]',
+            }, 0,
             function () {
                 return world2.isAlive;
             }, false
     );
+    //
 
-    bsTest( 'scene',
-            function(){
-                var test = '';
+    bsTest('scene',
+            function () {
+                var test = 1;
                 var scene = new Scene();
                 var world = new World('canvasTest3');
-                scene.addChild( 'cam1', new Camera() );
-                world.addScene( 'scene', scene );
+                world.addScene(scene);
                 try {
-                    world.addScene( 'scene', scene );
-                } catch(e) {
+                    world.addScene(scene);
+                } catch (e) {
                     test = e.toString();
                 }
                 return test;
             }, 'Error: World.addScene:0',
-            function(){
-                var test = '', Class = function(){};
+            function () {
+                var test = '', Class = function () {
+                };
                 var instance = new Class();
                 var world = new World('canvasTest3');
-                try{
+                try {
                     world.addScene(instance);
-                }catch(e){
+                } catch (e) {
                     test = e.toString();
                 }
                 return test;
             }, 'Error: World.addScene:1',
-            function(){
+            function () {
                 var world = new World('canvasTest3');
-                var testScene = new Scene();
-                world.addScene( 'testScene', testScene );
-                return world.getScene( 'testScene').uuid === testScene.uuid;
+                var testScene = new Scene().setId('scene1');
+                world.addScene(testScene);
+                return world.getScene('scene1') == testScene;
             }, true,
-            function(){
-                var world = new World( 'canvasTest3' );
-                var test = '';
-                try{
-                    world.getScene();
-                }catch(e){
-                    test = e.toString();
-                }
-                return test;
-            }, 'Error: World.getScene:0',
-            function(){
-                var world = new World( 'canvasTest3' );
-                return world.getScene( 'test' );
+            function () {
+                var world = new World('canvasTest3');
+                return world.getScene();
             }, null,
-            function(){
-                var world = new World( 'canvasTest3' );
-                var testScene = new Scene();
-                world.addScene( 'testScene', testScene );
-                world.removeScene( 'testScene' );
-                return testScene == world.getScene( 'testScene' );
-            }, false,
-            function(){
-                var world = new World( 'canvasTest3'), test = '';
-                try{
-                    world.removeScene( 'testScene' );
-                }catch(e){
+            function () {
+                var world = new World('canvasTest3');
+                return world.getScene('test');
+            }, null,
+            function () {
+                var world = new World('canvasTest3');
+                var scene = new Scene();
+                world.addScene(scene.setId('scene'));
+                world.removeScene('scene');
+                return world.getScene('scene')
+            }, null,
+            function () {
+                var world = new World('canvasTest3'), test = '';
+                try {
+                    world.removeScene('testScene');
+                } catch (e) {
                     test = e.toString();
                 }
                 return test;
             }, 'Error: World.removeScene:0'
     );
 
-    bsTest( 'render',
-            function(){
-                var world = World('canvasTest3'), lobby = Scene(), test = '';
-                lobby.addChild( 'cam1', new Camera() );
-                world.addScene( 'lobby', lobby );
-                world.addRender( 'lobby', 'cam1' );
-                try{
-                    world.addRender( 'lobby', 'cam1' );
-                }catch(e){
-                    test = e.toString();
-                }
-                return test;
-            }, 'Error: World.addRender:0',
-            function(){
-                var world = World( 'canvasTest3'), test = '';
-                try{
-                    world.addRender( '', 'cam' );
-                }catch(e){
-                    test = e.toString();
-                }
-                return test;
-            }, 'Error: World.addRender:1',
-            function(){
-                var world = World( 'canvasTest3'), test = '';
-                world.addScene( 'lobby', Scene().addChild( 'cam', Camera() ) );
-                try{
-                    world.addRender( 'lobby', '' );
-                }catch(e){
-                    test = e.toString();
-                }
-                return test;
-            }, 'Error: World.addRender:2',
-            function(){
-                var world = World('canvasTest3'), lobby = Scene(), test = '', cam = Camera();
-                lobby.addChild( 'cam1', cam );
-                world.addScene( 'lobby', lobby );
-                lobby.destroy();
-                try{
-                    world.addRender( 'lobby', 'cam1' );
-                }catch(e){
-                    test = e.toString();
-                }
-                return test;
-            },  'Error: World.addRender:1',
-            function(){
-                var world = World('canvasTest3'), lobby = Scene(), test = '', cam = Camera();
-                lobby.addChild( 'cam1', cam );
-                world.addScene( 'lobby', lobby );
-                cam.destroy();
-                try{
-                    world.addRender( 'lobby', 'cam1' );
-                }catch(e){
-                    test= e.toString();
-                }
-                return test;
-            }, 'Error: World.addRender:2',
-            function(){
-                var world = World('canvasTest3'), lobby = Scene(), test = '', cam = Camera();
-                lobby.addChild( 'cam1', cam );
-                world.addScene( 'lobby', lobby );
-                world.addRender( 'lobby', 'cam1' );
-                try{
-                    world.removeRender();
-                }catch(e){
-                    test = e.toString();
-                }
-                return test;
-            }, 'Error: World.removeRender:0',
-            function(){
-                var world = World('canvasTest3'), lobby = Scene(), test = '', cam = Camera();
-                lobby.addChild( 'cam1', cam );
-                world.addScene( 'lobby', lobby );
-                world.addRender( 'lobby', 'cam1' );
-                try{
-                    world.removeRender( '', 'cam1' );
-                }catch(e){
-                    test = e.toString();
-                }
-                return test;
-            }, 'Error: World.removeRender:0',
-            function(){
-                var world = World('canvasTest3'), lobby = Scene(), test = '', cam = Camera();
-                lobby.addChild( 'cam1', cam );
-                world.addScene( 'lobby', lobby );
-                world.addRender( 'lobby', 'cam1' );
-                try{
-                    world.removeRender( 'lobby', '' );
-                }catch(e){
-                    test = e.toString();
-                }
-
-                return test;
-            }, 'Error: World.removeRender:1'
-    );
 </script>
 </body>
 </html>

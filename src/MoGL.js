@@ -207,7 +207,7 @@ var MoGL = (function() {
             for (key in this) {
                 if (this.hasOwnProperty(key)) this[key] = null;
             }
-            if(ids[this.classId] && this.uuid in ids[this.classId][this]){//id파괴
+            if(ids[this.classId] && this.uuid in ids[this.classId]){//id파괴
                 key = ids[this.classId][this],
                 delete ids[this.classId][this],
                 delete ids[this.classId].ref[key];
@@ -316,7 +316,8 @@ var MoGL = (function() {
                     description:v.description,
                     param:v.param || (!isdoc ? param(v.value) : ''),
                     ret:v.ret,
-                    sample:v.sample
+                    sample:v.sample,
+                    exception: v.exception
                 };
             }
             return this;
@@ -353,7 +354,8 @@ var MoGL = (function() {
                     type:v.type,
                     description:v.description || (type == '_constant' ? 'Const' : type == '_event' ? 'Event' : 'Field') + ' of ' + this._construct.value.name,
                     defaultValue:v.defaultValue,
-                    sample:v.sample
+                    sample:v.sample,
+                    exception: v.exception
                 };
             }
             if (!isdoc && 'value' in this[type][k]) this._info[type][k].value = this[type][k].value;

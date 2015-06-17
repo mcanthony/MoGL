@@ -36,28 +36,28 @@
     var material = new Material();
     bsTest('type',
             function () {
-                material.setShading(Shading.none);
-                return material._shading.type;
+                material.shading = Shading.none
+                return material.shading;
             }, 'none',
             function() {
-                material.setShading(Shading.gouraud);
-                return material._shading.type;
+                material.shading = Shading.gouraud
+                return material.shading;
             }, 'gouraud',
             function() {
-                material.setShading(Shading.phong);
-                return material._shading.type;
+                material.shading = Shading.phong
+                return material.shading;
             }, 'phong',
             function() {
-                material.setShading(Shading.blinn);
-                return material._shading.type;
+                material.shading = Shading.blinn
+                return material.shading;
             }, 'blinn',
             function() {
-                material.setShading(Shading.flat);
-                return material._shading.type;
+                material.shading = Shading.flat
+                return material.shading;
             }, 'flat',
             function() {
-                material.setShading(Shading.toon);
-                return material._shading.type;
+                material.shading = Shading.toon
+                return material.shading;
             }, 'toon'
     );
 </script>

@@ -249,7 +249,7 @@ var Scene = (function () {
         result = false
         for (k in p) {
             if (p[k].id == id) {
-                childrenArray.splice(childrenArray[this].indexOf(p[k]),1)
+                childrenArray[this].splice(childrenArray[this].indexOf(p[k]),1)
                 delete p[k],
                 result = true
             }

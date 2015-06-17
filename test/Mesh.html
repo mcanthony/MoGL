@@ -366,17 +366,32 @@
             }, "Matrix(10, 0, 0, 0, 0, 20, 0, 0, 0, 0, 30, 0, 0, 0, 0, 1)"
     )
     */
+    mesh1.destroy();    
    bsTest('destroy',
-           function () {
+            function () {
+               // 죽었나 확인
+                return mesh1.isAlive;
+            }, false,
+            function () {
                 try{
-                    mesh1.destroy(); 
-                    return mesh1;
+                    // 파괴된 객체의 field에 접근 해보기
+                    var gg = mesh1.geometry;
+                    return true;
                 }catch(e){
                     console.log(e);
                     return false;
                 }
-           }, undefined
-   );
+            }, false,
+            function () {
+                try{
+                    // mesh가 등록된 scene에서 파괴된 mesh 찾아보기
+                    var mm = testScene.getChild('testMesh1');
+                    return false;
+                }catch(e){
+                   return e.toString().indexOf('Destroyed Object') > -1;
+                }
+            }, true
+    );
 </script>
 </body>
 </html>
