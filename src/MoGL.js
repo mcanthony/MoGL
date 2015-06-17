@@ -207,7 +207,7 @@ var MoGL = (function() {
             for (key in this) {
                 if (this.hasOwnProperty(key)) this[key] = null;
             }
-            if(ids[this.classId] && this.uuid in ids[this.classId][this]){//id파괴
+            if(ids[this.classId] && this.uuid in ids[this.classId]){//id파괴
                 key = ids[this.classId][this],
                 delete ids[this.classId][this],
                 delete ids[this.classId].ref[key];
