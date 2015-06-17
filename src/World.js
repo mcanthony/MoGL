@@ -617,7 +617,7 @@ var World = (function () {
 
                                 if (imsi.length) {
                                     //tGL.activeTexture(tGL.TEXTURE0);
-                                    tDiffuseID = tGPU.textures[imsi[0].tex.uuid]
+                                    tDiffuseID = tGPU.textures[imsi[imsi.length-1].tex.uuid]
                                     if (tDiffuseID != pDiffuseID) {
                                         tGL.bindTexture(tGL.TEXTURE_2D, tDiffuseID)
                                     }
