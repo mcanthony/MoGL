@@ -73,24 +73,24 @@
             // 잘생성이되었나
             function () {
                 console.log(testMaterial1.color)
-                return testMaterial1.color.toString();
-            }, {r:0,g:0,b:0,a:1}.toString(),
+                return testMaterial1.color.join();
+            }, [0,0,0,1].join(),
 //             잘생성이되었나
             function () {
-                return testMaterial2.color.toString();
-            }, {r:0,g:0,b:0,a:1}.toString(),
+                return testMaterial2.color.join();
+            }, [0,0,0,1].join(),
             function () {
-                return testMaterial3.color.toString();
-            }, {r:1,g:1,b:1,a:0.8}.toString(),
+                return testMaterial3.color.join();
+            }, [1,1,1,0.8].join()/*{r:1,g:1,b:1,a:0.8}.toString()*/,
             function () {
-                return testMaterial4.color.toString()
-            }, {r:0xff / 0xff,g:0xaf / 0xff,b:0x45 / 0xff,a:0.5}.toString(),
+                return testMaterial4.color.join()
+            }, [0xff / 0xff, 0xaf / 0xff, 0x45 / 0xff, 0.5].join(),
             function () {
-                return testMaterial5.color.toString()
-            }, {r:1,g:1,b:1,a:1}.toString(),
+                return testMaterial5.color.join()
+            }, [1,1,1,1].join(),
             function () {
-                return testMaterial6.color.toString();
-            }, {r:1,g:1,b:1,a:1}.toString()
+                return testMaterial6.color.join();
+            }, [1,1,1,1].join()
     );
     //    var world = new World('canvas')
     //    var lobby = new Scene().setId('lobby');
@@ -209,14 +209,17 @@
     var indexTestMaterial = Material('#ffffff127.8');
         bsTest('textureIndexTest',
                 function () {
-                    indexTestMaterial.addTexture(Texture.diffuse, indexTexture1, false, BlendMode.add)
+                    indexTestMaterial.addTexture(Texture.diffuse, indexTexture1, null, BlendMode.add)
                     return indexTestMaterial.diffuse[0].tex
                 }, indexTexture1,
                 function () {
                     return indexTestMaterial.diffuse[0].blendMode
                 }, BlendMode.add,
                 function () {
-                    indexTestMaterial.addTexture(Texture.diffuse, indexTexture2, false, BlendMode.screen)
+                    try{
+                        indexTestMaterial.addTexture(Texture.diffuse, indexTexture2, undefined, BlendMode.screen)
+                    }catch(e){console.log(e.toString())}
+                    console.log(indexTestMaterial.diffuse);
                     return indexTestMaterial.diffuse[1].tex
                 }, indexTexture2,
                 function () {
@@ -253,7 +256,7 @@
                 function () {
                     var material = new Material();
                     return material.color[0];
-                }, 0,
+                }, 1,
                 function () {
                     var material = new Material('#Fff');
                     return material.color[0];
