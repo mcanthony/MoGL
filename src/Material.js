@@ -250,8 +250,8 @@ var Material = (function () {
                 if (p[texture]) {
                     p[texture] = 0;
                     i = p.length;
-
                     p.splice(p.indexOf(texture), 1);
+                    delete p[texture]
                 }
             } else {
                 for (key in texType) {
@@ -259,6 +259,7 @@ var Material = (function () {
                     if (p[texture]) {
                         p[texture] = 0;
                         p.splice(p.indexOf(texture), 1);
+                        delete p[texture]
                     }
                 }
             }
