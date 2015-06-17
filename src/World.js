@@ -325,7 +325,7 @@ var World = (function () {
         tSceneList = sceneList[this], i = tSceneList.length;
         if (!(scene instanceof Scene )) this.error(1);
         while (i--) {
-            if (tSceneList[i] == this) this.error(0);
+            if (tSceneList[i] == scene) this.error(0);
         }
         tSceneList.push(scene)
         var p = gpu[this]
