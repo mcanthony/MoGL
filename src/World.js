@@ -339,7 +339,7 @@ var World = (function () {
     .method('getScene', function getScene(sceneID) {
         var i, tSceneList;
         tSceneList = sceneList[this],
-            i = tSceneList.length;
+        i = tSceneList.length;
         if (typeof sceneID === 'undefined') return null;
         while (i--) {
             if (tSceneList[i].id == sceneID) {
