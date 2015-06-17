@@ -368,14 +368,9 @@
     */
    bsTest('destroy',
            function () {
-                try{
-                    mesh1.destroy(); 
-                    return mesh1;
-                }catch(e){
-                    console.log(e);
-                    return false;
-                }
-           }, undefined
+               mesh1.destroy();
+               return mesh1.isAlive;
+           }, false
    );
 </script>
 </body>
