@@ -5,14 +5,14 @@
 
 **field**
 
-* [wireFrameColor](#wireFrameColor) - Field of Material
-* [wireFrame](#wireFrame) - Field of Material
-* [shading](#shading) - Field of Material
-* [lambert](#lambert) - Field of Material
-* [isLoaded](#isLoaded) - Field of Material
-* [diffuse](#diffuse) - Field of Material
-* [count](#count) - Field of Material
-* [color](#color) - Field of Material
+* [wireFrameColor](#wireFrameColor) - 와이어 프레임 컬러
+* [wireFrame](#wireFrame) - 와이어 프레임 표현여부
+* [shading](#shading) - 재질 쉐이딩 적용
+* [lambert](#lambert) - 재질 쉐이딩 적용 강도 설정
+* [isLoaded](#isLoaded) - 재질에 적용된 텍스쳐들이 모두 로딩되...
+* [diffuse](#diffuse) - 재질에 적용된 디퓨즈 리스트 반환
+* [count](#count) - 재질이 사용된 횟수
+* [color](#color) - 재질 컬러색
 
 **method**
 
@@ -72,7 +72,7 @@ _field_
 
 **description**
 
-- Field of Material
+- 와이어 프레임 컬러
 
 **setting**
 
@@ -82,7 +82,7 @@ _field_
 
 **defaultValue**
 
-- none
+- [Math.random(),Math.random(),Math.random(),1]
 
 **exception**
 
@@ -91,7 +91,8 @@ _field_
 **sample**
 
 ```javascript
-//none
+material.wireFrameColor = [1,0.5,1,1] // r,g,b,a
+console.log(material.wireFrameColor)
 ```
 
 [top](#)
@@ -104,7 +105,7 @@ _field_
 
 **description**
 
-- Field of Material
+- 와이어 프레임 표현여부
 
 **setting**
 
@@ -114,7 +115,7 @@ _field_
 
 **defaultValue**
 
-- none
+- false
 
 **exception**
 
@@ -123,7 +124,8 @@ _field_
 **sample**
 
 ```javascript
-//none
+material.wireFrame = true
+console.log(material.wireFrame)
 ```
 
 [top](#)
@@ -136,7 +138,7 @@ _field_
 
 **description**
 
-- Field of Material
+- 재질 쉐이딩 적용
 
 **setting**
 
@@ -146,7 +148,7 @@ _field_
 
 **defaultValue**
 
-- none
+- Shading.none
 
 **exception**
 
@@ -155,7 +157,8 @@ _field_
 **sample**
 
 ```javascript
-//none
+material.shading = Shading.phong
+console.log(material.shading)
 ```
 
 [top](#)
@@ -168,7 +171,7 @@ _field_
 
 **description**
 
-- Field of Material
+- 재질 쉐이딩 적용 강도 설정
 
 **setting**
 
@@ -178,7 +181,7 @@ _field_
 
 **defaultValue**
 
-- none
+- 1.0
 
 **exception**
 
@@ -187,7 +190,8 @@ _field_
 **sample**
 
 ```javascript
-//none
+material.lambert = 1.5
+console.log(material.lambert)
 ```
 
 [top](#)
@@ -200,7 +204,7 @@ _field_
 
 **description**
 
-- Field of Material
+- 재질에 적용된 텍스쳐들이 모두 로딩되었는지 확인
 
 **setting**
 
@@ -210,7 +214,7 @@ _field_
 
 **defaultValue**
 
-- none
+- false
 
 **exception**
 
@@ -219,7 +223,7 @@ _field_
 **sample**
 
 ```javascript
-//none
+console.log(material.isLoaded)
 ```
 
 [top](#)
@@ -232,17 +236,17 @@ _field_
 
 **description**
 
-- Field of Material
+- 재질에 적용된 디퓨즈 리스트 반환
 
 **setting**
 
-- *writable*:true
+- *writable*:false
 - *enumerable*:false
 - *configurable*:false
 
 **defaultValue**
 
-- none
+- []
 
 **exception**
 
@@ -251,7 +255,7 @@ _field_
 **sample**
 
 ```javascript
-//none
+console.log(material.diffuse)
 ```
 
 [top](#)
@@ -264,43 +268,11 @@ _field_
 
 **description**
 
-- Field of Material
+- 재질이 사용된 횟수
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
-
-**value**
-
-count
-
-**exception**
-
-- none
-
-**sample**
-
-```javascript
-//none
-```
-
-[top](#)
-
-<a name="color"></a>
-###color
-
-_field_
-
-
-**description**
-
-- Field of Material
-
-**setting**
-
-- *writable*:true
 - *enumerable*:false
 - *configurable*:false
 
@@ -315,7 +287,42 @@ _field_
 **sample**
 
 ```javascript
-//none
+// 미구현상태임
+console.log(material.count)
+```
+
+[top](#)
+
+<a name="color"></a>
+###color
+
+_field_
+
+
+**description**
+
+- 재질 컬러색
+
+**setting**
+
+- *writable*:true
+- *enumerable*:false
+- *configurable*:false
+
+**defaultValue**
+
+- [1,1,1,1]
+
+**exception**
+
+- none
+
+**sample**
+
+```javascript
+material.color = [0,1,2,1] // 배열형식으로 입력
+material.color = "#ff2233 // 16진수로 입력"
+console.log(material.color)
 ```
 
 [top](#)
