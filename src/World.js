@@ -1,4 +1,4 @@
-var World = (function () {
+var World = (function (makeUtil) {
     var getGL, glSetting, glContext, rectMatrix = Matrix();
     var canvas, context, makeVBO, makeVNBO, makeIBO, makeUVBO, makeProgram, makeTexture, makeFrameBuffer;
     var baseUpdate, baseShaderUpdate, cameraRenderAreaUpdate;
@@ -27,8 +27,6 @@ var World = (function () {
     };
     var renderList = {}, sceneList = [], cvsList = {}, autoSizer = {}, started = {}, gpu = {};
     // 씬에서 이사온놈들
-    canvas = document.createElement('canvas');
-    context = canvas.getContext('2d');
     makeVBO = function makeVBO(gpu, geo, data, stride) {
         var gl, buffer;
         gl = gpu.gl,
@@ -884,4 +882,4 @@ var World = (function () {
     .constant('renderBefore', 'WORLD_RENDER_BEFORE')
     .constant('renderAfter', 'WORLD_RENDER_AFTER')
     .build();
-})();
+})(makeUtil);

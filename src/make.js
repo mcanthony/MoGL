@@ -1,6 +1,6 @@
 var makeUtil = (function(){
     var makeBuffer = function makeBuffer(gl, target, data, stribe) {
-        var buffer = gl.createBuffer(),
+        var buffer = gl.createBuffer();
         gl.bindBuffer(target, buffer),
         gl.bufferData(target, data, gl.STATIC_DRAW),
         buffer.data = data,
@@ -85,7 +85,7 @@ var makeUtil = (function(){
             gl.useProgram(program),
             tList = vSource.attribute,
             len = tList.length;
-            for (i = 0; i < len; i++ {
+            for (i = 0; i < len; i++) {
                 gl.bindBuffer(gl.ARRAY_BUFFER, gpu.vbo['null']),
                 gl.enableVertexAttribArray(program[tList[i]] = gl.getAttribLocation(program, tList[i])),
                 gl.vertexAttribPointer(program[tList[i]], gpu.vbo['null'].stride, gl.FLOAT, false, 0, 0),
