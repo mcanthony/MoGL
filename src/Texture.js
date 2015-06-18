@@ -56,12 +56,22 @@ var Texture = (function() {
         this.removeEventListener('load', loaded);
         texture.dispatch('load');
     };
-    return MoGL.extend(function Texture(){})
+    return MoGL.extend('Texture',{
+        description: "텍스쳐 객체 클래스",
+        sample: [
+            "var texture = new Texture()"
+        ],
+        value:function Texture(){}
+    })
     .field('resizeType', {
         description:'resize type get/set field.',
         type:'string',
         defaultValue:'null',
-        sample: [""],
+        sample: [
+            "var texture = new Texture()",
+            "texture.resizeType = Texture.zoomIn",
+            "console.log(texture.resizeType)"
+        ],
         get:$getter(resize, false, 'zoomOut'),
         set:function resizeTypeSet(v){
             if (Texture[v]) {
@@ -75,22 +85,28 @@ var Texture = (function() {
         description:'Load check field.',
         type:'string',
         defaultValue:'null',
-        sample: [""],
+        sample: [
+            "var texture = new Texture()",
+            'texture.img = document.getElementID("imgElement")',
+            "console.log(texture.isLoaded)"
+        ],
         get:$getter(isLoaded, false, false)
     })
     .field('img', {
         description:'Image get/set field.',
         type:'string',
         defaultValue:'null',
-        sample: [""],
+        sample: [
+            "var texture = new Texture()",
+            'texture.img = document.getElementID("imgElement")',
+        ],
         get:$getter(imgs, false, empty),
         set:function imgSet(v){
             var complete, img, w, h;
             complete= false,
-            img = document.createElement('img')
+            img = v;
             if (v instanceof HTMLImageElement){
-                img.src = v.src
-                if (img.complete) {
+                if (v.complete) {
                     complete = true;
                 }
             } else if (v instanceof ImageData){
@@ -99,6 +115,7 @@ var Texture = (function() {
                 canvas.height = h = v.height,
                 context.clearRect(0, 0, w, h),
                 context.putImageData(v, 0, 0),
+                img = document.createElement('img'),
                 img.src = context.toDataURL();
             } else if (typeof v == 'string') {
                 if (v.substring(0, 10) == 'data:image' && v.indexOf('base64') > -1){
