@@ -78,10 +78,11 @@ var World = (function (makeUtil) {
         for (k in p) {
             p2 = p[k].cameras
             for (k2 in p2) {
-                var camera, tRenderArea, cvs;
+                var camera, tRenderArea, cvs,pixelRatio;
                 camera = p2[k2],
                 cvs = cvsList[self]
                 tRenderArea = camera.renderArea;
+                pixelRatio = window.devicePixelRatio
                 if (tRenderArea && !camera.renderArea.byAutoArea) {
                     var tw,th
                     tw = cvs.width,
@@ -672,8 +673,8 @@ var World = (function (makeUtil) {
                     if (!tVBO) return;
                     tGL.useProgram(tProgram);
                     tGL.uniformMatrix4fv(tProgram.uPixelMatrix, false, [
-                        2 / tCvs.width, 0, 0, 0,
-                        0, -2 / tCvs.height, 0, 0,
+                        2 / tCvs.clientWidth, 0, 0, 0,
+                        0, -2 / tCvs.clientHeight, 0, 0,
                         0, 0, 0, 0,
                         -1, 1, 0, 1
                     ]);
