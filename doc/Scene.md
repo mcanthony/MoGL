@@ -5,32 +5,32 @@
 
 **field**
 
-* [vertexShaders](#vertexShaders) - Field of Scene
-* [updateList](#updateList) - Field of Scene
-* [fragmentShaders](#fragmentShaders) - Field of Scene
-* [children](#children) - Field of Scene
-* [cameras](#cameras) - Field of Scene
+* [vertexShaders](#vertexShaders) - 현재 씬이 가지고있는 버텍스 쉐이더...
+* [updateList](#updateList) - world가 render 함수를 실행...
+* [fragmentShaders](#fragmentShaders) - 현재 씬이 가지고 있는 프레그먼트 쉐...
+* [children](#children) - 씬에 등록된 자식 리스트를 오브젝트...
+* [cameras](#cameras) - 씬에 등록된 카메라 리스트
 
 **method**
 
-* [getCamera](#getCamera) - Method of Scene
-* [removeTexture](#removeTexture) - Method of Scene
-* [getChild](#getChild) - Method of Scene
-* [addMesh](#addMesh) - Method of Scene
-* [removeMaterial](#removeMaterial) - Method of Scene
-* [addTexture](#addTexture) - Method of Scene
-* [removeGeometry](#removeGeometry) - Method of Scene
+* [getCamera](#getCamera) - 씬에 등록된 Camera객체를 검색
+* [removeTexture](#removeTexture) - 씬에 등록된 텍스쳐 객체를 리스트에서...
+* [getChild](#getChild) - 씬에 등록된 자식객체(Camera o...
+* [addMesh](#addMesh) - Mesh객체를 추가함.
+* [removeMaterial](#removeMaterial) - 씬에 등록된 재질 객체를 리스트에서...
+* [addTexture](#addTexture) - 텍스쳐 객체를 추가함
+* [removeGeometry](#removeGeometry) - 씬에 등록된 지오메트리 객체를 리스트...
 * [addVertexShader](#addVertexShader) - Method of Scene
-* [getMesh](#getMesh) - Method of Scene
-* [removeChild](#removeChild) - Method of Scene
-* [getTexture](#getTexture) - Method of Scene
-* [getGeometry](#getGeometry) - Method of Scene
-* [getMaterial](#getMaterial) - Method of Scene
-* [addMaterial](#addMaterial) - Method of Scene
-* [addGeometry](#addGeometry) - Method of Scene
+* [getMesh](#getMesh) - 씬에 등록된 Mesh객체를 검색
+* [removeChild](#removeChild) - 씬에 등록된 객체를 자식리스트에서 삭...
+* [getTexture](#getTexture) - 씬에 등록된 텍스쳐 객체를 검색
+* [getGeometry](#getGeometry) - 씬에 등록된 지오메트리 객체를 검색
+* [getMaterial](#getMaterial) - 씬에 등록된 재질 객체를 검색
+* [addMaterial](#addMaterial) - 재질 객체를 추가함
+* [addGeometry](#addGeometry) - 지오메트리 객체를 추가함
 * [addFragmentShader](#addFragmentShader) - Method of Scene
-* [addChild](#addChild) - Method of Scene
-* [addCamera](#addCamera) - Method of Scene
+* [addChild](#addChild) - 자식 객체를 추가함. 메쉬나 카메라...
+* [addCamera](#addCamera) - 카메라 객체를 추가함.
 
 **static**
 
@@ -47,11 +47,11 @@
 
 **description**
 
-Constructor of Scene
+- Constructor of Scene
 
 **param**
 
-
+- 
 
 **exception**
 
@@ -73,20 +73,26 @@ _field_
 
 **description**
 
-Field of Scene
+- 현재 씬이 가지고있는 버텍스 쉐이더 자바스크립트 정보
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **defaultValue**
 
-none
+- {}
+
+**exception**
+
+- none
 
 **sample**
 
 ```javascript
-//none
+console.log(scene.vertexShaders)
 ```
 
 [top](#)
@@ -99,20 +105,27 @@ _field_
 
 **description**
 
-Field of Scene
+- world가 render 함수를 실행하기전 GPU업데이트가 되어야할 목록.
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **defaultValue**
 
-none
+- { mesh : [], material : [], camera : [] }
+- 업데이트 완료후 각 리스트는 초기화 됨.
+
+**exception**
+
+- none
 
 **sample**
 
 ```javascript
-//none
+console.log(scene.updateList)
 ```
 
 [top](#)
@@ -125,20 +138,26 @@ _field_
 
 **description**
 
-Field of Scene
+- 현재 씬이 가지고 있는 프레그먼트 쉐이더 자바스크립트 정보
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **defaultValue**
 
-none
+- {}
+
+**exception**
+
+- none
 
 **sample**
 
 ```javascript
-//none
+console.log(scene.fragmentShaders)
 ```
 
 [top](#)
@@ -151,20 +170,26 @@ _field_
 
 **description**
 
-Field of Scene
+- 씬에 등록된 자식 리스트를 오브젝트 형식으로 반환
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **defaultValue**
 
-none
+- {}
+
+**exception**
+
+- none
 
 **sample**
 
 ```javascript
-//none
+console.log(scene.children)
 ```
 
 [top](#)
@@ -177,230 +202,246 @@ _field_
 
 **description**
 
-Field of Scene
+- 씬에 등록된 카메라 리스트
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **defaultValue**
 
-none
+- {}
+
+**exception**
+
+- none
 
 **sample**
 
 ```javascript
-//none
+var scene = new Scene()
+scene.addChild(new Camera)
+console.log(scene.cameras) // 오브젝트 형식의 카메라 리스트를 반환
 ```
 
 [top](#)
 
 <a name="getCamera"></a>
-###getCamera(id)
+###getCamera(id:String)
 
 _method_
 
 
 **description**
 
-Method of Scene
+- 씬에 등록된 Camera객체를 검색
 
 **param**
 
-1. id
+1. id:String - 찾고자 하는 Camera의 id
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- Camera or null
 
 **sample**
 
 ```javascript
-//none
+scene.getCamera('CameraID')
 ```
 
 [top](#)
 
 <a name="removeTexture"></a>
-###removeTexture(id)
+###removeTexture(id:String)
 
 _method_
 
 
 **description**
 
-Method of Scene
+- 씬에 등록된 텍스쳐 객체를 리스트에서 삭제
 
 **param**
 
-1. id
+1. id:String - 삭제 대상 객체의 id
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- true or false - 삭제성공시 true 반환
 
 **sample**
 
 ```javascript
-//none
+scene.removeTexture('targetID')
 ```
 
 [top](#)
 
 <a name="getChild"></a>
-###getChild(id)
+###getChild(id:String)
 
 _method_
 
 
 **description**
 
-Method of Scene
+- 씬에 등록된 자식객체(Camera or Mesh) 검색
 
 **param**
 
-1. id
+1. id:String - 찾고자 하는 자식의 id
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- Mesh/Camera or null
 
 **sample**
 
 ```javascript
-//none
+scene.getChild('CameraID')
 ```
 
 [top](#)
 
 <a name="addMesh"></a>
-###addMesh(v)
+###addMesh(mesh:Mesh)
 
 _method_
 
 
 **description**
 
-Method of Scene
+- Mesh객체를 추가함.
 
 **param**
 
-1. v
+1. mesh:Mesh - 메쉬객체
 
 **exception**
 
-none
+- 'Scene.addMesh:0' - 이미 등록된 메쉬객체를 등록하려고 할때
+- 'Scene.addMesh:1' - 메쉬가 아닌 객체를 등록하려고 할때
 
 **return**
 
-?
+- this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
 ```javascript
-//none
+var scene = new Scene()
+var geo = new Geometry([],[])
+var mat = new Material()
+var mesh = new Mesh(geo,mat)
+scene.addMesh(mesh)
 ```
 
 [top](#)
 
 <a name="removeMaterial"></a>
-###removeMaterial(id)
+###removeMaterial(id:String)
 
 _method_
 
 
 **description**
 
-Method of Scene
+- 씬에 등록된 재질 객체를 리스트에서 삭제
 
 **param**
 
-1. id
+1. id:String - 삭제 대상 객체의 id
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- true or false - 삭제성공시 true 반환
 
 **sample**
 
 ```javascript
-//none
+scene.removeMaterial('targetID')
 ```
 
 [top](#)
 
 <a name="addTexture"></a>
-###addTexture(v)
+###addTexture(texture:Texture)
 
 _method_
 
 
 **description**
 
-Method of Scene
+- 텍스쳐 객체를 추가함
 
 **param**
 
-1. v
+1. texture:Texture - 텍스쳐 객체
 
 **exception**
 
-none
+- 'Scene.addTexture:0' - 이미 등록된 텍스쳐를 등록하려 할때
+- 'Scene.addTexture:1' - Texture 타입이 아닌 객체를 등록하려 할때
 
 **return**
 
-?
+- this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
 ```javascript
-//none
+var scene = new Scene()
+var texture = new Texture()
+scene.addTexture(texture)
 ```
 
 [top](#)
 
 <a name="removeGeometry"></a>
-###removeGeometry(id)
+###removeGeometry(id:String)
 
 _method_
 
 
 **description**
 
-Method of Scene
+- 씬에 등록된 지오메트리 객체를 리스트에서 삭제
 
 **param**
 
-1. id
+1. id:String - 삭제 대상 객체의 id
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- true or false - 삭제성공시 true 반환
 
 **sample**
 
 ```javascript
-//none
+scene.removeGeometry('targetID')
 ```
 
 [top](#)
@@ -413,7 +454,7 @@ _method_
 
 **description**
 
-Method of Scene
+- Method of Scene
 
 **param**
 
@@ -421,11 +462,11 @@ Method of Scene
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- ?
 
 **sample**
 
@@ -436,211 +477,217 @@ none
 [top](#)
 
 <a name="getMesh"></a>
-###getMesh(id)
+###getMesh(id:String)
 
 _method_
 
 
 **description**
 
-Method of Scene
+- 씬에 등록된 Mesh객체를 검색
 
 **param**
 
-1. id
+1. id:String - 찾고자 하는 메쉬의 id
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- Mesh or null
 
 **sample**
 
 ```javascript
-//none
+scene.getMesh('MeshID')
 ```
 
 [top](#)
 
 <a name="removeChild"></a>
-###removeChild(id)
+###removeChild(id:String)
 
 _method_
 
 
 **description**
 
-Method of Scene
+- 씬에 등록된 객체를 자식리스트에서 삭제
 
 **param**
 
-1. id
+1. id:String - 삭제 대상 객체의 id
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- true or false - 삭제성공시 true 반환
 
 **sample**
 
 ```javascript
-//none
+scene.removeChild('targetID')
 ```
 
 [top](#)
 
 <a name="getTexture"></a>
-###getTexture(id)
+###getTexture(id:String)
 
 _method_
 
 
 **description**
 
-Method of Scene
+- 씬에 등록된 텍스쳐 객체를 검색
 
 **param**
 
-1. id
+1. id:String - 찾고자 하는 텍스쳐 객체의 id
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- Texture or null
 
 **sample**
 
 ```javascript
-//none
+scene.getTexture('TextureID')
 ```
 
 [top](#)
 
 <a name="getGeometry"></a>
-###getGeometry(id)
+###getGeometry(id:String)
 
 _method_
 
 
 **description**
 
-Method of Scene
+- 씬에 등록된 지오메트리 객체를 검색
 
 **param**
 
-1. id
+1. id:String - 찾고자 하는 지오메트리 객체의 id
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- Geometry or null
 
 **sample**
 
 ```javascript
-//none
+scene.getGeometry('GeometryID')
 ```
 
 [top](#)
 
 <a name="getMaterial"></a>
-###getMaterial(id)
+###getMaterial(id:String)
 
 _method_
 
 
 **description**
 
-Method of Scene
+- 씬에 등록된 재질 객체를 검색
 
 **param**
 
-1. id
+1. id:String - 찾고자 하는 재질 객체의 id
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- Material or null
 
 **sample**
 
 ```javascript
-//none
+scene.getMaterial('MaterialID')
 ```
 
 [top](#)
 
 <a name="addMaterial"></a>
-###addMaterial(v)
+###addMaterial(material:Material)
 
 _method_
 
 
 **description**
 
-Method of Scene
+- 재질 객체를 추가함
 
 **param**
 
-1. v
+1. material:Material - 재질 객체
 
 **exception**
 
-none
+- 'Scene.addMaterial:0' - 이미 등록된 재질을 등록하려 할때
+- 'Scene.addMaterial:1' - Material 타입이 아닌 객체를 등록하려 할때
 
 **return**
 
-?
+- this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
 ```javascript
-//none
+var scene = new Scene()
+var mat = new Material()
+scene.addMaterial(mat)
 ```
 
 [top](#)
 
 <a name="addGeometry"></a>
-###addGeometry(v)
+###addGeometry(geometry:Geometry)
 
 _method_
 
 
 **description**
 
-Method of Scene
+- 지오메트리 객체를 추가함
 
 **param**
 
-1. v
+1. geometry:Geometry - 지오메트리 객체
 
 **exception**
 
-none
+- 'Scene.addGeometry:0' - 이미 등록된 지오메트리를 등록하려 할때
+- 'Scene.addGeometry:1' - 지오메트리 타입이 아닌 객체를 등록하려 할때
 
 **return**
 
-?
+- this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
 ```javascript
-//none
+var scene = new Scene()
+var geo = new Geometry([],[])
+scene.addGeometry(camera)
 ```
 
 [top](#)
@@ -653,7 +700,7 @@ _method_
 
 **description**
 
-Method of Scene
+- Method of Scene
 
 **param**
 
@@ -661,11 +708,11 @@ Method of Scene
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- ?
 
 **sample**
 
@@ -676,61 +723,67 @@ none
 [top](#)
 
 <a name="addChild"></a>
-###addChild(v)
+###addChild(mesh:Mesh, camera:Camera)
 
 _method_
 
 
 **description**
 
-Method of Scene
+- 자식 객체를 추가함. 메쉬나 카메라 객체가 자식으로 올수 있음
 
 **param**
 
-1. v
+1. mesh:Mesh - 메쉬 객체
+2. camera:Camera - 카메라 객체
 
 **exception**
 
-none
+- 'Scene.addChild:0' - 카메라나 메쉬객체가 아닌 객체를 추가하려고 할때
 
 **return**
 
-?
+- this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
 ```javascript
-//none
+var scene = new Scene()
+var camera = new Camera()
+scene.addChild(camera)
 ```
 
 [top](#)
 
 <a name="addCamera"></a>
-###addCamera(v)
+###addCamera(camera:Camera)
 
 _method_
 
 
 **description**
 
-Method of Scene
+- 카메라 객체를 추가함.
 
 **param**
 
-1. v
+1. camera:Camera - 카메라 객체
 
 **exception**
 
-none
+- 'Scene.addCamera:0' : 이미 등록된 카메라객체를 등록하려고 할때
+- 'Scene.addCamera:1' : 카메라가 아닌 객체를 등록하려고 할때
 
 **return**
 
-?
+- this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
 ```javascript
-//none
+var scene = new Scene()
+var camera = new Camera()
+scene.addCamera(camera)
 ```
 
 [top](#)
@@ -743,18 +796,18 @@ _static_
 
 **description**
 
-해당 클래스를 마크다운 형식으로 문서화하여 출력함
+- 해당 클래스를 마크다운 형식으로 문서화하여 출력함
 
 **param**
 
 
 **exception**
 
-none
+- none
 
 **return**
 
-string - 클래스에 대한 문서 마크다운
+- string - 클래스에 대한 문서 마크다운
 
 **sample**
 
@@ -772,19 +825,19 @@ _static_
 
 **description**
 
-uuid 또는 id를 기반으로 인스턴스를 얻어냄
+- uuid 또는 id를 기반으로 인스턴스를 얻어냄
 
 **param**
 
-1. uuid:string
+1. uuid:string - 얻고 싶은 인스턴스의 uuid 또는 id
 
 **exception**
 
-undefined.getInstance:u
+- none
 
 **return**
 
-Object - 해당되는 인스턴스
+- Object - 해당되는 인스턴스
 
 **sample**
 
@@ -802,7 +855,7 @@ _static_
 
 **description**
 
-이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Defineder)를 얻음
+- 이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Defineder)를 얻음
 
 **Defineder class의 메소드**
 
@@ -817,16 +870,16 @@ _static_
 
 **param**
 
-1. className:string
-2. constructor:function
+1. className:string - 자식클래스의 이름
+2. constructor:function - 자식클래스의 생성자
 
 **exception**
 
-none
+- none
 
 **return**
 
-Defineder - 클래스를 정의할 수 있는 생성전용객체
+- Defineder - 클래스를 정의할 수 있는 생성전용객체
 
 **sample**
 
@@ -844,20 +897,20 @@ _static_
 
 **description**
 
-정적함수에서 표준화된 예외를 처리함(정적함수 내부에서 사용)
+- 정적함수에서 표준화된 예외를 처리함(정적함수 내부에서 사용)
 
 **param**
 
-1. method:string
-2. id:int
+1. method:string - 예외가 발생한 함수명
+2. id:int - 예외고유 id
 
 **exception**
 
-none
+- none
 
 **return**
 
-none
+- none
 
 **sample**
 
@@ -875,18 +928,18 @@ _static_
 
 **description**
 
-이 클래스로 부터 만들어져 활성화된 인스턴스의 수
+- 이 클래스로 부터 만들어져 활성화된 인스턴스의 수
 
 **param**
 
 
 **exception**
 
-none
+- none
 
 **return**
 
-int - 활성화된 인스턴스의 수
+- int - 활성화된 인스턴스의 수
 
 **sample**
 
