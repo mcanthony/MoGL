@@ -5,9 +5,9 @@
 
 **field**
 
-* [resizeType](#resizeType) - Field of Texture
-* [isLoaded](#isLoaded) - Field of Texture
-* [img](#img) - Field of Texture
+* [resizeType](#resizeType) - resize type get/set...
+* [isLoaded](#isLoaded) - Load check field.
+* [img](#img) - Image get/set field.
 
 **static**
 
@@ -19,16 +19,19 @@
 
 **constant**
 
-* [zoomOut](#zoomOut) - Const of Texture
-* [zoomIn](#zoomIn) - Const of Texture
-* [specularNormal](#specularNormal) - Const of Texture
-* [specular](#specular) - Const of Texture
-* [normal](#normal) - Const of Texture
-* [load](#load) - Const of Texture
-* [diffuseWrap](#diffuseWrap) - Const of Texture
-* [diffuse](#diffuse) - Const of Texture
-* [crop](#crop) - Const of Texture
-* [addSpace](#addSpace) - Const of Texture
+* [zoomOut](#zoomOut) - zoom out constant
+* [zoomIn](#zoomIn) - zoom in constant
+* [specularNormal](#specularNormal) - specularNormal const...
+* [specular](#specular) - specular constant
+* [normal](#normal) - normal constant
+* [diffuseWrap](#diffuseWrap) - diffuseWrap constant
+* [diffuse](#diffuse) - diffuse constant
+* [crop](#crop) - crop constant
+* [addSpace](#addSpace) - addSpace constant
+
+**event**
+
+* [load](#load) - load event
 
 [top](#)
 
@@ -37,20 +40,20 @@
 
 **description**
 
-Constructor of Texture
+- 씬을 실제로 렌더링할 카메라 객체를 생성함
 
 **param**
 
-
+- none
 
 **exception**
 
-none
+- none
 
 **sample**
 
 ```javascript
-//none
+var texture = new Texture()
 ```
 
 [top](#)
@@ -63,20 +66,28 @@ _field_
 
 **description**
 
-Field of Texture
+- resize type get/set field.
 
 **setting**
 
-*writable*:true, *enumerable*:false, *configurable*:false
+- *writable*:true
+- *enumerable*:false
+- *configurable*:false
 
 **defaultValue**
 
-none
+- null
+
+**exception**
+
+- none
 
 **sample**
 
 ```javascript
-//none
+var texture = new Texture()
+texture.resizeType = Texture.zoomIn
+console.log(texture.resizeType)
 ```
 
 [top](#)
@@ -89,20 +100,28 @@ _field_
 
 **description**
 
-Field of Texture
+- Load check field.
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **defaultValue**
 
-none
+- null
+
+**exception**
+
+- none
 
 **sample**
 
 ```javascript
-//none
+var texture = new Texture()
+texture.img = document.getElementID("imgElement")
+console.log(texture.isLoaded)
 ```
 
 [top](#)
@@ -115,20 +134,27 @@ _field_
 
 **description**
 
-Field of Texture
+- Image get/set field.
 
 **setting**
 
-*writable*:true, *enumerable*:false, *configurable*:false
+- *writable*:true
+- *enumerable*:false
+- *configurable*:false
 
 **defaultValue**
 
-none
+- null
+
+**exception**
+
+- none
 
 **sample**
 
 ```javascript
-//none
+var texture = new Texture()
+texture.img = document.getElementID("imgElement")
 ```
 
 [top](#)
@@ -141,18 +167,18 @@ _static_
 
 **description**
 
-해당 클래스를 마크다운 형식으로 문서화하여 출력함
+- 해당 클래스를 마크다운 형식으로 문서화하여 출력함
 
 **param**
 
 
 **exception**
 
-none
+- none
 
 **return**
 
-string - 클래스에 대한 문서 마크다운
+- string - 클래스에 대한 문서 마크다운
 
 **sample**
 
@@ -170,19 +196,19 @@ _static_
 
 **description**
 
-uuid 또는 id를 기반으로 인스턴스를 얻어냄
+- uuid 또는 id를 기반으로 인스턴스를 얻어냄
 
 **param**
 
-1. uuid:string
+1. uuid:string - 얻고 싶은 인스턴스의 uuid 또는 id
 
 **exception**
 
-undefined.getInstance:u
+- none
 
 **return**
 
-Object - 해당되는 인스턴스
+- Object - 해당되는 인스턴스
 
 **sample**
 
@@ -200,7 +226,7 @@ _static_
 
 **description**
 
-이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Defineder)를 얻음
+- 이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Defineder)를 얻음
 
 **Defineder class의 메소드**
 
@@ -215,16 +241,16 @@ _static_
 
 **param**
 
-1. className:string
-2. constructor:function
+1. className:string - 자식클래스의 이름
+2. constructor:function - 자식클래스의 생성자
 
 **exception**
 
-none
+- none
 
 **return**
 
-Defineder - 클래스를 정의할 수 있는 생성전용객체
+- Defineder - 클래스를 정의할 수 있는 생성전용객체
 
 **sample**
 
@@ -242,20 +268,20 @@ _static_
 
 **description**
 
-정적함수에서 표준화된 예외를 처리함(정적함수 내부에서 사용)
+- 정적함수에서 표준화된 예외를 처리함(정적함수 내부에서 사용)
 
 **param**
 
-1. method:string
-2. id:int
+1. method:string - 예외가 발생한 함수명
+2. id:int - 예외고유 id
 
 **exception**
 
-none
+- none
 
 **return**
 
-none
+- none
 
 **sample**
 
@@ -273,18 +299,18 @@ _static_
 
 **description**
 
-이 클래스로 부터 만들어져 활성화된 인스턴스의 수
+- 이 클래스로 부터 만들어져 활성화된 인스턴스의 수
 
 **param**
 
 
 **exception**
 
-none
+- none
 
 **return**
 
-int - 활성화된 인스턴스의 수
+- int - 활성화된 인스턴스의 수
 
 **sample**
 
@@ -302,15 +328,21 @@ _const_
 
 **description**
 
-Const of Texture
+- zoom out constant
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **value**
 
 zoomOut
+
+**exception**
+
+- none
 
 **sample**
 
@@ -328,15 +360,21 @@ _const_
 
 **description**
 
-Const of Texture
+- zoom in constant
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **value**
 
 zoomIn
+
+**exception**
+
+- none
 
 **sample**
 
@@ -354,15 +392,21 @@ _const_
 
 **description**
 
-Const of Texture
+- specularNormal constant
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **value**
 
 specularNormal
+
+**exception**
+
+- none
 
 **sample**
 
@@ -380,15 +424,21 @@ _const_
 
 **description**
 
-Const of Texture
+- specular constant
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **value**
 
 specular
+
+**exception**
+
+- none
 
 **sample**
 
@@ -406,41 +456,21 @@ _const_
 
 **description**
 
-Const of Texture
+- normal constant
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **value**
 
 normal
 
-**sample**
+**exception**
 
-```javascript
-//none
-```
-
-[top](#)
-
-<a name="load"></a>
-###load
-
-_const_
-
-
-**description**
-
-Const of Texture
-
-**setting**
-
-*writable*:false, *enumerable*:false, *configurable*:false
-
-**value**
-
-load
+- none
 
 **sample**
 
@@ -458,15 +488,21 @@ _const_
 
 **description**
 
-Const of Texture
+- diffuseWrap constant
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **value**
 
 diffuseWrap
+
+**exception**
+
+- none
 
 **sample**
 
@@ -484,15 +520,21 @@ _const_
 
 **description**
 
-Const of Texture
+- diffuse constant
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **value**
 
 diffuse
+
+**exception**
+
+- none
 
 **sample**
 
@@ -510,15 +552,21 @@ _const_
 
 **description**
 
-Const of Texture
+- crop constant
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **value**
 
 crop
+
+**exception**
+
+- none
 
 **sample**
 
@@ -536,15 +584,53 @@ _const_
 
 **description**
 
-Const of Texture
+- addSpace constant
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **value**
 
 addSpace
+
+**exception**
+
+- none
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="load"></a>
+###load
+
+_event_
+
+
+**description**
+
+- load event
+
+**setting**
+
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
+
+**value**
+
+load
+
+**exception**
+
+- none
 
 **sample**
 
