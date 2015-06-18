@@ -7,7 +7,7 @@ var Camera = (function () {
 	//shared private
 	$setPrivate('Camera', {});
 	return Matrix.extend('Camera',{
-		description: "기하구조와 재질을 포함할 수 있는 하나의 렌더링 단위인 Mesh를 생성함.",
+		description: "씬을 실제로 렌더링할 카메라 객체를 생성함",
 		sample: [
 			"var camera = new Camera()"
 		],
