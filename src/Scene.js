@@ -266,27 +266,90 @@ var Scene = (function () {
             }
         }
     )
-    .method('addGeometry', function (v) {
-        var p = geometrys[this];
-        if (p[v]) this.error(0);
-        if (!(v instanceof Geometry)) this.error(1);
-        p[v] = v;
-        return this;
-    })
-    .method('addMaterial', function (v) {
-        var p = materials[this];
-        if (p[v]) this.error(0);
-        if (!(v instanceof Material)) this.error(1);
-        p[v] = v
-        return this;
-    })
-    .method('addTexture', function addTexture(v) {
-        var p = textures[this];
-        if (p[v]) this.error(0);
-        if (!(v instanceof Texture)) this.error(1);
-        p[v] = v
-        return this;
-    })
+    .method('addGeometry', {
+            description: [
+                '지오메트리 객체를 추가함'
+            ],
+            param: [
+                'geometry:Geometry - 지오메트리 객체'
+            ],
+            ret: [
+                'this - 메서드체이닝을 위해 자신을 반환함.'
+            ],
+            sample: [
+                "var scene = new Scene()",
+                "var geo = new Geometry([],[])",
+                "scene.addGeometry(camera)"
+            ],
+            exception: [
+                "'Scene.addGeometry:0' - 이미 등록된 지오메트리를 등록하려 할때",
+                "'Scene.addGeometry:1' - 지오메트리 타입이 아닌 객체를 등록하려 할때"
+            ],
+            value: function (v) {
+                var p = geometrys[this];
+                if (p[v]) this.error(0);
+                if (!(v instanceof Geometry)) this.error(1);
+                p[v] = v;
+                return this;
+            }
+        }
+    )
+    .method('addMaterial', {
+            description: [
+                '재질 객체를 추가함'
+            ],
+            param: [
+                'material:Material - 재질 객체'
+            ],
+            ret: [
+                'this - 메서드체이닝을 위해 자신을 반환함.'
+            ],
+            sample: [
+                "var scene = new Scene()",
+                "var mat = new Material()",
+                "scene.addMaterial(mat)"
+            ],
+            exception: [
+                "'Scene.addMaterial:0' - 이미 등록된 재질을 등록하려 할때",
+                "'Scene.addMaterial:1' - Material 타입이 아닌 객체를 등록하려 할때"
+            ],
+            value: function addMaterial(v) {
+                var p = materials[this];
+                if (p[v]) this.error(0);
+                if (!(v instanceof Material)) this.error(1);
+                p[v] = v
+                return this;
+            }
+        }
+    )
+    .method('addTexture', {
+            description: [
+                '텍스쳐 객체를 추가함'
+            ],
+            param: [
+                'texture:Texture - 텍스쳐 객체'
+            ],
+            ret: [
+                'this - 메서드체이닝을 위해 자신을 반환함.'
+            ],
+            sample: [
+                "var scene = new Scene()",
+                "var texture = new Texture()",
+                "scene.addTexture(texture)"
+            ],
+            exception: [
+                "'Scene.addTexture:0' - 이미 등록된 텍스쳐를 등록하려 할때",
+                "'Scene.addTexture:1' - Texture 타입이 아닌 객체를 등록하려 할때"
+            ],
+            value: function addTexture(v) {
+                var p = textures[this];
+                if (p[v]) this.error(0);
+                if (!(v instanceof Texture)) this.error(1);
+                p[v] = v
+                return this;
+            }
+        }
+    )
     .method('addFragmentShader', function addFragmentShader(v) {
         var p = fragmentShaders[this];
         if (p[v.id]) this.error(0);
@@ -299,30 +362,78 @@ var Scene = (function () {
         p[v.id] = vertexShaderParser(v);
         return this
     })
-    .method('getMesh',function (id) {
-        var p = children[this],k;
-        for(k in p){
-            if(p[k].id == id){
-                return p[k]
+    .method('getMesh',{
+            description: [
+                '씬에 등록된 Mesh객체를 검색'
+            ],
+            param: [
+                'id:String - 찾고자 하는 메쉬의 id'
+            ],
+            ret: [
+                'Mesh or null'
+            ],
+            sample: [
+                "scene.getMesh('MeshID')"
+            ],
+            exception: null,
+            value: function getMesh(id) {
+                var p = children[this],k;
+                for(k in p){
+                    if(p[k].id == id){
+                        return p[k]
+                    }
+                }
+                return null
             }
         }
-        return null
-    })
-    .method('getCamera', function (id) {
-        var p = cameras[this],k;
-        for(k in p){
-            if(p[k].id == id){
-                return p[k]
+    )
+    .method('getCamera', {
+            description: [
+                '씬에 등록된 Camera객체를 검색'
+            ],
+            param: [
+                'id:String - 찾고자 하는 Camera의 id'
+            ],
+            ret: [
+                'Camera or null'
+            ],
+            sample: [
+                "scene.getCamera('CameraID')"
+            ],
+            exception: null,
+            value: function getCamera(id) {
+                var p = cameras[this], k;
+                for (k in p) {
+                    if (p[k].id == id) {
+                        return p[k]
+                    }
+                }
+                return null
             }
         }
-        return null
-    })
-    .method('getChild', function (id) {
-        var t;
-        if(t = this.getMesh(id)) return t
-        if(t = this.getCamera(id)) return t
-        return null
-    })
+    )
+    .method('getChild', {
+            description: [
+                '씬에 등록된 자식객체(Camera or Mesh) 검색'
+            ],
+            param: [
+                'id:String - 찾고자 하는 자식의 id'
+            ],
+            ret: [
+                'Mesh/Camera or null'
+            ],
+            sample: [
+                "scene.description('CameraID')"
+            ],
+            exception: null,
+            value : function getChild(id) {
+                var t;
+                if(t = this.getMesh(id)) return t
+                if(t = this.getCamera(id)) return t
+                return null
+            }
+        }
+    )
     .method('getGeometry', function (id) {
         var p = geometrys[this],k;
         for(k in p){
