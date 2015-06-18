@@ -33,10 +33,6 @@ var Camera = (function () {
 			'var camera = new Camera()',
 			'camera.clipPlaneNear = 10'
 		],
-		param: [
-			"1. number형으로 입력",
-			"clipPlaneNear의 경우 반드시 0보다 큰수로 지정"
-		],
 		defaultValue:"0.1",
 		get: $getter(prop, 'near'),
 		set: $setter(prop, 'near')
@@ -46,9 +42,6 @@ var Camera = (function () {
 		sample: [
 			'var camera = new Camera()',
 			'camera.clipPlaneFar = 1000'
-		],
-		param: [
-			"number형으로 입력"
 		],
 		defaultValue:"10000",
 		get: $getter(prop, 'far'),
@@ -69,9 +62,6 @@ var Camera = (function () {
 			'var camera = new Camera()',
 			'camera.antialias = true'
 		],
-		param: [
-			"true/false"
-		],
 		defaultValue:"false",
 		get: $getter(prop, 'antialias'),
 		set: function antialiasSet(v) {
@@ -83,9 +73,6 @@ var Camera = (function () {
 	})
 	.field('fogColor', {
 		description: "안개 효과 컬러 지정",
-		param: [
-			"[r,g,b,a] number형으로 입력"
-		],
 		sample: [
 			'var camera = new Camera()',
 			'camera.fogColor = [Math.random(),Math.random(),Math.random(),1]'
@@ -100,14 +87,11 @@ var Camera = (function () {
 	})
 	.field('fogNear', {
 		description: "안개효과가 시작되는 z축 거리",
-		param: [
-			"number형으로 입력"
-		],
 		sample: [
 			'var camera = new Camera()',
 			'camera.fogNear = 10'
 		],
-		defaultValue:0,
+		defaultValue:'0',
 		get: $getter(prop, 'fogNear'),
 		set: function fogNearSet(v) {
 			var p = prop[this];
@@ -117,14 +101,11 @@ var Camera = (function () {
 	})
 	.field('fogFar', {
 		description: "안개효과만 남고 아무것도 보이지 않는  z축 거리",
-		param: [
-			"number형으로 입력"
-		],
 		sample: [
 			'var camera = new Camera()',
 			'camera.fogFar = 1000'
 		],
-		defaultValue:0,
+		defaultValue:'0',
 		get: $getter(prop, 'fogFar'),
 		set: function fogFarSet(v) {
 			var p = prop[this];
@@ -213,14 +194,14 @@ var Camera = (function () {
 		}
 	})
 	.field('renderArea', {
-		description: "카메라 렌더링 영역지정, 렌더링 영역을 지정하지 않을경우 캔버스 영역 전체로 자동 지정됨.",
+		description: [
+			"카메라 렌더링 영역지정, 렌더링 영역을 지정하지 않을경우 캔버스 영역 전체로 자동 지정됨.",
+			"[x,y, width, height] - number형으로 입력, %단위도 입력가능"
+		],
 		sample: [
 			'var camera = new Camera()',
 			'camera.renderArea = [10,100,200,300]',
 			'camera.renderArea = ["10%","10%",200,300]',
-		],
-		param: [
-			"[x,y, width, height] - number형으로 입력, %단위도 입력가능"
 		],
 		defaultValue:'null',
 		get: $getter(prop, 'renderArea'),
