@@ -143,7 +143,7 @@ $md = function(classes){
                 temp[k].description = toStr(temp[k].description),
                 temp[k].enumerable = temp1[k] && temp1[k].enumerable ? true : false, 
                 temp[k].configurable = temp1[k] && temp1[k].configurable ? true : false;
-                temp[k].exception = toStr(temp[k].exception || 'none');
+                temp[k].exception = toStr2(temp[k].exception || 'none');
                 if (temp1[k]){
                     if ('writable' in temp1[k]) {
                         temp[k].writable = temp1[k].writable ? true : false;
@@ -295,7 +295,7 @@ $md = function(classes){
         md[md.length] = '\n**param**\n';
         md[md.length] = '- '+toStr(temp.param || 'none'),
         md[md.length] = '\n**exception**\n';
-        md[md.length] = toStr(temp.exception || 'none');
+        md[md.length] = '- '+toStr(temp.exception || 'none');
         md[md.length] = '\n**sample**\n';
         md[md.length] = '```javascript';
         md[md.length] = toStr(temp.sample || '//none');

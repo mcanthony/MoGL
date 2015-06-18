@@ -23,8 +23,8 @@ var Camera = (function () {
 				renderArea: null,
 				projectionMatrix: Matrix()
 			}),
-				this.z = 10,
-				this.lookAt(0, 0, 0);
+			this.z = 10,
+			this.lookAt(0, 0, 0);
 		}
 	})
 	.field('clipPlaneNear', {
@@ -32,10 +32,6 @@ var Camera = (function () {
 		sample: [
 			'var camera = new Camera()',
 			'camera.clipPlaneNear = 10'
-		],
-		param: [
-			"1. number형으로 입력",
-			"clipPlaneNear의 경우 반드시 0보다 큰수로 지정"
 		],
 		defaultValue:"0.1",
 		get: $getter(prop, 'near'),
@@ -46,9 +42,6 @@ var Camera = (function () {
 		sample: [
 			'var camera = new Camera()',
 			'camera.clipPlaneFar = 1000'
-		],
-		param: [
-			"number형으로 입력"
 		],
 		defaultValue:"10000",
 		get: $getter(prop, 'far'),
@@ -69,9 +62,6 @@ var Camera = (function () {
 			'var camera = new Camera()',
 			'camera.antialias = true'
 		],
-		param: [
-			"true/false"
-		],
 		defaultValue:"false",
 		get: $getter(prop, 'antialias'),
 		set: function antialiasSet(v) {
@@ -83,9 +73,6 @@ var Camera = (function () {
 	})
 	.field('fogColor', {
 		description: "안개 효과 컬러 지정",
-		param: [
-			"[r,g,b,a] number형으로 입력"
-		],
 		sample: [
 			'var camera = new Camera()',
 			'camera.fogColor = [Math.random(),Math.random(),Math.random(),1]'
@@ -100,14 +87,11 @@ var Camera = (function () {
 	})
 	.field('fogNear', {
 		description: "안개효과가 시작되는 z축 거리",
-		param: [
-			"number형으로 입력"
-		],
 		sample: [
 			'var camera = new Camera()',
 			'camera.fogNear = 10'
 		],
-		defaultValue:0,
+		defaultValue:'0',
 		get: $getter(prop, 'fogNear'),
 		set: function fogNearSet(v) {
 			var p = prop[this];
@@ -117,14 +101,11 @@ var Camera = (function () {
 	})
 	.field('fogFar', {
 		description: "안개효과만 남고 아무것도 보이지 않는  z축 거리",
-		param: [
-			"number형으로 입력"
-		],
 		sample: [
 			'var camera = new Camera()',
 			'camera.fogFar = 1000'
 		],
-		defaultValue:0,
+		defaultValue:'0',
 		get: $getter(prop, 'fogFar'),
 		set: function fogFarSet(v) {
 			var p = prop[this];
@@ -134,13 +115,11 @@ var Camera = (function () {
 	})
 	.field('fov', {
 		description: "FOV(Field of view) 시야각을 정의.",
-		param: [
-			"1. number형으로 입력",
-			"2. [width,height,angle] - 화면사이즈와 각도의 직접적 입력을 통한 fov 지정도 가능"
-		],
 		sample: [
 			'var camera = new Camera()',
+			"// number형으로 입력",
 			'camera.fov = 45', // 시야각입력을 통한 fov계산
+			"// [width,height,angle] - 화면사이즈와 각도의 직접적 입력을 통한 fov 지정도 가능" ,
 			'camera.fov = [width,height,angle]' // 화면사이즈와 각도의 직접적 입력을 통한 fov 지정
 		],
 		defaultValue:55,
@@ -156,11 +135,9 @@ var Camera = (function () {
 	})
 	.field('backgroundColor', {
 		description: "렌더링 배경화면 색상을 지정",
-		param: [
-			"[r,g,b,a] number형으로 입력"
-		],
 		sample: [
 			'var camera = new Camera()',
+			"// [r,g,b,a] number형으로 입력",
 			'camera.backgroundColor = [Math.random(),Math.random(),Math.random(),1]'
 		],
 		defaultValue:'{r: 0, g: 0, b: 0, a: 1}}',
@@ -179,13 +156,11 @@ var Camera = (function () {
 		}
 	})
 	.field('fog', {
-		description: "안개효과 지정여부",
+		description: "안개효과 지정여부" ,
 		sample: [
 			'var camera = new Camera()',
+			'// true or false - false로 지정시 안개효과 삭제' ,
 			'camera.fog = true'
-		],
-		param: [
-			"true/false"
 		],
 		defaultValue:'false',
 		get: function fogGet() {
@@ -193,14 +168,12 @@ var Camera = (function () {
 		}
 	})
 	.field('mode', {
-		description: "카메라모드 지정",
+		description:"카메라모드 지정",
 		sample: [
 			'var camera = new Camera()',
+			"// Camera.perspective or Camera.othogonal",
 			'camera.mode = Camera.perspective',
 			'camera.mode = Camera.othogonal'
-		],
-		param: [
-			"Camera.perspective or Camera.othogonal"
 		],
 		defaultValue:'Camera.perspective',
 		get: $getter(prop, 'mode'),
@@ -216,11 +189,9 @@ var Camera = (function () {
 		description: "카메라 렌더링 영역지정, 렌더링 영역을 지정하지 않을경우 캔버스 영역 전체로 자동 지정됨.",
 		sample: [
 			'var camera = new Camera()',
+			"// [x,y, width, height] - number형으로 입력, %단위도 입력가능",
 			'camera.renderArea = [10,100,200,300]',
 			'camera.renderArea = ["10%","10%",200,300]',
-		],
-		param: [
-			"[x,y, width, height] - number형으로 입력, %단위도 입력가능"
 		],
 		defaultValue:'null',
 		get: $getter(prop, 'renderArea'),
