@@ -375,14 +375,15 @@ var World = (function () {
             var tSceneList, i;
             tSceneList = sceneList[this], i = tSceneList.length;
             if (!(scene instanceof Scene )) this.error(1);
+            console.log(tSceneList);
             while (i--) {
-                if (tSceneList[i] == this) this.error(0);
+                if (tSceneList[i] == scene) this.error(0);
             }
-            tSceneList.push(scene)
-            var p = gpu[this]
-            baseUpdate(p)
-            baseShaderUpdate(p, scene)
-            cameraRenderAreaUpdate(this)
+            tSceneList.push(scene);
+            var p = gpu[this];
+            baseUpdate(p),
+            baseShaderUpdate(p, scene),
+            cameraRenderAreaUpdate(this);
             //scene등록시 현재 갖고 있는 모든 카메라 중 visible이 카메라 전부 등록
             //이후부터는 scene에 카메라의 변화가 생기면 자신의 world에게 알려야함
             return this;
