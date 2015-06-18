@@ -250,9 +250,18 @@ var World = (function () {
                 var camera, tRenderArea, cvs;
                 camera = p2[k2],
                 cvs = cvsList[self]
-                if (!cvs) return
                 tRenderArea = camera.renderArea;
                 if (tRenderArea) {
+                    var tw,th
+                    tw = cvs.width,
+                    th = cvs.height,
+                        camera.renderArea = [
+                        typeof tRenderArea[0] == 'string' ? tw * tRenderArea[0].replace('%', '') * 0.01 : tRenderArea[0],
+                        typeof tRenderArea[1] == 'string' ? th * tRenderArea[1].replace('%', '') * 0.01 : tRenderArea[1],
+                        typeof tRenderArea[2] == 'string' ? tw * tRenderArea[2].replace('%', '') * 0.01 : tRenderArea[2],
+                        typeof tRenderArea[3] == 'string' ? th * tRenderArea[3].replace('%', '') * 0.01 : tRenderArea[3],
+                    ];
+                    camera.renderArea = tRenderArea
                     var wRatio = tRenderArea[2] / cvs.width;
                     var hRatio = tRenderArea[3] / cvs.height;
                     camera.renderArea = [tRenderArea[0], tRenderArea[1], cvs.width * wRatio, cvs.height * hRatio]
