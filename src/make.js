@@ -75,6 +75,7 @@ var makeUtil = (function(){
             program = gl.createProgram(),
             gl.attachShader(program, vShader),
             gl.attachShader(program, fShader),
+            gl.linkProgram(program),
             vShader.name = vSource.id,
             fShader.name = fSource.id,
             program.name = name;
@@ -83,7 +84,7 @@ var makeUtil = (function(){
                 throw new Error('프로그램 셰이더 초기화 실패');
             }
             gl.useProgram(program),
-            tList = vSource.attribute,
+            tList = vSource.attributes,
             len = tList.length;
             for (i = 0; i < len; i++) {
                 gl.bindBuffer(gl.ARRAY_BUFFER, gpu.vbo['null']),
