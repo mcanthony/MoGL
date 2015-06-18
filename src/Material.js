@@ -66,8 +66,24 @@ var Material = (function () {
             shading[this] = Shading.none
         }
     })
-    .field('count', $getter(count, false, 0))
+    .field('count', {
+            description: "재질이 사용된 횟수",
+            sample: [
+                '// 미구현상태임',
+                'console.log(material.count)'
+            ],
+            defaultValue:0,
+            get: $getter(count, false, 0)
+        }
+    )
     .field('color', {
+        description: "재질 컬러색",
+        sample: [
+            'material.color = [0,1,2,1] // 배열형식으로 입력',
+            'material.color = "#ff2233 // 16진수로 입력"',
+            'console.log(material.color)'
+        ],
+        defaultValue:'[1,1,1,1]',
         get:$getter(color),
         set:function colorSet(v) {
             var p = color[this];
@@ -76,10 +92,22 @@ var Material = (function () {
        }
     })
     .field('wireFrame', {
+        description: "와이어 프레임 표현여부",
+        sample: [
+            'material.wireFrame = true',
+            'console.log(material.wireFrame)'
+        ],
+        defaultValue:'false',
         get:$getter(wireFrame),
         set:$setter(wireFrame)
     })
     .field('wireFrameColor', {
+        description: "와이어 프레임 컬러",
+        sample: [
+            'material.wireFrameColor = [1,0.5,1,1] // r,g,b,a',
+            'console.log(material.wireFrameColor)'
+        ],
+        defaultValue: '[Math.random(),Math.random(),Math.random(),1]',
         get:$getter(wireFrameColor),
         set:function wireFrameColorSet(v) {
             var p = wireFrameColor[this];
@@ -88,18 +116,40 @@ var Material = (function () {
        }
     })
     .field('shading', {
+        description: "재질 쉐이딩 적용",
+        sample: [
+            'material.shading = Shading.phong',
+            'console.log(material.shading)'
+        ],
+        defaultValue:'Shading.none',
         get:$getter(shading),
         set:$setter(shading)
     })
     .field('lambert', {
+        description: "재질 쉐이딩 적용 강도 설정",
+        sample: [
+            'material.lambert = 1.5',
+            'console.log(material.lambert)'
+        ],
+        defaultValue:'1.0',
         get:$getter(lambert),
         set:$setter(lambert)
     })
     .field('diffuse', {
-        get:$getter(diffuse),
-        set:$setter(diffuse)
+        description: "재질에 적용된 디퓨즈 리스트 반환",
+        sample: [
+            'console.log(material.diffuse)'
+        ],
+        defaultValue:'[]',
+        get:$getter(diffuse)
+        //set:$setter(diffuse)
     })
     .field('isLoaded', {
+        description: "재질에 적용된 텍스쳐들이 모두 로딩되었는지 확인",
+        sample: [
+            'console.log(material.isLoaded)'
+        ],
+        defaultValue:'false',
         get:function(mat) {
             var type, tex, i;
             for (type in texType) {

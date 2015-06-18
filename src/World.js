@@ -93,9 +93,11 @@ var World = (function (makeUtil) {
                         typeof tRenderArea[3] == 'string' ? th * tRenderArea[3].replace('%', '') * 0.01 : tRenderArea[3],
                     ];
                     camera.renderArea = tRenderArea
-                    var wRatio = tRenderArea[2] / cvs.width;
-                    var hRatio = tRenderArea[3] / cvs.height;
-                    camera.renderArea = [tRenderArea[0], tRenderArea[1], cvs.width * wRatio, cvs.height * hRatio]
+                    tRenderArea = camera.renderArea;
+                    //var wRatio = tRenderArea[2] / cvs.width;
+                    //var hRatio = tRenderArea[3] / cvs.height;
+                    //camera.renderArea = [tRenderArea[0], tRenderArea[1], cvs.width * wRatio, cvs.height * hRatio]
+                    camera.renderArea = [tRenderArea[0], tRenderArea[1], cvs.width , cvs.height ]
                 }else{
                     camera.renderArea = [0,0,cvs.width,cvs.height]
                 }
