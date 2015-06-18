@@ -119,7 +119,7 @@ $md = function(classes){
     },
     toStr = function(v){
         if (Array.isArray(v)) {
-            return v.join('\n');
+            return v.join('\n- ');
         }else if (!v) {
             return '';
         }
@@ -176,13 +176,13 @@ $md = function(classes){
                 md[md.length] = '\n**description**\n';
                 md[md.length] = '- '+k.description;
                 md[md.length] = '\n**setting**\n';
-                md[md.length] = '- *writable*:' + k.writable + ', *enumerable*:' + k.enumerable + ', *configurable*:' + k.configurable;
+                md[md.length] = '- *writable*:' + k.writable + '\n- *enumerable*:' + k.enumerable + '\n- *configurable*:' + k.configurable;
                 if ('value' in k) {
                     md[md.length] = '\n**value**\n';
                     md[md.length] = k.value;
                 } else if ('defaultValue' in k) {
                     md[md.length] = '\n**defaultValue**\n';
-                    md[md.length] = k.defaultValue;
+                    md[md.length] ='- '+k.defaultValue;
                 }
                 md[md.length] = '\n**exception**\n';
                 md[md.length] = '- '+k.exception;
@@ -232,7 +232,7 @@ $md = function(classes){
                 md[md.length] = '\n**exception**\n';
                 md[md.length] = '- '+k.exception;
                 md[md.length] = '\n**return**\n';
-                md[md.length] =  '- '+k.ret.length ? k.ret.replace('this', 'this - 메소드체이닝을 위해 자신을 반환함') : 'none';
+                md[md.length] =  '- ' +(k.ret.length ? k.ret.replace('this', 'this - 메소드체이닝을 위해 자신을 반환함') : 'none');
                 md[md.length] = '\n**sample**\n';
                 md[md.length] = '```javascript';
                 md[md.length] = k.sample;
@@ -287,7 +287,7 @@ $md = function(classes){
         md[md.length] = '\n**param**\n';
         md[md.length] = '- '+toStr(temp.param || 'none'),
         md[md.length] = '\n**exception**\n';
-        md[md.length] = '- '+toStr(temp.exception || 'none');
+        md[md.length] = toStr(temp.exception || 'none');
         md[md.length] = '\n**sample**\n';
         md[md.length] = '```javascript';
         md[md.length] = toStr(temp.sample || '//none');
