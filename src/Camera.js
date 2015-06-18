@@ -23,8 +23,8 @@ var Camera = (function () {
 				renderArea: null,
 				projectionMatrix: Matrix()
 			}),
-				this.z = 10,
-				this.lookAt(0, 0, 0);
+			this.z = 10,
+			this.lookAt(0, 0, 0);
 		}
 	})
 	.field('clipPlaneNear', {
@@ -115,13 +115,11 @@ var Camera = (function () {
 	})
 	.field('fov', {
 		description: "FOV(Field of view) 시야각을 정의.",
-		param: [
-			"1. number형으로 입력",
-			"2. [width,height,angle] - 화면사이즈와 각도의 직접적 입력을 통한 fov 지정도 가능"
-		],
 		sample: [
 			'var camera = new Camera()',
+			"// number형으로 입력",
 			'camera.fov = 45', // 시야각입력을 통한 fov계산
+			"// [width,height,angle] - 화면사이즈와 각도의 직접적 입력을 통한 fov 지정도 가능" ,
 			'camera.fov = [width,height,angle]' // 화면사이즈와 각도의 직접적 입력을 통한 fov 지정
 		],
 		defaultValue:55,
@@ -137,11 +135,9 @@ var Camera = (function () {
 	})
 	.field('backgroundColor', {
 		description: "렌더링 배경화면 색상을 지정",
-		param: [
-			"[r,g,b,a] number형으로 입력"
-		],
 		sample: [
 			'var camera = new Camera()',
+			"// [r,g,b,a] number형으로 입력",
 			'camera.backgroundColor = [Math.random(),Math.random(),Math.random(),1]'
 		],
 		defaultValue:'{r: 0, g: 0, b: 0, a: 1}}',
@@ -160,13 +156,11 @@ var Camera = (function () {
 		}
 	})
 	.field('fog', {
-		description: "안개효과 지정여부",
+		description: "안개효과 지정여부" ,
 		sample: [
 			'var camera = new Camera()',
+			'// true or false - false로 지정시 안개효과 삭제' ,
 			'camera.fog = true'
-		],
-		param: [
-			"true/false"
 		],
 		defaultValue:'false',
 		get: function fogGet() {
@@ -174,14 +168,12 @@ var Camera = (function () {
 		}
 	})
 	.field('mode', {
-		description: "카메라모드 지정",
+		description:"카메라모드 지정",
 		sample: [
 			'var camera = new Camera()',
+			"// Camera.perspective or Camera.othogonal",
 			'camera.mode = Camera.perspective',
 			'camera.mode = Camera.othogonal'
-		],
-		param: [
-			"Camera.perspective or Camera.othogonal"
 		],
 		defaultValue:'Camera.perspective',
 		get: $getter(prop, 'mode'),
@@ -194,12 +186,10 @@ var Camera = (function () {
 		}
 	})
 	.field('renderArea', {
-		description: [
-			"카메라 렌더링 영역지정, 렌더링 영역을 지정하지 않을경우 캔버스 영역 전체로 자동 지정됨.",
-			"[x,y, width, height] - number형으로 입력, %단위도 입력가능"
-		],
+		description: "카메라 렌더링 영역지정, 렌더링 영역을 지정하지 않을경우 캔버스 영역 전체로 자동 지정됨.",
 		sample: [
 			'var camera = new Camera()',
+			"// [x,y, width, height] - number형으로 입력, %단위도 입력가능",
 			'camera.renderArea = [10,100,200,300]',
 			'camera.renderArea = ["10%","10%",200,300]',
 		],

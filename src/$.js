@@ -140,7 +140,7 @@ $md = function(classes){
                 temp[k].type = temp[k].type || '?',
                 temp[k].defaultValue = temp[k].defaultValue || 'none', 
                 temp[k].sample = toStr(temp[k].sample || '//none'),
-                temp[k].description = toStr2(temp[k].description),
+                temp[k].description = toStr(temp[k].description),
                 temp[k].enumerable = temp1[k] && temp1[k].enumerable ? true : false, 
                 temp[k].configurable = temp1[k] && temp1[k].configurable ? true : false;
                 temp[k].exception = toStr2(temp[k].exception || 'none');
@@ -166,7 +166,7 @@ $md = function(classes){
             temp[k].ret = toStr(temp[k].ret || 'none');
             temp[k].sample = toStr(temp[k].sample || '//none');
             temp[k].exception = toStr2(temp[k].exception || 'none');
-            temp[k].description = toStr2(temp[k].description);
+            temp[k].description = toStr(temp[k].description);
             v[v.length] = temp[k];
         }
         list(type, md, v);
