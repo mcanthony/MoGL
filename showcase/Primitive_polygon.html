@@ -1,29 +1,30 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <title>MoGL Test Suite - Primitive.js</title>
+    <title>MoGL Showcase - Primitive_polygon</title>
     <meta charset="utf-8"/>
+    <meta property="og:title" content="Monkey"/>
+    <meta property="og:description" content="MoGL.js version"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="format-detection" content="telephone=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
     <meta name="viewport"
-          content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,target-densitydpi=medium-dpi"/>
-    <link rel="stylesheet" type="text/css" href="css.css"/>
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=high-dpi "/>
     <style>
-        html, body {
-            margin: 0px;
-            padding: 0px;
+        body {
+            background-color: #000;
+            margin: 0;
+            padding: 0;
             overflow: hidden;
+            height: 100%;
         }
+
     </style>
 </head>
 <body>
-<div id="stage"></div>
-<div id="result"></div>
-<div id="test"></div>
 <img src="../asset/honey1.png" id="testIMG2" style="position: absolute;top:0px; display:none" width="256">
-<canvas id="polygon2"></canvas>
+<canvas id="canvas"></canvas>
 <script src="../src/$.js"></script>
 <script src="../src/MoGL.js"></script>
 <script src="../src/BlendMode.js"></script>
@@ -42,42 +43,46 @@
 <script src="../src/Camera.js"></script>
 <script src="../src/Scene.js"></script>
 <script src="../src/World.js"></script>
+<script src="../showcase/dat.gui.min.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
 <script>
+    'use strict';
+    // basic settings
+    var world, scene, camera;
+    var texture, mat
 
-    var world = new World('polygon2'), scene = new Scene(), camera = new Camera()
-    world.addScene(scene);
-    scene.addChild(camera);
-    var texture = new Texture()
-    texture.img = document.getElementById('testIMG2')
+    world = new World('canvas')
+    scene = new Scene()
+    camera = new Camera()
+
     world.setAutoSize(1)
+    world.start()
 
-    var prevN = 3
-    var newMesh;
+    world.addScene(scene)
+    scene.addChild(camera)
 
-    var mat = new Material('#FFF')
-    newMesh = new Mesh(Primitive.polygon(3), mat)
+    texture = new Texture()
+    texture.img = document.getElementById('testIMG2')
+    mat = new Material('#FFF')
     mat.addTexture(Texture.diffuse, texture).wireFrame = 1
 
+    ////////////////////////////////////////////////////////////////
+    var newMesh;
+    var prevN, start, end, intervalId;
+    prevN = 3, start = 3, end = 30
+    newMesh = new Mesh(Primitive.polygon(3), mat)
     scene.addChild(newMesh);
-
     newMesh.z = -5
-    var setMesh = function (n) {
-
+    function setMesh(n) {
         newMesh.geometry = Primitive.polygon(n)
         prevN = n
-    };
+    }
 
-    var start = 3, end = 30, intervalId;
     setMesh(start++);
-    world.render();
     setInterval(function () {
         if (start > end) start = 3
         setMesh(start++);
-        world.render();
     }, 32);
-
-
 </script>
 </body>
 </html>

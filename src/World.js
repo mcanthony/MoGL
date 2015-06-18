@@ -165,9 +165,8 @@ var World = (function () {
         gl.bindTexture(gl.TEXTURE_2D, null);
     },
     // TODO 일단은 카메라 프레임버퍼 전용
-    makeFrameBuffer = function makeFrameBuffer(gpu, camera) {
-        var gl, texture, fBuffer, rBuffer, tArea, cvs, cvsW, cvsH, pRatio;
-        cvs = camera.cvs
+    makeFrameBuffer = function makeFrameBuffer(gpu, camera,cvs) {
+        var gl, texture, fBuffer, rBuffer, tArea, cvsW, cvsH, pRatio;
         if (!cvs) return
         cvsW = cvs.width,
         cvsH = cvs.height,
@@ -177,7 +176,6 @@ var World = (function () {
         } else {
             tArea = [0, 0, cvsW, cvsH]
         }
-
         gl = gpu.gl,
         fBuffer = gl.createFramebuffer(),
         fBuffer.x = tArea[0], fBuffer.y = tArea[1],
@@ -251,18 +249,20 @@ var World = (function () {
             for (k2 in p2) {
                 var camera, tRenderArea, cvs;
                 camera = p2[k2],
-                cvs = camera.cvs = cvsList[self]
+                cvs = cvsList[self]
                 if (!cvs) return
                 tRenderArea = camera.renderArea;
                 if (tRenderArea) {
                     var wRatio = tRenderArea[2] / cvs.width;
                     var hRatio = tRenderArea[3] / cvs.height;
                     camera.renderArea = [tRenderArea[0], tRenderArea[1], cvs.width * wRatio, cvs.height * hRatio]
+                }else{
+                    camera.renderArea = [0,0,cvs.width,cvs.height]
                 }
                 camera.resetProjectionMatrix()
                 //TODO 렌더러 반영하겠금 고쳐야겠고..
                 // 헉!! 프레임 버퍼가 카메라에 종속되있어!!!!!!
-                makeFrameBuffer(gpu[self], camera);
+                makeFrameBuffer(gpu[self], camera, cvs);
             }
 
         }

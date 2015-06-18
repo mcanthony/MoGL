@@ -18,7 +18,6 @@ var Camera = (function () {
             antialias:false,
             mode:Camera.perspective,
             //filters:{},
-            cvs:null,
             renderArea:null,
             projectionMatrix:Matrix()
         }),
@@ -116,30 +115,10 @@ var Camera = (function () {
             }
         }
     })
-    .field('cvs', {
-        get:$getter(prop, 'cvs'),
-        set:function cvsSet(v) {
-            prop[this].cvs = v;
-        }
-    })
     .field('renderArea', {
         get: $getter(prop, 'renderArea'),
         set: function renderAreaSet(v) {
-            var tw, th,c;
-            c = prop[this].cvs
-            if(c){
-                tw = c.width,
-                th = c.height,
-                //console.log(typeof x == 'string' ? tw * x.replace('%', '') : x);
-                prop[this].renderArea = [
-                    typeof v[0] == 'string' ? tw * v[0].replace('%', '') * 0.01 : v[0],
-                    typeof v[1] == 'string' ? th * v[1].replace('%', '') * 0.01 : v[1],
-                    typeof v[2] == 'string' ? tw * v[2].replace('%', '') * 0.01 : v[2],
-                    typeof v[3] == 'string' ? th * v[3].replace('%', '') * 0.01 : v[3],
-                ];
-            }else{
-                prop[this].renderArea = v
-            }
+            prop[this].renderArea = v
         }
     })
     .field('projectionMatrix', {
@@ -160,8 +139,7 @@ var Camera = (function () {
             tMatrix.raw[12] = -1
             tMatrix.raw[13] = 1
         }else {
-            if (tArea) tMatrix.matPerspective(p.fov, tArea[2] / tArea[3], p.near, p.far);
-            else tMatrix.matPerspective(p.fov, p.cvs.width/p.cvs.height, p.near, p.far);
+            tMatrix.matPerspective(p.fov, tArea[2] / tArea[3], p.near, p.far);
         }
         return this;
     })

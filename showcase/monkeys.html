@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <title>Monkey</title>
+    <title>MoGL Showcase - Monkeys</title>
     <meta charset="utf-8"/>
-    <meta property="og:image" content="http://shallaa.github.io/SoftEngine/og/2.jpg"/>
     <meta property="og:title" content="Monkey"/>
     <meta property="og:description" content="MoGL.js version"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -13,7 +12,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=high-dpi "/>
     <style>
-        html, body {
+        body {
             background-color: #000;
             margin: 0;
             padding: 0;
@@ -25,7 +24,7 @@
             color: #FFF;
             left: 0px;
             top: 0px;
-            position: absolute;
+            position: absolute
         }
     </style>
     <script src="../src/$.js"></script>
@@ -50,48 +49,93 @@
 <body>
 <img src="monkey/Suzanne.jpg" id="testIMG2" style="position: absolute;top:0px; display:none" width="256" height="256">
 <canvas id="canvas"></canvas>
-<div class="FPS" style="position: absolute;top:0px;">
+<div class="FPS">
     Current FPS: <span id="currentFPS"></span>
     Average FPS: <span id="averageFPS"></span>
 </div>
+
 <script>
     'use strict';
+    // basic settings
+    var divCurrentFPS, divAverageFPS, prevTime;
+    var world, scene, camera;
 
-    var world = new World('canvas');
-    var scene = new Scene();
-    var divCurrentFPS = document.getElementById('currentFPS');
-    var divAverageFPS = document.getElementById('averageFPS');
+    divCurrentFPS = document.getElementById('currentFPS')
+    divAverageFPS = document.getElementById('averageFPS')
+    prevTime = 0
 
-    var material = new Material('#fff')
-    var texture = new Texture()
-    world.setAutoSize(1)
-    world.addScene(scene);
+    world = new World('canvas')
+    scene = new Scene()
+    camera = new Camera()
+
+    world.addScene(scene)
+    scene.addChild(camera)
+
+    var material, texture;
+    material = new Material('#fff')
+    texture = new Texture()
     texture.img = document.getElementById('testIMG2')
-    //
-    var camera = new Camera()
-    scene.addChild(camera);
     scene.addMaterial(material.setId('material'));
-    //
-    //    material.addTexture(Texture.diffuse, texture);
-    //    material.shading = Shading.phong
 
+    ////////////////////////////////////////////////////////////////////////////
     var xmlhttp = new XMLHttpRequest();
-
     xmlhttp.open('GET', 'monkey/monkey.babylon', true);
     xmlhttp.onreadystatechange = function () {
         if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-            start(JSON.parse(xmlhttp.responseText));
+            var geo = getGeometry(JSON.parse(xmlhttp.responseText));
+            makeItems(geo)
+            world.setAutoSize(1)
+            world.start()
         }
     };
     xmlhttp.send(null);
+    ////////////////////////////////////////////////////////////////////////////
+    function makeItems(geo) {
+        var meshs, item, PI2, i;
+        meshs = []
+        PI2 = Math.PI * 2;
+        for (i = 0; i < 500; i++) {
+            var a = new Material('#' + (0xffffff * Math.random().toString()))
+            if (i % 5 == 0) a.addTexture(Texture.diffuse, texture)
+            item = new Mesh(geo, a);
+            a.shading = Shading.phong
+            item.position = [Math.random() * 50 - 25, Math.random() * 50 - 25, Math.random() * 50 - 25]
+            item.rotate = [Math.random() * PI2,Math.random() * PI2,Math.random() * PI2];
+            scene.addChild(item);
+            meshs.push(item);
+        }
 
-    function start(json) {
-        var mesh = json.meshes[0];
-        var vertices = mesh.vertices;
-        var indices = mesh.indices;
-        var uvCount = mesh.uvCount;
-        var verticesStep = 1;
+        var currentFPS, prevTime = 0, count = 0, sum = 0
+        world.addEventListener(World.renderAfter, function (currTime) {
+            var currentFPS = 1000 / ( currTime - prevTime );
+            prevTime = currTime;
+            count++
+            divCurrentFPS.textContent = currentFPS.toFixed(2);
+            divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
 
+            var i = meshs.length,item;
+            while (i--) {
+                item = meshs[i],
+                item.rotateX += 0.05,
+                item.rotateY += 0.05,
+                item.rotateZ += 0.05
+            }
+            camera.x = Math.sin(count / 50) * 50,
+            camera.y = Math.cos(count / 100) * 50,
+            camera.z = Math.cos(count / 100) * 50 + Math.sin(count / 100) * 50,
+            camera.lookAt(0, 0, 0);
+        })
+    }
+    function getGeometry(json) {
+        var tMesh, tVertices, tIndices;
+        var uvCount, verticesStep, verticesCount, facesCount;
+        var i, j;
+        var vertex, index;
+        tMesh = json.meshes[0]
+        tVertices = tMesh.vertices
+        tIndices = tMesh.indices
+        uvCount = tMesh.uvCount
+        verticesStep = 1;
         switch (uvCount) {
             case 0:
                 verticesStep = 6;
@@ -103,135 +147,28 @@
                 verticesStep = 10;
                 break;
         }
-
-        var verticesCount = vertices.length / verticesStep;
-        var facesCount = indices.length / 3;
-        var vertex = [];
-        var index = [];
-        var i = 0;
-        var j;
-
-        for (; i < verticesCount; i++) {
+        verticesCount = tVertices.length / verticesStep;
+        facesCount = tIndices.length / 3;
+        vertex = [], index = [];
+        for (i = 0; i < verticesCount; i++) {
             j = i * verticesStep;
-
-            vertex.push(vertices[j], vertices[j + 1], vertices[j + 2], vertices[j + 3], vertices[j + 4], vertices[j + 5]);
-
+            vertex.push(
+                    tVertices[j], tVertices[j + 1], tVertices[j + 2],
+                    tVertices[j + 3], tVertices[j + 4], tVertices[j + 5]
+            );
             if (uvCount > 0) {
-                vertex.push(vertices[j + 6], vertices[j + 7]);
-            } else {
+                vertex.push(tVertices[j + 6], tVertices[j + 7]);
+            }
+            else {
                 vertex.push(0, 0);
             }
         }
-
         for (i = 0; i < facesCount; i++) {
             j = i * 3;
-
-            index.push(indices[j], indices[j + 1], indices[j + 2]);
+            index.push(tIndices[j], tIndices[j + 1], tIndices[j + 2]);
         }
-
-        var geo = new Geometry(vertex, index, [Vertex.x, Vertex.y, Vertex.z, Vertex.normalX, Vertex.normalY, Vertex.normalZ, Vertex.u, Vertex.v]).setId('geometry')
-
-        var meshes = [];
-        var monkey;
-        var PI2 = Math.PI * 2;
-
-        for (i = 0; i < 500; i++) {
-            var a = new Material('#' + (0xffffff * Math.random().toString()))
-            if (i % 5 == 0) a.addTexture(Texture.diffuse, texture)
-//            a.addTexture(Texture.diffuse,texture)
-            monkey = new Mesh(geo, a);
-            a.shading = Shading.phong
-            monkey.x = Math.random() * 50 - 25;
-            monkey.y = Math.random() * 50 - 25;
-            monkey.z = Math.random() * 50 - 25;
-//            monkey.z = Math.random() * 50 - 25;
-            monkey.rotateX = Math.random() * PI2;
-            monkey.rotateY = Math.random() * PI2;
-            monkey.rotateZ = Math.random() * PI2;
-
-            scene.addChild(monkey);
-            meshes.push(monkey);
-
-
-        }
-
-//        monkey = new Mesh(Primitive.sphere(), material);
-//        scene.addChild(monkey);
-////        monkey.setScale(3, 3, 3)
-//
-//        monkey = new Mesh(Primitive.sphere(), material);
-//        scene.addChild(monkey);
-////        monkey.setScale(2, 2, 2)
-////        monkey.setPosition(-3, 0, 0)
-//
-//        monkey = new Mesh(Primitive.sphere(), material);
-//        scene.addChild(monkey);
-////        monkey.setScale(2, 2, 2)
-////        monkey.setPosition(3, 0, 0)
-
-        var prevTime = 0;
-        var sum = 0, count = 1;
-
-//        world.addEventListener(World.renderBefore, function addRenderBefore(currTime) {
-//
-//            var currentFPS = 1000 / ( currTime - prevTime );
-//            prevTime = currTime;
-//
-//
-//            count++
-//            divCurrentFPS.textContent = currentFPS.toFixed(2);
-//            divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
-//
-//            var i = meshes.length;
-//
-//            var mesh;
-//
-//            while (i--) {
-//                mesh = meshes[i];
-//                mesh.rotateX += 0.05;
-//                mesh.rotateY += 0.05;
-//                mesh.rotateZ += 0.05;
-//            }
-//            camera.x = Math.sin(count / 50) * 50
-//            camera.y = Math.cos(count / 100) * 50
-//            camera.z = Math.cos(count / 100) * 50 + Math.sin(count / 100) * 50
-//            camera.lookAt(0, 0, 0);
-//        })
-//
-//        world.start()
-
-        function aa(currTime) {
-
-
-            var currentFPS = 1000 / ( currTime - prevTime );
-            prevTime = currTime;
-
-            count++
-            divCurrentFPS.textContent = currentFPS.toFixed(2);
-            divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
-
-            var i = meshes.length;
-            var mesh;
-
-            while(i--){
-                mesh = meshes[i];
-                mesh.rotateX += 0.05;
-                mesh.rotateY += 0.05;
-                mesh.rotateZ += 0.05;
-            }
-            camera.x = Math.sin(count / 50) * 50
-            camera.y = Math.cos(count / 100) * 50
-            camera.z = Math.cos(count / 100) * 50 + Math.sin(count / 100) * 50
-            camera.lookAt(0, 0, 0);
-            requestAnimationFrame(aa)
-        }
-
-        requestAnimationFrame(aa)
-
-
-        world.start()
+        return new Geometry(vertex, index, [Vertex.x, Vertex.y, Vertex.z, Vertex.normalX, Vertex.normalY, Vertex.normalZ, Vertex.u, Vertex.v])
     }
-
 </script>
 </body>
 </html>
