@@ -520,7 +520,7 @@ var World = (function () {
             while (i--) {
                 if (tSceneList[i].id == sceneID) {
                     tSceneList.splice(i, 1),
-                    console.log(sceneList),
+                    console.log(sceneList);
                     return this;
                 }
             }
