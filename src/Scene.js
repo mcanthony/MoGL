@@ -423,7 +423,7 @@ var Scene = (function () {
                 'Mesh/Camera or null'
             ],
             sample: [
-                "scene.description('CameraID')"
+                "scene.getChild('CameraID')"
             ],
             exception: null,
             value : function getChild(id) {
@@ -434,81 +434,193 @@ var Scene = (function () {
             }
         }
     )
-    .method('getGeometry', function (id) {
-        var p = geometrys[this],k;
-        for(k in p){
-            if(p[k].id == id){
-                return p[k]
+    .method('getGeometry', {
+            description: [
+                '씬에 등록된 지오메트리 객체를 검색'
+            ],
+            param: [
+                'id:String - 찾고자 하는 지오메트리 객체의 id'
+            ],
+            ret: [
+                'Geometry or null'
+            ],
+            sample: [
+                "scene.getGeometry('GeometryID')"
+            ],
+            exception: null,
+            value: function getGeometry(id) {
+                var p = geometrys[this], k;
+                for (k in p) {
+                    if (p[k].id == id) {
+                        return p[k]
+                    }
+                }
+                return null
             }
         }
-        return null
-    })
-    .method('getMaterial', function (id) {
-        var p = materials[this],k;
-        for(k in p){
-            if(p[k].id == id){
-                return p[k]
+    )
+    .method('getMaterial', {
+            description: [
+                '씬에 등록된 재질 객체를 검색'
+            ],
+            param: [
+                'id:String - 찾고자 하는 재질 객체의 id'
+            ],
+            ret: [
+                'Material or null'
+            ],
+            sample: [
+                "scene.getMaterial('MaterialID')"
+            ],
+            exception: null,
+            value: function getMaterial(id) {
+                var p = materials[this], k;
+                for (k in p) {
+                    if (p[k].id == id) {
+                        return p[k]
+                    }
+                }
+                return null
             }
         }
-        return null
-    })
-    .method('getTexture', function (id) {
-        var p = textures[this],k;
-        for(k in p){
-            if(p[k].id == id){
-                return p[k]
+    )
+    .method('getTexture', {
+            description: [
+                '씬에 등록된 텍스쳐 객체를 검색'
+            ],
+            param: [
+                'id:String - 찾고자 하는 텍스쳐 객체의 id'
+            ],
+            ret: [
+                'Texture or null'
+            ],
+            sample: [
+                "scene.getTexture('TextureID')"
+            ],
+            exception: null,
+            value: function getTexture(id) {
+                var p = textures[this], k;
+                for (k in p) {
+                    if (p[k].id == id) {
+                        return p[k]
+                    }
+                }
+                return null
             }
         }
-        return null
-    })
-    .method('removeChild', function removeChild(id) {
-        var p, k, result;
-        p = children[this],
-        result = false
-        for (k in p) {
-            if (p[k].id == id) {
-                childrenArray[this].splice(childrenArray[this].indexOf(p[k]),1)
-                delete p[k],
-                result = true
+    )
+    .method('removeChild', {
+            description: [
+                '씬에 등록된 객체를 자식리스트에서 삭제'
+            ],
+            param: [
+                'id:String - 삭제 대상 객체의 id'
+            ],
+            ret: [
+                'true or false - 삭제성공시 true 반환'
+            ],
+            sample: [
+                "scene.removeChild('targetID')"
+            ],
+            exception: null,
+            value: function removeChild(id) {
+                var p, k, result;
+                p = children[this],
+                    result = false
+                for (k in p) {
+                    if (p[k].id == id) {
+                        childrenArray[this].splice(childrenArray[this].indexOf(p[k]), 1)
+                        delete p[k],
+                        result = true
+                    }
+                }
+
+                return result;
             }
         }
-    
-        return result;
-    })
-    .method('removeGeometry', function removeGeometry(id) {
-        var p, k, result;
-        p = geometrys[this],
-        result = false
-        for (k in p) {
-            if (p[k].id == id) {
-                delete p[k],
-                result = true
+    )
+    .method('removeGeometry', {
+            description: [
+                '씬에 등록된 지오메트리 객체를 리스트에서 삭제'
+            ],
+            param: [
+                'id:String - 삭제 대상 객체의 id'
+            ],
+            ret: [
+                'true or false - 삭제성공시 true 반환'
+            ],
+            sample: [
+                "scene.removeGeometry('targetID')"
+            ],
+            exception: null,
+            value: function removeGeometry(id) {
+                var p, k, result;
+                p = geometrys[this],
+                    result = false
+                for (k in p) {
+                    if (p[k].id == id) {
+                        delete p[k],
+                        result = true
+                    }
+                }
+                return result;
             }
         }
-        return result;
-    })
-    .method('removeMaterial', function removeMaterial(id) {
-        var p, k, result;
-        p = materials[this],
-            result = false
-        for (k in p) {
-            if (p[k].id == id) {
-                delete p[k],
-                result = true
+    )
+    .method('removeMaterial', {
+            description: [
+                '씬에 등록된 재질 객체를 리스트에서 삭제'
+            ],
+            param: [
+                'id:String - 삭제 대상 객체의 id'
+            ],
+            ret: [
+                'true or false - 삭제성공시 true 반환'
+            ],
+            sample: [
+                "scene.removeMaterial('targetID')"
+            ],
+            exception: null,
+            value: function removeMaterial(id) {
+                var p, k, result;
+                p = materials[this],
+                    result = false
+                for (k in p) {
+                    if (p[k].id == id) {
+                        delete p[k],
+                        result = true
+                    }
+                }
+                return result;
             }
         }
-        return result;
-    })
-    .method('removeTexture', function removeTexture(id) {
-        var p, result;
-        p = textures[this],
-        result = false
-        if(p[id] ){
-            delete p[id],
-            result = true
+    )
+    .method('removeTexture', {
+            description: [
+                '씬에 등록된 텍스쳐 객체를 리스트에서 삭제'
+            ],
+            param: [
+                'id:String - 삭제 대상 객체의 id'
+            ],
+            ret: [
+                'true or false - 삭제성공시 true 반환'
+            ],
+            sample: [
+                "scene.removeTexture('targetID')"
+            ],
+            exception: null,
+            value: function removeTexture(id) {
+                var p, result;
+                p = textures[this],
+                    result = false
+                if (p[id]) {
+                    delete p[id],
+                    result = true
+                }
+                return result;
+            }
         }
-        return result;
-    })
+    )
     .build();
 //fn.getFragmentShader = function (id) {
 //    // TODO 마일스톤0.5
