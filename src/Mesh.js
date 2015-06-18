@@ -51,7 +51,7 @@ var Mesh = (function () {
             'mesh1.culling = "cullingFront" // 앞면 페이스 컬링을 함',
             'mesh1.culling = "cullingBack" // 뒷면 페이스 컬링을 함'
         ],
-        defaultvalue:"cullingNone",
+        defaultValue:"cullingNone",
         exception:"* 'Mesh.cullingSet:0' - Mesh에 정의된 culling상수값들과 다른 값을 입력 할 경우",
         get:$getter(culling, false, 'cullingNone'),
         set:function cullingSet(v) {
