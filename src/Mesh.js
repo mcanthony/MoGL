@@ -109,7 +109,7 @@ var Mesh = (function () {
                 "var mesh1 = new Mesh(geometry, material)",
                 "mesh1.culling = Mesh.cullingNone;",
             ],
-            value:"'cullingNone'"
+            value:"cullingNone"
         })
     .constant('cullingFront',  {
             description: "Mesh FrontFace를 그리지 않음.",
@@ -118,7 +118,7 @@ var Mesh = (function () {
                 "var mesh1 = new Mesh(geometry, material)",
                 "mesh1.culling = Mesh.cullingFront;",
             ],
-            value:"'cullingFront'"
+            value:"cullingFront"
         })
     .constant('cullingBack', {
             description: "Mesh BackFace를 그리지않음",
@@ -127,7 +127,7 @@ var Mesh = (function () {
                 "var mesh1 = new Mesh(geometry, material)",
                 "mesh1.culling = Mesh.cullingBack;",
             ],
-            value:"'cullingBack'"
+            value:"cullingBack"
         })
     .event('changed', 'changed')
     .build();
