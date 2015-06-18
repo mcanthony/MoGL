@@ -103,7 +103,7 @@ SIN = Math.sin, COS = Math.cos, TAN = Math.tan, ATAN = Math.atan, ATAN2 = Math.a
 SQRT = Math.sqrt, CEIL = Math.ceil, ABS = Math.abs, PI = Math.PI, PIH = PI * 0.5, PERPI = 180 / PI;
 //markdown
 $md = function(classes){
-    var list, val, func, sort, toStr, fieldDetail, methodDetail;
+    var list, val, func, sort, toStr,toStr2, fieldDetail, methodDetail;
     sort = function(a,b){
         return a.name < b.name;
     },
@@ -120,6 +120,14 @@ $md = function(classes){
     toStr = function(v){
         if (Array.isArray(v)) {
             return v.join('\n');
+        }else if (!v) {
+            return '';
+        }
+        return v;
+    },
+    toStr2 = function(v){
+        if (Array.isArray(v)) {
+            return v.join('\n- ');
         }else if (!v) {
             return '';
         }
@@ -157,7 +165,7 @@ $md = function(classes){
             temp[k].param = toStr(temp[k].param || 'none');
             temp[k].ret = toStr(temp[k].ret || 'none');
             temp[k].sample = toStr(temp[k].sample || '//none');
-            temp[k].exception = toStr(temp[k].exception || 'none');
+            temp[k].exception = toStr2(temp[k].exception || 'none');
             temp[k].description = toStr(temp[k].description);
             v[v.length] = temp[k];
         }
@@ -174,18 +182,18 @@ $md = function(classes){
                 md[md.length] = '###' + k.name;
                 md[md.length] = '\n_' + type + '_\n';
                 md[md.length] = '\n**description**\n';
-                md[md.length] = k.description;
+                md[md.length] = '- '+k.description;
                 md[md.length] = '\n**setting**\n';
-                md[md.length] = '*writable*:' + k.writable + ', *enumerable*:' + k.enumerable + ', *configurable*:' + k.configurable;
+                md[md.length] = '- *writable*:' + k.writable + '\n- *enumerable*:' + k.enumerable + '\n- *configurable*:' + k.configurable;
                 if ('value' in k) {
                     md[md.length] = '\n**value**\n';
                     md[md.length] = k.value;
                 } else if ('defaultValue' in k) {
                     md[md.length] = '\n**defaultValue**\n';
-                    md[md.length] = k.defaultValue;
+                    md[md.length] ='- '+k.defaultValue;
                 }
                 md[md.length] = '\n**exception**\n';
-                md[md.length] = k.exception;
+                md[md.length] = '- '+k.exception;
                 md[md.length] = '\n**sample**\n';
                 md[md.length] = '```javascript';
                 md[md.length] = k.sample;
@@ -214,7 +222,7 @@ $md = function(classes){
                 }
                 md[md.length] = '\n_' + type + '_\n';
                 md[md.length] = '\n**description**\n';
-                md[md.length] = k.description;
+                md[md.length] =  '- '+k.description;
                 md[md.length] = '\n**param**\n';
                 if (k.param != 'none' && n) {
                     for(m = 0; m < n ; m++){
@@ -230,9 +238,9 @@ $md = function(classes){
                     md[md.length] = 'none';
                 }
                 md[md.length] = '\n**exception**\n';
-                md[md.length] = k.exception;
+                md[md.length] = '- '+k.exception;
                 md[md.length] = '\n**return**\n';
-                md[md.length] = k.ret.length ? k.ret.replace('this', 'this - 메소드체이닝을 위해 자신을 반환함') : 'none';
+                md[md.length] =  '- ' +(k.ret.length ? k.ret.replace('this', 'this - 메소드체이닝을 위해 자신을 반환함') : 'none');
                 md[md.length] = '\n**sample**\n';
                 md[md.length] = '```javascript';
                 md[md.length] = k.sample;
@@ -283,9 +291,9 @@ $md = function(classes){
         md[md.length] = '\n<a name="constructor"></a>';
         md[md.length] = '##Constructor';
         md[md.length] = '\n**description**\n';
-        md[md.length] = toStr(temp.description);
+        md[md.length] = '- '+toStr(temp.description);
         md[md.length] = '\n**param**\n';
-        md[md.length] = toStr(temp.param || 'none'),
+        md[md.length] = '- '+toStr(temp.param || 'none'),
         md[md.length] = '\n**exception**\n';
         md[md.length] = toStr(temp.exception || 'none');
         md[md.length] = '\n**sample**\n';

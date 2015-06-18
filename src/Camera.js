@@ -37,7 +37,7 @@ var Camera = (function () {
 			"1. number형으로 입력",
 			"clipPlaneNear의 경우 반드시 0보다 큰수로 지정"
 		],
-		defaultvalue:"0.1",
+		defaultValue:"0.1",
 		get: $getter(prop, 'near'),
 		set: $setter(prop, 'near')
 	})
@@ -50,7 +50,7 @@ var Camera = (function () {
 		param: [
 			"number형으로 입력"
 		],
-		defaultvalue:"10000",
+		defaultValue:"10000",
 		get: $getter(prop, 'far'),
 		set: $setter(prop, 'far')
 	})
@@ -72,7 +72,7 @@ var Camera = (function () {
 		param: [
 			"true/false"
 		],
-		defaultvalue:"false",
+		defaultValue:"false",
 		get: $getter(prop, 'antialias'),
 		set: function antialiasSet(v) {
 			if (typeof v == 'number') {
@@ -90,7 +90,7 @@ var Camera = (function () {
 			'var camera = new Camera()',
 			'camera.fogColor = [Math.random(),Math.random(),Math.random(),1]'
 		],
-		defaultvalue:null,
+		defaultValue:null,
 		get: $getter(prop, 'fogColor'),
 		set: function fogColorSet(v) {
 			var p = prop[this];
@@ -107,7 +107,7 @@ var Camera = (function () {
 			'var camera = new Camera()',
 			'camera.fogNear = 10'
 		],
-		defaultvalue:0,
+		defaultValue:0,
 		get: $getter(prop, 'fogNear'),
 		set: function fogNearSet(v) {
 			var p = prop[this];
@@ -124,7 +124,7 @@ var Camera = (function () {
 			'var camera = new Camera()',
 			'camera.fogFar = 1000'
 		],
-		defaultvalue:0,
+		defaultValue:0,
 		get: $getter(prop, 'fogFar'),
 		set: function fogFarSet(v) {
 			var p = prop[this];
@@ -143,7 +143,7 @@ var Camera = (function () {
 			'camera.fov = 45', // 시야각입력을 통한 fov계산
 			'camera.fov = [width,height,angle]' // 화면사이즈와 각도의 직접적 입력을 통한 fov 지정
 		],
-		defaultvalue:55,
+		defaultValue:55,
 		get: $getter(prop, 'fov'),
 		set: function fovSet(v) {
 			var p = prop[this];
@@ -163,7 +163,7 @@ var Camera = (function () {
 			'var camera = new Camera()',
 			'camera.backgroundColor = [Math.random(),Math.random(),Math.random(),1]'
 		],
-		defaultvalue:'{r: 0, g: 0, b: 0, a: 1}}',
+		defaultValue:'{r: 0, g: 0, b: 0, a: 1}}',
 		get: (function () {
 			var a = [];
 			return function backgroundColorGet() {
@@ -187,7 +187,7 @@ var Camera = (function () {
 		param: [
 			"true/false"
 		],
-		defaultvalue:'false',
+		defaultValue:'false',
 		get: function fogGet() {
 			return prop[this].fog ? true : false;
 		}
@@ -202,7 +202,7 @@ var Camera = (function () {
 		param: [
 			"Camera.perspective or Camera.othogonal"
 		],
-		defaultvalue:'Camera.perspective',
+		defaultValue:'Camera.perspective',
 		get: $getter(prop, 'mode'),
 		set: function modeSet(v) {
 			if (Camera[v]) {
@@ -222,7 +222,7 @@ var Camera = (function () {
 		param: [
 			"[x,y, width, height] - number형으로 입력, %단위도 입력가능"
 		],
-		defaultvalue:'null',
+		defaultValue:'null',
 		get: $getter(prop, 'renderArea'),
 		set: function renderAreaSet(v) {
 			prop[this].renderArea = v
