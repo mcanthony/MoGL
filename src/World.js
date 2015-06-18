@@ -82,24 +82,23 @@ var World = (function (makeUtil) {
                 camera = p2[k2],
                 cvs = cvsList[self]
                 tRenderArea = camera.renderArea;
-                if (tRenderArea) {
+                if (tRenderArea && !camera.renderArea.byAutoArea) {
                     var tw,th
                     tw = cvs.width,
-                    th = cvs.height,
-                        camera.renderArea = [
+                    th = cvs.height
+                    var wRatio = tRenderArea[2] / tw;
+                    var hRatio = tRenderArea[3] / th;
+                    tRenderArea = [
                         typeof tRenderArea[0] == 'string' ? tw * tRenderArea[0].replace('%', '') * 0.01 : tRenderArea[0],
                         typeof tRenderArea[1] == 'string' ? th * tRenderArea[1].replace('%', '') * 0.01 : tRenderArea[1],
                         typeof tRenderArea[2] == 'string' ? tw * tRenderArea[2].replace('%', '') * 0.01 : tRenderArea[2],
                         typeof tRenderArea[3] == 'string' ? th * tRenderArea[3].replace('%', '') * 0.01 : tRenderArea[3],
                     ];
-                    camera.renderArea = tRenderArea
-                    tRenderArea = camera.renderArea;
-                    //var wRatio = tRenderArea[2] / cvs.width;
-                    //var hRatio = tRenderArea[3] / cvs.height;
-                    //camera.renderArea = [tRenderArea[0], tRenderArea[1], cvs.width * wRatio, cvs.height * hRatio]
-                    camera.renderArea = [tRenderArea[0], tRenderArea[1], cvs.width , cvs.height ]
+                    camera.renderArea = [tRenderArea[0], tRenderArea[1], tw * wRatio, th * hRatio]
+                    camera.renderArea.byAutoArea=false
                 }else{
                     camera.renderArea = [0,0,cvs.width,cvs.height]
+                    camera.renderArea.byAutoArea = true
                 }
                 camera.resetProjectionMatrix()
                 //TODO 렌더러 반영하겠금 고쳐야겠고..
@@ -507,7 +506,6 @@ var World = (function (makeUtil) {
                             for (k in tGPU.programs) {
                                 tProgram = tGPU.programs[k],
                                 tGL.useProgram(tProgram),
-                                //tCamera.cvs = tCvs
                                 tGL.uniformMatrix4fv(tProgram.uPixelMatrix, false, tProjectionMtx),
                                 tGL.uniformMatrix4fv(tProgram.uCameraMatrix, false, tCameraMtx);
                                 if(tProgram['uDLite']) {
@@ -674,8 +672,8 @@ var World = (function (makeUtil) {
                     if (!tVBO) return;
                     tGL.useProgram(tProgram);
                     tGL.uniformMatrix4fv(tProgram.uPixelMatrix, false, [
-                        2 / tCvs.clientWidth, 0, 0, 0,
-                        0, -2 / tCvs.clientHeight, 0, 0,
+                        2 / tCvs.width, 0, 0, 0,
+                        0, -2 / tCvs.height, 0, 0,
                         0, 0, 0, 0,
                         -1, 1, 0, 1
                     ]);
