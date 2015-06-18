@@ -378,45 +378,48 @@
             return test.z;
         }, 30
     );
-    test.setProperties({x:0, y:0, z:0},{time:1});
-    bsTest( 'setProperty ani start',
-        function(){
-            return test.x;
-        }, bsTest.NOT(0),
-        function(){
-            return test.y;
-        }, bsTest.NOT(0),
-        function(){
-            return test.z;
-        }, bsTest.NOT(0)
-    );
-    setTimeout( function(){
-        bsTest( 'setProperty ani start1',
+    if(window.top === window.self) {
+        test.setProperties({x:0, y:0, z:0},{time:1});
+        bsTest( 'setProperty ani start',
             function(){
                 return test.x;
-            }, bsTest.RANGE(4, 6),
+            }, bsTest.NOT(0),
             function(){
                 return test.y;
-            }, bsTest.RANGE(9, 11),
+            }, bsTest.NOT(0),
             function(){
                 return test.z;
-            }, bsTest.RANGE(14, 16)
+            }, bsTest.NOT(0)
         );
-    }, 500 );
-    setTimeout( function(){
-        bsTest( 'setProperty ani start2',
-            function(){
-                return test.x;
-            }, 0,
-            function(){
-                return test.y;
-            }, 0,
-            function(){
-                return test.z;
-            }, 0
-        );
-    }, 1010 );
+        setTimeout( function(){
+            bsTest( 'setProperty ani start1',
+                function(){
+                    return test.x;
+                }, bsTest.RANGE(4, 6),
+                function(){
+                    return test.y;
+                }, bsTest.RANGE(9, 11),
+                function(){
+                    return test.z;
+                }, bsTest.RANGE(14, 16)
+            );
+        }, 500 );
+        setTimeout( function(){
+            bsTest( 'setProperty ani start2',
+                function(){
+                    return test.x;
+                }, 0,
+                function(){
+                    return test.y;
+                }, 0,
+                function(){
+                    return test.z;
+                }, 0
+            );
+        }, 1010 );
+    }
 })();   
+    console.log('this is top? ' + (window.top === window.self));
 </script>
 </body>
 </html>
