@@ -31,13 +31,11 @@
 
 **description**
 
-- Constructor of Vector
+- 
 
 **param**
 
-- x
-y
-z
+- none
 
 **exception**
 
