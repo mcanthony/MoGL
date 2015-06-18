@@ -5,14 +5,14 @@
 
 **field**
 
-* [volume](#volume) - Field of Geometry
-* [vertexCount](#vertexCount) - Field of Geometry
-* [uv](#uv) - Field of Geometry
-* [triangleCount](#triangleCount) - Field of Geometry
-* [position](#position) - Field of Geometry
-* [normal](#normal) - Field of Geometry
-* [index](#index) - Field of Geometry
-* [color](#color) - Field of Geometry
+* [volume](#volume) - 지오메트리의 최대 부피값.
+* [vertexCount](#vertexCount) - 지오메트리를 구성하는 버텍스 갯수
+* [uv](#uv) - 지오메트리를 구성하는 버텍스의 UV...
+* [triangleCount](#triangleCount) - 지오메트리를 구성하는 삼각형 갯수
+* [position](#position) - 지오메트리를 구성하는 버텍스의 포지션...
+* [normal](#normal) - 지오메트리를 구성하는 버텍스의 노멀...
+* [index](#index) - 지오메트리를 인덱스 배열을 반환
+* [color](#color) - 지오메트리를 구성하는 버텍스의 컬러...
 
 **static**
 
@@ -29,22 +29,21 @@
 
 **description**
 
-Constructor of Geometry
+- Geometry 클래스
 
 **param**
 
-vertex
-tIndex
-info
+- vertex : 지오메트리를 구성할 버텍스 배열 정보 (Array or Float32Array)
+index : 지오메트리를 구성할 인덱스 배열 정보 (Array or Uint16Array)
 
 **exception**
 
-0,1,3,4,2
+- none
 
 **sample**
 
 ```javascript
-//none
+var geo = new Geometry([],[])
 ```
 
 [top](#)
@@ -57,20 +56,26 @@ _field_
 
 **description**
 
-Field of Geometry
+- 지오메트리의 최대 부피값.
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **defaultValue**
 
-none
+- none
+
+**exception**
+
+- none
 
 **sample**
 
 ```javascript
-//none
+console.log(geometry.volume)
 ```
 
 [top](#)
@@ -83,20 +88,26 @@ _field_
 
 **description**
 
-Field of Geometry
+- 지오메트리를 구성하는 버텍스 갯수
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **defaultValue**
 
-none
+- none
+
+**exception**
+
+- none
 
 **sample**
 
 ```javascript
-//none
+console.log(geometry.vertexCount)
 ```
 
 [top](#)
@@ -109,20 +120,26 @@ _field_
 
 **description**
 
-Field of Geometry
+- 지오메트리를 구성하는 버텍스의 UV 배열을 반환
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **defaultValue**
 
-none
+- none
+
+**exception**
+
+- none
 
 **sample**
 
 ```javascript
-//none
+console.log(geometry.uv)
 ```
 
 [top](#)
@@ -135,20 +152,26 @@ _field_
 
 **description**
 
-Field of Geometry
+- 지오메트리를 구성하는 삼각형 갯수
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **defaultValue**
 
-none
+- none
+
+**exception**
+
+- none
 
 **sample**
 
 ```javascript
-//none
+console.log(geometry.triangleCount)
 ```
 
 [top](#)
@@ -161,20 +184,26 @@ _field_
 
 **description**
 
-Field of Geometry
+- 지오메트리를 구성하는 버텍스의 포지션 배열을 반환
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **defaultValue**
 
-none
+- none
+
+**exception**
+
+- none
 
 **sample**
 
 ```javascript
-//none
+console.log(geometry.position)
 ```
 
 [top](#)
@@ -187,20 +216,26 @@ _field_
 
 **description**
 
-Field of Geometry
+- 지오메트리를 구성하는 버텍스의 노멀 배열을 반환
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **defaultValue**
 
-none
+- none
+
+**exception**
+
+- none
 
 **sample**
 
 ```javascript
-//none
+console.log(geometry.normal)
 ```
 
 [top](#)
@@ -213,20 +248,26 @@ _field_
 
 **description**
 
-Field of Geometry
+- 지오메트리를 인덱스 배열을 반환
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **defaultValue**
 
-none
+- none
+
+**exception**
+
+- none
 
 **sample**
 
 ```javascript
-//none
+console.log(geometry.index)
 ```
 
 [top](#)
@@ -239,20 +280,26 @@ _field_
 
 **description**
 
-Field of Geometry
+- 지오메트리를 구성하는 버텍스의 컬러 배열을 반환
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **defaultValue**
 
-none
+- none
+
+**exception**
+
+- none
 
 **sample**
 
 ```javascript
-//none
+console.log(geometry.color)
 ```
 
 [top](#)
@@ -265,18 +312,18 @@ _static_
 
 **description**
 
-해당 클래스를 마크다운 형식으로 문서화하여 출력함
+- 해당 클래스를 마크다운 형식으로 문서화하여 출력함
 
 **param**
 
 
 **exception**
 
-none
+- none
 
 **return**
 
-string - 클래스에 대한 문서 마크다운
+- string - 클래스에 대한 문서 마크다운
 
 **sample**
 
@@ -294,19 +341,19 @@ _static_
 
 **description**
 
-uuid 또는 id를 기반으로 인스턴스를 얻어냄
+- uuid 또는 id를 기반으로 인스턴스를 얻어냄
 
 **param**
 
-1. uuid:string
+1. uuid:string - 얻고 싶은 인스턴스의 uuid 또는 id
 
 **exception**
 
-undefined.getInstance:u
+- none
 
 **return**
 
-Object - 해당되는 인스턴스
+- Object - 해당되는 인스턴스
 
 **sample**
 
@@ -324,7 +371,7 @@ _static_
 
 **description**
 
-이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Defineder)를 얻음
+- 이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Defineder)를 얻음
 
 **Defineder class의 메소드**
 
@@ -339,16 +386,16 @@ _static_
 
 **param**
 
-1. className:string
-2. constructor:function
+1. className:string - 자식클래스의 이름
+2. constructor:function - 자식클래스의 생성자
 
 **exception**
 
-none
+- none
 
 **return**
 
-Defineder - 클래스를 정의할 수 있는 생성전용객체
+- Defineder - 클래스를 정의할 수 있는 생성전용객체
 
 **sample**
 
@@ -366,20 +413,20 @@ _static_
 
 **description**
 
-정적함수에서 표준화된 예외를 처리함(정적함수 내부에서 사용)
+- 정적함수에서 표준화된 예외를 처리함(정적함수 내부에서 사용)
 
 **param**
 
-1. method:string
-2. id:int
+1. method:string - 예외가 발생한 함수명
+2. id:int - 예외고유 id
 
 **exception**
 
-none
+- none
 
 **return**
 
-none
+- none
 
 **sample**
 
@@ -397,18 +444,18 @@ _static_
 
 **description**
 
-이 클래스로 부터 만들어져 활성화된 인스턴스의 수
+- 이 클래스로 부터 만들어져 활성화된 인스턴스의 수
 
 **param**
 
 
 **exception**
 
-none
+- none
 
 **return**
 
-int - 활성화된 인스턴스의 수
+- int - 활성화된 인스턴스의 수
 
 **sample**
 
