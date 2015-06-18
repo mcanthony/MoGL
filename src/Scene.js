@@ -113,27 +113,28 @@ var Scene = (function () {
     .field('updateList', {
             description: "world가 render 함수를 실행하기전 GPU업데이트가 되어야할 목록.",
             sample: [
-                ""
+                "console.log(scene.updateList)"
             ],
-            defaultValue: '{ mesh : [], material : [], camera : [] } - 업데이트 완료후 각 리스트는 초기화 됨.',
+            defaultValue: '{ mesh : [], material : [], camera : [] }\n- 업데이트 완료후 각 리스트는 초기화 됨.',
             get: $getter(updateList)
         }
     )
     .field('vertexShaders', {
             description: "현재 씬이 가지고있는 버텍스 쉐이더 자바스크립트 정보",
             sample: [
-                ""
+                "console.log(scene.vertexShaders)"
             ],
             defaultValue: "{}",
-            get:$getter(vertexShaders)}
+            get: $getter(vertexShaders)
+        }
     )
     .field('fragmentShaders', {
             description: "현재 씬이 가지고 있는 프레그먼트 쉐이더 자바스크립트 정보",
             sample: [
-                ""
+                "console.log(scene.fragmentShaders)"
             ],
             defaultValue: "{}",
-            get:$getter(fragmentShaders)
+            get: $getter(fragmentShaders)
         }
     )
     .field('cameras', {
@@ -144,7 +145,7 @@ var Scene = (function () {
                 "console.log(scene.cameras) // 오브젝트 형식의 카메라 리스트를 반환"
             ],
             defaultValue: "{}",
-            get:$getter(cameras)
+            get: $getter(cameras)
         }
     )
     .field('children', {
@@ -153,29 +154,29 @@ var Scene = (function () {
                 "console.log(scene.children)"
             ],
             defaultValue: "{}",
-            get:$getter(children)
+            get: $getter(children)
         }
     )
     .method('addMesh', {
-            description:[
+            description: [
                 'Mesh객체를 추가함.'
             ],
-            param:[
+            param: [
                 'mesh:Mesh - 메쉬객체'
             ],
-            ret:[
+            ret: [
                 'this - 메서드체이닝을 위해 자신을 반환함.'
             ],
-            sample:[
+            sample: [
                 "var scene = new Scene()",
                 "var geo = new Geometry([],[])",
                 "var mat = new Material()",
                 "var mesh = new Mesh(geo,mat)",
-                "scene.addChild(mesh)"
+                "scene.addMesh(mesh)"
             ],
-            exception:[
-                "* 'Scene.addMesh:0' - 이미 등록된 메쉬객체를 등록하려고 할때",
-                "* 'Scene.addMesh:1' - 메쉬가 아니 객체를 등록하려고 할때"
+            exception: [
+                "'Scene.addMesh:0' - 이미 등록된 메쉬객체를 등록하려고 할때",
+                "'Scene.addMesh:1' - 메쉬가 아닌 객체를 등록하려고 할때"
             ],
             value : function(v){
                 var p = children[this], p2 = updateList[this], mat;
@@ -210,22 +211,61 @@ var Scene = (function () {
         }
     )
     .method('addCamera', {
-        value : function addCamera(v){
-            var p = cameras[this];
-            if (p[v]) this.error(0);
-            if (!(v instanceof Camera)) this.error(1);
-            p[v] = v;
-            updateList[this].camera.push(v)
-            return this;
-        }
+            description: [
+                '카메라 객체를 추가함.'
+            ],
+            param: [
+                'camera:Camera - 카메라 객체'
+            ],
+            ret: [
+                'this - 메서드체이닝을 위해 자신을 반환함.'
+            ],
+            sample: [
+                "var scene = new Scene()",
+                "var camera = new Camera()",
+                "scene.addCamera(camera)"
+            ],
+            exception: [
+                "'Scene.addCamera:0' : 이미 등록된 카메라객체를 등록하려고 할때",
+                "'Scene.addCamera:1' : 카메라가 아닌 객체를 등록하려고 할때"
+            ],
+            value: function addCamera(v) {
+                var p = cameras[this];
+                if (p[v]) this.error(0);
+                if (!(v instanceof Camera)) this.error(1);
+                p[v] = v;
+                updateList[this].camera.push(v)
+                return this;
+            }
         }
     )
-    .method('addChild', function addChild(v) {
-        if(v instanceof Mesh)  this.addMesh(v)
-        else if(v instanceof Camera)  this.addCamera(v)
-        else this.error(0)
-        return this;
-    })
+    .method('addChild', {
+            description: [
+                '자식 객체를 추가함. 메쉬나 카메라 객체가 자식으로 올수 있음'
+            ],
+            param: [
+                'mesh:Mesh - 메쉬 객체',
+                'camera:Camera - 카메라 객체'
+            ],
+            ret: [
+                'this - 메서드체이닝을 위해 자신을 반환함.'
+            ],
+            sample: [
+                "var scene = new Scene()",
+                "var camera = new Camera()",
+                "scene.addChild(camera)"
+            ],
+            exception: [
+                "'Scene.addChild:0' - 카메라나 메쉬객체가 아닌 객체를 추가하려고 할때"
+            ],
+            value: function addChild(v) {
+                if (v instanceof Mesh)  this.addMesh(v)
+                else if (v instanceof Camera)  this.addCamera(v)
+                else this.error(0)
+                return this;
+            }
+        }
+    )
     .method('addGeometry', function (v) {
         var p = geometrys[this];
         if (p[v]) this.error(0);
