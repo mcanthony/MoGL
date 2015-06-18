@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <title>MoGL Test Suite - Mesh.js</title>
+    <title>MoGL(ver0.3) Test Suite - Mesh.js</title>
     <meta charset="utf-8"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="format-detection" content="telephone=no"/>
@@ -36,26 +36,15 @@
 <script src="../src/World.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
 <script>
-    var world = new World('canvas')
-    var tGeo = new Geometry([], [])
-    var tMat = new Material('#f00')
-    var tMat2 = new Material('#f00')
+    var world = new World('canvas');
+    var tGeo = new Geometry([], []);
+    var tMat = new Material('#f00').setId('mat_red');
+    var tMat2 = new Material('#00f').setId('mat_blue');
     var mesh1 = new Mesh(tGeo, tMat);
-    //    var mesh2 = new Mesh(new Geometry([], []), new Material('#f00'));
-    //    var mesh3 = Mesh('cube', 'mat1');
-    //    var mesh4 = Mesh(null, null);
-    var testGeometry1 = new Geometry([], []);
-    var testGeometry2 = new Geometry([], []);
-    //    var tMat = Material('#f00');
-    //    var tMat2 = Material('#f00');
-    //
+    var testGeometry1 = new Geometry([], []).setId('geo1');
+    var testGeometry2 = new Geometry([], []).setId('geo2');
     var testScene = Scene();
     world.addScene(testScene)
-    //    testScene.addMaterial("red", new Material("#ff0000"));
-    //    testScene.addGeometry("triangle", new Geometry([-1, 0, 0, 1, 0, 0, 0, 1, 0], [0, 1, 2]));
-    //    var mesh5 = Mesh("triangle", "red");
-    //    var mesh6 = Mesh("triangle", "red");
-    //
     var tempGeo, tempMaterial;
     var temp;
     bsTest('new',
@@ -64,44 +53,136 @@
                 return mesh1.isAlive;
             }, true,
             function () {
-                try {
-                    new Mesh('키가 들어가있으면 등록이되면안됨', '재질도마찬가지!')
+                try { // 기하구조에 키가 들어가있으면 등록이되면안됨
+                    new Mesh('geo1', tMat);
                 } catch (e) {
-                    return false
+                    return e.toString().indexOf('Mesh.geometrySet:0') > -1;
                 }
-                return true;
-            }, false
-//            function () {
-//                // Mesh('cube', 'mat1');
-//                return mesh3.isAlive;
-//            }, true,
-//            function () {
-//                // Mesh();
-//                return mesh4.isAlive;
-//            }, true
+            }, true,
+            function () {
+                try { // 재질도마찬가지!
+                    new Mesh(testGeometry1, 'mat_red');
+                } catch (e) {
+                    return e.toString().indexOf('Mesh.materialSet:0') > - 1;
+                }
+            }, true,
+            function () { // 팩토리함수로도 사용가능
+                var mash = Mesh(testGeometry1, tMat);
+                return mash.isAlive;
+            }, true
+    );
+    bsTest('constant',
+            function () {
+                // cullingNone
+                return Mesh.cullingNone;
+            }, "cullingNone",
+            function () {
+               // cullingFront
+               return Mesh.cullingFront;      
+            }, "cullingFront",
+            function () {
+               // cullingBack
+                return Mesh.cullingBack;
+            }, "cullingBack"
     );
     bsTest('Geometry',
             function () {
-                // 신에 등록하기전
+                // get geometry
                 return mesh1.geometry;
-            }, tGeo
-//            function () {
-//                mesh1.geometry = new Geometry();
-//                return mesh1.getGeometry();
-//            }, null
+            }, tGeo,
+            function () {
+               // set geometry
+               try{
+                   mesh1.geometry = new Geometry([], []);
+                   return true;                   
+               } catch (e) {
+                   return false;
+               }
+            }, true,
+            function () {
+               // set exception
+               try{
+                   mesh1.geometry = new Geometry([], []);
+                   return true;
+               } catch (e) {
+                   return e.toString().indexOf('Mesh.geometrySet:0') > -1;
+               }
+            }, true
     );
     bsTest('Material',
             function () {
-                // 신에 등록하기전
+                // get material
                 return mesh1.material;
-            }, tMat
+            }, tMat,
+            function () {
+               // set material
+               try{
+                   mesh1.geometry = new Geometry([], []);
+                   return true;                   
+               } catch (e) {
+                   return false;
+               }
+            }, true,
+            function () {
+               // set material exception
+               try{
+                   mesh1.geometry = new Geometry([], []);
+                   return true;
+               } catch (e) {
+                   return e.toString().indexOf('Mesh.geometrySet:0') > -1;
+               }
+            }, true
+    );
+    bsTest('culling',
+            function () {
+                // get default culling
+                return mesh1.culling;
+            }, "cullingNone",
+            function () {
+                // set culling - constant type
+                try{
+                   mesh1.culling = Mesh.cullingFront;
+                   return true;                   
+                } catch (e) {
+                   return false;
+                }
+            }, true,
+            function () {
+               // set culling - string type
+               try{
+                   mesh1.culling = "cullingBack";
+                   return true;                   
+               } catch (e) {
+                   return false;
+               }
+            }, true,
+            function () {
+               // set culling exception - 정의되지 않은 값을 사용
+               try{
+                   mesh1.culling = null;
+               } catch (e) {
+                   return e.toString().indexOf('Mesh.cullingSet:0') > -1;
+               }
+            }, true,
+            function () {
+               // set culling exception2 - 정의되지 않은 문자열 
+               try{
+                   mesh1.culling = "cullingnone"; // 소문자
+               } catch (e) {
+                   return e.toString().indexOf('Mesh.cullingSet:0') > -1;
+               }
+            }, true,
+            function () {
+                // get culling
+                return mesh1.culling;
+            }, "cullingBack"
     );
     bsTest('after AddChild',
             function () {
                 // 씬에 등록후 지오메트리가 제대로 찾아지나 점검
                 testScene.addChild(mesh1.setId('testMesh1'));
                 testScene.getChild('testMesh1').geometry = tGeo;
-                tempGeo = testScene.getChild('testMesh1').geometry
+                tempGeo = testScene.getChild('testMesh1').geometry;
                 return tempGeo;
             }, tGeo,
                 function () {
@@ -132,7 +213,7 @@
                 function () {
                     try {
                         // 이미 씬에 등록된 mesh 에 Geometry를 바꿈
-                        mesh1.material = new Geometry([],[])
+                        mesh1.material = new Geometry([],[]);
                     }catch(e){
                         console.log(e);
                         return false;
@@ -141,7 +222,7 @@
                 function () {
                     try {
                         // 이미 씬에 등록된 mesh 에 Geometry 에 null 입력
-                        mesh1.geometry = null
+                        mesh1.geometry = null;
                     }catch(e){
                         console.log(e);
                         return false;
@@ -150,7 +231,7 @@
                 function () {
                     try {
                         // 이미 씬에 등록된 mesh 에 Material 바꿈
-                        mesh1.material = new Material('#222')
+                        mesh1.material = new Material('#222');
                     }catch(e){
                         console.log(e);
                         return false;
@@ -253,7 +334,7 @@
                 return mesh1.scaleX == temp[0] && mesh1.scaleY == temp[1] && mesh1.scaleZ == temp[2];
             }, true
     )
-    //
+    /*
     bsTest('Matrix',
             function () {
                 // type check
@@ -284,15 +365,33 @@
                 return mesh1.matrix.matStr();
             }, "Matrix(10, 0, 0, 0, 0, 20, 0, 0, 0, 0, 30, 0, 0, 0, 0, 1)"
     )
-
-//    mesh1.destroy();
-//    bsTest('destroy',
-//            function () {
-//                return mesh1;
-//            }, undefined
-//    );
-
-
+    */
+    mesh1.destroy();    
+   bsTest('destroy',
+            function () {
+               // 죽었나 확인
+                return mesh1.isAlive;
+            }, false,
+            function () {
+                try{
+                    // 파괴된 객체의 field에 접근 해보기
+                    var gg = mesh1.geometry;
+                    return true;
+                }catch(e){
+                    console.log(e);
+                    return false;
+                }
+            }, false,
+            function () {
+                try{
+                    // mesh가 등록된 scene에서 파괴된 mesh 찾아보기
+                    var mm = testScene.getChild('testMesh1');
+                    return false;
+                }catch(e){
+                   return e.toString().indexOf('Destroyed Object') > -1;
+                }
+            }, true
+    );
 </script>
 </body>
 </html>

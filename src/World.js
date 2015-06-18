@@ -150,7 +150,7 @@ var World = (function () {
         var gl, glTexture;
         gl = gpu.gl
 
-        if (gpu.textures[texture]) return ;
+        //if (gpu.textures[texture]) return ;
         glTexture = gl.createTexture(),
         gl.bindTexture(gl.TEXTURE_2D, glTexture),
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.img),
@@ -354,6 +354,7 @@ var World = (function () {
             return this;
         }
     })
+<<<<<<< HEAD
     .method('addScene', {
         description:[
             "[Scene](Scene.md)객체를 world에 추가함."
@@ -386,8 +387,17 @@ var World = (function () {
             //scene등록시 현재 갖고 있는 모든 카메라 중 visible이 카메라 전부 등록
             //이후부터는 scene에 카메라의 변화가 생기면 자신의 world에게 알려야함
             return this;
+=======
+    .method('addScene', function addScene(scene) {
+        var tSceneList, i;
+        tSceneList = sceneList[this], i = tSceneList.length;
+        if (!(scene instanceof Scene )) this.error(1);
+        while (i--) {
+            if (tSceneList[i] == scene) this.error(0);
+>>>>>>> 5443a815bfa0451d7849e981cd8896ed6aa64d4a
         }
     })
+<<<<<<< HEAD
     .method('getScene', {
         description:[
             "sceneId에 해당되는 [Scene](Scene.md)을 얻음."
@@ -410,6 +420,16 @@ var World = (function () {
                 if (tSceneList[i].id == sceneID) {
                     return tSceneList[i];
                 }
+=======
+    .method('getScene', function getScene(sceneID) {
+        var i, tSceneList;
+        tSceneList = sceneList[this],
+        i = tSceneList.length;
+        if (typeof sceneID === 'undefined') return null;
+        while (i--) {
+            if (tSceneList[i].id == sceneID) {
+                return tSceneList[i];
+>>>>>>> 5443a815bfa0451d7849e981cd8896ed6aa64d4a
             }
             return null;
         }
@@ -746,6 +766,7 @@ var World = (function () {
                                     tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
                                     tGL.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, tGL.FLOAT, false, 0, 0);
                                 }
+<<<<<<< HEAD
                                 tColor = priMatColor[tMatUUID],
                                 tGL.uniform4fv(tProgram.uColor, tColor);
                                 if (useNormalBuffer) {
@@ -769,6 +790,15 @@ var World = (function () {
                                             tGL.bindTexture(tGL.TEXTURE_2D, tDiffuseID);
                                         }
                                         tGL.uniform1i(tProgram.uSampler, 0);
+=======
+                                var imsi = priMatDiffuse[tMatUUID]
+
+                                if (imsi.length) {
+                                    //tGL.activeTexture(tGL.TEXTURE0);
+                                    tDiffuseID = tGPU.textures[imsi[imsi.length-1].tex.uuid]
+                                    if (tDiffuseID != pDiffuseID) {
+                                        tGL.bindTexture(tGL.TEXTURE_2D, tDiffuseID)
+>>>>>>> 5443a815bfa0451d7849e981cd8896ed6aa64d4a
                                     }
                                 }
 

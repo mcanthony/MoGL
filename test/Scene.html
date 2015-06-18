@@ -54,6 +54,13 @@ void main(void) {
 
 
 
+
+
+
+
+
+
+
 </script>
 <script>
     var testTexture_IMG = document.getElementById('img1')
@@ -119,10 +126,6 @@ void main(void) {
                 return scene1.getChild('meshKey1')
             }, testMesh1,
             function () {
-                // Scene 잘 적용되었나..
-                return scene1.getChild('meshKey1').scene == scene1
-            }, true,
-            function () {
                 // 같은걸 등록하는걸 잘 체크하나..
                 testResult = 1
                 try {
@@ -163,10 +166,6 @@ void main(void) {
                 // 삭제는 잘되나..
                 scene1.removeChild('meshKey1')
                 return scene1.getChild('meshkey1')
-            }, null,
-            function () {
-                // Scene 잘 삭제되었나..
-                return testMesh1.scene
             }, null
     );
     bsTest('Geometry',
@@ -194,7 +193,7 @@ void main(void) {
                 // 중복 추가
                 testResult = 1
                 try {
-                    scene1.addGeometry( testGeometry1)
+                    scene1.addGeometry(testGeometry1)
                 } catch (e) {
                     console.log(e)
                     testResult = 0
@@ -206,97 +205,79 @@ void main(void) {
                 return scene1.getGeometry('addGeoTest1') instanceof Geometry
             }, true
     )
-        bsTest('Material',
-                function () {
-                    // 없는걸 찾으면 null이 나와야함
-                    return scene1.getMaterial('addMaterialTest1')
-                }, null,
-                function () {
-                    // Material을 등록하고 잘 찾아지나 테스트
-                    scene1.addMaterial(testMaterial1.setId('addMaterialTest1'))
-                    return scene1.getMaterial('addMaterialTest1')
-                }, testMaterial1,
-                function () {
-                    // Material가 아닌녀석을 등록시도할때
-                    testResult = 1
-                    try {
-                        scene1.addMaterial({})
-                    } catch (e) {
-                        console.log(e)
-                        testResult = 0
-                    }
-                    return testResult
-                }, 0,
-                function () {
-                    // 중복 ID 추가
-                    testResult = 1
-                    try {
-                        scene1.addMaterial(testMaterial1)
-                    } catch (e) {
-                        console.log(e)
-                        testResult = 0
-                    }
-                    return testResult
-                }, 0,
-                function () {
-                    // 찾아진놈이 Material 인스턴스인가!
-                    return scene1.getMaterial('addMaterialTest1') instanceof Material
-                }, true
-        )
-//        bsTest('Texture',
-//                function () {
-//                    // 없는 키값을 조회할때
-//                    return scene1.getTexture('wantNull')
-//                }, null,
-//                function () {
-//                    // 텍스쳐 추가
-//                    scene1.addTexture(testTexture_IMG.setId('addTextureTest1'))
-//                    return scene1.getTexture('addTextureTest1')
-//                }, testTexture_IMG
-//                function () {
-//                    // 중복 ID 추가
-//                    testResult = 1
-//                    try {
-//                        scene1.addTexture('addTextureTest1', testTexture_IMG)
-//                    } catch (e) {
-//                        console.log(e)
-//                        testResult = 0
-//                    }
-//                    return testResult
-//                }, 0,
-//                function () {
-//                    // 이미지 형식체크 - 안되는놈
-//                    testResult = 1
-//                    try {
-//                        scene1.addTexture('안되는걸테스트해볼까', {})
-//                    } catch (e) {
-//                        console.log(e)
-//                        testResult = 0
-//                    }
-//                    return testResult
-//                }, 0,
-//    //            function (){
-//    //                // 이미지 형식체크 - imgData(rgba)
-//    //                scene1.addTexture('testTexture_imgData',testTexture_imgData)
-//    //                return scene1.getTexture('testTexture_imgData').img.img.src
-//    //            },testTexture_imgData.src
-//                function () {
-//                    // 이미지 형식체크 - urlData(base64)
-//                    scene1.addTexture('testTexture_dataURL', testTexture_dataURL)
-//                    return scene1.getTexture('testTexture_dataURL').webglTexture.originalData
-//                }, testTexture_dataURL,
-//                function () {
-//                    // 이미지 형식체크 - canvas element
-//                    scene1.addTexture('testTexture_canvas', testTexture_canvas)
-//                    console.log(scene1.getTexture('testTexture_canvas'))
-//                    return scene1.getTexture('testTexture_canvas').webglTexture.originalData
-//                }, testTexture_canvas,
-//                function () {
-//                    // 이미지 형식체크 - video element
-//                    scene1.addTexture('testTexture_VIDEO', testTexture_VIDEO)
-//                    return scene1.getTexture('testTexture_VIDEO').webglTexture.originalData
-//                }, testTexture_VIDEO
-//        )
+    bsTest('Material',
+            function () {
+                // 없는걸 찾으면 null이 나와야함
+                return scene1.getMaterial('addMaterialTest1')
+            }, null,
+            function () {
+                // Material을 등록하고 잘 찾아지나 테스트
+                scene1.addMaterial(testMaterial1.setId('addMaterialTest1'))
+                return scene1.getMaterial('addMaterialTest1')
+            }, testMaterial1,
+            function () {
+                // Material가 아닌녀석을 등록시도할때
+                testResult = 1
+                try {
+                    scene1.addMaterial({})
+                } catch (e) {
+                    console.log(e)
+                    testResult = 0
+                }
+                return testResult
+            }, 0,
+            function () {
+                // 중복 ID 추가
+                testResult = 1
+                try {
+                    scene1.addMaterial(testMaterial1)
+                } catch (e) {
+                    console.log(e)
+                    testResult = 0
+                }
+                return testResult
+            }, 0,
+            function () {
+                // 찾아진놈이 Material 인스턴스인가!
+                return scene1.getMaterial('addMaterialTest1') instanceof Material
+            }, true
+    )
+
+    var textureTest = new Texture()
+    textureTest.img = document.getElementById('img1')
+    bsTest('Texture',
+            function () {
+                // 없는 키값을 조회할때
+                return scene1.getTexture('wantNull')
+            }, null,
+            function () {
+                // 텍스쳐 추가
+                scene1.addTexture(textureTest.setId('addTextureTest1'))
+                return scene1.getTexture('addTextureTest1')
+            }, textureTest,
+            function () {
+                // 중복 ID 추가
+                testResult = 1
+                try {
+                    scene1.addTexture(textureTest)
+                } catch (e) {
+                    console.log(e)
+                    testResult = 0
+                }
+                return testResult
+            }, 0,
+            function () {
+                // 텍스쳐가 아닌놈 테스트
+                testResult = 1
+                try {
+                    scene1.addTexture({})
+                } catch (e) {
+                    console.log(e)
+                    testResult = 0
+                }
+                return testResult
+            }, 0
+    )
     //    bsTest('FragmentShader',
     //            function () {
     //                // TODO 구현

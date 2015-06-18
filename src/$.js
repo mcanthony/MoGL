@@ -103,19 +103,7 @@ SIN = Math.sin, COS = Math.cos, TAN = Math.tan, ATAN = Math.atan, ATAN2 = Math.a
 SQRT = Math.sqrt, CEIL = Math.ceil, ABS = Math.abs, PI = Math.PI, PIH = PI * 0.5, PERPI = 180 / PI;
 //markdown
 $md = function(classes){
-    var exception, list, val, func, sort, toStr, fieldDetail, methodDetail;
-    exception = function(f){
-        var temp, i, j, k;
-        f = Function.prototype.toString.call(f);
-        temp = [],
-        k = 0;
-        while ((i = f.indexOf('this.error(', k)) > -1) {
-            k = i + 'this.error('.length;
-            temp[temp.length] = f.substring(k, f.indexOf(')', k));
-        }
-        if (!temp.length) temp[temp.length] = 'none';
-        return temp;
-    },
+    var list, val, func, sort, toStr, fieldDetail, methodDetail;
     sort = function(a,b){
         return a.name < b.name;
     },
@@ -147,6 +135,7 @@ $md = function(classes){
                 temp[k].description = toStr(temp[k].description),
                 temp[k].enumerable = temp1[k] && temp1[k].enumerable ? true : false, 
                 temp[k].configurable = temp1[k] && temp1[k].configurable ? true : false;
+                temp[k].exception = toStr(temp[k].exception || 'none');
                 if (temp1[k]){
                     if ('writable' in temp1[k]) {
                         temp[k].writable = temp1[k].writable ? true : false;
@@ -155,7 +144,7 @@ $md = function(classes){
                     } else {
                         temp[k].writable = false;
                     }
-                }
+                };
                 v[v.length] = temp[k];
             }
             list(type, md, v);
@@ -164,19 +153,19 @@ $md = function(classes){
     func = function(type, md, ref){
         var v = [], temp = ref._info['_'+type], temp1 = ref['_'+type], k;
         for (k in temp) {
-            temp[k].name = k,
-            temp[k].param = toStr(temp[k].param || 'none'), 
-            temp[k].ret = toStr(temp[k].ret || 'none'), 
-            temp[k].sample = toStr(temp[k].sample || '//none'),
-            temp[k].exception = temp1[k] && k != 'toString' ? exception(temp1[k].value) : '',
-            temp[k].description = toStr(temp[k].description),
+            temp[k].name = k;
+            temp[k].param = toStr(temp[k].param || 'none');
+            temp[k].ret = toStr(temp[k].ret || 'none');
+            temp[k].sample = toStr(temp[k].sample || '//none');
+            temp[k].exception = toStr(temp[k].exception || 'none');
+            temp[k].description = toStr(temp[k].description);
             v[v.length] = temp[k];
         }
         list(type, md, v);
         return v;
     },
     fieldDetail = function(type, v, md) {
-        var i, j, k;
+        var i, j, k, m, n;
         if (v.length) {
             for (i = 0, j = v.length; i < j; i++){
                 k = v[i];
@@ -195,6 +184,8 @@ $md = function(classes){
                     md[md.length] = '\n**defaultValue**\n';
                     md[md.length] = k.defaultValue;
                 }
+                md[md.length] = '\n**exception**\n';
+                md[md.length] = k.exception;
                 md[md.length] = '\n**sample**\n';
                 md[md.length] = '```javascript';
                 md[md.length] = k.sample;
@@ -239,13 +230,7 @@ $md = function(classes){
                     md[md.length] = 'none';
                 }
                 md[md.length] = '\n**exception**\n';
-                if (k.exception != 'none'){
-                    for(m = 0, n = k.exception.length; m < n ; m++){
-                        md[md.length] = this.className + '.' + k.name + ':' + k.param[m];
-                    }
-                } else {
-                    md[md.length] = 'none';
-                }
+                md[md.length] = k.exception;
                 md[md.length] = '\n**return**\n';
                 md[md.length] = k.ret.length ? k.ret.replace('this', 'this - 메소드체이닝을 위해 자신을 반환함') : 'none';
                 md[md.length] = '\n**sample**\n';
@@ -302,7 +287,7 @@ $md = function(classes){
         md[md.length] = '\n**param**\n';
         md[md.length] = toStr(temp.param || 'none'),
         md[md.length] = '\n**exception**\n';
-        md[md.length] = exception(temp.value);
+        md[md.length] = toStr(temp.exception || 'none');
         md[md.length] = '\n**sample**\n';
         md[md.length] = '```javascript';
         md[md.length] = toStr(temp.sample || '//none');
