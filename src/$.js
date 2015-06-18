@@ -174,9 +174,9 @@ $md = function(classes){
                 md[md.length] = '###' + k.name;
                 md[md.length] = '\n_' + type + '_\n';
                 md[md.length] = '\n**description**\n';
-                md[md.length] = k.description;
+                md[md.length] = '- '+k.description;
                 md[md.length] = '\n**setting**\n';
-                md[md.length] = '*writable*:' + k.writable + ', *enumerable*:' + k.enumerable + ', *configurable*:' + k.configurable;
+                md[md.length] = '- *writable*:' + k.writable + ', *enumerable*:' + k.enumerable + ', *configurable*:' + k.configurable;
                 if ('value' in k) {
                     md[md.length] = '\n**value**\n';
                     md[md.length] = k.value;
@@ -185,7 +185,7 @@ $md = function(classes){
                     md[md.length] = k.defaultValue;
                 }
                 md[md.length] = '\n**exception**\n';
-                md[md.length] = k.exception;
+                md[md.length] = '- '+k.exception;
                 md[md.length] = '\n**sample**\n';
                 md[md.length] = '```javascript';
                 md[md.length] = k.sample;
@@ -214,7 +214,7 @@ $md = function(classes){
                 }
                 md[md.length] = '\n_' + type + '_\n';
                 md[md.length] = '\n**description**\n';
-                md[md.length] = k.description;
+                md[md.length] =  '- '+k.description;
                 md[md.length] = '\n**param**\n';
                 if (k.param != 'none' && n) {
                     for(m = 0; m < n ; m++){
@@ -230,9 +230,9 @@ $md = function(classes){
                     md[md.length] = 'none';
                 }
                 md[md.length] = '\n**exception**\n';
-                md[md.length] = k.exception;
+                md[md.length] = '- '+k.exception;
                 md[md.length] = '\n**return**\n';
-                md[md.length] = k.ret.length ? k.ret.replace('this', 'this - 메소드체이닝을 위해 자신을 반환함') : 'none';
+                md[md.length] =  '- '+k.ret.length ? k.ret.replace('this', 'this - 메소드체이닝을 위해 자신을 반환함') : 'none';
                 md[md.length] = '\n**sample**\n';
                 md[md.length] = '```javascript';
                 md[md.length] = k.sample;
@@ -283,11 +283,11 @@ $md = function(classes){
         md[md.length] = '\n<a name="constructor"></a>';
         md[md.length] = '##Constructor';
         md[md.length] = '\n**description**\n';
-        md[md.length] = toStr(temp.description);
+        md[md.length] = '- '+toStr(temp.description);
         md[md.length] = '\n**param**\n';
-        md[md.length] = toStr(temp.param || 'none'),
+        md[md.length] = '- '+toStr(temp.param || 'none'),
         md[md.length] = '\n**exception**\n';
-        md[md.length] = toStr(temp.exception || 'none');
+        md[md.length] = '- '+toStr(temp.exception || 'none');
         md[md.length] = '\n**sample**\n';
         md[md.length] = '```javascript';
         md[md.length] = toStr(temp.sample || '//none');
