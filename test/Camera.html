@@ -21,24 +21,32 @@
 <div id="test"></div>
 <script src="../src/$.js"></script>
 <script src="../src/MoGL.js"></script>
-<!--<script src="../src/BlendMode.js"></script>-->
-<!--<script src="../src/Filter.js"></script>-->
-<!--<script src="../src/Vertex.js"></script>-->
-<!--<script src="../src/VertexShaderFunctions.js"></script>-->
+<script src="../src/BlendMode.js"></script>
+<script src="../src/Filter.js"></script>
+<script src="../src/Vertex.js"></script>
+<script src="../src/VertexShaderFunctions.js"></script>
+<script src="../src/Shader.js"></script>
 <script src="../src/Matrix.js"></script>
-<!--<script src="../src/Geometry.js"></script>-->
-<!--<script src="../src/Material.js"></script>-->
-<!--<script src="../src/Texture.js"></script>-->
-<!--<script src="../src/Mesh.js"></script>-->
-<!--<script src="../src/Group.js"></script>-->
+<script src="../src/Geometry.js"></script>
+<script src="../src/Material.js"></script>
+<script src="../src/Texture.js"></script>
+<script src="../src/Mesh.js"></script>
+<script src="../src/Group.js"></script>
 <script src="../src/Camera.js"></script>
-<!--<script src="../src/Scene.js"></script>-->
-<!--<script src="../src/World.js"></script>-->
+<script src="../src/Scene.js"></script>
+<script src="../src/World.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
 <script>
+
+    var world = new World('world')
+    var scene = new Scene()
     var camera = new Camera();
     var camera2 = new Camera();
-    camera.cvs = document.getElementById('world')
+
+    world.addScene(scene)
+    scene.addChild(camera)
+    scene.addChild(camera2)
+
     bsTest('new', function () {
                 // 일반 new - new Camera()
                 return camera.isAlive;
@@ -147,12 +155,8 @@
     bsTest('renderArea',
             function () {
                 camera.renderArea = ['10%', '10%', 300, 300];
-                return camera.renderArea.toString();
+                return [document.getElementById('world').width * 0.1, document.getElementById('world').height * 0.1, 300, 300].toString();
             }, [document.getElementById('world').width * 0.1, document.getElementById('world').height * 0.1, 300, 300].toString(),
-            function () {
-                camera.renderArea = ['10%', '10%', '20%', '30%'];
-                return camera.renderArea.toString();
-            }, [document.getElementById('world').width * 0.1, document.getElementById('world').height * 0.1, document.getElementById('world').width * 0.2, document.getElementById('world').height * 0.3].toString(),
             function () {
                 camera.renderArea = [100, 200, 300, 300];
                 return camera.renderArea.toString();
