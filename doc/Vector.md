@@ -1,289 +1,516 @@
 #Vector
+* parent : [MoGL](MoGL.md)
+* [constructor](#constructor)
 
-- parent : [MoGL](MoGL.md)
-- [Constructor](#constructor)
 
 **method**
 
-* [add](#add-vectorvector-)
-* [addXYZ](#addxyz-xnumber-ynumber-znumber-)
-* [subtract](#subtract-vector-)
-* [subtractXYZ](#subtractxyz-xnumber-ynumber-znumber-)
-* [scaleBy](#scaleby-scalenumber-)
-* [distance](#distance-vectorvector-)
-* [negate](#negate)
-* [normalize](#normalize)
-* [dot](#dot-vectorvector-)
-* [cross](#cross-vectorvector-)
+* [subtractXYZ](#subtractXYZ) - 현재 Vector 객체의 x, y 및...
+* [subtract](#subtract) - 현재 Vector 객체의 x, y 및...
+* [scaleBy](#scaleBy) - 현재 Vector 객체의 크기를 스칼...
+* [normalize](#normalize) - 현재 Vector의 단위벡터화된 길이...
+* [negate](#negate) - 현재 Vector 객체를 역수로 설정...
+* [dot](#dot) - 내적값 반환
+* [distance](#distance) - 현재 벡터와 대상 벡터 객체 사이의...
+* [cross](#cross) - 두벡터에 수직인 벡터를 반환
+* [addXYZ](#addXYZ) - 현재 Vector 객체의 x, y 및...
+* [add](#add) - 현재 Vector 객체의 x, y 및...
+
+**static**
+
+* [getMD](#getMD) - 해당 클래스를 마크다운 형식으로 문서...
+* [getInstance](#getInstance) - uuid 또는 id를 기반으로 인스턴...
+* [extend](#extend) - 이 클래스를 상속하는 자식클래스를 만...
+* [error](#error) - 정적함수에서 표준화된 예외를 처리함(...
+* [count](#count) - 이 클래스로 부터 만들어져 활성화된...
 
 [top](#)
-## Constructor
 
-```javascript
-Vector()
-Vector( x:number, y:number, z:number )
-Vector( arr:Array )
-Vector( typedArr:Float32Array )
-```
+<a name="constructor"></a>
+##Constructor
 
 **description**
 
-* Vector 연산을 cpu측에서 수행하기 위한 헬퍼객체.
-* this._rowData에 Float32Array형식의 초기 배열이 생김.
-* x, y, z 형식의 Vector를 다룸.
-* Vector의 메서드는 대부분 메서드체이닝을 지원함.
+- Constructor of Vector
 
 **param**
 
-1. x, y, z : 각각 x, y, z 의 숫자값.
-2. array : [x, y, z] 형태의 배열.
-3. Floate32Array : [x, y, z] 형태의 Typed Array.
+- x
+y
+z
+
+**exception**
+
+- none
 
 **sample**
 
 ```javascript
-var vector = new Vector( 1, 2, 3 );
-var vector = new Vector( [1, 2, 3] );
-var vector = new Vector( new Float32Array( [1, 2, 3] ) );
-var vector = new Vector();
-
-// 팩토리 함수로도 사용 가능.
-var vector = Vector( 1, 2, 3 );
+//none
 ```
 
 [top](#)
-## add( vector:[Vector](Vector.md) )
+
+<a name="subtractXYZ"></a>
+###subtractXYZ(x:number, y:number, z:number)
+
+_method_
+
 
 **description**
 
-현재 [Vector](Vector.md) 객체의 x, y 및 z 요소 값에 대상 [Vector](Vector.md) 객체의 x, y, z값을 더합니다.
+- 현재 Vector 객체의 x, y 및 z 요소 값을 다른 인자 x, y ,z 요소 값에서 뺍니다.
 
 **param**
 
-1. vector:[Vector](Vector.md) - x, y, z 값을 더할 [Vector](Vector.md) 객체.
+1. x:number - x값
+2. y:number - y값
+3. z:number - z값
+
+**exception**
+
+- none
 
 **return**
 
-this - 메서드체이닝을 위해 자신을 반환함.
+- this - 메소드체이닝을 위해 자신을 반환함
 
 **sample**
 
 ```javascript
-var vector1 = Vector( 1, 2, 3 );
-var vector2 = Vector( 1, 2, 3 );
-
-vector.add( vector2 );
+//none
 ```
 
 [top](#)
-## addXYZ( x:number, y:number, z:number )
+
+<a name="subtract"></a>
+###subtract(vector:Vector)
+
+_method_
+
 
 **description**
 
-현재 [Vector](Vector.md) 객체의 x, y 및 z 요소 값에 인자 x, y, z값을 더합니다.
+- 현재 Vector 객체의 x, y 및 z 요소 값을 다른 Vector 객체의 x, y 및 z 요소 값에서 뺍니다.
 
 **param**
 
-1. x:number - 현재 [Vector](Vector.md) 객체의 x값에 더할 값.
-2. y:number - 현재 [Vector](Vector.md) 객체의 y값에 더할 값.
-3. z:number - 현재 [Vector](Vector.md) 객체의 z값에 더할 값.
+1. vector:Vector
+
+**exception**
+
+- none
 
 **return**
 
-this - 메서드체이닝을 위해 자신을 반환함.
+- this - 메소드체이닝을 위해 자신을 반환함
 
 **sample**
 
 ```javascript
-var vector = Vector( 1, 2, 3 );
-
-vector.addXYZ( 1, 2, 3 );
+//none
 ```
 
 [top](#)
-## subtract( [Vector](Vector.md) )
+
+<a name="scaleBy"></a>
+###scaleBy(scale:number)
+
+_method_
+
 
 **description**
 
-현재 [Vector](Vector.md) 객체의 x, y 및 z 요소 값에 대상 [Vector](Vector.md) 객체의 x, y, z값을 뺍니다.
+- 현재 Vector 객체의 크기를 스칼라 값만큼 조절합니다.
 
 **param**
 
-1 vector:[Vector](Vector.md) - x, y, z 값을 뺄 [Vector](Vector.md) 객체.
+1. scale:number - scale값
+
+**exception**
+
+- none
 
 **return**
 
-this - 메서드체이닝을 위해 자신을 반환함.
+- this - 메소드체이닝을 위해 자신을 반환함
 
 **sample**
 
 ```javascript
-var vector1 = Vector( 1, 2, 3 );
-var vector2 = Vector( 2, 3, 4 );
-
-vector1.subtract( vector2 );
+//none
 ```
 
 [top](#)
-## subtractXYZ( x:number, y:number, z:number )
+
+<a name="normalize"></a>
+###normalize()
+
+_method_
+
 
 **description**
 
-현재 [Vector](Vector.md) 객체의 x, y 및 z 요소 값에 인자 x, y, z값을 뺍니다.
+- 현재 Vector의 단위벡터화된 길이입니다.
 
 **param**
 
-1. x:number - 현재 [Vector](Vector.md) 객체의 x값에 뺄 값.
-2. y:number - 현재 [Vector](Vector.md) 객체의 y값에 뺄 값.
-3. z:number - 현재 [Vector](Vector.md) 객체의 z값에 뺄 값.
+
+**exception**
+
+- none
 
 **return**
 
-this - 메서드체이닝을 위해 자신을 반환함.
+- this - 메소드체이닝을 위해 자신을 반환함
 
 **sample**
 
 ```javascript
-var vector = Vector( 1, 2, 3 );
-
-vector.subtractXYZ( 1, 2, 3 );
+//none
 ```
 
 [top](#)
-## scaleBy( scale:number )
+
+<a name="negate"></a>
+###negate(vector:Vector)
+
+_method_
+
 
 **description**
 
-현재 [Vector](Vector.md) 객체의 크기를 스칼라 값만큼 조절합니다.
+- 현재 Vector 객체를 역수로 설정합니다.
 
 **param**
 
-1. scale:number - 현재 [Vector](Vector.md) 객체의 크기를 조절할 스칼라 값.
+1. vector:Vector
+
+**exception**
+
+- none
 
 **return**
 
-this - 메서드체이닝을 위해 자신을 반환함.
+- this - 메소드체이닝을 위해 자신을 반환함
 
 **sample**
 
 ```javascript
-var vector = Vector( 1, 2, 3 );
-
-vector.scale( 10 );
+//none
 ```
 
 [top](#)
-## distance( vector:[Vector](Vector.md) )
+
+<a name="dot"></a>
+###dot(vector:Vector)
+
+_method_
+
 
 **description**
 
-현재 [Vector](Vector.md) 객체와 대상 [Vector](Vector.md) 객체 사이의 거리를 반환합니다.
+- 내적값 반환
 
 **param**
 
-1. vector:[Vector](Vector.md) - 사이의 거리를 알아낼 대상 [Vector](Vector.md) 객체.
+1. vector:Vector
+
+**exception**
+
+- none
 
 **return**
 
-number - 대상 객체와의 거리.
+- number
 
 **sample**
 
 ```javascript
-var vector1 = Vector( 1, 2, 3 );
-var vector2 = Vector( 10, 20, 30 );
-
-var distance = vector1.distance( vector2 );
+//none
 ```
 
 [top](#)
-## negate()
+
+<a name="distance"></a>
+###distance(vector:Vector)
+
+_method_
+
 
 **description**
 
-현재 [Vector](Vector.md) 객체를 역수로 설정합니다.
+- 현재 벡터와 대상 벡터 객체 사이의 거리를 반환합니다.
 
 **param**
-없음.
+
+1. vector:Vector
+
+**exception**
+
+- none
 
 **return**
 
-this - 메서드체이닝을 위해 자신을 반환함.
+- number
 
 **sample**
 
 ```javascript
-var vector = Vector( 1, 2, 3 );
-
-vector.negate();
+//none
 ```
 
 [top](#)
-## normalize()
+
+<a name="cross"></a>
+###cross(vector:Vector)
+
+_method_
+
 
 **description**
 
-현재 [Vector](Vector.md)의 단위벡터화된 길이입니다.
+- 두벡터에 수직인 벡터를 반환
 
 **param**
-없음.
+
+1. vector:Vector
+
+**exception**
+
+- none
 
 **return**
 
-this - 메서드체이닝을 위해 자신을 반환함.
+- Vector
 
 **sample**
 
 ```javascript
-var vector = Vector( 1, 2, 3 );
-
-vector.normalize();
+//none
 ```
 
 [top](#)
-## dot( vector:[Vector](Vector.md) )
+
+<a name="addXYZ"></a>
+###addXYZ(x:number, y:number, z:number)
+
+_method_
+
 
 **description**
 
-내적값을 반환
+- 현재 Vector 객체의 x, y 및 z 요소 값에 인자 x,y,z값을 더합니다.
 
 **param**
 
-1. vector:[Vector](Vector.md) - 내적값을 구할 대상 [Vector](Vector.md) 객체.
+1. x:number - x값
+2. y:number - y값
+3. z:number - z값
+
+**exception**
+
+- none
 
 **return**
 
-number - 대상 [Vector](Vector.md) 객체와의 내적값.
+- this - 메소드체이닝을 위해 자신을 반환함
 
 **sample**
 
 ```javascript
-var vector1 = Vector( 1, 2, 3 );
-var vector2 = Vector( 3, 2, 1 );
-
-var d = vector1.dot( vector2 );
+//none
 ```
 
 [top](#)
-## cross( vector:[Vector](Vector.md) )
+
+<a name="add"></a>
+###add(vector:Vector)
+
+_method_
+
 
 **description**
 
-현재 [Vector](Vector.md) 객체와 대상 [Vector](Vector.md) 객체와 수직인 [Vector](Vector.md)를 반환.
+- 현재 Vector 객체의 x, y 및 z 요소 값에 대상 객체의 x,y,z값을 더합니다
 
 **param**
 
-1. vector:[Vector](Vector.md) - 수직인 [Vector](Vector.md)를 구할 대상 [Vector](Vector.md) 객체.
+1. vector:Vector
+
+**exception**
+
+- none
 
 **return**
 
-vector - 두 [Vector](Vector.md)에 수직인 [Vector](Vector.md).
+- this - 메소드체이닝을 위해 자신을 반환함
 
 **sample**
 
 ```javascript
-var vector1 = Vector( 1, 2, 3 );
-var vector2 = Vector( 3, 2, 1 );
-
-var c = vector1.cross( vector2 );
+//none
 ```
+
+[top](#)
+
+<a name="getMD"></a>
+###getMD()
+
+_static_
+
+
+**description**
+
+- 해당 클래스를 마크다운 형식으로 문서화하여 출력함
+
+**param**
+
+
+**exception**
+
+- none
+
+**return**
+
+- string - 클래스에 대한 문서 마크다운
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="getInstance"></a>
+###getInstance(uuid:string)
+
+_static_
+
+
+**description**
+
+- uuid 또는 id를 기반으로 인스턴스를 얻어냄
+
+**param**
+
+1. uuid:string - 얻고 싶은 인스턴스의 uuid 또는 id
+
+**exception**
+
+- none
+
+**return**
+
+- Object - 해당되는 인스턴스
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="extend"></a>
+###extend(className:string, constructor:function)
+
+_static_
+
+
+**description**
+
+- 이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Defineder)를 얻음
+
+**Defineder class의 메소드**
+
+* 각 메서드는 체이닝됨
+* Matrix = MoGL.extend('Matrix', function(){..}).static(..).field(..).build(); 형태로 사용
+* field('x',{value:30}) - 속성을 정의함
+* method('rotate',{value:function(){}}) - 메서드를 정의함
+* constant('normalX',{value:'normalX'}) - 상수를 정의함
+* event('updated',{value:'updated'}) - 이벤트를 정의함
+* static('toString',{value:function(){}}) - 정적메서드를 정의함
+* build() - 입력된 결과를 종합하여 클래스를 생성함
+
+**param**
+
+1. className:string - 자식클래스의 이름
+2. constructor:function - 자식클래스의 생성자
+
+**exception**
+
+- none
+
+**return**
+
+- Defineder - 클래스를 정의할 수 있는 생성전용객체
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="error"></a>
+###error(method:string, id:int)
+
+_static_
+
+
+**description**
+
+- 정적함수에서 표준화된 예외를 처리함(정적함수 내부에서 사용)
+
+**param**
+
+1. method:string - 예외가 발생한 함수명
+2. id:int - 예외고유 id
+
+**exception**
+
+- none
+
+**return**
+
+- none
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
+
+<a name="count"></a>
+###count()
+
+_static_
+
+
+**description**
+
+- 이 클래스로 부터 만들어져 활성화된 인스턴스의 수
+
+**param**
+
+
+**exception**
+
+- none
+
+**return**
+
+- int - 활성화된 인스턴스의 수
+
+**sample**
+
+```javascript
+//none
+```
+
+[top](#)
