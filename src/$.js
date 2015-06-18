@@ -78,7 +78,8 @@ $color = (function(){
     return function(v){
         if (typeof v == 'string' && v.charAt(0) == '#') {
             if (v.length == 4) {
-                v += v.substr(1,3)
+                v = v.substr(1,3)
+                v = '#'+v[0]+v[0]+v[1]+v[1]+v[2]+v[2]
             }
             co[0] = parseInt(v.substr(1, 2), 16) / 255,
             co[1] = parseInt(v.substr(3, 2), 16) / 255,
@@ -140,7 +141,7 @@ $md = function(classes){
                 temp[k].type = temp[k].type || '?',
                 temp[k].defaultValue = temp[k].defaultValue || 'none', 
                 temp[k].sample = toStr(temp[k].sample || '//none'),
-                temp[k].description = toStr(temp[k].description),
+                temp[k].description = toStr2(temp[k].description),
                 temp[k].enumerable = temp1[k] && temp1[k].enumerable ? true : false, 
                 temp[k].configurable = temp1[k] && temp1[k].configurable ? true : false;
                 temp[k].exception = toStr2(temp[k].exception || 'none');
@@ -166,7 +167,7 @@ $md = function(classes){
             temp[k].ret = toStr(temp[k].ret || 'none');
             temp[k].sample = toStr(temp[k].sample || '//none');
             temp[k].exception = toStr2(temp[k].exception || 'none');
-            temp[k].description = toStr(temp[k].description);
+            temp[k].description = toStr2(temp[k].description);
             v[v.length] = temp[k];
         }
         list(type, md, v);
