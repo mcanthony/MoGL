@@ -103,7 +103,7 @@ SIN = Math.sin, COS = Math.cos, TAN = Math.tan, ATAN = Math.atan, ATAN2 = Math.a
 SQRT = Math.sqrt, CEIL = Math.ceil, ABS = Math.abs, PI = Math.PI, PIH = PI * 0.5, PERPI = 180 / PI;
 //markdown
 $md = function(classes){
-    var list, val, func, sort, toStr, fieldDetail, methodDetail;
+    var list, val, func, sort, toStr,toStr2, fieldDetail, methodDetail;
     sort = function(a,b){
         return a.name < b.name;
     },
@@ -118,6 +118,14 @@ $md = function(classes){
         }
     },
     toStr = function(v){
+        if (Array.isArray(v)) {
+            return v.join('\n');
+        }else if (!v) {
+            return '';
+        }
+        return v;
+    },
+    toStr2 = function(v){
         if (Array.isArray(v)) {
             return v.join('\n- ');
         }else if (!v) {
@@ -157,7 +165,7 @@ $md = function(classes){
             temp[k].param = toStr(temp[k].param || 'none');
             temp[k].ret = toStr(temp[k].ret || 'none');
             temp[k].sample = toStr(temp[k].sample || '//none');
-            temp[k].exception = toStr(temp[k].exception || 'none');
+            temp[k].exception = toStr2(temp[k].exception || 'none');
             temp[k].description = toStr(temp[k].description);
             v[v.length] = temp[k];
         }
