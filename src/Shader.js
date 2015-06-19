@@ -10,7 +10,7 @@ var Shader = (function () {
 		}
 	)
 	.field('code', {get: $getter(code)})
-	.constant('colorVertexShader', {
+	.static('colorVertexShader', {
 		value: (function () {
 			var cache;
 			return function () {
@@ -28,7 +28,7 @@ var Shader = (function () {
 			}
 		})()
 	})
-	.constant('colorFragmentShader', {
+	.static('colorFragmentShader', {
 		value: (function () {
 			var cache;
 			return function () {
@@ -45,7 +45,7 @@ var Shader = (function () {
 			}
 		})()
 	})
-	.constant('wireFrameVertexShader', {
+	.static('wireFrameVertexShader', {
 		value: (function () {
 			var cache;
 			return function () {
@@ -63,7 +63,7 @@ var Shader = (function () {
 			}
 		})()
 	})
-	.constant('wireFrameFragmentShader', {
+	.static('wireFrameFragmentShader', {
 		value: (function () {
 			var cache;
 			return function () {
@@ -80,7 +80,7 @@ var Shader = (function () {
 			}
 		})()
 	})
-	.constant('bitmapVertexShader', {
+	.static('bitmapVertexShader', {
 		value: (function () {
 			var cache;
 			return function () {
@@ -98,7 +98,7 @@ var Shader = (function () {
 			}
 		})()
 	})
-	.constant('bitmapFragmentShader', {
+	.static('bitmapFragmentShader', {
 		value: (function () {
 			var cache;
 			return function () {
@@ -115,7 +115,7 @@ var Shader = (function () {
 			}
 		})()
 	})
-	.constant('colorVertexShaderGouraud', {
+	.static('colorVertexShaderGouraud', {
 		value: (function () {
 			var cache;
 			return function () {
@@ -138,7 +138,7 @@ var Shader = (function () {
 			}
 		})()
 	})
-	.constant('colorFragmentShaderGouraud', {
+	.static('colorFragmentShaderGouraud', {
 		value: (function () {
 			var cache;
 			return function () {
@@ -155,7 +155,7 @@ var Shader = (function () {
 			}
 		})()
 	})
-	.constant('bitmapVertexShaderGouraud', {
+	.static('bitmapVertexShaderGouraud', {
 		value: (function () {
 			var cache;
 			return function () {
@@ -179,7 +179,7 @@ var Shader = (function () {
 			}
 		})()
 	})
-	.constant('bitmapFragmentShaderGouraud', {
+	.static('bitmapFragmentShaderGouraud', {
 		value: (function () {
 			var cache;
 			return function () {
@@ -197,7 +197,7 @@ var Shader = (function () {
 			}
 		})()
 	})
-	.constant('colorVertexShaderPhong', {
+	.static('colorVertexShaderPhong', {
 		value: (function () {
 			var cache;
 			return function () {
@@ -218,7 +218,7 @@ var Shader = (function () {
 			}
 		})()
 	})
-	.constant('colorFragmentShaderPhong', {
+	.static('colorFragmentShaderPhong', {
 		value: (function () {
 			var cache;
 			return function () {
@@ -252,7 +252,7 @@ var Shader = (function () {
 			}
 		})()
 	})
-	.constant('toonVertexShaderPhong', {
+	.static('toonVertexShaderPhong', {
 		value: (function () {
 			var cache;
 			return function () {
@@ -274,7 +274,7 @@ var Shader = (function () {
 			}
 		})()
 	})
-	.constant('toonFragmentShaderPhong', {
+	.static('toonFragmentShaderPhong', {
 		value: (function () {
 			var cache;
 			return function () {
@@ -317,7 +317,7 @@ var Shader = (function () {
 			}
 		})()
 	})
-	.constant('bitmapVertexShaderPhong', {
+	.static('bitmapVertexShaderPhong', {
 		value: (function () {
 			var cache;
 			return function () {
@@ -338,7 +338,7 @@ var Shader = (function () {
 			}
 		})()
 	})
-	.constant('bitmapFragmentShaderPhong', {
+	.static('bitmapFragmentShaderPhong', {
 		value: (function () {
 			var cache;
 			return function () {
@@ -373,7 +373,7 @@ var Shader = (function () {
 			}
 		})()
 	})
-	.constant('bitmapVertexShaderBlinn', {
+	.static('bitmapVertexShaderBlinn', {
 		value: (function () {
 			var cache;
 			return function () {
@@ -394,7 +394,7 @@ var Shader = (function () {
 			}
 		})()
 	})
-	.constant('bitmapFragmentShaderBlinn', {
+	.static('bitmapFragmentShaderBlinn', {
 		value: (function () {
 			var cache;
 			return function () {
@@ -429,7 +429,7 @@ var Shader = (function () {
 			}
 		})()
 	})
-	.constant('postBaseVertexShader', {
+	.static('postBaseVertexShader', {
 		value: (function () {
 			var cache;
 			return function () {
@@ -447,7 +447,7 @@ var Shader = (function () {
 			}
 		})()
 	})
-	.constant('postBaseFragmentShader', {
+	.static('postBaseFragmentShader', {
 		value: (function () {
 			var cache;
 			return function () {
