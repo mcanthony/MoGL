@@ -112,6 +112,8 @@
         mesh.material.shading = Shading.phong
         scene.addChild(mesh);
 
+        scene.dLite = [0,1,1]
+
         var mesh2 = new Mesh(geo, material);
         mesh2.scale = [10, 10, 10]
         scene.addChild(mesh2);
@@ -140,6 +142,8 @@
             camera3.y = Math.cos(currTime / 1000) * 10
             camera3.z = Math.cos(currTime / 1000) * 10 + Math.sin(currTime / 1000) * 10
             camera3.lookAt(0, 0, 0)
+
+            scene.dLite = [Math.sin(currTime / 1000) / Math.PI, Math.cos(currTime / 1000) / Math.PI, Math.cos(currTime / 1000)  / Math.PI + Math.sin(currTime / 1000)  / Math.PI]
         })
 
     }

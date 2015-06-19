@@ -474,7 +474,8 @@ var World = (function (makeUtil) {
                     tScene.updateList.material.length = 0,
                     tScene.updateList.camera.length = 0,
                     //////////////////////////////////////////////////////////////////////////////////////////////////////
-                    tCameraList = tScene.cameras;
+                    tCameraList = tScene.cameras,
+                    dLite = tScene.dLite
                     for (k in tCameraList) len++;
                     for (k in tCameraList) {
                         tCamera = tCameraList[k];
@@ -498,7 +499,6 @@ var World = (function (makeUtil) {
                             //tGL.scissor(0, 0,  tCvsW, tCvsH);
 
                             // 라이팅 세팅
-                            dLite = [0, -1, -1],
                             tColor = tCamera.backgroundColor,
                             tGL.clearColor(tColor[0], tColor[1], tColor[2], tColor[3]),
                             tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);

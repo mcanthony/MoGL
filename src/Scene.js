@@ -1,11 +1,12 @@
 'use strict'
 var Scene = (function () {
     var vertexShaderParser, fragmentShaderParser,
-        children,childrenArray, cameras, textures, materials, geometrys, vertexShaders, fragmentShaders, updateList;
+        children,childrenArray, cameras, textures, materials, geometrys, vertexShaders, fragmentShaders, updateList,dLite;
     //private
     children = {},
     childrenArray = {},
     cameras = {},
+    dLite={},
     textures = {},
     materials = {},
     geometrys = {},
@@ -99,6 +100,7 @@ var Scene = (function () {
             material : [],
             camera : []
         },
+        dLite[this] = [0, -1, -1],
 
         this.addVertexShader(Shader.colorVertexShader), this.addFragmentShader(Shader.colorFragmentShader),
         this.addVertexShader(Shader.wireFrameVertexShader), this.addFragmentShader(Shader.wireFrameFragmentShader),
@@ -136,6 +138,18 @@ var Scene = (function () {
             ],
             defaultValue: "{}",
             get: $getter(fragmentShaders)
+        }
+    )
+    .field('dLite', {
+            description: "디렉셔널 라이트 방향 설정, -1~1 사이값으로 입력(0.4에서 노멀라이즈처리)",
+            sample: [
+                "var scene = new Scene()",
+                "scene.dLite =[0,1,0]",
+                "console.log(scene.dLite) "
+            ],
+            defaultValue: "[0, -1, -1]",
+            set: $setter(dLite),
+            get: $getter(dLite)
         }
     )
     .field('cameras', {
