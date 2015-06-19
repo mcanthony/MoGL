@@ -261,7 +261,8 @@ _method_
 **sample**
 
 ```javascript
-//none
+var mtx = new Matrix()
+mtx.matRotateX(0.3)
 ```
 
 [top](#)
@@ -290,7 +291,8 @@ _method_
 **sample**
 
 ```javascript
-//none
+var mtx = new Matrix()
+console.log(mtx.matStr())
 ```
 
 [top](#)
@@ -322,7 +324,8 @@ _method_
 **sample**
 
 ```javascript
-//none
+var mtx = new Matrix()
+mtx.matTranslate(10,20,30)
 ```
 
 [top](#)
@@ -352,7 +355,8 @@ _method_
 **sample**
 
 ```javascript
-//none
+var mtx = new Matrix()
+mtx.matRotateZ(0.3)
 ```
 
 [top](#)
@@ -382,7 +386,9 @@ _method_
 **sample**
 
 ```javascript
-//none
+var mtx = new Matrix()
+var mtx2 = new Matrix()
+mtx.matClone(mtx2)// mtx2에 mtx의 속성이 복사됨.
 ```
 
 [top](#)
@@ -446,7 +452,8 @@ _method_
 **sample**
 
 ```javascript
-//none
+var mtx = new Matrix()
+mtx.matScale(10,20,30)
 ```
 
 [top](#)
@@ -475,7 +482,8 @@ _method_
 **sample**
 
 ```javascript
-//none
+var mtx = new Matrix()
+mtx.matIdentity()
 ```
 
 [top](#)
@@ -505,7 +513,8 @@ _method_
 **sample**
 
 ```javascript
-//none
+var mtx = new Matrix()
+mtx.matRotateY(0.3)
 ```
 
 [top](#)
@@ -535,7 +544,9 @@ _method_
 **sample**
 
 ```javascript
-//none
+var mtx = new Matrix()
+var mtx2 = new Matrix()
+mtx.matMultiply(mtx2)// mtx에 mtx2를 곱한 결과를 반환
 ```
 
 [top](#)
@@ -566,7 +577,8 @@ _method_
 **sample**
 
 ```javascript
-//none
+var mtx = new Matrix()
+mtx.matRotate(0.3,[0,1,2])
 ```
 
 [top](#)
@@ -599,7 +611,8 @@ _method_
 **sample**
 
 ```javascript
-//none
+var mtx = new Matrix()
+mtx.matPerspective(55, 4/3,0.1,1000)
 ```
 
 [top](#)
@@ -628,7 +641,8 @@ _method_
 **sample**
 
 ```javascript
-//none
+var mtx = new Matrix()
+mtx.matClone()
 ```
 
 [top](#)
@@ -661,7 +675,8 @@ _method_
 **sample**
 
 ```javascript
-//none
+var mtx = new Matrix()
+mtx.lookAt(0,0,0) // 현재위치에서 0,0,0을 바라보는 상태로 rotateX, rotateY, rotateZ가 변경됨
 ```
 
 [top](#)
