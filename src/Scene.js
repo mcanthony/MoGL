@@ -24,7 +24,7 @@ var Scene = (function () {
         resultObject = {
             uniforms: [],
             attributes: [],
-            id: source.id,
+            id: code.id,
             shaderStr: null
         },
         str = "",
@@ -57,7 +57,7 @@ var Scene = (function () {
         code =  source.code,
         resultObject = {
             uniforms: [],
-            id: source.id,
+            id: code.id,
             shaderStr: null
         },
         str = "";
@@ -99,16 +99,17 @@ var Scene = (function () {
             material : [],
             camera : []
         },
-        this.addVertexShader(Shader.colorVertexShader),this.addFragmentShader(Shader.colorFragmentShader)
-        this.addVertexShader(Shader.wireFrameVertexShader),this.addFragmentShader(Shader.wireFrameFragmentShader),
-        this.addVertexShader(Shader.bitmapVertexShader),this.addFragmentShader(Shader.bitmapFragmentShader),
-        this.addVertexShader(Shader.bitmapVertexShaderGouraud),this.addFragmentShader(Shader.bitmapFragmentShaderGouraud),
-        this.addVertexShader(Shader.colorVertexShaderGouraud),this.addFragmentShader(Shader.colorFragmentShaderGouraud),
-        this.addVertexShader(Shader.colorVertexShaderPhong),this.addFragmentShader(Shader.colorFragmentShaderPhong),
-        this.addVertexShader(Shader.toonVertexShaderPhong),this.addFragmentShader(Shader.toonFragmentShaderPhong),
-        this.addVertexShader(Shader.bitmapVertexShaderPhong),this.addFragmentShader(Shader.bitmapFragmentShaderPhong),
-        this.addVertexShader(Shader.bitmapVertexShaderBlinn),this.addFragmentShader(Shader.bitmapFragmentShaderBlinn),
-        this.addVertexShader(Shader.postBaseVertexShader),this.addFragmentShader(Shader.postBaseFragmentShader);
+
+        this.addVertexShader(Shader.colorVertexShader()), this.addFragmentShader(Shader.colorFragmentShader()),
+        this.addVertexShader(Shader.wireFrameVertexShader()), this.addFragmentShader(Shader.wireFrameFragmentShader()),
+        this.addVertexShader(Shader.bitmapVertexShader()), this.addFragmentShader(Shader.bitmapFragmentShader()),
+        this.addVertexShader(Shader.bitmapVertexShaderGouraud()), this.addFragmentShader(Shader.bitmapFragmentShaderGouraud()),
+        this.addVertexShader(Shader.colorVertexShaderGouraud()), this.addFragmentShader(Shader.colorFragmentShaderGouraud()),
+        this.addVertexShader(Shader.colorVertexShaderPhong()), this.addFragmentShader(Shader.colorFragmentShaderPhong()),
+        this.addVertexShader(Shader.toonVertexShaderPhong()), this.addFragmentShader(Shader.toonFragmentShaderPhong()),
+        this.addVertexShader(Shader.bitmapVertexShaderPhong()), this.addFragmentShader(Shader.bitmapFragmentShaderPhong()),
+        this.addVertexShader(Shader.bitmapVertexShaderBlinn()), this.addFragmentShader(Shader.bitmapFragmentShaderBlinn()),
+        this.addVertexShader(Shader.postBaseVertexShader()), this.addFragmentShader(Shader.postBaseFragmentShader());
     })
     .field('updateList', {
             description: "world가 render 함수를 실행하기전 GPU업데이트가 되어야할 목록.",
@@ -352,14 +353,14 @@ var Scene = (function () {
     )
     .method('addFragmentShader', function addFragmentShader(v) {
         var p = fragmentShaders[this];
-        if (p[v.id]) this.error(0);
-        p[v.id] = fragmentShaderParser(v);;
+        if (p[v.code.id]) this.error(0);
+        p[v.code.id] = fragmentShaderParser(v);;
         return this
     })
     .method('addVertexShader', function addVertexShader(v) {
         var p = vertexShaders[this];
-        if (p[v.id]) this.error(0);
-        p[v.id] = vertexShaderParser(v);
+        if (p[v.code.id]) this.error(0);
+        p[v.code.id] = vertexShaderParser(v);
         return this
     })
     .method('getMesh',{
