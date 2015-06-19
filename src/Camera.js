@@ -1,7 +1,7 @@
 var Camera = (function () {
 	var PERPIR, prop;
 	//lib
-	PERPIR = PI / 180 * .5,
+	PERPIR = D2R * .5,
 	//private
 	prop = {},
 	//shared private
@@ -129,7 +129,7 @@ var Camera = (function () {
 			if (typeof v == 'number') {
 				p.fov = v;
 			} else if ('0' in v && '1' in v) {
-				p.fov = CEIL(2 * ATAN(TAN(v[2] * PERPIR) * (v[1] / v[0])) * PERPI);
+				p.fov = CEIL(2 * ATAN(TAN(v[2] * PERPIR) * (v[1] / v[0])) * R2D);
 			}
 		}
 	})
