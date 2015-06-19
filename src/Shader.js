@@ -11,6 +11,7 @@ var Shader = (function () {
 	)
 	.field('code', {get: $getter(code)})
 	.constant('colorVertexShader', {
+		description: "컬러 버텍스 쉐이더",
 		get: (function () {
 			var cache;
 			return function () {
@@ -29,6 +30,7 @@ var Shader = (function () {
 		})()
 	})
 	.constant('colorFragmentShader', {
+		description: "컬러 프레그먼트 쉐이더",
 		get: (function () {
 			var cache;
 			return function () {
@@ -46,6 +48,7 @@ var Shader = (function () {
 		})()
 	})
 	.constant('wireFrameVertexShader', {
+		description: "와이어프레임 버텍스 쉐이더",
 		get: (function () {
 			var cache;
 			return function () {
@@ -64,6 +67,7 @@ var Shader = (function () {
 		})()
 	})
 	.constant('wireFrameFragmentShader', {
+		description: "와이어프레임 프레그먼트 쉐이더",
 		get: (function () {
 			var cache;
 			return function () {
@@ -81,6 +85,7 @@ var Shader = (function () {
 		})()
 	})
 	.constant('bitmapVertexShader', {
+		description: "비트맵 버텍스 쉐이더",
 		get: (function () {
 			var cache;
 			return function () {
@@ -99,6 +104,7 @@ var Shader = (function () {
 		})()
 	})
 	.constant('bitmapFragmentShader', {
+		description: "비트맵 프레그먼트 쉐이더",
 		get: (function () {
 			var cache;
 			return function () {
@@ -116,6 +122,7 @@ var Shader = (function () {
 		})()
 	})
 	.constant('colorVertexShaderGouraud', {
+		description: "컬러 고라우드 버텍스 쉐이더",
 		get: (function () {
 			var cache;
 			return function () {
@@ -139,6 +146,7 @@ var Shader = (function () {
 		})()
 	})
 	.constant('colorFragmentShaderGouraud', {
+		description: "컬러 고라우드 프레그먼트 쉐이더",
 		get: (function () {
 			var cache;
 			return function () {
@@ -156,6 +164,7 @@ var Shader = (function () {
 		})()
 	})
 	.constant('bitmapVertexShaderGouraud', {
+		description: "비트맵 고라우드 버텍스 쉐이더",
 		get: (function () {
 			var cache;
 			return function () {
@@ -180,6 +189,7 @@ var Shader = (function () {
 		})()
 	})
 	.constant('bitmapFragmentShaderGouraud', {
+		description: "비트맵 고라우드 프레그먼트 쉐이더",
 		get: (function () {
 			var cache;
 			return function () {
@@ -198,6 +208,7 @@ var Shader = (function () {
 		})()
 	})
 	.constant('colorVertexShaderPhong', {
+		description: "컬러 퐁 버텍스 쉐이더",
 		get: (function () {
 			var cache;
 			return function () {
@@ -219,6 +230,7 @@ var Shader = (function () {
 		})()
 	})
 	.constant('colorFragmentShaderPhong', {
+		description: "컬러 퐁 프레그먼트 쉐이더",
 		get: (function () {
 			var cache;
 			return function () {
@@ -253,6 +265,7 @@ var Shader = (function () {
 		})()
 	})
 	.constant('toonVertexShaderPhong', {
+		description: "툰 퐁 버텍스 쉐이더",
 		get: (function () {
 			var cache;
 			return function () {
@@ -275,6 +288,7 @@ var Shader = (function () {
 		})()
 	})
 	.constant('toonFragmentShaderPhong', {
+		description: "툰 퐁 프레그먼트 쉐이더",
 		get: (function () {
 			var cache;
 			return function () {
@@ -318,6 +332,7 @@ var Shader = (function () {
 		})()
 	})
 	.constant('bitmapVertexShaderPhong', {
+		description: "비트맵 퐁 버텍스 쉐이더",
 		get: (function () {
 			var cache;
 			return function () {
@@ -339,6 +354,7 @@ var Shader = (function () {
 		})()
 	})
 	.constant('bitmapFragmentShaderPhong', {
+		description: "비트맵 퐁 프레그먼트 쉐이더",
 		get: (function () {
 			var cache;
 			return function () {
@@ -374,6 +390,7 @@ var Shader = (function () {
 		})()
 	})
 	.constant('bitmapVertexShaderBlinn', {
+		description: "비트맵 블린 버텍스 쉐이더",
 		get: (function () {
 			var cache;
 			return function () {
@@ -395,6 +412,7 @@ var Shader = (function () {
 		})()
 	})
 	.constant('bitmapFragmentShaderBlinn', {
+		description: "비트맵 블린 프레그먼트 쉐이더",
 		get: (function () {
 			var cache;
 			return function () {
@@ -430,6 +448,7 @@ var Shader = (function () {
 		})()
 	})
 	.constant('postBaseVertexShader', {
+		description: "후처리 베이스 버텍스 쉐이더",
 		get: (function () {
 			var cache;
 			return function () {
@@ -448,6 +467,7 @@ var Shader = (function () {
 		})()
 	})
 	.constant('postBaseFragmentShader', {
+		description: "후처리 베이스 프레그먼트 쉐이더",
 		get: (function () {
 			var cache;
 			return function () {
