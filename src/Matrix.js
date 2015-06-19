@@ -102,7 +102,7 @@ var Matrix = (function () {
             'y:number - 바라볼 y위치',
             'z:number - 바라볼 z위치'
         ],
-        smaple:[
+        sample:[
             'var mtx = new Matrix()',
             'mtx.lookAt(0,0,0) // 현재위치에서 0,0,0을 바라보는 상태로 rotateX, rotateY, rotateZ가 변경됨'
         ],
@@ -153,7 +153,7 @@ var Matrix = (function () {
     })
     .method('matIdentity', {
         description:'현재 매트릭스를 초기화한다.',
-        smaple:[
+        sample:[
             'var mtx = new Matrix()',
             'mtx.matIdentity()'
         ],
@@ -166,7 +166,7 @@ var Matrix = (function () {
     })
     .method('matClone', {
         description: '현재 매트릭스를 복제',
-        smaple: [
+        sample: [
             'var mtx = new Matrix()',
             'mtx.matClone()'
         ],
@@ -182,7 +182,7 @@ var Matrix = (function () {
     })
     .method('matCopy', {
         description:'대상 매트릭스에 현재 매트릭스의 상태를 복사',
-        smaple: [
+        sample: [
             'var mtx = new Matrix()',
             'var mtx2 = new Matrix()',
             'mtx.matClone(mtx2)// mtx2에 mtx의 속성이 복사됨.'
@@ -207,7 +207,7 @@ var Matrix = (function () {
     //};
     .method('matMultiply', {
         description:'현재매트릭스에 대상 매트릭스를 곱한다. ',
-        smaple: [
+        sample: [
             'var mtx = new Matrix()',
             'var mtx2 = new Matrix()',
             'mtx.matMultiply(mtx2)// mtx에 mtx2를 곱한 결과를 반환'
@@ -233,7 +233,7 @@ var Matrix = (function () {
     })
     .method('matTranslate', {
         description:'현재매트릭스에 x,y,z축 증분 평행이동 ',
-        smaple: [
+        sample: [
             'var mtx = new Matrix()',
             'mtx.matTranslate(10,20,30)'
         ],
@@ -254,7 +254,7 @@ var Matrix = (function () {
     })
     .method('matScale', {
         description:'현재매트릭스에 x,y,z축 증분 확대 ',
-        smaple: [
+        sample: [
             'var mtx = new Matrix()',
             'mtx.matScale(10,20,30)'
         ],
@@ -272,7 +272,7 @@ var Matrix = (function () {
     })
     .method('matRotateX', {
         description:'현재 매트릭스를 X축 기준 증분 회전 ',
-        smaple: [
+        sample: [
             'var mtx = new Matrix()',
             'mtx.matRotateX(0.3)'
         ],
@@ -288,7 +288,7 @@ var Matrix = (function () {
     })
     .method('matRotateY', {
         description:'현재 매트릭스를 Y축 기준 증분 회전 ',
-        smaple: [
+        sample: [
             'var mtx = new Matrix()',
             'mtx.matRotateY(0.3)'
         ],
@@ -304,7 +304,7 @@ var Matrix = (function () {
     })
     .method('matRotateZ', {
         description:'현재 매트릭스를 Z축 기준 증분 회전 ',
-        smaple: [
+        sample: [
             'var mtx = new Matrix()',
             'mtx.matRotateZ(0.3)'
         ],
@@ -320,7 +320,7 @@ var Matrix = (function () {
     })
     .method('matRotate', {
         description:'현재 매트릭스를 특정축을 기준으로 증분 회전 ',
-        smaple: [
+        sample: [
             'var mtx = new Matrix()',
             'mtx.matRotate(0.3,[0,1,2])'
         ],
@@ -350,7 +350,7 @@ var Matrix = (function () {
     })
     .method('matPerspective', {
         description:'퍼스펙티브 매트릭스',
-        smaple: [
+        sample: [
             'var mtx = new Matrix()',
             'mtx.matPerspective(55, 4/3,0.1,1000)'
         ],
@@ -388,7 +388,7 @@ var Matrix = (function () {
     })
     .method('matStr', {
         description:'현재 매트릭스를 문자화한다.',
-        smaple: [
+        sample: [
             'var mtx = new Matrix()',
             'console.log(mtx.matStr())'
         ],
