@@ -25,25 +25,56 @@ var Matrix = (function () {
            return result;
         };
     };
-    return MoGL.extend(function Matrix() {
-        raw[this] = new Float32Array(16);
-        this.matIdentity();
-        this.x = this.y = this.z = this.rotateX = this.rotateY = this.rotateZ = 0,
-        this.scaleX = this.scaleY = this.scaleZ = 1;
+    return MoGL.extend('Matrix',{
+        description:'매트릭스 객체로서 사용되며,\n- position(x, y, z),\n- scale(scaleX, scaleY, scaleZ),\n- rotate(rotateX, rotateY, rotateZ)\n-  관련된 속성도 포함한다. ',
+        sample:[
+            'var mtx = new Matrix()',
+            'console.log(mtx.x)',
+            'console.log(mtx.position) // [x,y,z]'
+        ],
+        value:function Matrix() {
+            raw[this] = new Float32Array(16);
+            this.matIdentity();
+            this.x = this.y = this.z = this.rotateX = this.rotateY = this.rotateZ = 0,
+            this.scaleX = this.scaleY = this.scaleZ = 1;
+        }
     })
     .field('position', {
+        description: 'x,y,z값을 배열로 반환하거나 입력',
+        sample:[
+            'var mtx = new Matrix()',
+            'mtx.position = [10,20,30]',
+            'console.log(mtx.position) // [10,20,30]'
+        ],
         set:setter('x', 'y', 'z'),
         get:getter('x', 'y', 'z')
     })
     .field('scale', {
+        description: 'scale값을 배열로 반환하거나 입력',
+        sample:[
+            'var mtx = new Matrix()',
+            'mtx.scale = [10,20,30]',
+            'console.log(mtx.scale) // [10,20,30]'
+        ],
         set:setter('scaleX', 'scaleY', 'scaleZ'),
         get:getter('scaleX', 'scaleY', 'scaleZ')
     })
     .field('rotate', {
+        description: 'rotate값을 배열로 반환하거나 입력',
+        sample:[
+            'var mtx = new Matrix()',
+            'mtx.rotate = [10,20,30]',
+            'console.log(mtx.rotate) // [10,20,30]'
+        ],
         set:setter('rotateX', 'rotateY', 'rotateZ'),
         get:getter('rotateX', 'rotateY', 'rotateZ')
     })
     .field('matrix', {
+        description: '현재 객체내의 position,rotate,scale을 반영한 후 자신을 반환',
+        sample:[
+            'var mtx = new Matrix()',
+            'console.log(mtx.matrix)'
+        ],
         get:function matrixGet() {
             if(this instanceof Camera) {
                 this.matIdentity().matScale(this.scaleX,this.scaleY,this.scaleZ).matRotateX(this.rotateX).matRotateY(this.rotateY).matRotateZ(this.rotateZ).matTranslate(this.x, this.y, -this.z);
@@ -55,71 +86,113 @@ var Matrix = (function () {
         }
     })
     .field('raw', {
+        description: '현재 매트릭스 객체의 rawData를 Float32Array 형식으로 반환',
+        sample:[
+            'var mtx = new Matrix()',
+            'console.log(mtx.raw)'
+        ],
         get:function rawGet(){
             return raw[this]
         }
     })
-    .method('lookAt', (function(){
-        var A = new Float32Array(3), B = new Float32Array(3);
-        return function lookAt(x, y, z) {
-            var d, d11, d12, d13, d21, d22, d23, d31, d32, d33, md31,
-                radianX, radianY, radianZ, cosY;
-    
-            this.matIdentity(),
-            A[0] = this.x, A[1] = this.y, A[2] = this.z,
-            B[0] = x, B[1] = y, B[2] = z,
-            this.matLookAt(A, B, [0, 1, 0]),
-            //this.matTranslate(F3);
-            d = raw[this],
-            d11 = d[0], d12 = d[1], d13 = d[2], 
-            d21 = d[4], d22 = d[5], d23 = d[6], 
-            d31 = d[8], d32 = d[9], d33 = d[10],
-            md31 = -d31;
-            if (md31 <= -1) {
-                radianY = -PIH;
-            } else if (1 <= md31) {
-                radianY = PIH;
-            } else {
-                radianY = ASIN(md31);
-            }
-            cosY = COS(radianY);
-            if (cosY <= 0.001){
-                radianZ = 0,
-                radianX = ATAN2(-d23, d22);
-            } else {
-                radianZ = ATAN2(d21, d11),
-                radianX = ATAN2(d32, d33);
-            }
-            this.rotateX = radianX,
-            this.rotateY = radianY,
-            this.rotateZ = radianZ;
-    
-            //var dx = x - this.x;
-            //var dy = y - this.y;
-            //var dz = z - this.z;
-            //this.rotationX = Math.atan2(dz, Math.sqrt(dx * dx + dy * dy)) - Math.PI / 2;
-            //this.rotationY = 0;
-            //this.rotationZ = -Math.atan2(dx, dy);
-        };
-    })())
-    .method('matIdentity', function matIdentity() {
-        var a = raw[this];
-        a[0] = 1, a[1] = 0, a[2] = 0, a[3] = 0, a[4] = 0, a[5] = 1, a[6] = 0, a[7] = 0, a[8] = 0, a[9] = 0, a[10] = 1, a[11] = 0, a[12] = 0, a[13] = 0, a[14] = 0, a[15] = 1;
-        return this;
+    .method('lookAt', {
+        description: '현재매트릭스를 대상지점을 바라보도록 변경\n- 현재 매트릭스의 rotateX,rotateY,rotateZ, 속성을 자동으로 변경',
+        param:[
+            'x:number - 바라볼 x위치',
+            'y:number - 바라볼 y위치',
+            'z:number - 바라볼 z위치'
+        ],
+        smaple:[
+            'var mtx = new Matrix()',
+            'mtx.lookAt(0,0,0) // 현재위치에서 0,0,0을 바라보는 상태로 rotateX, rotateY, rotateZ가 변경됨'
+        ],
+        ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
+        value:(function(){
+            var A = new Float32Array(3), B = new Float32Array(3);
+            return function lookAt(x, y, z) {
+                var d, d11, d12, d13, d21, d22, d23, d31, d32, d33, md31,
+                    radianX, radianY, radianZ, cosY;
+
+                this.matIdentity(),
+                A[0] = this.x, A[1] = this.y, A[2] = this.z,
+                B[0] = x, B[1] = y, B[2] = z,
+                this.matLookAt(A, B, [0, 1, 0]),
+                //this.matTranslate(F3);
+                d = raw[this],
+                d11 = d[0], d12 = d[1], d13 = d[2],
+                d21 = d[4], d22 = d[5], d23 = d[6],
+                d31 = d[8], d32 = d[9], d33 = d[10],
+                md31 = -d31;
+                if (md31 <= -1) {
+                    radianY = -PIH;
+                } else if (1 <= md31) {
+                    radianY = PIH;
+                } else {
+                    radianY = ASIN(md31);
+                }
+                cosY = COS(radianY);
+                if (cosY <= 0.001){
+                    radianZ = 0,
+                        radianX = ATAN2(-d23, d22);
+                } else {
+                    radianZ = ATAN2(d21, d11),
+                        radianX = ATAN2(d32, d33);
+                }
+                this.rotateX = radianX,
+                this.rotateY = radianY,
+                this.rotateZ = radianZ;
+
+                //var dx = x - this.x;
+                //var dy = y - this.y;
+                //var dz = z - this.z;
+                //this.rotationX = Math.atan2(dz, Math.sqrt(dx * dx + dy * dy)) - Math.PI / 2;
+                //this.rotationY = 0;
+                //this.rotationZ = -Math.atan2(dx, dy);
+            };
+        })()
     })
-    .method('matClone', function matClone() {
-        var a, b,out;
-        a = raw[this],
-        out = new Matrix(),
-        b = raw[out];
-        b[0] = a[0], b[1] = a[1], b[2] = a[2], b[3] = a[3], b[4] = a[4], b[5] = a[5], b[6] = a[6], b[7] = a[7], b[8] = a[8], b[9] = a[9], b[10] = a[10], b[11] = a[11], b[12] = a[12], b[13] = a[13], b[14] = a[14], b[15] = a[15];
-        return out;
+    .method('matIdentity', {
+        description:'현재 매트릭스를 초기화한다.',
+        smaple:[
+            'var mtx = new Matrix()',
+            'mtx.matIdentity()'
+        ],
+        ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
+        value:function matIdentity() {
+            var a = raw[this];
+            a[0] = 1, a[1] = 0, a[2] = 0, a[3] = 0, a[4] = 0, a[5] = 1, a[6] = 0, a[7] = 0, a[8] = 0, a[9] = 0, a[10] = 1, a[11] = 0, a[12] = 0, a[13] = 0, a[14] = 0, a[15] = 1;
+            return this;
+        }
     })
-    .method('matCopy', function matCopy(t) {
-        var a = raw[this];
-        t = raw[t];
-        t[0] = a[0], t[1] = a[1], t[2] = a[2], t[3] = a[3], t[4] = a[4], t[5] = a[5], t[6] = a[6], t[7] = a[7], t[8] = a[8], t[9] = a[9], t[10] = a[10], t[11] = a[11], t[12] = a[12], t[13] = a[13], t[14] = a[14], t[15] = a[15];
-        return this;
+    .method('matClone', {
+        description: '현재 매트릭스를 복제',
+        smaple: [
+            'var mtx = new Matrix()',
+            'mtx.matClone()'
+        ],
+        ret: ['Matrix - 복제한 매트릭스를 반환.'],
+        value:function matClone() {
+            var a, b,out;
+            a = raw[this],
+                out = new Matrix(),
+                b = raw[out];
+            b[0] = a[0], b[1] = a[1], b[2] = a[2], b[3] = a[3], b[4] = a[4], b[5] = a[5], b[6] = a[6], b[7] = a[7], b[8] = a[8], b[9] = a[9], b[10] = a[10], b[11] = a[11], b[12] = a[12], b[13] = a[13], b[14] = a[14], b[15] = a[15];
+            return out;
+        }
+    })
+    .method('matCopy', {
+        description:'대상 매트릭스에 현재 매트릭스의 상태를 복사',
+        smaple: [
+            'var mtx = new Matrix()',
+            'var mtx2 = new Matrix()',
+            'mtx.matClone(mtx2)// mat2에 mtx의 속성이 복사됨.'
+        ],
+        value:function matCopy(t) {
+            var a = raw[this];
+            t = raw[t];
+            t[0] = a[0], t[1] = a[1], t[2] = a[2], t[3] = a[3], t[4] = a[4], t[5] = a[5], t[6] = a[6], t[7] = a[7], t[8] = a[8], t[9] = a[9], t[10] = a[10], t[11] = a[11], t[12] = a[12], t[13] = a[13], t[14] = a[14], t[15] = a[15];
+            return this;
+        }
     })
     //.method('matInvert', function matInvert() {
     //    return this;
