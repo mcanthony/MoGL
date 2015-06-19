@@ -22,6 +22,11 @@ var Scene = (function () {
     vertexShaderParser = makeUtil.vertexShaderParser,
     fragmentShaderParser = makeUtil.fragmentShaderParser;
     return MoGL.extend('Scene',{
+        description:'실제 렌더링될 구조체는 Scene별로 집결됨.\n- ' +
+        'Scene은 렌더링과 관련된 [Mesh](Mesh.md), [Camera](Camera.md), [Light](Light.md) 등을 포함하고 이들 객체가 공유하며 활용하는 기초 자원으로서 vertex shader, fragment shader, [Texture](Texture.md), [Material](Material.md), [Geometry](Geometry.md) 등을 등록하여 관리한다',
+        sample:[
+            'var scene = new Scene()'
+        ],
         value:function Scene() {
             // for JS
             children[this] = {},
