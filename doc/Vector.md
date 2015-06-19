@@ -31,11 +31,13 @@
 
 **description**
 
-- 
+- 벡터3D 클래스
 
 **param**
 
-- none
+- x:number, y:number, z:number - 벡터 초기값을 넘버형으로 입력할 수 있음
+- [x,y,z]:Array - 첫번째 인자에 배열(Float32Array or Array)형태로 입력 할 수 있음
+- 인자가 없을경우 0,0,0으로 초기화
 
 **exception**
 
@@ -76,7 +78,8 @@ _method_
 **sample**
 
 ```javascript
-//none
+var vec1 = new Vector()
+vec1.subtractXYZ(10,20,30)
 ```
 
 [top](#)
@@ -106,7 +109,9 @@ _method_
 **sample**
 
 ```javascript
-//none
+var vec1 = new Vector()
+var vec2 = new Vector()
+vec1.subtract(vec2)
 ```
 
 [top](#)
@@ -136,7 +141,8 @@ _method_
 **sample**
 
 ```javascript
-//none
+var vec1 = new Vector()
+vec1.scaleBy(10)
 ```
 
 [top](#)
@@ -165,7 +171,8 @@ _method_
 **sample**
 
 ```javascript
-//none
+var vec1 = new Vector()
+vec1.normalize()
 ```
 
 [top](#)
@@ -195,7 +202,8 @@ _method_
 **sample**
 
 ```javascript
-//none
+var vec1 = new Vector()
+vec1.negate()
 ```
 
 [top](#)
@@ -225,7 +233,9 @@ _method_
 **sample**
 
 ```javascript
-//none
+var vec1 = new Vector()
+var vec2 = new Vector()
+vec1.dot(vec2)
 ```
 
 [top](#)
@@ -255,7 +265,9 @@ _method_
 **sample**
 
 ```javascript
-//none
+var vec1 = new Vector()
+var vec2 = new Vector()
+vec1.distance(vec2)
 ```
 
 [top](#)
@@ -285,7 +297,9 @@ _method_
 **sample**
 
 ```javascript
-//none
+var vec1 = new Vector()
+var vec2 = new Vector()
+vec1.cross(vec2)
 ```
 
 [top](#)
@@ -317,7 +331,8 @@ _method_
 **sample**
 
 ```javascript
-//none
+var vec1 = new Vector()
+vec1.addXYZ(10,20,30)
 ```
 
 [top](#)
@@ -347,7 +362,9 @@ _method_
 **sample**
 
 ```javascript
-//none
+var vec1 = new Vector()
+var vec2 = new Vector()
+vec1.add(vec2)
 ```
 
 [top](#)
@@ -420,17 +437,17 @@ _static_
 **description**
 
 - 이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Defineder)를 얻음
-
+- 
 **Defineder class의 메소드**
 
-* 각 메서드는 체이닝됨
-* Matrix = MoGL.extend('Matrix', function(){..}).static(..).field(..).build(); 형태로 사용
-* field('x',{value:30}) - 속성을 정의함
-* method('rotate',{value:function(){}}) - 메서드를 정의함
-* constant('normalX',{value:'normalX'}) - 상수를 정의함
-* event('updated',{value:'updated'}) - 이벤트를 정의함
-* static('toString',{value:function(){}}) - 정적메서드를 정의함
-* build() - 입력된 결과를 종합하여 클래스를 생성함
+- * 각 메서드는 체이닝됨
+- * Matrix = MoGL.extend('Matrix', function(){..}).static(..).field(..).build(); 형태로 사용
+- * field('x',{value:30}) - 속성을 정의함
+- * method('rotate',{value:function(){}}) - 메서드를 정의함
+- * constant('normalX',{value:'normalX'}) - 상수를 정의함
+- * event('updated',{value:'updated'}) - 이벤트를 정의함
+- * static('toString',{value:function(){}}) - 정적메서드를 정의함
+- * build() - 입력된 결과를 종합하여 클래스를 생성함
 
 **param**
 
