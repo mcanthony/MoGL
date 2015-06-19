@@ -6,3 +6,4 @@ var Vertex = {
 };
 Object.freeze(Vertex);
 
+
