@@ -100,16 +100,16 @@ var Scene = (function () {
             camera : []
         },
 
-        this.addVertexShader(Shader.colorVertexShader()), this.addFragmentShader(Shader.colorFragmentShader()),
-        this.addVertexShader(Shader.wireFrameVertexShader()), this.addFragmentShader(Shader.wireFrameFragmentShader()),
-        this.addVertexShader(Shader.bitmapVertexShader()), this.addFragmentShader(Shader.bitmapFragmentShader()),
-        this.addVertexShader(Shader.bitmapVertexShaderGouraud()), this.addFragmentShader(Shader.bitmapFragmentShaderGouraud()),
-        this.addVertexShader(Shader.colorVertexShaderGouraud()), this.addFragmentShader(Shader.colorFragmentShaderGouraud()),
-        this.addVertexShader(Shader.colorVertexShaderPhong()), this.addFragmentShader(Shader.colorFragmentShaderPhong()),
-        this.addVertexShader(Shader.toonVertexShaderPhong()), this.addFragmentShader(Shader.toonFragmentShaderPhong()),
-        this.addVertexShader(Shader.bitmapVertexShaderPhong()), this.addFragmentShader(Shader.bitmapFragmentShaderPhong()),
-        this.addVertexShader(Shader.bitmapVertexShaderBlinn()), this.addFragmentShader(Shader.bitmapFragmentShaderBlinn()),
-        this.addVertexShader(Shader.postBaseVertexShader()), this.addFragmentShader(Shader.postBaseFragmentShader());
+        this.addVertexShader(Shader.colorVertexShader), this.addFragmentShader(Shader.colorFragmentShader),
+        this.addVertexShader(Shader.wireFrameVertexShader), this.addFragmentShader(Shader.wireFrameFragmentShader),
+        this.addVertexShader(Shader.bitmapVertexShader), this.addFragmentShader(Shader.bitmapFragmentShader),
+        this.addVertexShader(Shader.bitmapVertexShaderGouraud), this.addFragmentShader(Shader.bitmapFragmentShaderGouraud),
+        this.addVertexShader(Shader.colorVertexShaderGouraud), this.addFragmentShader(Shader.colorFragmentShaderGouraud),
+        this.addVertexShader(Shader.colorVertexShaderPhong), this.addFragmentShader(Shader.colorFragmentShaderPhong),
+        this.addVertexShader(Shader.toonVertexShaderPhong), this.addFragmentShader(Shader.toonFragmentShaderPhong),
+        this.addVertexShader(Shader.bitmapVertexShaderPhong), this.addFragmentShader(Shader.bitmapFragmentShaderPhong),
+        this.addVertexShader(Shader.bitmapVertexShaderBlinn), this.addFragmentShader(Shader.bitmapFragmentShaderBlinn),
+        this.addVertexShader(Shader.postBaseVertexShader), this.addFragmentShader(Shader.postBaseFragmentShader);
     })
     .field('updateList', {
             description: "world가 render 함수를 실행하기전 GPU업데이트가 되어야할 목록.",
