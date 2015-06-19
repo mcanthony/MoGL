@@ -30,7 +30,7 @@
 })();
 //전역에서 사용하는 공통함수
 var $setPrivate, $getPrivate, $writable, $readonly, $getter, $setter, $color, $md, $ease,
-    GLMAT_EPSILON, SIN, COS, TAN, ATAN, ATAN2, ASIN, SQRT, CEIL, ABS, PIH, PERPI;
+    GLMAT_EPSILON, SIN, COS, TAN, ATAN, ATAN2, ASIN, SQRT, CEIL, ABS, PIH, PID, D2R, R2D;
 
 (function() {
     var VAR = {}, value = {};
@@ -101,7 +101,7 @@ $color = (function(){
 //수학함수
 GLMAT_EPSILON = 0.000001,
 SIN = Math.sin, COS = Math.cos, TAN = Math.tan, ATAN = Math.atan, ATAN2 = Math.atan2, ASIN = Math.asin,
-SQRT = Math.sqrt, CEIL = Math.ceil, ABS = Math.abs, PI = Math.PI, PIH = PI * 0.5, PERPI = 180 / PI;
+SQRT = Math.sqrt, CEIL = Math.ceil, ABS = Math.abs, PI = Math.PI, PIH = PI * 0.5, PID = PI * 2, D2R = PI / 180, R2D = 180 / PI;
 //markdown
 $md = function(classes){
     var list, val, func, sort, toStr,toStr2, fieldDetail, methodDetail;
