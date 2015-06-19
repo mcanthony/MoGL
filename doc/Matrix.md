@@ -5,28 +5,28 @@
 
 **field**
 
-* [scale](#scale) - Field of Matrix
-* [rotate](#rotate) - Field of Matrix
-* [raw](#raw) - Field of Matrix
-* [position](#position) - Field of Matrix
-* [matrix](#matrix) - Field of Matrix
+* [scale](#scale) - scale값을 배열로 반환하거나 입력
+* [rotate](#rotate) - rotate값을 배열로 반환하거나 입...
+* [raw](#raw) - 현재 매트릭스 객체의 rawData를...
+* [position](#position) - x,y,z값을 배열로 반환하거나 입력
+* [matrix](#matrix) - 현재 객체내의 position,rot...
 
 **method**
 
-* [matRotateX](#matRotateX) - Method of Matrix
-* [matStr](#matStr) - Method of Matrix
-* [matTranslate](#matTranslate) - Method of Matrix
-* [matRotateZ](#matRotateZ) - Method of Matrix
-* [matCopy](#matCopy) - Method of Matrix
-* [matLookAt](#matLookAt) - Method of Matrix
-* [matScale](#matScale) - Method of Matrix
-* [matIdentity](#matIdentity) - Method of Matrix
-* [matRotateY](#matRotateY) - Method of Matrix
-* [matMultiply](#matMultiply) - Method of Matrix
-* [matRotate](#matRotate) - Method of Matrix
-* [matPerspective](#matPerspective) - Method of Matrix
-* [matClone](#matClone) - Method of Matrix
-* [lookAt](#lookAt) - Method of Matrix
+* [matRotateX](#matRotateX) - 현재 매트릭스를 X축 기준 증분 회전...
+* [matStr](#matStr) - 현재 매트릭스를 문자화한다.
+* [matTranslate](#matTranslate) - 현재매트릭스에 x,y,z축 증분 평행...
+* [matRotateZ](#matRotateZ) - 현재 매트릭스를 Z축 기준 증분 회전...
+* [matCopy](#matCopy) - 대상 매트릭스에 현재 매트릭스의 상태...
+* [matLookAt](#matLookAt) - 
+* [matScale](#matScale) - 현재매트릭스에 x,y,z축 증분 확대...
+* [matIdentity](#matIdentity) - 현재 매트릭스를 초기화한다.
+* [matRotateY](#matRotateY) - 현재 매트릭스를 Y축 기준 증분 회전...
+* [matMultiply](#matMultiply) - 현재매트릭스에 대상 매트릭스를 곱한다...
+* [matRotate](#matRotate) - 현재 매트릭스를 특정축을 기준으로 증...
+* [matPerspective](#matPerspective) - 퍼스펙티브 매트릭스
+* [matClone](#matClone) - 현재 매트릭스를 복제
+* [lookAt](#lookAt) - 현재매트릭스를 대상지점을 바라보도록...
 * [_frustum](#_frustum) - Method of Matrix
 
 **static**
@@ -44,20 +44,26 @@
 
 **description**
 
-Constructor of Matrix
+- 매트릭스 객체로서 사용되며,
+- position(x, y, z),
+- scale(scaleX, scaleY, scaleZ),
+- rotate(rotateX, rotateY, rotateZ)
+-  관련된 속성도 포함한다. 
 
 **param**
 
-
+- none
 
 **exception**
 
-none
+- none
 
 **sample**
 
 ```javascript
-//none
+var mtx = new Matrix()
+console.log(mtx.x)
+console.log(mtx.position) // [x,y,z]
 ```
 
 [top](#)
@@ -70,20 +76,28 @@ _field_
 
 **description**
 
-Field of Matrix
+- scale값을 배열로 반환하거나 입력
 
 **setting**
 
-*writable*:true, *enumerable*:false, *configurable*:false
+- *writable*:true
+- *enumerable*:false
+- *configurable*:false
 
 **defaultValue**
 
-none
+- none
+
+**exception**
+
+- none
 
 **sample**
 
 ```javascript
-//none
+var mtx = new Matrix()
+mtx.scale = [10,20,30]
+console.log(mtx.scale) // [10,20,30]
 ```
 
 [top](#)
@@ -96,20 +110,28 @@ _field_
 
 **description**
 
-Field of Matrix
+- rotate값을 배열로 반환하거나 입력
 
 **setting**
 
-*writable*:true, *enumerable*:false, *configurable*:false
+- *writable*:true
+- *enumerable*:false
+- *configurable*:false
 
 **defaultValue**
 
-none
+- none
+
+**exception**
+
+- none
 
 **sample**
 
 ```javascript
-//none
+var mtx = new Matrix()
+mtx.rotate = [10,20,30]
+console.log(mtx.rotate) // [10,20,30]
 ```
 
 [top](#)
@@ -122,20 +144,27 @@ _field_
 
 **description**
 
-Field of Matrix
+- 현재 매트릭스 객체의 rawData를 Float32Array 형식으로 반환
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **defaultValue**
 
-none
+- none
+
+**exception**
+
+- none
 
 **sample**
 
 ```javascript
-//none
+var mtx = new Matrix()
+console.log(mtx.raw)
 ```
 
 [top](#)
@@ -148,20 +177,28 @@ _field_
 
 **description**
 
-Field of Matrix
+- x,y,z값을 배열로 반환하거나 입력
 
 **setting**
 
-*writable*:true, *enumerable*:false, *configurable*:false
+- *writable*:true
+- *enumerable*:false
+- *configurable*:false
 
 **defaultValue**
 
-none
+- none
+
+**exception**
+
+- none
 
 **sample**
 
 ```javascript
-//none
+var mtx = new Matrix()
+mtx.position = [10,20,30]
+console.log(mtx.position) // [10,20,30]
 ```
 
 [top](#)
@@ -174,45 +211,52 @@ _field_
 
 **description**
 
-Field of Matrix
+- 현재 객체내의 position,rotate,scale을 반영한 후 자신을 반환
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **defaultValue**
 
-none
+- none
+
+**exception**
+
+- none
 
 **sample**
 
 ```javascript
-//none
+var mtx = new Matrix()
+console.log(mtx.matrix)
 ```
 
 [top](#)
 
 <a name="matRotateX"></a>
-###matRotateX(rad)
+###matRotateX(rad:number)
 
 _method_
 
 
 **description**
 
-Method of Matrix
+- 현재 매트릭스를 X축 기준 증분 회전 
 
 **param**
 
-1. rad
+1. rad:number - x축 증분 회전 값, radian단위로 입력
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
@@ -230,19 +274,18 @@ _method_
 
 **description**
 
-Method of Matrix
+- 현재 매트릭스를 문자화한다.
 
 **param**
 
-none
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- String - 문자화된 매트릭스 raw를 반환
 
 **sample**
 
@@ -253,28 +296,28 @@ none
 [top](#)
 
 <a name="matTranslate"></a>
-###matTranslate(x, y, z)
+###matTranslate(x:number, y:number, z:number)
 
 _method_
 
 
 **description**
 
-Method of Matrix
+- 현재매트릭스에 x,y,z축 증분 평행이동 
 
 **param**
 
-1. x
-2. y
-3. z
+1. x:number - x축 증분 이동
+2. y:number - y축 증분 이동
+3. z:number - z축 증분 이동
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
@@ -285,26 +328,26 @@ none
 [top](#)
 
 <a name="matRotateZ"></a>
-###matRotateZ(rad)
+###matRotateZ(rad:number)
 
 _method_
 
 
 **description**
 
-Method of Matrix
+- 현재 매트릭스를 Z축 기준 증분 회전 
 
 **param**
 
-1. rad
+1. rad:number - z축 증분 회전 값, radian단위로 입력
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
@@ -315,26 +358,26 @@ none
 [top](#)
 
 <a name="matCopy"></a>
-###matCopy(t)
+###matCopy(matrix:Matrix)
 
 _method_
 
 
 **description**
 
-Method of Matrix
+- 대상 매트릭스에 현재 매트릭스의 상태를 복사
 
 **param**
 
-1. t
+1. matrix:Matrix - 복사 대상 매트릭스
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
@@ -352,7 +395,7 @@ _method_
 
 **description**
 
-Method of Matrix
+- 
 
 **param**
 
@@ -362,11 +405,11 @@ Method of Matrix
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- none
 
 **sample**
 
@@ -377,28 +420,28 @@ none
 [top](#)
 
 <a name="matScale"></a>
-###matScale(x, y, z)
+###matScale(x:number, y:number, z:number)
 
 _method_
 
 
 **description**
 
-Method of Matrix
+- 현재매트릭스에 x,y,z축 증분 확대 
 
 **param**
 
-1. x
-2. y
-3. z
+1. x:number - x축 증분 확대
+2. y:number - y축 증분 확대
+3. z:number - z축 증분 확대
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
@@ -416,19 +459,18 @@ _method_
 
 **description**
 
-Method of Matrix
+- 현재 매트릭스를 초기화한다.
 
 **param**
 
-none
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
@@ -439,26 +481,26 @@ none
 [top](#)
 
 <a name="matRotateY"></a>
-###matRotateY(rad)
+###matRotateY(rad:number)
 
 _method_
 
 
 **description**
 
-Method of Matrix
+- 현재 매트릭스를 Y축 기준 증분 회전 
 
 **param**
 
-1. rad
+1. rad:number - y축 증분 회전 값, radian단위로 입력
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
@@ -469,26 +511,26 @@ none
 [top](#)
 
 <a name="matMultiply"></a>
-###matMultiply(t)
+###matMultiply(matrix:Matrix)
 
 _method_
 
 
 **description**
 
-Method of Matrix
+- 현재매트릭스에 대상 매트릭스를 곱한다. 
 
 **param**
 
-1. t
+1. matrix:Matrix - 곱할 매트릭스
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
@@ -499,27 +541,27 @@ none
 [top](#)
 
 <a name="matRotate"></a>
-###matRotate(rad, axis)
+###matRotate(rad:number, axis:Array)
 
 _method_
 
 
 **description**
 
-Method of Matrix
+- 현재 매트릭스를 특정축을 기준으로 증분 회전 
 
 **param**
 
-1. rad
-2. axis
+1. rad:number - z축 증분 회전 값, radian단위로 입력
+2. axis:Array - 기준 회전축을 입력
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
@@ -530,29 +572,29 @@ none
 [top](#)
 
 <a name="matPerspective"></a>
-###matPerspective(fov, aspect, near, far)
+###matPerspective(fov:number, aspect:number, near:number, far:number)
 
 _method_
 
 
 **description**
 
-Method of Matrix
+- 퍼스펙티브 매트릭스
 
 **param**
 
-1. fov
-2. aspect
-3. near
-4. far
+1. fov:number - 시야각, degree 단위로 입력
+2. aspect:number - 가로/세로비율
+3. near:number - 절두체의 최소z값, 0.0보다 큰값으로 설정
+4. far:number - 절두체의 최대z값
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
@@ -570,19 +612,18 @@ _method_
 
 **description**
 
-Method of Matrix
+- 현재 매트릭스를 복제
 
 **param**
 
-none
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- Matrix - 복제한 매트릭스를 반환.
 
 **sample**
 
@@ -593,28 +634,29 @@ none
 [top](#)
 
 <a name="lookAt"></a>
-###lookAt(x, y, z)
+###lookAt(x:number, y:number, z:number)
 
 _method_
 
 
 **description**
 
-Method of Matrix
+- 현재매트릭스를 대상지점을 바라보도록 변경
+- 현재 매트릭스의 rotateX,rotateY,rotateZ, 속성을 자동으로 변경
 
 **param**
 
-1. x
-2. y
-3. z
+1. x:number - 바라볼 x위치
+2. y:number - 바라볼 y위치
+3. z:number - 바라볼 z위치
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
@@ -632,7 +674,7 @@ _method_
 
 **description**
 
-Method of Matrix
+- Method of Matrix
 
 **param**
 
@@ -645,11 +687,11 @@ Method of Matrix
 
 **exception**
 
-none
+- none
 
 **return**
 
-?
+- ?
 
 **sample**
 
@@ -667,19 +709,18 @@ _static_
 
 **description**
 
-해당 클래스를 마크다운 형식으로 문서화하여 출력함
+- 해당 클래스를 마크다운 형식으로 문서화하여 출력함
 
 **param**
 
-none
 
 **exception**
 
-none
+- none
 
 **return**
 
-string - 클래스에 대한 문서 마크다운
+- string - 클래스에 대한 문서 마크다운
 
 **sample**
 
@@ -697,19 +738,19 @@ _static_
 
 **description**
 
-uuid 또는 id를 기반으로 인스턴스를 얻어냄
+- uuid 또는 id를 기반으로 인스턴스를 얻어냄
 
 **param**
 
-1. uuid:string
+1. uuid:string - 얻고 싶은 인스턴스의 uuid 또는 id
 
 **exception**
 
-undefined.getInstance:u
+- none
 
 **return**
 
-Object - 해당되는 인스턴스
+- Object - 해당되는 인스턴스
 
 **sample**
 
@@ -727,31 +768,31 @@ _static_
 
 **description**
 
-이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Defineder)를 얻음
-
+- 이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Defineder)를 얻음
+- 
 **Defineder class의 메소드**
 
-* 각 메서드는 체이닝됨
-* Matrix = MoGL.extend('Matrix', function(){..}).static(..).field(..).build(); 형태로 사용
-* field('x',{value:30}) - 속성을 정의함
-* method('rotate',{value:function(){}}) - 메서드를 정의함
-* constant('normalX',{value:'normalX'}) - 상수를 정의함
-* event('updated',{value:'updated'}) - 이벤트를 정의함
-* static('toString',{value:function(){}}) - 정적메서드를 정의함
-* build() - 입력된 결과를 종합하여 클래스를 생성함
+- * 각 메서드는 체이닝됨
+- * Matrix = MoGL.extend('Matrix', function(){..}).static(..).field(..).build(); 형태로 사용
+- * field('x',{value:30}) - 속성을 정의함
+- * method('rotate',{value:function(){}}) - 메서드를 정의함
+- * constant('normalX',{value:'normalX'}) - 상수를 정의함
+- * event('updated',{value:'updated'}) - 이벤트를 정의함
+- * static('toString',{value:function(){}}) - 정적메서드를 정의함
+- * build() - 입력된 결과를 종합하여 클래스를 생성함
 
 **param**
 
-1. className:string
-2. constructor:function
+1. className:string - 자식클래스의 이름
+2. constructor:function - 자식클래스의 생성자
 
 **exception**
 
-none
+- none
 
 **return**
 
-Defineder - 클래스를 정의할 수 있는 생성전용객체
+- Defineder - 클래스를 정의할 수 있는 생성전용객체
 
 **sample**
 
@@ -769,20 +810,20 @@ _static_
 
 **description**
 
-정적함수에서 표준화된 예외를 처리함(정적함수 내부에서 사용)
+- 정적함수에서 표준화된 예외를 처리함(정적함수 내부에서 사용)
 
 **param**
 
-1. method:string
-2. id:int
+1. method:string - 예외가 발생한 함수명
+2. id:int - 예외고유 id
 
 **exception**
 
-none
+- none
 
 **return**
 
-none
+- none
 
 **sample**
 
@@ -800,19 +841,18 @@ _static_
 
 **description**
 
-이 클래스로 부터 만들어져 활성화된 인스턴스의 수
+- 이 클래스로 부터 만들어져 활성화된 인스턴스의 수
 
 **param**
 
-none
 
 **exception**
 
-none
+- none
 
 **return**
 
-int - 활성화된 인스턴스의 수
+- int - 활성화된 인스턴스의 수
 
 **sample**
 
