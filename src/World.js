@@ -412,7 +412,7 @@ var World = (function (makeUtil) {
 
             var tGeo;
             var tItemUUID;
-            var dLite, useNormalBuffer, useTexture;
+            var baseLightRotate, useNormalBuffer, useTexture;
             var tColor;
 
             privateChildren = $getPrivate('Scene', 'children'),
@@ -445,7 +445,7 @@ var World = (function (makeUtil) {
                 i = tSceneList.length;
 
                 this.dispatch(World.renderBefore, currentTime);
-                
+
                 while (i--) {
                     tScene = tSceneList[i]
                     //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -475,7 +475,7 @@ var World = (function (makeUtil) {
                     tScene.updateList.camera.length = 0,
                     //////////////////////////////////////////////////////////////////////////////////////////////////////
                     tCameraList = tScene.cameras,
-                    dLite = tScene.dLite
+                    baseLightRotate = tScene.baseLightRotate
                     for (k in tCameraList) len++;
                     for (k in tCameraList) {
                         tCamera = tCameraList[k];
@@ -510,7 +510,7 @@ var World = (function (makeUtil) {
                                 tGL.uniformMatrix4fv(tProgram.uPixelMatrix, false, tProjectionMtx),
                                 tGL.uniformMatrix4fv(tProgram.uCameraMatrix, false, tCameraMtx);
                                 if(tProgram['uDLite']) {
-                                    tGL.uniform3fv(tProgram.uDLite, dLite);
+                                    tGL.uniform3fv(tProgram.uDLite, baseLightRotate);
                                 }
                             }
                             tItem = tMaterial = tProgram = tVBO = tIBO = null;
