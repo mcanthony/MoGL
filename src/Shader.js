@@ -2,14 +2,24 @@ var Shader = (function () {
 	var code;
 	//private
 	code = {},
-		$setPrivate('Shader', {});
+	$setPrivate('Shader', {});
 	return MoGL.extend('Shader', {
+			description: "쉐이더 클래스. 버텍스쉐이더와 프레그먼트 쉐이더를 생성.",
+			param : [
+				"1. v:Object - 오브젝트 형태로 쉐이더 정보를 입력",
+				"2. 버텍스쉐이더 - { id:'', attributes:[], uniforms:[], varyings[], function:[], main[]",
+				"3. 프레그먼트쉐이더 - { id:'', uniforms:[], varyings[], function:[], main[]"
+			],
 			value: function Shader(v) {
 				code[this] = v;
 			}
 		}
 	)
-	.field('code', {get: $getter(code)})
+	.field('code', {
+			description : '쉐이더 구성정보 코드(JS)를 반환',
+			get: $getter(code)
+		}
+	)
 	.constant('colorVertexShader', {
 		description: "컬러 버텍스 쉐이더",
 		get: (function () {
