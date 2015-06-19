@@ -5,7 +5,7 @@
 
 **field**
 
-* [code](#code) - Field of Shader
+* [code](#code) - 쉐이더 구성정보 코드(JS)를 반환
 
 **static**
 
@@ -45,11 +45,13 @@
 
 **description**
 
-- 
+- 쉐이더 클래스. 버텍스쉐이더와 프레그먼트 쉐이더를 생성.
 
 **param**
 
-- none
+- 1. v:Object - 오브젝트 형태로 쉐이더 정보를 입력
+2. 버텍스쉐이더 - { id:'', attributes:[], uniforms:[], varyings[], function:[], main[]
+3. 프레그먼트쉐이더 - { id:'', uniforms:[], varyings[], function:[], main[]
 
 **exception**
 
@@ -71,7 +73,7 @@ _field_
 
 **description**
 
-- Field of Shader
+- 쉐이더 구성정보 코드(JS)를 반환
 
 **setting**
 
