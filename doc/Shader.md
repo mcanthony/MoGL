@@ -17,26 +17,26 @@
 
 **constant**
 
-* [colorVertexShaderPhong](#colorVertexShaderPhong) - Const of Shader
-* [postBaseFragmentShader](#postBaseFragmentShader) - Const of Shader
-* [wireFrameVertexShader](#wireFrameVertexShader) - Const of Shader
-* [wireFrameFragmentShader](#wireFrameFragmentShader) - Const of Shader
-* [postBaseVertexShader](#postBaseVertexShader) - Const of Shader
-* [toonFragmentShaderPhong](#toonFragmentShaderPhong) - Const of Shader
-* [toonVertexShaderPhong](#toonVertexShaderPhong) - Const of Shader
-* [bitmapFragmentShader](#bitmapFragmentShader) - Const of Shader
-* [colorVertexShader](#colorVertexShader) - Const of Shader
-* [colorVertexShaderGouraud](#colorVertexShaderGouraud) - Const of Shader
-* [colorFragmentShaderPhong](#colorFragmentShaderPhong) - Const of Shader
-* [colorFragmentShaderGouraud](#colorFragmentShaderGouraud) - Const of Shader
-* [colorFragmentShader](#colorFragmentShader) - Const of Shader
-* [bitmapVertexShaderPhong](#bitmapVertexShaderPhong) - Const of Shader
-* [bitmapVertexShaderGouraud](#bitmapVertexShaderGouraud) - Const of Shader
-* [bitmapVertexShaderBlinn](#bitmapVertexShaderBlinn) - Const of Shader
-* [bitmapVertexShader](#bitmapVertexShader) - Const of Shader
-* [bitmapFragmentShaderPhong](#bitmapFragmentShaderPhong) - Const of Shader
-* [bitmapFragmentShaderGouraud](#bitmapFragmentShaderGouraud) - Const of Shader
-* [bitmapFragmentShaderBlinn](#bitmapFragmentShaderBlinn) - Const of Shader
+* [colorVertexShaderPhong](#colorVertexShaderPhong) - 컬러 퐁 버텍스 쉐이더
+* [postBaseFragmentShader](#postBaseFragmentShader) - 후처리 베이스 프레그먼트 쉐이더
+* [wireFrameVertexShader](#wireFrameVertexShader) - 와이어프레임 버텍스 쉐이더
+* [wireFrameFragmentShader](#wireFrameFragmentShader) - 와이어프레임 프레그먼트 쉐이더
+* [postBaseVertexShader](#postBaseVertexShader) - 후처리 베이스 버텍스 쉐이더
+* [toonFragmentShaderPhong](#toonFragmentShaderPhong) - 툰 퐁 프레그먼트 쉐이더
+* [toonVertexShaderPhong](#toonVertexShaderPhong) - 툰 퐁 버텍스 쉐이더
+* [bitmapFragmentShader](#bitmapFragmentShader) - 비트맵 프레그먼트 쉐이더
+* [colorVertexShader](#colorVertexShader) - 컬러 버텍스 쉐이더
+* [colorVertexShaderGouraud](#colorVertexShaderGouraud) - 컬러 고라우드 버텍스 쉐이더
+* [colorFragmentShaderPhong](#colorFragmentShaderPhong) - 컬러 퐁 프레그먼트 쉐이더
+* [colorFragmentShaderGouraud](#colorFragmentShaderGouraud) - 컬러 고라우드 프레그먼트 쉐이더
+* [colorFragmentShader](#colorFragmentShader) - 컬러 프레그먼트 쉐이더
+* [bitmapVertexShaderPhong](#bitmapVertexShaderPhong) - 비트맵 퐁 버텍스 쉐이더
+* [bitmapVertexShaderGouraud](#bitmapVertexShaderGouraud) - 비트맵 고라우드 버텍스 쉐이더
+* [bitmapVertexShaderBlinn](#bitmapVertexShaderBlinn) - 비트맵 블린 버텍스 쉐이더
+* [bitmapVertexShader](#bitmapVertexShader) - 비트맵 버텍스 쉐이더
+* [bitmapFragmentShaderPhong](#bitmapFragmentShaderPhong) - 비트맵 퐁 프레그먼트 쉐이더
+* [bitmapFragmentShaderGouraud](#bitmapFragmentShaderGouraud) - 비트맵 고라우드 프레그먼트 쉐이더
+* [bitmapFragmentShaderBlinn](#bitmapFragmentShaderBlinn) - 비트맵 블린 프레그먼트 쉐이더
 
 [top](#)
 
@@ -45,15 +45,15 @@
 
 **description**
 
-Constructor of Shader
+- 
 
 **param**
 
-v
+- none
 
 **exception**
 
-none
+- none
 
 **sample**
 
@@ -71,15 +71,21 @@ _field_
 
 **description**
 
-Field of Shader
+- Field of Shader
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
 **defaultValue**
 
-none
+- none
+
+**exception**
+
+- none
 
 **sample**
 
@@ -97,19 +103,18 @@ _static_
 
 **description**
 
-해당 클래스를 마크다운 형식으로 문서화하여 출력함
+- 해당 클래스를 마크다운 형식으로 문서화하여 출력함
 
 **param**
 
-none
 
 **exception**
 
-none
+- none
 
 **return**
 
-string - 클래스에 대한 문서 마크다운
+- string - 클래스에 대한 문서 마크다운
 
 **sample**
 
@@ -127,19 +132,19 @@ _static_
 
 **description**
 
-uuid 또는 id를 기반으로 인스턴스를 얻어냄
+- uuid 또는 id를 기반으로 인스턴스를 얻어냄
 
 **param**
 
-1. uuid:string
+1. uuid:string - 얻고 싶은 인스턴스의 uuid 또는 id
 
 **exception**
 
-undefined.getInstance:u
+- none
 
 **return**
 
-Object - 해당되는 인스턴스
+- Object - 해당되는 인스턴스
 
 **sample**
 
@@ -157,31 +162,31 @@ _static_
 
 **description**
 
-이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Defineder)를 얻음
-
+- 이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Defineder)를 얻음
+- 
 **Defineder class의 메소드**
 
-* 각 메서드는 체이닝됨
-* Matrix = MoGL.extend('Matrix', function(){..}).static(..).field(..).build(); 형태로 사용
-* field('x',{value:30}) - 속성을 정의함
-* method('rotate',{value:function(){}}) - 메서드를 정의함
-* constant('normalX',{value:'normalX'}) - 상수를 정의함
-* event('updated',{value:'updated'}) - 이벤트를 정의함
-* static('toString',{value:function(){}}) - 정적메서드를 정의함
-* build() - 입력된 결과를 종합하여 클래스를 생성함
+- * 각 메서드는 체이닝됨
+- * Matrix = MoGL.extend('Matrix', function(){..}).static(..).field(..).build(); 형태로 사용
+- * field('x',{value:30}) - 속성을 정의함
+- * method('rotate',{value:function(){}}) - 메서드를 정의함
+- * constant('normalX',{value:'normalX'}) - 상수를 정의함
+- * event('updated',{value:'updated'}) - 이벤트를 정의함
+- * static('toString',{value:function(){}}) - 정적메서드를 정의함
+- * build() - 입력된 결과를 종합하여 클래스를 생성함
 
 **param**
 
-1. className:string
-2. constructor:function
+1. className:string - 자식클래스의 이름
+2. constructor:function - 자식클래스의 생성자
 
 **exception**
 
-none
+- none
 
 **return**
 
-Defineder - 클래스를 정의할 수 있는 생성전용객체
+- Defineder - 클래스를 정의할 수 있는 생성전용객체
 
 **sample**
 
@@ -199,20 +204,20 @@ _static_
 
 **description**
 
-정적함수에서 표준화된 예외를 처리함(정적함수 내부에서 사용)
+- 정적함수에서 표준화된 예외를 처리함(정적함수 내부에서 사용)
 
 **param**
 
-1. method:string
-2. id:int
+1. method:string - 예외가 발생한 함수명
+2. id:int - 예외고유 id
 
 **exception**
 
-none
+- none
 
 **return**
 
-none
+- none
 
 **sample**
 
@@ -230,19 +235,18 @@ _static_
 
 **description**
 
-이 클래스로 부터 만들어져 활성화된 인스턴스의 수
+- 이 클래스로 부터 만들어져 활성화된 인스턴스의 수
 
 **param**
 
-none
 
 **exception**
 
-none
+- none
 
 **return**
 
-int - 활성화된 인스턴스의 수
+- int - 활성화된 인스턴스의 수
 
 **sample**
 
@@ -260,15 +264,21 @@ _const_
 
 **description**
 
-Const of Shader
+- 컬러 퐁 버텍스 쉐이더
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
-**value**
+**defaultValue**
 
-[object Object]
+- none
+
+**exception**
+
+- none
 
 **sample**
 
@@ -286,15 +296,21 @@ _const_
 
 **description**
 
-Const of Shader
+- 후처리 베이스 프레그먼트 쉐이더
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
-**value**
+**defaultValue**
 
-[object Object]
+- none
+
+**exception**
+
+- none
 
 **sample**
 
@@ -312,15 +328,21 @@ _const_
 
 **description**
 
-Const of Shader
+- 와이어프레임 버텍스 쉐이더
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
-**value**
+**defaultValue**
 
-[object Object]
+- none
+
+**exception**
+
+- none
 
 **sample**
 
@@ -338,15 +360,21 @@ _const_
 
 **description**
 
-Const of Shader
+- 와이어프레임 프레그먼트 쉐이더
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
-**value**
+**defaultValue**
 
-[object Object]
+- none
+
+**exception**
+
+- none
 
 **sample**
 
@@ -364,15 +392,21 @@ _const_
 
 **description**
 
-Const of Shader
+- 후처리 베이스 버텍스 쉐이더
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
-**value**
+**defaultValue**
 
-[object Object]
+- none
+
+**exception**
+
+- none
 
 **sample**
 
@@ -390,15 +424,21 @@ _const_
 
 **description**
 
-Const of Shader
+- 툰 퐁 프레그먼트 쉐이더
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
-**value**
+**defaultValue**
 
-[object Object]
+- none
+
+**exception**
+
+- none
 
 **sample**
 
@@ -416,15 +456,21 @@ _const_
 
 **description**
 
-Const of Shader
+- 툰 퐁 버텍스 쉐이더
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
-**value**
+**defaultValue**
 
-[object Object]
+- none
+
+**exception**
+
+- none
 
 **sample**
 
@@ -442,15 +488,21 @@ _const_
 
 **description**
 
-Const of Shader
+- 비트맵 프레그먼트 쉐이더
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
-**value**
+**defaultValue**
 
-[object Object]
+- none
+
+**exception**
+
+- none
 
 **sample**
 
@@ -468,15 +520,21 @@ _const_
 
 **description**
 
-Const of Shader
+- 컬러 버텍스 쉐이더
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
-**value**
+**defaultValue**
 
-[object Object]
+- none
+
+**exception**
+
+- none
 
 **sample**
 
@@ -494,15 +552,21 @@ _const_
 
 **description**
 
-Const of Shader
+- 컬러 고라우드 버텍스 쉐이더
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
-**value**
+**defaultValue**
 
-[object Object]
+- none
+
+**exception**
+
+- none
 
 **sample**
 
@@ -520,15 +584,21 @@ _const_
 
 **description**
 
-Const of Shader
+- 컬러 퐁 프레그먼트 쉐이더
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
-**value**
+**defaultValue**
 
-[object Object]
+- none
+
+**exception**
+
+- none
 
 **sample**
 
@@ -546,15 +616,21 @@ _const_
 
 **description**
 
-Const of Shader
+- 컬러 고라우드 프레그먼트 쉐이더
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
-**value**
+**defaultValue**
 
-[object Object]
+- none
+
+**exception**
+
+- none
 
 **sample**
 
@@ -572,15 +648,21 @@ _const_
 
 **description**
 
-Const of Shader
+- 컬러 프레그먼트 쉐이더
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
-**value**
+**defaultValue**
 
-[object Object]
+- none
+
+**exception**
+
+- none
 
 **sample**
 
@@ -598,15 +680,21 @@ _const_
 
 **description**
 
-Const of Shader
+- 비트맵 퐁 버텍스 쉐이더
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
-**value**
+**defaultValue**
 
-[object Object]
+- none
+
+**exception**
+
+- none
 
 **sample**
 
@@ -624,15 +712,21 @@ _const_
 
 **description**
 
-Const of Shader
+- 비트맵 고라우드 버텍스 쉐이더
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
-**value**
+**defaultValue**
 
-[object Object]
+- none
+
+**exception**
+
+- none
 
 **sample**
 
@@ -650,15 +744,21 @@ _const_
 
 **description**
 
-Const of Shader
+- 비트맵 블린 버텍스 쉐이더
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
-**value**
+**defaultValue**
 
-[object Object]
+- none
+
+**exception**
+
+- none
 
 **sample**
 
@@ -676,15 +776,21 @@ _const_
 
 **description**
 
-Const of Shader
+- 비트맵 버텍스 쉐이더
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
-**value**
+**defaultValue**
 
-[object Object]
+- none
+
+**exception**
+
+- none
 
 **sample**
 
@@ -702,15 +808,21 @@ _const_
 
 **description**
 
-Const of Shader
+- 비트맵 퐁 프레그먼트 쉐이더
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
-**value**
+**defaultValue**
 
-[object Object]
+- none
+
+**exception**
+
+- none
 
 **sample**
 
@@ -728,15 +840,21 @@ _const_
 
 **description**
 
-Const of Shader
+- 비트맵 고라우드 프레그먼트 쉐이더
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
-**value**
+**defaultValue**
 
-[object Object]
+- none
+
+**exception**
+
+- none
 
 **sample**
 
@@ -754,15 +872,21 @@ _const_
 
 **description**
 
-Const of Shader
+- 비트맵 블린 프레그먼트 쉐이더
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+- *enumerable*:false
+- *configurable*:false
 
-**value**
+**defaultValue**
 
-[object Object]
+- none
+
+**exception**
+
+- none
 
 **sample**
 
