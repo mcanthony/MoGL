@@ -10,6 +10,7 @@
 * [fragmentShaders](#fragmentShaders) - 현재 씬이 가지고 있는 프레그먼트 쉐...
 * [children](#children) - 씬에 등록된 자식 리스트를 오브젝트...
 * [cameras](#cameras) - 씬에 등록된 카메라 리스트
+* [baseLightRotate](#baseLightRotate) - 디렉셔널 라이트 방향 설정, -1~1...
 
 **method**
 
@@ -55,7 +56,7 @@
 
 **exception**
 
-none
+- none
 
 **sample**
 
@@ -224,6 +225,40 @@ _field_
 var scene = new Scene()
 scene.addChild(new Camera)
 console.log(scene.cameras) // 오브젝트 형식의 카메라 리스트를 반환
+```
+
+[top](#)
+
+<a name="baseLightRotate"></a>
+###baseLightRotate
+
+_field_
+
+
+**description**
+
+- 디렉셔널 라이트 방향 설정, -1~1 사이값으로 입력(0.4에서 노멀라이즈처리)
+
+**setting**
+
+- *writable*:true
+- *enumerable*:false
+- *configurable*:false
+
+**defaultValue**
+
+- [0, -1, -1]
+
+**exception**
+
+- none
+
+**sample**
+
+```javascript
+var scene = new Scene()
+scene.baseLightRotate =[0,1,0]
+console.log(scene.baseLightRotate) 
 ```
 
 [top](#)
@@ -856,17 +891,17 @@ _static_
 **description**
 
 - 이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Defineder)를 얻음
-
+- 
 **Defineder class의 메소드**
 
-* 각 메서드는 체이닝됨
-* Matrix = MoGL.extend('Matrix', function(){..}).static(..).field(..).build(); 형태로 사용
-* field('x',{value:30}) - 속성을 정의함
-* method('rotate',{value:function(){}}) - 메서드를 정의함
-* constant('normalX',{value:'normalX'}) - 상수를 정의함
-* event('updated',{value:'updated'}) - 이벤트를 정의함
-* static('toString',{value:function(){}}) - 정적메서드를 정의함
-* build() - 입력된 결과를 종합하여 클래스를 생성함
+- * 각 메서드는 체이닝됨
+- * Matrix = MoGL.extend('Matrix', function(){..}).static(..).field(..).build(); 형태로 사용
+- * field('x',{value:30}) - 속성을 정의함
+- * method('rotate',{value:function(){}}) - 메서드를 정의함
+- * constant('normalX',{value:'normalX'}) - 상수를 정의함
+- * event('updated',{value:'updated'}) - 이벤트를 정의함
+- * static('toString',{value:function(){}}) - 정적메서드를 정의함
+- * build() - 입력된 결과를 종합하여 클래스를 생성함
 
 **param**
 
