@@ -77,7 +77,7 @@ var Camera = (function () {
 			'var camera = new Camera()',
 			'camera.fogColor = [Math.random(),Math.random(),Math.random(),1]'
 		],
-		defaultValue:null,
+		defaultValue:'null',
 		get: $getter(prop, 'fogColor'),
 		set: function fogColorSet(v) {
 			var p = prop[this];
@@ -122,7 +122,7 @@ var Camera = (function () {
 			"// [width,height,angle] - 화면사이즈와 각도의 직접적 입력을 통한 fov 지정도 가능" ,
 			'camera.fov = [width,height,angle]' // 화면사이즈와 각도의 직접적 입력을 통한 fov 지정
 		],
-		defaultValue:55,
+		defaultValue:'55',
 		get: $getter(prop, 'fov'),
 		set: function fovSet(v) {
 			var p = prop[this];
