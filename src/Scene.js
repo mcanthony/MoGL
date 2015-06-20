@@ -357,7 +357,6 @@ var Scene = (function () {
             sample: [
                 "scene.getCamera('CameraID')"
             ],
-            exception: null,
             value: function getCamera(id) {
                 var p = cameras[this], k;
                 for (k in p) {
@@ -382,7 +381,6 @@ var Scene = (function () {
             sample: [
                 "scene.getChild('CameraID')"
             ],
-            exception: null,
             value : function getChild(id) {
                 var t;
                 if(t = this.getMesh(id)) return t
@@ -404,7 +402,6 @@ var Scene = (function () {
             sample: [
                 "scene.getGeometry('GeometryID')"
             ],
-            exception: null,
             value: function getGeometry(id) {
                 var p = geometrys[this], k;
                 for (k in p) {
@@ -429,7 +426,6 @@ var Scene = (function () {
             sample: [
                 "scene.getMaterial('MaterialID')"
             ],
-            exception: null,
             value: function getMaterial(id) {
                 var p = materials[this], k;
                 for (k in p) {
@@ -454,7 +450,6 @@ var Scene = (function () {
             sample: [
                 "scene.getTexture('TextureID')"
             ],
-            exception: null,
             value: function getTexture(id) {
                 var p = textures[this], k;
                 for (k in p) {
@@ -479,7 +474,6 @@ var Scene = (function () {
             sample: [
                 "scene.removeChild('targetID')"
             ],
-            exception: null,
             value: function removeChild(id) {
                 var p, k, result;
                 p = children[this],
@@ -509,7 +503,6 @@ var Scene = (function () {
             sample: [
                 "scene.removeGeometry('targetID')"
             ],
-            exception: null,
             value: function removeGeometry(id) {
                 var p, k, result;
                 p = geometrys[this],
@@ -537,7 +530,6 @@ var Scene = (function () {
             sample: [
                 "scene.removeMaterial('targetID')"
             ],
-            exception: null,
             value: function removeMaterial(id) {
                 var p, k, result;
                 p = materials[this],
@@ -565,7 +557,6 @@ var Scene = (function () {
             sample: [
                 "scene.removeTexture('targetID')"
             ],
-            exception: null,
             value: function removeTexture(id) {
                 var p, result;
                 p = textures[this],
