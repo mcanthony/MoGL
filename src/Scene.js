@@ -333,7 +333,6 @@ var Scene = (function () {
             sample: [
                 "scene.getMesh('MeshID')"
             ],
-            exception: null,
             value: function getMesh(id) {
                 var p = children[this],k;
                 for(k in p){
