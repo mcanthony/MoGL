@@ -117,7 +117,7 @@ var Geometry = (function () {
             sample: [
                 'console.log(geometry.vertexCount)'
             ],
-            defaultValue:null,
+            defaultValue:'null',
             get:$getter(vertexCount)
         }
     )
@@ -126,7 +126,7 @@ var Geometry = (function () {
             sample: [
                 'console.log(geometry.triangleCount)'
             ],
-            defaultValue:null,
+            defaultValue:'null',
             get:$getter(triangleCount)
         }
     )
@@ -135,7 +135,7 @@ var Geometry = (function () {
         sample: [
             'console.log(geometry.volume)'
         ],
-        defaultValue:null,
+        defaultValue:'null',
         get:function volumeGet() {
             var minX, minY, minZ, maxX, maxY, maxZ, t0, t1, t2, t, i;
             if (!volume[this]) {
@@ -160,7 +160,7 @@ var Geometry = (function () {
             sample: [
                 'console.log(geometry.position)'
             ],
-            defaultValue:null,
+            defaultValue:'null',
             get: $getter(position)
         }
     )
