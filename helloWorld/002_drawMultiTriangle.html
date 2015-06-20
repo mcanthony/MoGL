@@ -10,15 +10,20 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=high-dpi "/>
     <link rel="stylesheet" type="text/css" href="css.css"/>
+    <script src="../src/$.js"></script>
+    <script src="../src/make.js"></script>
     <script src="../src/MoGL.js"></script>
     <script src="../src/BlendMode.js"></script>
     <script src="../src/Filter.js"></script>
+    <script src="../src/Primitive.js"></script>
     <script src="../src/Vertex.js"></script>
+    <script src="../src/Shading.js"></script>
     <script src="../src/VertexShaderFunctions.js"></script>
+    <script src="../src/Shader.js"></script>
     <script src="../src/Matrix.js"></script>
+    <script src="../src/Texture.js"></script>
     <script src="../src/Geometry.js"></script>
     <script src="../src/Material.js"></script>
-    <script src="../src/Texture.js"></script>
     <script src="../src/Mesh.js"></script>
     <script src="../src/Group.js"></script>
     <script src="../src/Camera.js"></script>
@@ -30,29 +35,33 @@
 <script>
     ////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////
-    var world = new World('firstWorld')
-    world.setAutoSize(1)
+    var world = new World('firstWorld');
+    world.setAutoSize(1);
     // 씬 생성
-    var scene = new Scene()
-    world.addScene(scene)
+    var scene = new Scene();
+    world.addScene(scene);
     // 카메라 생성
-    var camera = new Camera()
-    scene.addChild('testCamera', camera)
+    var camera = new Camera();
+    scene.addChild(camera);
     // 씬에 지오메트리, 재질, 매쉬 등록
-    scene.addGeometry('triangle', new Geometry([-1, 0, 0, 1, 0, 0, 0, 1, 0], [0, 1, 2]))
-    scene.addMaterial('white', new Material('#ffffff'))
+    var triangle = new Geometry([-1, 0, 0, 1, 0, 0, 0, 1, 0], [0, 1, 2]);
 
-    scene.addChild('mesh1', new Mesh('triangle', 'white'))
-    scene.addChild('mesh2', new Mesh('triangle', new Material(0.3, 0.2, 0.1, 1)))
+    var mesh1 = new Mesh(triangle, new Material('#ffffff'));
+    var mesh2 = new Mesh(triangle, new Material(0.3, 0.2, 0.1, 1));
 
-    scene.getChild('mesh2').x = 3
+    mesh1.id = 'triangle1';
+    mesh2.id = 'triangle2';
+    scene.addChild(mesh1);
+    scene.addChild(mesh2);
 
-    world.start()
+    scene.getChild('triangle1').x = 3;
+
+    world.start();
     world.addEventListener(World.renderAfter, function () {
-        scene.getChild('mesh1').rotateX += 0.1
-        scene.getChild('mesh1').rotateY += 0.1
-        scene.getChild('mesh1').rotateZ += 0.1
-        scene.getChild('mesh2').setRotate(scene.getChild('mesh1').rotateX, scene.getChild('mesh1').rotateX, scene.getChild('mesh1').rotateX)
+        scene.getChild('triangle1').rotateX += 0.1;
+        scene.getChild('triangle1').rotateY += 0.1;
+        scene.getChild('triangle1').rotateZ += 0.1;
+        scene.getChild('triangle2').rotate = [scene.getChild('triangle1').rotateX, scene.getChild('triangle1').rotateX, scene.getChild('triangle1').rotateX];
     })
 </script>
 <div style="position: absolute; top: 0px; background: #fff; padding: 5px">GitHub - <a

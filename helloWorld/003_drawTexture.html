@@ -10,15 +10,20 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=high-dpi "/>
     <link rel="stylesheet" type="text/css" href="css.css"/>
+    <script src="../src/$.js"></script>
+    <script src="../src/make.js"></script>
     <script src="../src/MoGL.js"></script>
     <script src="../src/BlendMode.js"></script>
     <script src="../src/Filter.js"></script>
+    <script src="../src/Primitive.js"></script>
     <script src="../src/Vertex.js"></script>
+    <script src="../src/Shading.js"></script>
     <script src="../src/VertexShaderFunctions.js"></script>
+    <script src="../src/Shader.js"></script>
     <script src="../src/Matrix.js"></script>
+    <script src="../src/Texture.js"></script>
     <script src="../src/Geometry.js"></script>
     <script src="../src/Material.js"></script>
-    <script src="../src/Texture.js"></script>
     <script src="../src/Mesh.js"></script>
     <script src="../src/Group.js"></script>
     <script src="../src/Camera.js"></script>
@@ -28,16 +33,16 @@
 <body>
 <canvas id="firstWorld"></canvas>
 <script>
-    var world = new World('firstWorld')
-    world.setAutoSize(1)
+    var world = new World('firstWorld');
+    world.setAutoSize(1);
     // 씬 생성
-    var scene = new Scene()
-    world.addScene(scene)
+    var scene = new Scene();
+    world.addScene(scene);
     // 카메라 생성
-    var camera = new Camera()
-    scene.addChild('testCamera', camera)
+    var camera = new Camera();
+    scene.addChild(camera);
     // 씬에 지오메트리등록
-    scene.addGeometry('rect', new Geometry(
+    var rect =  new Geometry(
                     [
                         1.0, 1.0, 0.0, 0.0, 0.0,
                         -1.0, 1.0, 0.0, 1.0, 0.0,
@@ -50,24 +55,24 @@
                     [
                         Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v
                     ]
-            )
-    )
+            );
     // 씬에 재질을 등록!
-    var material = new Material()
-    scene.addMaterial('bitmapMat', material)
-    // 씬에 텍스쳐를 등록!
-    scene.addTexture('texture1', '../src/ohno.png')
+    var material = new Material();
+    var texture = new Texture();
+    var imgTag = document.createElement('img');
+    imgTag.src = '../src/ohno.png';
+    texture.img = imgTag;
     // 씬에 등록된 재질에 텍스쳐를 적용!
-    scene.getMaterial('bitmapMat').addTexture(Texture.diffuse, 'texture1')
+    material.addTexture(Texture.diffuse, texture);
     // 메쉬 생성!
-    var mesh = new Mesh('rect', 'bitmapMat')
-    scene.addChild('mesh1', mesh)
+    var mesh = new Mesh(rect, material);
+    scene.addChild(mesh);
 
-    world.start()
+    world.start();
     world.addEventListener(World.renderAfter, function () {
-        mesh.rotateX += 0.1
-        mesh.rotateY += 0.1
-        mesh.rotateZ += 0.1
+        mesh.rotateX += 0.1;
+        mesh.rotateY += 0.1;
+        mesh.rotateZ += 0.1;
     })
 </script>
 <div style="position: absolute; top: 0px; background: #fff; padding: 5px">GitHub - <a
