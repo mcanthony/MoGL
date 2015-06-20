@@ -13,15 +13,15 @@
         });
     }
     //표준이름의 requestAnimationFrame가 없는 경우
-    if (!('requestAnimationFrame' in window)) window.requestAnimationFrame = webkitRequestAnimationFrame || mozRequestAnimationFrame || msRequestAnimationFrame;
+    if (!('requestAnimationFrame' in window)) window.requestAnimationFrame = window['webkitRequestAnimationFrame'] || window['mozRequestAnimationFrame'] || window['msRequestAnimationFrame'];
     //ios7,8 - performance.now가 지원되지 않는 경우
     var nowOffset;
     if (!('performance' in window)) window.performance = {};
     if (!('now' in Date)) Date.now = function () {return +new Date();};
     if (!('now' in window.performance)){
         nowOffset = Date.now();
-        if (performance.timing && performance.timing.navigationStart) {
-            nowOffset = performance.timing.navigationStart;
+        if (window.performance.timing && window.performance.timing.navigationStart) {
+            nowOffset = window.performance.timing.navigationStart;
         }
         window.performance.now = function now(){
             return Date.now() - nowOffset;
