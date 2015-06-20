@@ -1,6 +1,6 @@
 var Texture = (function() {
     var imgType, canvas, context, empty, resizer,
-        resize, imgs, loaded, isLoaded;
+        resize, imgs, loaded, isLoaded, doc = window.document;
     //private
     resize = {},
     imgs = {},
@@ -11,11 +11,11 @@ var Texture = (function() {
     }),
     //lib
     imgType = {'.jpg':1, '.png':1, '.gif':1},
-    canvas = document.createElement('canvas'),
+    canvas = doc.createElement('canvas'),
     context = canvas.getContext('2d'),
     canvas.width = canvas.height = 2,
     context.clearRect(0, 0, 2, 2),
-    empty = document.createElement('img'),
+    empty = doc.createElement('img'),
     empty.src = canvas.toDataURL(),
     resizer = function(resizeType, v){
         var tw, th, dw, dh;
@@ -104,7 +104,7 @@ var Texture = (function() {
         set:function imgSet(v){
             var complete, img, w, h;
             complete= false,
-            img = document.createElement('img')
+            img = doc.createElement('img')
             if (v instanceof HTMLImageElement){
                 img.src = v.src
                 if (img.complete) {
