@@ -1,4 +1,5 @@
 var MoGL = (function() {
+    'use strict';
     var Defineder, build, func, keys, val, init, param, checker,
         MoGL, idProp, destroy, classGet, totalCount, error;
     checker = {};

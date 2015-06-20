@@ -1,4 +1,5 @@
 var Geometry = (function () {
+    'use strict';
     var position, vertexCount, triangleCount, vertexShaders, normal,index, uv, color, volume, key;
 
     //private

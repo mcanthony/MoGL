@@ -1,4 +1,5 @@
 var Texture = (function() {
+    'use strict';
     var imgType, canvas, context, empty, resizer,
         resize, imgs, loaded, isLoaded, doc = window.document;
     //private

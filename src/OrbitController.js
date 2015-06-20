@@ -2,6 +2,7 @@
  * Created by redcamel on 2015-05-22.
  */
 var OrbitController = (function () {
+    'use strict';
     var HD_down, HD_move, HD_up,HD_downTouch, HD_moveTouch, HD_upTouch,
         self;
     HD_down = function HD_down(e) {

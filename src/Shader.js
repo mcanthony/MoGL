@@ -1,4 +1,5 @@
 var Shader = (function () {
+    'use strict';
 	var code;
 	//private
 	code = {},

@@ -1,4 +1,5 @@
 var Camera = (function () {
+    'use strict';
 	var PERPIR, prop;
 	//lib
 	PERPIR = D2R * .5,

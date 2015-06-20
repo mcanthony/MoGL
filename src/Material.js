@@ -1,4 +1,5 @@
 var Material = (function () {
+    'use strict';
     var textureLoaded, texType,
         diffuse, normal, specular, diffuseWrap, specularNormal, 
         shading, lambert,  wireFrame, wireFrameColor, count,color;

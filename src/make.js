@@ -1,4 +1,5 @@
 var makeUtil = (function(){
+    'use strict';
     var makeBuffer = function makeBuffer(gl, target, data, stribe) {
         var buffer = gl.createBuffer();
         gl.bindBuffer(target, buffer),

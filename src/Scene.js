@@ -1,5 +1,6 @@
 'use strict'
 var Scene = (function () {
+    'use strict';
     var vertexShaderParser, fragmentShaderParser,
         children,childrenArray, cameras, textures, materials, geometrys, vertexShaders, fragmentShaders, updateList,baseLightRotate;
     //private

@@ -1,4 +1,5 @@
 var Matrix = (function () {
+    'use strict';
     var temp, setter, getter,
         raw;
     //private

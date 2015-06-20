@@ -1,6 +1,7 @@
 var World = (function (makeUtil) {
+    'use strict';
     var getGL, glSetting, glContext, rectMatrix = Matrix();
-    var canvas, context, makeVBO, makeVNBO, makeIBO, makeUVBO, makeProgram, makeTexture, makeFrameBuffer;
+    var makeVBO, makeVNBO, makeIBO, makeUVBO, makeProgram, makeTexture, makeFrameBuffer;
     var baseUpdate, baseShaderUpdate, cameraRenderAreaUpdate;
     glSetting = {
         alpha: true,
