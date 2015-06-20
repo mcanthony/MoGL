@@ -72,7 +72,7 @@ var Material = (function () {
                 '// 미구현상태임',
                 'console.log(material.count)'
             ],
-            defaultValue:0,
+            defaultValue:'0',
             get: $getter(count, false, 0)
         }
     )
@@ -107,7 +107,7 @@ var Material = (function () {
             'material.wireFrameColor = [1,0.5,1,1] // r,g,b,a',
             'console.log(material.wireFrameColor)'
         ],
-        defaultValue: '[Math.random(),Math.random(),Math.random(),1]',
+        defaultValue:'[Math.random(),Math.random(),Math.random(),1]',
         get:$getter(wireFrameColor),
         set:function wireFrameColorSet(v) {
             var p = wireFrameColor[this];
