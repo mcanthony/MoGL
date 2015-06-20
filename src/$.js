@@ -30,7 +30,7 @@
 })();
 //전역에서 사용하는 공통함수
 var $setPrivate, $getPrivate, $writable, $readonly, $getter, $setter, $color, $md, $ease,
-    GLMAT_EPSILON, SIN, COS, TAN, ATAN, ATAN2, ASIN, SQRT, CEIL, ABS, PIH, PID, D2R, R2D;
+    GLMAT_EPSILON, SIN, COS, TAN, ATAN, ATAN2, ASIN, SQRT, CEIL, ABS, PI, PIH, PID, D2R, R2D;
 
 (function() {
     var VAR = {}, value = {};
