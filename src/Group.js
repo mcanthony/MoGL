@@ -5,9 +5,9 @@ var Group = Matrix.extend(function Group(){
     return this;
 })
 .method('getChild', function getChild(id) { 
-    return null
+    return null;
 })
 .method('removeChild', function removeChild(id) { 
-    return this
+    return this;
 })
 .build();
