@@ -1,11 +1,13 @@
 'use strict'
 var Scene = (function () {
+    'use strict';
     var vertexShaderParser, fragmentShaderParser,
-        children,childrenArray, cameras, textures, materials, geometrys, vertexShaders, fragmentShaders, updateList;
+        children,childrenArray, cameras, textures, materials, geometrys, vertexShaders, fragmentShaders, updateList,baseLightRotate;
     //private
     children = {},
     childrenArray = {},
     cameras = {},
+    baseLightRotate={},
     textures = {},
     materials = {},
     geometrys = {},
@@ -18,97 +20,42 @@ var Scene = (function () {
         childrenArray : childrenArray
     }),
     //lib
-    vertexShaderParser = function vertexShaderParser(source) {
-        var i, temp, str, resultObject, code;
-        code =  source.code,
-        resultObject = {
-            uniforms: [],
-            attributes: [],
-            id: source.id,
-            shaderStr: null
-        },
-        str = "",
-        temp = code.attributes,
-        i = temp.length;
-        while (i--) {
-            str += 'attribute ' + temp[i] + ';\n',
-            resultObject.attributes.push(temp[i].split(' ')[1]);
+    vertexShaderParser = makeUtil.vertexShaderParser,
+    fragmentShaderParser = makeUtil.fragmentShaderParser;
+    return MoGL.extend('Scene',{
+        description:'실제 렌더링될 구조체는 Scene별로 집결됨.\n- ' +
+        'Scene은 렌더링과 관련된 [Mesh](Mesh.md), [Camera](Camera.md), [Light](Light.md) 등을 포함하고 이들 객체가 공유하며 활용하는 기초 자원으로서 vertex shader, fragment shader, [Texture](Texture.md), [Material](Material.md), [Geometry](Geometry.md) 등을 등록하여 관리한다',
+        sample:[
+            'var scene = new Scene()'
+        ],
+        value:function Scene() {
+            // for JS
+            children[this] = {},
+                childrenArray[this] = [],
+                cameras[this] = {},
+                textures[this] = {},
+                materials[this] = {},
+                geometrys[this] = {},
+                vertexShaders[this] = {},
+                fragmentShaders[this] = {},
+                updateList[this] = {
+                    mesh : [],
+                    material : [],
+                    camera : []
+                },
+                baseLightRotate[this] = [0, -1, -1],
+
+                this.addVertexShader(Shader.colorVertexShader), this.addFragmentShader(Shader.colorFragmentShader),
+                this.addVertexShader(Shader.wireFrameVertexShader), this.addFragmentShader(Shader.wireFrameFragmentShader),
+                this.addVertexShader(Shader.bitmapVertexShader), this.addFragmentShader(Shader.bitmapFragmentShader),
+                this.addVertexShader(Shader.bitmapVertexShaderGouraud), this.addFragmentShader(Shader.bitmapFragmentShaderGouraud),
+                this.addVertexShader(Shader.colorVertexShaderGouraud), this.addFragmentShader(Shader.colorFragmentShaderGouraud),
+                this.addVertexShader(Shader.colorVertexShaderPhong), this.addFragmentShader(Shader.colorFragmentShaderPhong),
+                this.addVertexShader(Shader.toonVertexShaderPhong), this.addFragmentShader(Shader.toonFragmentShaderPhong),
+                this.addVertexShader(Shader.bitmapVertexShaderPhong), this.addFragmentShader(Shader.bitmapFragmentShaderPhong),
+                this.addVertexShader(Shader.bitmapVertexShaderBlinn), this.addFragmentShader(Shader.bitmapFragmentShaderBlinn),
+                this.addVertexShader(Shader.postBaseVertexShader), this.addFragmentShader(Shader.postBaseFragmentShader);
         }
-        temp = code.uniforms,
-        i = temp.length;
-        while (i--) {
-            str += 'uniform ' + temp[i] + ';\n',
-            resultObject.uniforms.push(temp[i].split(' ')[1]);
-        }
-        temp = code.varyings,
-        i = temp.length;
-        while (i--) {
-            str += 'varying ' + temp[i] + ';\n';
-        }
-        str += VertexShader.baseFunction,
-        str += 'void main(void){\n',
-        str += code.main + ';\n',
-        str += '}\n'
-        resultObject.shaderStr = str
-        return resultObject;
-    },
-    fragmentShaderParser = function fragmentShaderParser(source) {
-        var i, temp, str, resultObject, code;
-        code =  source.code,
-        resultObject = {
-            uniforms: [],
-            id: source.id,
-            shaderStr: null
-        },
-        str = "";
-        if (code.precision) {
-            str += 'precision ' + code.precision + ';\n';
-        }
-        else {
-            str += 'precision mediump float;\n';
-        }
-        temp = code.uniforms,
-        i = temp.length;
-        while (i--) {
-            str += 'uniform ' + temp[i] + ';\n',
-            resultObject.uniforms.push(temp[i].split(' ')[1]);
-        }
-        temp = code.varyings,
-        i = temp.length;
-        while (i--) {
-            str += 'varying ' + temp[i] + ';\n';
-        }
-        str += 'void main(void){\n',
-        str += code.main + ';\n',
-        str += '}\n'
-        resultObject.shaderStr = str
-        return resultObject;
-    };
-    return MoGL.extend(function Scene() {
-        // for JS
-        children[this] = {},
-        childrenArray[this] = [],
-        cameras[this] = {},
-        textures[this] = {},
-        materials[this] = {},
-        geometrys[this] = {},
-        vertexShaders[this] = {},
-        fragmentShaders[this] = {},
-        updateList[this] = {
-            mesh : [],
-            material : [],
-            camera : []
-        },
-        this.addVertexShader(Shader.colorVertexShader),this.addFragmentShader(Shader.colorFragmentShader)
-        this.addVertexShader(Shader.wireFrameVertexShader),this.addFragmentShader(Shader.wireFrameFragmentShader),
-        this.addVertexShader(Shader.bitmapVertexShader),this.addFragmentShader(Shader.bitmapFragmentShader),
-        this.addVertexShader(Shader.bitmapVertexShaderGouraud),this.addFragmentShader(Shader.bitmapFragmentShaderGouraud),
-        this.addVertexShader(Shader.colorVertexShaderGouraud),this.addFragmentShader(Shader.colorFragmentShaderGouraud),
-        this.addVertexShader(Shader.colorVertexShaderPhong),this.addFragmentShader(Shader.colorFragmentShaderPhong),
-        this.addVertexShader(Shader.toonVertexShaderPhong),this.addFragmentShader(Shader.toonFragmentShaderPhong),
-        this.addVertexShader(Shader.bitmapVertexShaderPhong),this.addFragmentShader(Shader.bitmapFragmentShaderPhong),
-        this.addVertexShader(Shader.bitmapVertexShaderBlinn),this.addFragmentShader(Shader.bitmapFragmentShaderBlinn),
-        this.addVertexShader(Shader.postBaseVertexShader),this.addFragmentShader(Shader.postBaseFragmentShader);
     })
     .field('updateList', {
             description: "world가 render 함수를 실행하기전 GPU업데이트가 되어야할 목록.",
@@ -135,6 +82,18 @@ var Scene = (function () {
             ],
             defaultValue: "{}",
             get: $getter(fragmentShaders)
+        }
+    )
+    .field('baseLightRotate', {
+            description: "디렉셔널 라이트 방향 설정, -1~1 사이값으로 입력(0.4에서 노멀라이즈처리)",
+            sample: [
+                "var scene = new Scene()",
+                "scene.baseLightRotate =[0,1,0]",
+                "console.log(scene.baseLightRotate) "
+            ],
+            defaultValue: "[0, -1, -1]",
+            set: $setter(baseLightRotate),
+            get: $getter(baseLightRotate)
         }
     )
     .field('cameras', {
@@ -352,14 +311,14 @@ var Scene = (function () {
     )
     .method('addFragmentShader', function addFragmentShader(v) {
         var p = fragmentShaders[this];
-        if (p[v.id]) this.error(0);
-        p[v.id] = fragmentShaderParser(v);;
+        if (p[v.code.id]) this.error(0);
+        p[v.code.id] = fragmentShaderParser(v);;
         return this
     })
     .method('addVertexShader', function addVertexShader(v) {
         var p = vertexShaders[this];
-        if (p[v.id]) this.error(0);
-        p[v.id] = vertexShaderParser(v);
+        if (p[v.code.id]) this.error(0);
+        p[v.code.id] = vertexShaderParser(v);
         return this
     })
     .method('getMesh',{
@@ -375,7 +334,6 @@ var Scene = (function () {
             sample: [
                 "scene.getMesh('MeshID')"
             ],
-            exception: null,
             value: function getMesh(id) {
                 var p = children[this],k;
                 for(k in p){
@@ -400,7 +358,6 @@ var Scene = (function () {
             sample: [
                 "scene.getCamera('CameraID')"
             ],
-            exception: null,
             value: function getCamera(id) {
                 var p = cameras[this], k;
                 for (k in p) {
@@ -425,7 +382,6 @@ var Scene = (function () {
             sample: [
                 "scene.getChild('CameraID')"
             ],
-            exception: null,
             value : function getChild(id) {
                 var t;
                 if(t = this.getMesh(id)) return t
@@ -447,7 +403,6 @@ var Scene = (function () {
             sample: [
                 "scene.getGeometry('GeometryID')"
             ],
-            exception: null,
             value: function getGeometry(id) {
                 var p = geometrys[this], k;
                 for (k in p) {
@@ -472,7 +427,6 @@ var Scene = (function () {
             sample: [
                 "scene.getMaterial('MaterialID')"
             ],
-            exception: null,
             value: function getMaterial(id) {
                 var p = materials[this], k;
                 for (k in p) {
@@ -497,7 +451,6 @@ var Scene = (function () {
             sample: [
                 "scene.getTexture('TextureID')"
             ],
-            exception: null,
             value: function getTexture(id) {
                 var p = textures[this], k;
                 for (k in p) {
@@ -522,7 +475,6 @@ var Scene = (function () {
             sample: [
                 "scene.removeChild('targetID')"
             ],
-            exception: null,
             value: function removeChild(id) {
                 var p, k, result;
                 p = children[this],
@@ -552,7 +504,6 @@ var Scene = (function () {
             sample: [
                 "scene.removeGeometry('targetID')"
             ],
-            exception: null,
             value: function removeGeometry(id) {
                 var p, k, result;
                 p = geometrys[this],
@@ -580,7 +531,6 @@ var Scene = (function () {
             sample: [
                 "scene.removeMaterial('targetID')"
             ],
-            exception: null,
             value: function removeMaterial(id) {
                 var p, k, result;
                 p = materials[this],
@@ -608,7 +558,6 @@ var Scene = (function () {
             sample: [
                 "scene.removeTexture('targetID')"
             ],
-            exception: null,
             value: function removeTexture(id) {
                 var p, result;
                 p = textures[this],

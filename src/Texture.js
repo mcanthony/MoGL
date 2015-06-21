@@ -1,4 +1,5 @@
 var Texture = (function() {
+    'use strict';
     var imgType, canvas, context, empty, resizer,
         resize, imgs, loaded, isLoaded;
     //private
@@ -104,9 +105,10 @@ var Texture = (function() {
         set:function imgSet(v){
             var complete, img, w, h;
             complete= false,
-            img = v;
+            img = document.createElement('img')
             if (v instanceof HTMLImageElement){
-                if (v.complete) {
+                img.src = v.src
+                if (img.complete) {
                     complete = true;
                 }
             } else if (v instanceof ImageData){
@@ -115,7 +117,6 @@ var Texture = (function() {
                 canvas.height = h = v.height,
                 context.clearRect(0, 0, w, h),
                 context.putImageData(v, 0, 0),
-                img = document.createElement('img'),
                 img.src = context.toDataURL();
             } else if (typeof v == 'string') {
                 if (v.substring(0, 10) == 'data:image' && v.indexOf('base64') > -1){
@@ -123,7 +124,6 @@ var Texture = (function() {
                 } else if (!imgType[v.substring(-4)]) {
                     this.error(1);
                 }
-                img = document.createElement('img'),
                 img.src = v;
             } else {
                 this.error(0);

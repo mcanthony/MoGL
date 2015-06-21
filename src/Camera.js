@@ -1,7 +1,8 @@
 var Camera = (function () {
+    'use strict';
 	var PERPIR, prop;
 	//lib
-	PERPIR = PI / 180 * .5,
+	PERPIR = D2R * .5,
 	//private
 	prop = {},
 	//shared private
@@ -77,7 +78,7 @@ var Camera = (function () {
 			'var camera = new Camera()',
 			'camera.fogColor = [Math.random(),Math.random(),Math.random(),1]'
 		],
-		defaultValue:null,
+		defaultValue:'null',
 		get: $getter(prop, 'fogColor'),
 		set: function fogColorSet(v) {
 			var p = prop[this];
@@ -122,14 +123,14 @@ var Camera = (function () {
 			"// [width,height,angle] - 화면사이즈와 각도의 직접적 입력을 통한 fov 지정도 가능" ,
 			'camera.fov = [width,height,angle]' // 화면사이즈와 각도의 직접적 입력을 통한 fov 지정
 		],
-		defaultValue:55,
+		defaultValue:'55',
 		get: $getter(prop, 'fov'),
 		set: function fovSet(v) {
 			var p = prop[this];
 			if (typeof v == 'number') {
 				p.fov = v;
 			} else if ('0' in v && '1' in v) {
-				p.fov = CEIL(2 * ATAN(TAN(v[2] * PERPIR) * (v[1] / v[0])) * PERPI);
+				p.fov = CEIL(2 * ATAN(TAN(v[2] * PERPIR) * (v[1] / v[0])) * R2D);
 			}
 		}
 	})

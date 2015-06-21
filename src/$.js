@@ -13,15 +13,15 @@
         });
     }
     //표준이름의 requestAnimationFrame가 없는 경우
-    if (!('requestAnimationFrame' in window)) window.requestAnimationFrame = webkitRequestAnimationFrame || mozRequestAnimationFrame || msRequestAnimationFrame;
+    if (!('requestAnimationFrame' in window)) window.requestAnimationFrame = window['webkitRequestAnimationFrame'] || window['mozRequestAnimationFrame'] || window['msRequestAnimationFrame'];
     //ios7,8 - performance.now가 지원되지 않는 경우
     var nowOffset;
     if (!('performance' in window)) window.performance = {};
     if (!('now' in Date)) Date.now = function () {return +new Date();};
     if (!('now' in window.performance)){
         nowOffset = Date.now();
-        if (performance.timing && performance.timing.navigationStart) {
-            nowOffset = performance.timing.navigationStart;
+        if (window.performance.timing && window.performance.timing.navigationStart) {
+            nowOffset = window.performance.timing.navigationStart;
         }
         window.performance.now = function now(){
             return Date.now() - nowOffset;
@@ -30,7 +30,7 @@
 })();
 //전역에서 사용하는 공통함수
 var $setPrivate, $getPrivate, $writable, $readonly, $getter, $setter, $color, $md, $ease,
-    GLMAT_EPSILON, SIN, COS, TAN, ATAN, ATAN2, ASIN, SQRT, CEIL, ABS, PIH, PERPI;
+    GLMAT_EPSILON, SIN, COS, TAN, ATAN, ATAN2, ASIN, SQRT, CEIL, ABS, PI, PIH, PID, D2R, R2D;
 
 (function() {
     var VAR = {}, value = {};
@@ -101,7 +101,7 @@ $color = (function(){
 //수학함수
 GLMAT_EPSILON = 0.000001,
 SIN = Math.sin, COS = Math.cos, TAN = Math.tan, ATAN = Math.atan, ATAN2 = Math.atan2, ASIN = Math.asin,
-SQRT = Math.sqrt, CEIL = Math.ceil, ABS = Math.abs, PI = Math.PI, PIH = PI * 0.5, PERPI = 180 / PI;
+SQRT = Math.sqrt, CEIL = Math.ceil, ABS = Math.abs, PI = Math.PI, PIH = PI * 0.5, PID = PI * 2, D2R = PI / 180, R2D = 180 / PI;
 //markdown
 $md = function(classes){
     var list, val, func, sort, toStr,toStr2, fieldDetail, methodDetail;
@@ -314,7 +314,7 @@ Object.freeze($ease = {
     linear:function(a,c,b){return b*a+c},
     backIn:function(a,c,b){return b*a*a*(2.70158*a-1.70158)+c},
     backOut:function(a,c,b){a-=1;return b*(a*a*(2.70158*a+1.70158)+1)+c},
-    backInOut:bio = function(a,c,b){a*=2;if(1>a)return 0.5*b*a*a*(3.5949095*a-2.5949095)+c;a-=2;return 0.5*b*(a*a*(3.70158*a+2.70158)+2)+c},
+    backInOut:function(a,c,b){a*=2;if(1>a)return 0.5*b*a*a*(3.5949095*a-2.5949095)+c;a-=2;return 0.5*b*(a*a*(3.70158*a+2.70158)+2)+c},
     bounceOut:function(a,c,b){if(0.363636>a)return 7.5625*b*a*a+c;if(0.727272>a)return a-=0.545454,b*(7.5625*a*a+0.75)+c;if(0.90909>a)return a-=0.818181,b*(7.5625*a*a+0.9375)+c;a-=0.95454;return b*(7.5625*a*a+0.984375)+c},
     sineIn:function(a,c,b){return -b*Math.cos(a*PIH)+b+c},
     sineOut:function(a,c,b){return b*Math.sin(a*PIH)+c},

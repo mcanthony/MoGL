@@ -1,6 +1,7 @@
 var World = (function (makeUtil) {
+    'use strict';
     var getGL, glSetting, glContext, rectMatrix = Matrix();
-    var canvas, context, makeVBO, makeVNBO, makeIBO, makeUVBO, makeProgram, makeTexture, makeFrameBuffer;
+    var makeVBO, makeVNBO, makeIBO, makeUVBO, makeProgram, makeTexture, makeFrameBuffer;
     var baseUpdate, baseShaderUpdate, cameraRenderAreaUpdate;
     glSetting = {
         alpha: true,
@@ -412,7 +413,7 @@ var World = (function (makeUtil) {
 
             var tGeo;
             var tItemUUID;
-            var dLite, useNormalBuffer, useTexture;
+            var baseLightRotate, useNormalBuffer, useTexture;
             var tColor;
 
             privateChildren = $getPrivate('Scene', 'children'),
@@ -445,7 +446,7 @@ var World = (function (makeUtil) {
                 i = tSceneList.length;
 
                 this.dispatch(World.renderBefore, currentTime);
-                
+
                 while (i--) {
                     tScene = tSceneList[i]
                     //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -474,7 +475,8 @@ var World = (function (makeUtil) {
                     tScene.updateList.material.length = 0,
                     tScene.updateList.camera.length = 0,
                     //////////////////////////////////////////////////////////////////////////////////////////////////////
-                    tCameraList = tScene.cameras;
+                    tCameraList = tScene.cameras,
+                    baseLightRotate = tScene.baseLightRotate
                     for (k in tCameraList) len++;
                     for (k in tCameraList) {
                         tCamera = tCameraList[k];
@@ -498,7 +500,6 @@ var World = (function (makeUtil) {
                             //tGL.scissor(0, 0,  tCvsW, tCvsH);
 
                             // 라이팅 세팅
-                            dLite = [0, -1, -1],
                             tColor = tCamera.backgroundColor,
                             tGL.clearColor(tColor[0], tColor[1], tColor[2], tColor[3]),
                             tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
@@ -510,7 +511,7 @@ var World = (function (makeUtil) {
                                 tGL.uniformMatrix4fv(tProgram.uPixelMatrix, false, tProjectionMtx),
                                 tGL.uniformMatrix4fv(tProgram.uCameraMatrix, false, tCameraMtx);
                                 if(tProgram['uDLite']) {
-                                    tGL.uniform3fv(tProgram.uDLite, dLite);
+                                    tGL.uniform3fv(tProgram.uDLite, baseLightRotate);
                                 }
                             }
                             tItem = tMaterial = tProgram = tVBO = tIBO = null;

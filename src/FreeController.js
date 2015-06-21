@@ -2,6 +2,7 @@
  * Created by redcamel on 2015-05-22.
  */
 var FreeController = (function () {
+    'use strict';
     var MAT1 = Matrix(), MAT2 = Matrix();
     return MoGL.extend(function FreeController(camera) {
         if(!(camera instanceof Camera)) this.error(0);

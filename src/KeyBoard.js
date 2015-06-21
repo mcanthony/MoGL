@@ -1,4 +1,5 @@
 var KeyBoard = (function () {
+    'use strict';
     var W, KeyBoard;
     W = window,
     KeyBoard =  {

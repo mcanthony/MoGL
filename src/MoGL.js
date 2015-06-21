@@ -1,5 +1,6 @@
 var MoGL = (function() {
-    var Defineder, build, func, keys, val, init, param, checker,
+    'use strict';
+    var Defineder, build, func, keys, val, param, checker,
         MoGL, idProp, destroy, classGet, totalCount, error;
     checker = {};
     param = function(v){
@@ -59,7 +60,7 @@ var MoGL = (function() {
         md = {
             description:'해당 클래스를 마크다운 형식으로 문서화하여 출력함',
             ret:'string - 클래스에 대한 문서 마크다운'
-        }
+        };
         if ($md) {
             md.value = $md(classes);
         } else {

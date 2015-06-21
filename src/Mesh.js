@@ -1,4 +1,5 @@
 var Mesh = (function () {
+    'use strict';
     var geometry, material, culling;
     //private
     geometry = {},
