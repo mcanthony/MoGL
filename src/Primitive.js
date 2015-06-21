@@ -7,8 +7,8 @@ var Primitive = (function () {
     .static('plane', {
         description: "면을 나타내는 Geometry 객체 반환",
         param: [
-            'splitX: X축 방향 면의 분할수, 생략하면 기본값 1',
-            'splitY: Y축 방향 면의 분할수, 생략하면 기본값 1'
+            'splitX - X축 방향 면의 분할수, 생략하면 기본값 1',
+            'splitY - Y축 방향 면의 분할수, 생략하면 기본값 1'
         ],
         ret: [
             'Geometry - 점의 기하 정보를 담고 있는 Geometry 객체.'
@@ -48,7 +48,7 @@ var Primitive = (function () {
     .static('polygon', {
         description: "정다각형 Geometry 객체 반환",
         param: [
-            'n: 꼭지점의 수'
+            'n - 꼭지점의 수'
         ],
         ret: [
             'Geometry - 정다각형 기하 정보를 담고 있는 Geometry 객체.'
@@ -89,9 +89,9 @@ var Primitive = (function () {
     .static('cube', {
         description: "정육면체 Geometry 객체 반환",
         param: [
-            'splitX: 각 면의 X축 방향 분할값',
-            'splitY: 각 면의 Y축 방향 분할값',
-            'splitZ: 각 면의 Z축 방향 분할값'
+            'splitX - 각 면의 X축 방향 분할값',
+            'splitY - 각 면의 Y축 방향 분할값',
+            'splitZ - 각 면의 Z축 방향 분할값'
         ],
         ret: [
             'Geometry - 정육면체 기하 정보를 담고 있는 Geometry 객체.'
@@ -167,8 +167,8 @@ var Primitive = (function () {
     .static('sphere', {
         description: "구를 나타내는 Geometry 객체 반환",
         param: [
-            'splitLatitude: 위도 방향 분할수',
-            'splitLongitude: 경도 방향 분할수'
+            'splitLatitude - 위도 방향 분할수',
+            'splitLongitude - 경도 방향 분할수'
         ],
         ret: [
             'Geometry - 구의 기하 정보를 담고 있는 Geometry 객체.'
@@ -219,7 +219,7 @@ var Primitive = (function () {
     .static('geodesic', {
         description: "geodesic Geometry 객체 반환",
         param: [
-            'n: 구면을 분할하는 삼각형의 개수'
+            'n - 구면을 분할하는 삼각형의 개수'
         ],
         ret: [
             'Geometry - 극점에서 삼각형이 집중되지 않는 geodesic sphere 기하 정보를 담고 있는 Geometry 객체.'
@@ -297,9 +297,9 @@ var Primitive = (function () {
     .static('skybox', {
         description: "3차원 배경이 되어주는 큐브 형태의 Geometry 객체 반환 - 아직 미구현",
         param: [
-            'splitX: 각 면의 X축 방향 분할값',
-            'splitY: 각 면의 Y축 방향 분할값',
-            'splitZ: 각 면의 Z축 방향 분할값'
+            'splitX - 각 면의 X축 방향 분할값',
+            'splitY - 각 면의 Y축 방향 분할값',
+            'splitZ - 각 면의 Z축 방향 분할값'
         ],
         ret: [
             'Geometry - 3차원 배경 기하 정보를 담고 있는 Geometry 객체.'
