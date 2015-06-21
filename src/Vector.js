@@ -5,6 +5,15 @@ var Vector = MoGL.extend('Vector', {
         '[x,y,z]:Array - 첫번째 인자에 배열(Float32Array or Array)형태로 입력 할 수 있음\n- '+
         '인자가 없을경우 0,0,0으로 초기화'
     ],
+    sample:[
+        'var vector = new Vector( 1, 2, 3 );',
+        'var vector = new Vector( [1, 2, 3] );',
+        'var vector = new Vector( new Float32Array( [1, 2, 3] ) );',
+        'var vector = new Vector();',
+        '',
+        '// 팩토리 함수로도 사용 가능.',
+        'var vector = Vector( 1, 2, 3 );'
+    ],
     value: function Vector(x, y, z) {
         if (x instanceof Float32Array || Array.isArray(x)) {
             this.x = x[0], this.y = x[1], this.z = x[2]
