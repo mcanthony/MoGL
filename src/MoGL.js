@@ -219,7 +219,7 @@ var MoGL = (function() {
             total--;//전체인스턴스감소
         },
         classGet = function classGet(context) {
-            var i;
+            var k;
             if (!context) context = {};
             for (k in classes) {
                 if (classes.hasOwnProperty(k)) context[k] = classes[k].cls;
