@@ -7,7 +7,8 @@
     <meta name="format-detection" content="telephone=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
     <link rel="stylesheet" type="text/css" href="css.css"/>
     <style>
         html, body {
@@ -31,41 +32,43 @@
 <div id="test"></div>
 <script src="../showcase/dat.gui.min.js"></script>
 
+<script src="../src/$.js"></script>
+<script src="../src/make.js"></script>
 <script src="../src/MoGL.js"></script>
-<script src="../src/KeyBoard.js"></script>
 <script src="../src/BlendMode.js"></script>
 <script src="../src/Filter.js"></script>
+<script src="../src/Primitive.js"></script>
+<script src="../src/Vertex.js"></script>
 <script src="../src/Shading.js"></script>
 <script src="../src/VertexShaderFunctions.js"></script>
 <script src="../src/Shader.js"></script>
-<script src="../src/Vertex.js"></script>
-
 <script src="../src/Matrix.js"></script>
+<script src="../src/Texture.js"></script>
 <script src="../src/Geometry.js"></script>
 <script src="../src/Material.js"></script>
-<script src="../src/Texture.js"></script>
 <script src="../src/Mesh.js"></script>
-<script src="../src/Primitive.js"></script>
 <script src="../src/Group.js"></script>
 <script src="../src/Camera.js"></script>
-<script src="../src/FreeController.js"></script>
 <script src="../src/Scene.js"></script>
 <script src="../src/World.js"></script>
+
+
+<script src="../src/KeyBoard.js"></script>
+<script src="../src/FreeController.js"></script>
+
 <script src="http://js.bsapi.co/test/"></script>
 <script>
 
 
-    var camera = new Camera()
     var world = new World('world')
     var scene = new Scene()
+    var camera = new Camera()
     var controller = new FreeController(camera)
+    var material = new Material('#fff')
+    material.shading = Shading.phong
 
     world.addScene(scene)
     scene.addChild(camera)
-
-
-    var material = new Material('#fff')
-
 
 
     for (var i = 0; i < 100; i++) {
