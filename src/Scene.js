@@ -218,9 +218,9 @@ var Scene = (function () {
                 "'Scene.addChild:0' - 카메라나 메쉬객체가 아닌 객체를 추가하려고 할때"
             ],
             value: function addChild(v) {
-                if (v instanceof Mesh)  this.addMesh(v)
-                else if (v instanceof Camera)  this.addCamera(v)
-                else this.error(0)
+                if (v instanceof Mesh)  this.addMesh(v);
+                else if (v instanceof Camera)  this.addCamera(v);
+                else this.error(0);
                 return this;
             }
         }
