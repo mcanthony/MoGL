@@ -158,34 +158,7 @@
             scaleY: 1,
             scaleZ: 1
         };
-        var shadingParams = {
-            color: function () {
-                testMat.removeTexture('texture');
-                testMat.setShading(Shading.none)
-            },
-            toon: function () {
-                testMat.removeTexture('texture');
-                testMat.setShading(Shading.toon)
-            },
-            PhongColor: function () {
-                testMat.removeTexture('texture');
-                testMat.setShading(Shading.phong)
-            },
-            GouraudColor: function () {
-                testMat.removeTexture('texture');
-                testMat.setShading(Shading.gouraud)
-            },
-            GouraudTextrue: function () {
-                testMat.removeTexture('texture');
-                testMat.addTexture(Texture.diffuse, 'texture');
-                testMat.setShading(Shading.gouraud)
-            },
-            PhongTextrue: function () {
-                testMat.removeTexture('texture');
-                testMat.addTexture(Texture.diffuse, 'texture');
-                testMat.setShading(Shading.phong)
-            }
-        };
+
         var gui = new dat.GUI();
         var panel = gui.addFolder('position');
         panel.add(controllerParams, 'x', -5, 5).onChange(function (value) {
@@ -216,13 +189,7 @@
             testItem.scaleZ = value
         })
         panel.open()
-        var shading = gui.addFolder('Shading');
-        shading.add(shadingParams, 'color');
-        shading.add(shadingParams, 'toon');
-        shading.add(shadingParams, 'GouraudColor');
-        shading.add(shadingParams, 'PhongColor');
-        shading.add(shadingParams, 'GouraudTextrue');
-        shading.add(shadingParams, 'PhongTextrue');
+
     }
 </script>
 </body>
