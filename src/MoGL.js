@@ -383,7 +383,7 @@ var MoGL = (function() {
                 '* 보통 직접적으로 MoGL 클래스를 사용하는 경우는 없음'
             ],
             sample:"var instance = new MoGL();",
-            value:MoGL,
+            value:MoGL
         }, null, checker)
         .field('id', idProp)
         .field('isUpdated', {
