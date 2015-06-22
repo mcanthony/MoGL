@@ -9,7 +9,8 @@
     <meta name="format-detection" content="telephone=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
     <style>
         body {
             background-color: #000;
@@ -134,7 +135,19 @@
 
             mat1.addTexture(Texture.diffuse, texture2)
             mat2.addTexture(Texture.diffuse, texture3)
+            check1()
+
         }, 1000)
+        var check1 = function(){
+            mesh.material = mat1
+            mesh2.material = mat2
+            setTimeout(check2, 1000)
+        }
+        var check2 = function(){
+            mesh.material = mat2
+            mesh2.material = mat1
+            setTimeout(check1, 1000)
+        }
         var currentFPS, prevTime = 0, count = 0, sum = 0
         world.addEventListener(World.renderBefore, function (currTime) {
                     currentFPS = 1000 / ( currTime - prevTime );
