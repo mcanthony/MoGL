@@ -516,7 +516,7 @@ var MoGL = (function() {
                                     inst.dispatch(MoGL.propertyChanged);
                                 }
                             } else {//진행중
-                                ease = ani.ease,
+                                var ease = ani.ease,
                                 rate = (t - ani.start) / ani.term;
                                 for(k1 in prop){
                                     inst[k1] = ease(rate, init[k1], prop[k1] - init[k1]);
