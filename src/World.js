@@ -119,7 +119,7 @@ var World = (function (makeUtil) {
             "var world = new World('canvasID1);",
             "",
             "// 애니메이션 루프에 인스턴스를 넣는다.",
-            "requestAnimationFrame( world.getRenderer(true) );",
+            "requestAnimationFrame(world.getRenderer(true));",
             "",
             "// 팩토리함수로도 사용가능",
             "var world2 = World('canvasID2');"
@@ -211,8 +211,8 @@ var World = (function (makeUtil) {
         ],
         sample:[
             "var world = new World('canvasID');",
-            "world.addScene( Scene().setId('lobby') );",
-            "world.addScene( Scene().setId('room') );"
+            "world.addScene(Scene().setId('lobby'));",
+            "world.addScene(Scene().setId('room'));"
         ],
         value:function addScene(scene) {
             var tSceneList, i;
@@ -242,8 +242,8 @@ var World = (function (makeUtil) {
         ret:"[Scene](Scene.md) - sceneId에 해당되는 [Scene](Scene.md) 인스턴스.",
         sample:[
             "var world = new World('canvasID');",
-            "world.addScene( new Scene().setId('lobby') );",
-            "var lobby = world.getScene( 'lobby' );"
+            "world.addScene(new Scene().setId('lobby'));",
+            "var lobby = world.getScene('lobby');"
         ],
         value:function getScene(sceneID) {
             var i, tSceneList;
@@ -269,11 +269,11 @@ var World = (function (makeUtil) {
         ret:"function - this.render.bind(this) 형태로 본인과 바인딩된 함수를 반환함.",
         sample:[
             "var world = new World('canvasID');",
-            "world.addScene( Scene().setId('lobby') );",
+            "world.addScene(Scene().setId('lobby'));",
             "//인터벌용",
-            "setInterval( world.getRenderer() );",
+            "setInterval(world.getRenderer());",
             "//raf용",
-            "requestAnimationFrame( world.getRenderer(true) );"
+            "requestAnimationFrame(world.getRenderer(true));"
         ],
         value:function getRenderer(isRequestAnimationFrame) {
             var p, self;
@@ -347,14 +347,14 @@ var World = (function (makeUtil) {
         sample:[
             "// Scene과 Camara생성 및 등록",
             "var lobby = new Scene();",
-            "lobby.addChild( Camera() );",
+            "lobby.addChild(Camera());",
             "",
             "// Scene 등록",
             "var world = new World('canvasID');",
-            "world.addScene( lobby.setId('lobby') );",
+            "world.addScene(lobby.setId('lobby'));",
             "",
             "// Scene 제거",
-            "world.removeScene( 'lobby' );"
+            "world.removeScene('lobby');"
         ],
         value:function removeScene(sceneID) {
             var i, tSceneList;
@@ -379,11 +379,11 @@ var World = (function (makeUtil) {
         sample:[
             "// Scene과 Camara생성 및 등록",
             "var lobby = new Scene();",
-            "lobby.addChild( Camera() );",
+            "lobby.addChild(Camera());",
             "",
             "// Scene 등록",
             "var world = new World('canvasID');",
-            "world.addScene( lobby.setId('lobby') );",
+            "world.addScene(lobby.setId('lobby'));",
             "",
             "// 실제 출력",
             "world.render();"
