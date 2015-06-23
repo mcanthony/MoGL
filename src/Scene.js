@@ -320,7 +320,6 @@ var Scene = (function () {
                 'this - 메서드체이닝을 위해 자신을 반환함.'
             ],
             sample: [
-                "var scene = new Scene();",
                 "scene.addFragmentShader(fragmentShader);"
             ],
             exception: [
@@ -344,12 +343,10 @@ var Scene = (function () {
                 'this - 메서드체이닝을 위해 자신을 반환함.'
             ],
             sample: [
-                "var scene = new Scene();",
-                "var texture = new Texture();",
-                "scene.addTexture(texture);"
+                "scene.addVertexShader(vertexShader);"
             ],
             exception: [
-                "'Scene.addTexture:0' - 이미 등록된 버텍스 쉐이더를 등록하려 할 때"
+                "'Scene.addVertexShader:0' - 이미 등록된 버텍스 쉐이더를 등록하려 할 때"
             ],
             value: function addVertexShader(v) {
                 var p = vertexShaders[this];
