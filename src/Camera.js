@@ -206,12 +206,23 @@ var Camera = (function () {
 	})
 	.field('projectionMatrix', {
 		description: "현재 프로젝션 매트릭스를 반환",
+		sample: [
+			'var camera = new Camera();',
+			'var matrix = camera.projectionMatrix;'
+		],
 		get: function projectionMatrixGet() {
 			return prop[this].projectionMatrix
 		}
 	})
 	.method('resetProjectionMatrix', {
 			description: "현재 프로퍼티들을 기준으로 프로젝션 매트릭스를 갱신",
+			sample: [
+				'var camera = new Camera();',
+				'camera.fov = 10;',
+				'camera.renderArea = [10,100,200,300];',
+				'// 새로운 속성 기준으로 프로젝션 매트릭스 갱신',
+				'camera.resetProjectionMatrix();'
+			],
 			value: function resetProjectionMatrix() {
 				var tMatrix, tArea, p;
 				p = prop[this]
@@ -231,9 +242,30 @@ var Camera = (function () {
 			}
 		}
 	)
-	.constant('resize', 'resize')
-	.constant('othogonal', 'othogonal')
-	.constant('perspective', 'perspective')
+	.constant('resize', {
+		description: '',
+		type:'string',
+		sample: '',
+		value:'resize'
+	})
+	.constant('orthogonal',{
+		description: '카메라 정사 모드',
+		type:'string',
+		sample: [
+			'var camera = new Camera();',
+			'camera.mode = Camera.orthogonal;'
+		],
+		value:'orthogonal'
+	})
+	.constant('perspective', {
+		description: '카메라 원근 모드',
+		type:'string',
+		sample: [
+			'var camera = new Camera();',
+			'camera.mode = Camera.perspective;'
+		],
+		value:'perspective'
+	})
 	.build();
 	/*마일스톤0.5
 	 fn.getFilters = function getFilters(){
