@@ -231,9 +231,9 @@ $md = function(classes){
                     md[md.length] = 'none';
                 }
                 md[md.length] = '\n**exception**\n';
-                md[md.length] = '- '+k.exception;
+                md[md.length] = k.exception;
                 md[md.length] = '\n**return**\n';
-                md[md.length] =  '- ' +(k.ret.length ? k.ret.replace('this', 'this - 메소드체이닝을 위해 자신을 반환함') : 'none');
+                md[md.length] = (k.ret.length ? k.ret.replace('this', 'this - 메소드체이닝을 위해 자신을 반환함') : 'none');
                 md[md.length] = '\n**sample**\n';
                 md[md.length] = '```javascript';
                 md[md.length] = k.sample;
