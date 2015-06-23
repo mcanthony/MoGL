@@ -343,11 +343,24 @@ var Matrix = (function () {
             return this;
         }
     })
-    .method('_frustum', function _frustum(a, b, c, d, e, g) {
-        var f = raw[this];
-        var h = b - a, i = d - c, j = g - e;
-        f[0] = e * 2 / h, f[1] = 0, f[2] = 0, f[3] = 0, f[4] = 0, f[5] = e * 2 / i, f[6] = 0, f[7] = 0, f[8] = (b + a) / h, f[9] = (d + c) / i, f[10] = -(g + e) / j, f[11] = -1, f[12] = 0, f[13] = 0, f[14] = -(g * e * 2) / j, f[15] = 0;
-        return this;
+    .method('frustum', {
+        description:['보이는 화면 영역'],
+        sample:[],
+        ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
+        param:[
+            'a:number - 가로세로 비율',
+            'b:number - 가로세로 비율',
+            'c:number - 시야각, degree 단위로 입력',
+            'd:number - 시야각, degree 단위로 입력',
+            'e:number - 절두체의 죄소 z값, 0.0보다 큰 값으로 설정',
+            'g:number - 절두체의 최대 z값'
+        ],
+        value:function frustum(a, b, c, d, e, g) {
+            var f = raw[this];
+            var h = b - a, i = d - c, j = g - e;
+            f[0] = e * 2 / h, f[1] = 0, f[2] = 0, f[3] = 0, f[4] = 0, f[5] = e * 2 / i, f[6] = 0, f[7] = 0, f[8] = (b + a) / h, f[9] = (d + c) / i, f[10] = -(g + e) / j, f[11] = -1, f[12] = 0, f[13] = 0, f[14] = -(g * e * 2) / j, f[15] = 0;
+            return this;
+        }
     })
     .method('matPerspective', {
         description:'퍼스펙티브 매트릭스',
@@ -365,8 +378,8 @@ var Matrix = (function () {
         value:function matPerspective(fov, aspect, near, far) {
             fov = near * Math.tan(fov * Math.PI / 360),
             aspect = fov * aspect,
-            this._frustum(-aspect, aspect, -fov, fov, near, far);
-            return this
+            this.frustum(-aspect, aspect, -fov, fov, near, far);
+            return this;
         }
     })
     .method('matLookAt', {
