@@ -1,6 +1,6 @@
 var MoGL = (function() {
     'use strict';
-    var Defineder, build, func, keys, val, param, checker,
+    var Definer, build, func, keys, val, param, checker,
         MoGL, idProp, destroy, classGet, totalCount, error;
     checker = {};
     param = function(v){
@@ -13,9 +13,9 @@ var MoGL = (function() {
             return v;
         }
     },
-    Defineder = function(k, v, parent, check){
+    Definer = function(k, v, parent, check){
         var p, i;
-        if (check !== checker) throw new Error('Defineder는 extend를 통해서만 사용할 수 있습니다');
+        if (check !== checker) throw new Error('Definer는 extend를 통해서만 사용할 수 있습니다');
         this.parent = parent;
         if (typeof v == 'function') {
             this._construct = {
@@ -73,8 +73,8 @@ var MoGL = (function() {
                     'constructor:function - 자식클래스의 생성자'
                 ],
                 description:[
-                    '이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Defineder)를 얻음',
-                    '\n**Defineder class의 메소드**\n',
+                    '이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Definer)를 얻음',
+                    '\n**Definer class의 메소드**\n',
                     '* 각 메서드는 체이닝됨',
                     "* Matrix = MoGL.extend('Matrix', function(){..}).static(..).field(..).build(); 형태로 사용",
                     "* field('x',{value:30}) - 속성을 정의함",
@@ -84,7 +84,10 @@ var MoGL = (function() {
                     "* static('toString',{value:function(){}}) - 정적메서드를 정의함",
                     "* build() - 입력된 결과를 종합하여 클래스를 생성함"
                 ],
-                ret:'Defineder - 클래스를 정의할 수 있는 생성전용객체',
+                ret:'Definer - 클래스를 정의할 수 있는 생성전용객체',
+				sample:[
+					"var classA = MoGL.extend('classA', function(){}).build();"
+				],
                 value:function extend(k) {
                     var v;
                     if(arguments.length == 1) {
@@ -92,13 +95,16 @@ var MoGL = (function() {
                     } else {
                         v = arguments[1];
                     }
-                    return new Defineder(k, v, this, checker);
+                    return new Definer(k, v, this, checker);
                 }
             },
             getInstance:{
                 param:'uuid:string - 얻고 싶은 인스턴스의 uuid 또는 id',
                 description:'uuid 또는 id를 기반으로 인스턴스를 얻어냄',
                 ret:'Object - 해당되는 인스턴스',
+				sample:[
+					"var instance = Mesh.getInstance(uuid);"
+				],
                 value:function getInstance(v) {
                     var inst, p, k;
                     if (v in allInstance) {
@@ -118,6 +124,9 @@ var MoGL = (function() {
             count:{
                 description:'이 클래스로 부터 만들어져 활성화된 인스턴스의 수',
                 ret:'int - 활성화된 인스턴스의 수',
+				sample:[
+					"var meshCount = Mesh.count();"
+				],
                 value:function count() {
                     return counter[this.uuid];
                 }
@@ -128,6 +137,13 @@ var MoGL = (function() {
                     'method:string - 예외가 발생한 함수명',
                     'id:int - 예외고유 id'
                 ],
+				sample:[
+					"var classA = MoGL.extend('classA', function(){})",
+					"    .static('test', function(){",
+					"	     this.error('test', 0);",
+					"    })",
+					"    .build();"
+				],
                 value:function error(method, id) {
                     throw new Error(this.className + '.' + method + ':' + id);
                 }
@@ -363,7 +379,7 @@ var MoGL = (function() {
             return this;
         }};
     },
-    Object.defineProperties(Defineder.prototype, {
+    Object.defineProperties(Definer.prototype, {
         method:func('_method'),
         static:func('_static'),
         field:val('_field'),
@@ -371,13 +387,13 @@ var MoGL = (function() {
         event:val('_event'),
         build:{value:build}
     });
-    Object.freeze(Defineder),
-    Object.freeze(Defineder.prototype);
+    Object.freeze(Definer),
+    Object.freeze(Definer.prototype);
     MoGL = (function(){
         var init, updated, listener;
         listener = {},
         updated = {},
-        init = new Defineder('MoGL', {
+        init = new Definer('MoGL', {
             description:[
                 'MoGL 라이브러리의 모든 클래스는 MoGL을 상속함',
                 '* 보통 직접적으로 MoGL 클래스를 사용하는 경우는 없음'
