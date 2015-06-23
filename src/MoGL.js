@@ -85,9 +85,9 @@ var MoGL = (function() {
                     "* build() - 입력된 결과를 종합하여 클래스를 생성함"
                 ],
                 ret:'Definer - 클래스를 정의할 수 있는 생성전용객체',
-				sample:[
-					"var classA = MoGL.extend('classA', function(){}).build();"
-				],
+                sample:[
+                    "var classA = MoGL.extend('classA', function(){}).build();"
+                ],
                 value:function extend(k) {
                     var v;
                     if(arguments.length == 1) {
@@ -102,9 +102,9 @@ var MoGL = (function() {
                 param:'uuid:string - 얻고 싶은 인스턴스의 uuid 또는 id',
                 description:'uuid 또는 id를 기반으로 인스턴스를 얻어냄',
                 ret:'Object - 해당되는 인스턴스',
-				sample:[
-					"var instance = Mesh.getInstance(uuid);"
-				],
+                sample:[
+                    "var instance = Mesh.getInstance(uuid);"
+                ],
                 value:function getInstance(v) {
                     var inst, p, k;
                     if (v in allInstance) {
@@ -124,9 +124,9 @@ var MoGL = (function() {
             count:{
                 description:'이 클래스로 부터 만들어져 활성화된 인스턴스의 수',
                 ret:'int - 활성화된 인스턴스의 수',
-				sample:[
-					"var meshCount = Mesh.count();"
-				],
+                sample:[
+                    "var meshCount = Mesh.count();"
+                ],
                 value:function count() {
                     return counter[this.uuid];
                 }
@@ -137,13 +137,13 @@ var MoGL = (function() {
                     'method:string - 예외가 발생한 함수명',
                     'id:int - 예외고유 id'
                 ],
-				sample:[
-					"var classA = MoGL.extend('classA', function(){})",
-					"    .static('test', function(){",
-					"	     this.error('test', 0);",
-					"    })",
-					"    .build();"
-				],
+                sample:[
+                    "var classA = MoGL.extend('classA', function(){})",
+                    "    .static('test', function(){",
+                    "	     this.error('test', 0);",
+                    "    })",
+                    "    .build();"
+                ],
                 value:function error(method, id) {
                     throw new Error(this.className + '.' + method + ':' + id);
                 }

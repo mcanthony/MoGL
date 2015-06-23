@@ -159,71 +159,71 @@ var makeUtil = (function(){
                 texture:texture
             };
         },
-	    vertexShaderParser: function vertexShaderParser(source) {
-		    var i, temp, str, resultObject, code;
-		    code = source.code,
-		    resultObject = {
-			    uniforms: [],
-			    attributes: [],
-			    id: code.id,
-			    shaderStr: null
-		    },
-		    str = "",
-		    temp = code.attributes,
-		    i = temp.length;
-		    while (i--) {
-			    str += 'attribute ' + temp[i] + ';\n',
-			    resultObject.attributes.push(temp[i].split(' ')[1]);
-		    }
-		    temp = code.uniforms,
-			    i = temp.length;
-		    while (i--) {
-			    str += 'uniform ' + temp[i] + ';\n',
-			    resultObject.uniforms.push(temp[i].split(' ')[1]);
-		    }
-		    temp = code.varyings,
-		    i = temp.length;
-		    while (i--) {
-			    str += 'varying ' + temp[i] + ';\n';
-		    }
-		    str += VertexShader.baseFunction,
-		    str += 'void main(void){\n',
-		    str += code.main + ';\n',
-		    str += '}\n'
-		    resultObject.shaderStr = str
-		    return resultObject;
-	    },
-	    fragmentShaderParser : function fragmentShaderParser(source) {
-		    var i, temp, str, resultObject, code;
-		    code = source.code,
-		    resultObject = {
-			    uniforms: [],
-			    id: code.id,
-			    shaderStr: null
-		    },
-		    str = "";
-		    if (code.precision) {
-			    str += 'precision ' + code.precision + ';\n';
-		    }
-		    else {
-			    str += 'precision mediump float;\n';
-		    }
-		    temp = code.uniforms,
-		    i = temp.length;
-		    while (i--) {
-			    str += 'uniform ' + temp[i] + ';\n',
-			    resultObject.uniforms.push(temp[i].split(' ')[1]);
-		    }
-		    temp = code.varyings,
-		    i = temp.length;
-		    while (i--) {
-			    str += 'varying ' + temp[i] + ';\n';
-		    }
-		    str += 'void main(void){\n',
-		    str += code.main + ';\n',
-		    str += '}\n'
-		    resultObject.shaderStr = str
-		    return resultObject;
-	    }
+        vertexShaderParser: function vertexShaderParser(source) {
+            var i, temp, str, resultObject, code;
+            code = source.code,
+            resultObject = {
+                uniforms: [],
+                attributes: [],
+                id: code.id,
+                shaderStr: null
+            },
+            str = "",
+            temp = code.attributes,
+            i = temp.length;
+            while (i--) {
+                str += 'attribute ' + temp[i] + ';\n',
+                resultObject.attributes.push(temp[i].split(' ')[1]);
+            }
+            temp = code.uniforms,
+                i = temp.length;
+            while (i--) {
+                str += 'uniform ' + temp[i] + ';\n',
+                resultObject.uniforms.push(temp[i].split(' ')[1]);
+            }
+            temp = code.varyings,
+            i = temp.length;
+            while (i--) {
+                str += 'varying ' + temp[i] + ';\n';
+            }
+            str += VertexShader.baseFunction,
+            str += 'void main(void){\n',
+            str += code.main + ';\n',
+            str += '}\n'
+            resultObject.shaderStr = str
+            return resultObject;
+        },
+        fragmentShaderParser : function fragmentShaderParser(source) {
+            var i, temp, str, resultObject, code;
+            code = source.code,
+            resultObject = {
+                uniforms: [],
+                id: code.id,
+                shaderStr: null
+            },
+            str = "";
+            if (code.precision) {
+                str += 'precision ' + code.precision + ';\n';
+            }
+            else {
+                str += 'precision mediump float;\n';
+            }
+            temp = code.uniforms,
+            i = temp.length;
+            while (i--) {
+                str += 'uniform ' + temp[i] + ';\n',
+                resultObject.uniforms.push(temp[i].split(' ')[1]);
+            }
+            temp = code.varyings,
+            i = temp.length;
+            while (i--) {
+                str += 'varying ' + temp[i] + ';\n';
+            }
+            str += 'void main(void){\n',
+            str += code.main + ';\n',
+            str += '}\n'
+            resultObject.shaderStr = str
+            return resultObject;
+        }
     };
 })();
