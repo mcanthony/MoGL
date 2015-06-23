@@ -71,7 +71,7 @@ var Material = (function () {
             description: "재질이 사용된 횟수",
             sample: [
                 '// 미구현상태임',
-                'console.log(material.count)'
+                'console.log(material.count);'
             ],
             defaultValue:'0',
             get: $getter(count, false, 0)
@@ -80,9 +80,9 @@ var Material = (function () {
     .field('color', {
         description: "재질 컬러색",
         sample: [
-            'material.color = [0,1,2,1] // 배열형식으로 입력',
-            'material.color = "#ff2233 // 16진수로 입력"',
-            'console.log(material.color)'
+            'material.color = [0,1,2,1]; // 배열형식으로 입력',
+            'material.color = "#ff2233; // 16진수로 입력"',
+            'console.log(material.color);'
         ],
         defaultValue:'[1,1,1,1]',
         get:$getter(color),
@@ -95,8 +95,8 @@ var Material = (function () {
     .field('wireFrame', {
         description: "와이어 프레임 표현여부",
         sample: [
-            'material.wireFrame = true',
-            'console.log(material.wireFrame)'
+            'material.wireFrame = true;',
+            'console.log(material.wireFrame);'
         ],
         defaultValue:'false',
         get:$getter(wireFrame),
@@ -105,8 +105,8 @@ var Material = (function () {
     .field('wireFrameColor', {
         description: "와이어 프레임 컬러",
         sample: [
-            'material.wireFrameColor = [1,0.5,1,1] // r,g,b,a',
-            'console.log(material.wireFrameColor)'
+            'material.wireFrameColor = [1,0.5,1,1]; // r,g,b,a',
+            'console.log(material.wireFrameColor);'
         ],
         defaultValue:'[Math.random(),Math.random(),Math.random(),1]',
         get:$getter(wireFrameColor),
@@ -119,8 +119,8 @@ var Material = (function () {
     .field('shading', {
         description: "재질 쉐이딩 적용",
         sample: [
-            'material.shading = Shading.phong',
-            'console.log(material.shading)'
+            'material.shading = Shading.phong;',
+            'console.log(material.shading);'
         ],
         defaultValue:'Shading.none',
         get:$getter(shading),
@@ -129,8 +129,8 @@ var Material = (function () {
     .field('lambert', {
         description: "재질 쉐이딩 적용 강도 설정",
         sample: [
-            'material.lambert = 1.5',
-            'console.log(material.lambert)'
+            'material.lambert = 1.5;',
+            'console.log(material.lambert);'
         ],
         defaultValue:'1.0',
         get:$getter(lambert),
@@ -139,7 +139,7 @@ var Material = (function () {
     .field('diffuse', {
         description: "재질에 적용된 디퓨즈 리스트 반환",
         sample: [
-            'console.log(material.diffuse)'
+            'console.log(material.diffuse);'
         ],
         defaultValue:'[]',
         get:$getter(diffuse)
@@ -148,7 +148,7 @@ var Material = (function () {
     .field('isLoaded', {
         description: "재질에 적용된 텍스쳐들이 모두 로딩되었는지 확인",
         sample: [
-            'console.log(material.isLoaded)'
+            'console.log(material.isLoaded);'
         ],
         defaultValue:'false',
         get:function(mat) {
@@ -210,14 +210,14 @@ var Material = (function () {
             "var indexTexture1 = new Texture();",
             "indexTestMaterial.addTexture(Texture.diffuse, indexTexture1, null, BlendMode.add);",
             "",
-            "var indexTexture2 = new Texture()",
+            "var indexTexture2 = new Texture();",
             "indexTestMaterial.addTexture(Texture.diffuse, indexTexture2, undefined, BlendMode.screen);",
             "",
-            "var indexTexture3 = new Texture()",
-            "indexTestMaterial.addTexture(Texture.diffuse, indexTexture3, 1, BlendMode.darken)",
+            "var indexTexture3 = new Texture();",
+            "indexTestMaterial.addTexture(Texture.diffuse, indexTexture3, 1, BlendMode.darken);",
             "",
-            "var indexTexture4 = new Texture()",
-            "indexTestMaterial.addTexture(Texture.diffuse, indexTexture4)",
+            "var indexTexture4 = new Texture();",
+            "indexTestMaterial.addTexture(Texture.diffuse, indexTexture4);",
             ""
         ],
         value:function addTexture(type, texture/*,index,blendMode*/) {
