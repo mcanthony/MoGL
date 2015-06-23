@@ -113,7 +113,7 @@ var World = (function (makeUtil) {
     return MoGL.extend('World', {
         description:"World는 MoGL의 기본 시작객체로 내부에 다수의 Scene을 소유할 수 있으며, 실제 렌더링되는 대상임.",
         param:[
-            "1. id:string - canvasID"
+            "id:string - canvasID"
         ],
         sample:[
             "var world = new World('canvasID1);",
@@ -159,7 +159,7 @@ var World = (function (makeUtil) {
             "생성시 기본값은 false"
         ],
         param:[
-            "1. isAutoSize:boolean - 자동으로 캔버스의 크기를 조정하는지에 대한 여부."
+            "isAutoSize:boolean - 자동으로 캔버스의 크기를 조정하는지에 대한 여부."
         ],
         ret:"this - 메서드체이닝을 위해 자신을 반환함.",
         sample:[
@@ -202,7 +202,7 @@ var World = (function (makeUtil) {
             "[Scene](Scene.md)객체를 world에 추가함."
         ],
         param:[
-            "1. scene:[Scene](Scene.md) - [Scene](Scene.md)의 인스턴스"
+            "scene:[Scene](Scene.md) - [Scene](Scene.md)의 인스턴스"
         ],
         ret:"this - 메서드체이닝을 위해 자신을 반환함.",
         exception:[
@@ -237,7 +237,7 @@ var World = (function (makeUtil) {
             "sceneId에 해당되는 [Scene](Scene.md)을 얻음."
         ],
         param:[
-            "1. sceneId:string - 등록시 scene의 id. 없으면 null을 반환함."
+            "sceneId:string - 등록시 scene의 id. 없으면 null을 반환함."
         ],
         ret:"[Scene](Scene.md) - sceneId에 해당되는 [Scene](Scene.md) 인스턴스.",
         sample:[
@@ -264,7 +264,7 @@ var World = (function (makeUtil) {
             "실제로는 본인과 바인딩된 render함수를 반환하고 한 번 반환한 이후는 캐쉬로 잡아둠."
         ],
         param:[
-            "1. isRequestAnimationFrame:boolean - 애니메이션프레임용으로 반환하는 경우는 내부에서 다시 requestAnimationFrame을 호출하는 기능이 추가됨."
+            "isRequestAnimationFrame:boolean - 애니메이션프레임용으로 반환하는 경우는 내부에서 다시 requestAnimationFrame을 호출하는 기능이 추가됨."
         ],
         ret:"function - this.render.bind(this) 형태로 본인과 바인딩된 함수를 반환함.",
         sample:[
@@ -338,7 +338,7 @@ var World = (function (makeUtil) {
             "[Scene](Scene.md)을 제거하면 관련된 카메라가 지정된 render도 자동으로 제거됨."
         ],
         param:[
-            "1. sceneId:string - [Scene](Scene.md)객체에 정의된 id."
+            "sceneId:string - [Scene](Scene.md)객체에 정의된 id."
         ],
         ret:"this - 메서드체이닝을 위해 자신을 반환함.",
         exception:[
@@ -374,6 +374,9 @@ var World = (function (makeUtil) {
     .method('render', {
         description:[
             "현재 화면을 그림."
+        ],
+        param:[
+            "?currentTime:number - 현재시간 milliseconds."
         ],
         ret:"this - 메서드체이닝을 위해 자신을 반환함.",
         sample:[
@@ -714,7 +717,23 @@ var World = (function (makeUtil) {
             }
         })()
     })
-    .constant('renderBefore', 'WORLD_RENDER_BEFORE')
-    .constant('renderAfter', 'WORLD_RENDER_AFTER')
+    .constant('renderBefore', {
+        description:'renderBefore constant',
+        sample:[
+            "world.addEventListener(World.renderBefore, function() {",
+            "   //job",
+            "});"
+        ],
+        value:'WORLD_RENDER_BEFORE'
+    })
+    .constant('renderAfter', {
+        description:'renderAfter constant',
+        sample:[
+            "world.addEventListener(World.renderAfter, function () {",
+            "   //job",
+            "});"
+        ],
+        value:'WORLD_RENDER_AFTER'
+    })
     .build();
 })(makeUtil);

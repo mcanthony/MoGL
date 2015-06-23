@@ -134,8 +134,8 @@ var Scene = (function () {
                 "scene.addMesh(mesh);"
             ],
             exception: [
-                "'Scene.addMesh:0' - 이미 등록된 메쉬객체를 등록하려고 할때",
-                "'Scene.addMesh:1' - 메쉬가 아닌 객체를 등록하려고 할때"
+                "'Scene.addMesh:0' - 이미 등록된 메쉬객체를 등록하려고 할 때",
+                "'Scene.addMesh:1' - 메쉬가 아닌 객체를 등록하려고 할 때"
             ],
             value : function(v){
                 var p = children[this], p2 = updateList[this], mat;
@@ -185,8 +185,8 @@ var Scene = (function () {
                 "scene.addCamera(camera);"
             ],
             exception: [
-                "'Scene.addCamera:0' : 이미 등록된 카메라객체를 등록하려고 할때",
-                "'Scene.addCamera:1' : 카메라가 아닌 객체를 등록하려고 할때"
+                "'Scene.addCamera:0' : 이미 등록된 카메라객체를 등록하려고 할 때",
+                "'Scene.addCamera:1' : 카메라가 아닌 객체를 등록하려고 할 때"
             ],
             value: function addCamera(v) {
                 var p = cameras[this];
@@ -200,7 +200,7 @@ var Scene = (function () {
     )
     .method('addChild', {
             description: [
-                '자식 객체를 추가함. 메쉬나 카메라 객체가 자식으로 올수 있음'
+                '자식 객체를 추가함. 메쉬나 카메라 객체가 자식으로 올 수 있음'
             ],
             param: [
                 'mesh:Mesh - 메쉬 객체',
@@ -215,7 +215,7 @@ var Scene = (function () {
                 "scene.addChild(camera);"
             ],
             exception: [
-                "'Scene.addChild:0' - 카메라나 메쉬객체가 아닌 객체를 추가하려고 할때"
+                "'Scene.addChild:0' - 카메라나 메쉬객체가 아닌 객체를 추가하려고 할 때"
             ],
             value: function addChild(v) {
                 if (v instanceof Mesh)  this.addMesh(v);
@@ -241,8 +241,8 @@ var Scene = (function () {
                 "scene.addGeometry(camera);"
             ],
             exception: [
-                "'Scene.addGeometry:0' - 이미 등록된 지오메트리를 등록하려 할때",
-                "'Scene.addGeometry:1' - 지오메트리 타입이 아닌 객체를 등록하려 할때"
+                "'Scene.addGeometry:0' - 이미 등록된 지오메트리를 등록하려 할 때",
+                "'Scene.addGeometry:1' - 지오메트리 타입이 아닌 객체를 등록하려 할 때"
             ],
             value: function (v) {
                 var p = geometrys[this];
@@ -269,8 +269,8 @@ var Scene = (function () {
                 "scene.addMaterial(mat);"
             ],
             exception: [
-                "'Scene.addMaterial:0' - 이미 등록된 재질을 등록하려 할때",
-                "'Scene.addMaterial:1' - Material 타입이 아닌 객체를 등록하려 할때"
+                "'Scene.addMaterial:0' - 이미 등록된 재질을 등록하려 할 때",
+                "'Scene.addMaterial:1' - Material 타입이 아닌 객체를 등록하려 할 때"
             ],
             value: function addMaterial(v) {
                 var p = materials[this];
@@ -297,8 +297,8 @@ var Scene = (function () {
                 "scene.addTexture(texture);"
             ],
             exception: [
-                "'Scene.addTexture:0' - 이미 등록된 텍스쳐를 등록하려 할때",
-                "'Scene.addTexture:1' - Texture 타입이 아닌 객체를 등록하려 할때"
+                "'Scene.addTexture:0' - 이미 등록된 텍스쳐를 등록하려 할 때",
+                "'Scene.addTexture:1' - Texture 타입이 아닌 객체를 등록하려 할 때"
             ],
             value: function addTexture(v) {
                 var p = textures[this];
@@ -309,17 +309,51 @@ var Scene = (function () {
             }
         }
     )
-    .method('addFragmentShader', function addFragmentShader(v) {
-        var p = fragmentShaders[this];
-        if (p[v.code.id]) this.error(0);
-        p[v.code.id] = fragmentShaderParser(v);
-        return this;
+    .method('addFragmentShader', {
+            description: [
+                '프레그먼트 쉐이더 객체를 추가함'
+            ],
+            param: [
+                'fragmentShader:Shader - 프레그먼트 쉐이더 객체'
+            ],
+            ret: [
+                'this - 메서드체이닝을 위해 자신을 반환함.'
+            ],
+            sample: [
+                "scene.addFragmentShader(fragmentShader);"
+            ],
+            exception: [
+                "'Scene.addFragmentShader:0' - 이미 등록된 프레그먼트 쉐이더를 등록하려 할 때"
+            ],
+            value: function addFragmentShader(v) {
+                var p = fragmentShaders[this];
+                if (p[v.code.id]) this.error(0);
+                p[v.code.id] = fragmentShaderParser(v);
+                return this;
+        }
     })
-    .method('addVertexShader', function addVertexShader(v) {
-        var p = vertexShaders[this];
-        if (p[v.code.id]) this.error(0);
-        p[v.code.id] = vertexShaderParser(v);
-        return this;
+    .method('addVertexShader', {
+            description: [
+                '버텍스 쉐이더 객체를 추가함'
+            ],
+            param: [
+                'vertexShader:Shader - 버텍스 쉐이더 객체'
+            ],
+            ret: [
+                'this - 메서드체이닝을 위해 자신을 반환함.'
+            ],
+            sample: [
+                "scene.addVertexShader(vertexShader);"
+            ],
+            exception: [
+                "'Scene.addVertexShader:0' - 이미 등록된 버텍스 쉐이더를 등록하려 할 때"
+            ],
+            value: function addVertexShader(v) {
+                var p = vertexShaders[this];
+                if (p[v.code.id]) this.error(0);
+                p[v.code.id] = vertexShaderParser(v);
+                return this;
+            }
     })
     .method('getMesh',{
             description: [
