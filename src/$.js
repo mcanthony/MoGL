@@ -114,7 +114,7 @@ $md = function(classes){
             v.sort(sort);
             md[md.length] = '\n**' + type + '**\n';
             for (i = 0, j = v.length; i < j; i++){
-                md[md.length] = '* [' + v[i].name + '](#' + v[i].name + ') - ' + v[i].description.substr(0, 20).trim() + (v[i].description.length > 20 ? '...' : '');
+                md[md.length] = '* [' + v[i].name + '](#' + v[i].name + ') - ' + v[i].description.split('\n')[0].substr(0, 20).trim() + (v[i].description.length > 20 ? '...' : '');
             }
         }
     },
