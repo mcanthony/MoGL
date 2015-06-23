@@ -311,7 +311,7 @@ var Scene = (function () {
     )
     .method('addFragmentShader', {
             description: [
-                '프레그먼트 쉐이더 객를 추가함'
+                '프레그먼트 쉐이더 객체를 추가함'
             ],
             param: [
                 'fragmentShader:Shader - 프레그먼트 쉐이더 객체'
