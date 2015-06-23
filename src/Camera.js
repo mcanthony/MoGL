@@ -10,7 +10,7 @@ var Camera = (function () {
 	return Matrix.extend('Camera',{
 		description: "씬을 실제로 렌더링할 카메라 객체를 생성함",
 		sample: [
-			"var camera = new Camera()"
+			"var camera = new Camera();"
 		],
 		value : function Camera() {
 			Object.seal(prop[this] = {
@@ -31,8 +31,8 @@ var Camera = (function () {
 	.field('clipPlaneNear', {
 		description: "현재 절두체의 최소z값",
 		sample: [
-			'var camera = new Camera()',
-			'camera.clipPlaneNear = 10'
+			'var camera = new Camera();',
+			'camera.clipPlaneNear = 10;'
 		],
 		defaultValue:"0.1",
 		get: $getter(prop, 'near'),
@@ -41,8 +41,8 @@ var Camera = (function () {
 	.field('clipPlaneFar', {
 		description: "현재 절두체의 최대z값",
 		sample: [
-			'var camera = new Camera()',
-			'camera.clipPlaneFar = 1000'
+			'var camera = new Camera();',
+			'camera.clipPlaneFar = 1000;'
 		],
 		defaultValue:"10000",
 		get: $getter(prop, 'far'),
@@ -50,6 +50,10 @@ var Camera = (function () {
 	})
 	.field('visible', {
 		get: $getter(prop, 'visible'),
+        sample:[
+            "var camera = Camera();",
+            "camera.visible = false;"
+        ],
 		set: function visibleSet(v) {
 			if (typeof v == 'number') {
 				v = v ? true : false
@@ -60,8 +64,8 @@ var Camera = (function () {
 	.field('antialias', {
 		description: "쉐이더 레벨의 안티알리어싱 적용여부",
 		sample: [
-			'var camera = new Camera()',
-			'camera.antialias = true'
+			'var camera = new Camera();',
+			'camera.antialias = true;'
 		],
 		defaultValue:"false",
 		get: $getter(prop, 'antialias'),
@@ -75,8 +79,8 @@ var Camera = (function () {
 	.field('fogColor', {
 		description: "안개 효과 컬러 지정",
 		sample: [
-			'var camera = new Camera()',
-			'camera.fogColor = [Math.random(),Math.random(),Math.random(),1]'
+			'var camera = new Camera();',
+			'camera.fogColor = [Math.random(),Math.random(),Math.random(),1];'
 		],
 		defaultValue:'null',
 		get: $getter(prop, 'fogColor'),
@@ -89,8 +93,8 @@ var Camera = (function () {
 	.field('fogNear', {
 		description: "안개효과가 시작되는 z축 거리",
 		sample: [
-			'var camera = new Camera()',
-			'camera.fogNear = 10'
+			'var camera = new Camera();',
+			'camera.fogNear = 10;'
 		],
 		defaultValue:'0',
 		get: $getter(prop, 'fogNear'),
@@ -103,8 +107,8 @@ var Camera = (function () {
 	.field('fogFar', {
 		description: "안개효과만 남고 아무것도 보이지 않는  z축 거리",
 		sample: [
-			'var camera = new Camera()',
-			'camera.fogFar = 1000'
+			'var camera = new Camera();',
+			'camera.fogFar = 1000;'
 		],
 		defaultValue:'0',
 		get: $getter(prop, 'fogFar'),
@@ -117,11 +121,11 @@ var Camera = (function () {
 	.field('fov', {
 		description: "FOV(Field of view) 시야각을 정의.",
 		sample: [
-			'var camera = new Camera()',
+			'var camera = new Camera();',
 			"// number형으로 입력",
-			'camera.fov = 45', // 시야각입력을 통한 fov계산
+			'camera.fov = 45;', // 시야각입력을 통한 fov계산
 			"// [width,height,angle] - 화면사이즈와 각도의 직접적 입력을 통한 fov 지정도 가능" ,
-			'camera.fov = [width,height,angle]' // 화면사이즈와 각도의 직접적 입력을 통한 fov 지정
+			'camera.fov = [width,height,angle];' // 화면사이즈와 각도의 직접적 입력을 통한 fov 지정
 		],
 		defaultValue:'55',
 		get: $getter(prop, 'fov'),
@@ -137,9 +141,9 @@ var Camera = (function () {
 	.field('backgroundColor', {
 		description: "렌더링 배경화면 색상을 지정",
 		sample: [
-			'var camera = new Camera()',
+			'var camera = new Camera();',
 			"// [r,g,b,a] number형으로 입력",
-			'camera.backgroundColor = [Math.random(),Math.random(),Math.random(),1]'
+			'camera.backgroundColor = [Math.random(),Math.random(),Math.random(),1];'
 		],
 		defaultValue:'{r: 0, g: 0, b: 0, a: 1}}',
 		get: (function () {
@@ -159,9 +163,9 @@ var Camera = (function () {
 	.field('fog', {
 		description: "안개효과 지정여부" ,
 		sample: [
-			'var camera = new Camera()',
+			'var camera = new Camera();',
 			'// true or false - false로 지정시 안개효과 삭제' ,
-			'camera.fog = true'
+			'camera.fog = true;'
 		],
 		defaultValue:'false',
 		get: function fogGet() {
@@ -171,10 +175,10 @@ var Camera = (function () {
 	.field('mode', {
 		description:"카메라모드 지정",
 		sample: [
-			'var camera = new Camera()',
+			'var camera = new Camera();',
 			"// Camera.perspective or Camera.othogonal",
-			'camera.mode = Camera.perspective',
-			'camera.mode = Camera.othogonal'
+			'camera.mode = Camera.perspective;',
+			'camera.mode = Camera.othogonal;'
 		],
 		defaultValue:'Camera.perspective',
 		get: $getter(prop, 'mode'),
@@ -189,10 +193,10 @@ var Camera = (function () {
 	.field('renderArea', {
 		description: "카메라 렌더링 영역지정, 렌더링 영역을 지정하지 않을경우 캔버스 영역 전체로 자동 지정됨.",
 		sample: [
-			'var camera = new Camera()',
+			'var camera = new Camera();',
 			"// [x,y, width, height] - number형으로 입력, %단위도 입력가능",
-			'camera.renderArea = [10,100,200,300]',
-			'camera.renderArea = ["10%","10%",200,300]',
+			'camera.renderArea = [10,100,200,300];',
+			'camera.renderArea = ["10%","10%",200,300];',
 		],
 		defaultValue:'null',
 		get: $getter(prop, 'renderArea'),
