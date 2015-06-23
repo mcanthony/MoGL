@@ -104,7 +104,7 @@ SIN = Math.sin, COS = Math.cos, TAN = Math.tan, ATAN = Math.atan, ATAN2 = Math.a
 SQRT = Math.sqrt, CEIL = Math.ceil, ABS = Math.abs, PI = Math.PI, PIH = PI * 0.5, PID = PI * 2, D2R = PI / 180, R2D = 180 / PI;
 //markdown
 $md = function(classes){
-    var list, val, func, sort, toStr,toStr2, fieldDetail, methodDetail;
+    var list, val, func, sort, toStr, fieldDetail, methodDetail;
     sort = function(a,b){
         return a.name < b.name;
     },
@@ -126,14 +126,6 @@ $md = function(classes){
         }
         return v;
     },
-    toStr2 = function(v){
-        if (Array.isArray(v)) {
-            return v.join('\n- ');
-        }else if (!v) {
-            return '';
-        }
-        return v;
-    },
     val = function(type, md, ref){
             var v = [], temp = ref._info['_'+type], temp1 = ref['_'+type], k;
             for (k in temp) {
@@ -141,10 +133,10 @@ $md = function(classes){
                 temp[k].type = temp[k].type || '?',
                 temp[k].defaultValue = temp[k].defaultValue || 'none', 
                 temp[k].sample = toStr(temp[k].sample || '//none'),
-                temp[k].description = toStr2(temp[k].description),
+                temp[k].description = toStr(temp[k].description),
                 temp[k].enumerable = temp1[k] && temp1[k].enumerable ? true : false, 
                 temp[k].configurable = temp1[k] && temp1[k].configurable ? true : false;
-                temp[k].exception = toStr2(temp[k].exception || 'none');
+                temp[k].exception = toStr(temp[k].exception || 'none');
                 if (temp1[k]){
                     if ('writable' in temp1[k]) {
                         temp[k].writable = temp1[k].writable ? true : false;
@@ -166,8 +158,8 @@ $md = function(classes){
             temp[k].param = toStr(temp[k].param || 'none');
             temp[k].ret = toStr(temp[k].ret || 'none');
             temp[k].sample = toStr(temp[k].sample || '//none');
-            temp[k].exception = toStr2(temp[k].exception || 'none');
-            temp[k].description = toStr2(temp[k].description);
+            temp[k].exception = toStr(temp[k].exception || 'none');
+            temp[k].description = toStr(temp[k].description);
             v[v.length] = temp[k];
         }
         list(type, md, v);
@@ -183,18 +175,18 @@ $md = function(classes){
                 md[md.length] = '###' + k.name;
                 md[md.length] = '\n_' + type + '_\n';
                 md[md.length] = '\n**description**\n';
-                md[md.length] = '- '+k.description;
+                md[md.length] = k.description;
                 md[md.length] = '\n**setting**\n';
-                md[md.length] = '- *writable*:' + k.writable + '\n- *enumerable*:' + k.enumerable + '\n- *configurable*:' + k.configurable;
+                md[md.length] = '*writable*:' + k.writable + ' *enumerable*:' + k.enumerable + ' *configurable*:' + k.configurable;
                 if ('value' in k) {
                     md[md.length] = '\n**value**\n';
                     md[md.length] = k.value;
                 } else if ('defaultValue' in k) {
                     md[md.length] = '\n**defaultValue**\n';
-                    md[md.length] ='- '+k.defaultValue;
+                    md[md.length] = k.defaultValue;
                 }
                 md[md.length] = '\n**exception**\n';
-                md[md.length] = '- '+k.exception;
+                md[md.length] = k.exception;
                 md[md.length] = '\n**sample**\n';
                 md[md.length] = '```javascript';
                 md[md.length] = k.sample;
@@ -223,7 +215,7 @@ $md = function(classes){
                 }
                 md[md.length] = '\n_' + type + '_\n';
                 md[md.length] = '\n**description**\n';
-                md[md.length] =  '- '+k.description;
+                md[md.length] = k.description;
                 md[md.length] = '\n**param**\n';
                 if (k.param != 'none' && n) {
                     for(m = 0; m < n ; m++){
