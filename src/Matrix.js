@@ -370,6 +370,17 @@ var Matrix = (function () {
         }
     })
     .method('matLookAt', {
+        description:'eye 벡터가 center 벡터를 바라보는 회전 행렬 생성',
+        sample:[
+            'var matrix = new Matrix();',
+            'matrix.matLookAt([100, 100, 100], [0, 0, 0], [0, 1, 0]);'
+        ],
+        ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
+        param:[
+            'eye:Array - [x, y, z] 형태의 eye 좌표',
+            'center:Array - [x, y, z] 형태의 center 좌표',
+            'up:Array - [x, y, z] 형태의 up 벡터'
+        ],
         value:function matLookAt(eye, center, up) {
             var a = raw[this];
             var x0, x1, x2, y0, y1, y2, z0, z1, z2, len, eyex = eye[0], eyey = eye[1], eyez = eye[2], upx = up[0], upy = up[1], upz = up[2], centerx = center[0], centery = center[1], centerz = center[2];
