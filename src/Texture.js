@@ -60,7 +60,7 @@ var Texture = (function() {
     return MoGL.extend('Texture',{
         description: "텍스쳐 객체 클래스",
         sample: [
-            "var texture = new Texture()"
+            "var texture = new Texture();"
         ],
         value:function Texture(){}
     })
@@ -69,9 +69,9 @@ var Texture = (function() {
         type:'string',
         defaultValue:'null',
         sample: [
-            "var texture = new Texture()",
-            "texture.resizeType = Texture.zoomIn",
-            "console.log(texture.resizeType)"
+            "var texture = new Texture();",
+            "texture.resizeType = Texture.zoomIn;",
+            "console.log(texture.resizeType);"
         ],
         get:$getter(resize, false, 'zoomOut'),
         set:function resizeTypeSet(v){
@@ -87,9 +87,9 @@ var Texture = (function() {
         type:'string',
         defaultValue:'null',
         sample: [
-            "var texture = new Texture()",
-            'texture.img = document.getElementID("imgElement")',
-            "console.log(texture.isLoaded)"
+            "var texture = new Texture();",
+            'texture.img = document.getElementID("imgElement");',
+            "console.log(texture.isLoaded);"
         ],
         get:$getter(isLoaded, false, false)
     })
@@ -98,8 +98,8 @@ var Texture = (function() {
         type:'string',
         defaultValue:'null',
         sample: [
-            "var texture = new Texture()",
-            'texture.img = document.getElementID("imgElement")',
+            "var texture = new Texture();",
+            'texture.img = document.getElementID("imgElement");'
         ],
         get:$getter(imgs, false, empty),
         set:function imgSet(v){
@@ -149,38 +149,83 @@ var Texture = (function() {
     })
     .constant('zoomOut', {
         description : 'zoom out constant',
+        sample:[
+            'var texture = new Texture();',
+            '// 리사이즈 타입 설정',
+            'texture.resizeType = Texture.zoomOut;'
+        ],
         value : 'zoomOut'
     })
     .constant('zoomIn', {
         description : 'zoom in constant',
+        sample:[
+            'var texture = new Texture();',
+            '// 리사이즈 타입 설정',
+            'texture.resizeType = Texture.zoomIn;'
+        ],
         value : 'zoomIn'
     })
     .constant('crop', {
         description : 'crop constant',
+        sample:[
+            'var texture = new Texture();',
+            '// 리사이즈 타입 설정',
+            'texture.resizeType = Texture.crop;'
+        ],
         value : 'crop'
     })
     .constant('addSpace',{
         description : 'addSpace constant',
+        sample:[
+            'var texture = new Texture();',
+            '// 리사이즈 타입 설정',
+            'texture.resizeType = Texture.addSpace;'
+        ],
         value : 'addSpace'
     })
     .constant('diffuse', {
         description : 'diffuse constant',
+        sample:[
+            'var texture = new Texture();',
+            '// 리사이즈 타입 설정',
+            'texture.resizeType = Texture.diffuse;'
+        ],
         value : 'diffuse'
     })
     .constant('specular', {
         description : 'specular constant',
+        sample:[
+            'var texture = new Texture();',
+            '// 리사이즈 타입 설정',
+            'texture.resizeType = Texture.specular;'
+        ],
         value : 'specular'
     })
     .constant('diffuseWrap', {
         description : 'diffuseWrap constant',
+        sample:[
+            'var texture = new Texture();',
+            '// 리사이즈 타입 설정',
+            'texture.resizeType = Texture.diffuseWrap;'
+        ],
         value : 'diffuseWrap'
     })
     .constant('normal', {
         description : 'normal constant',
+        sample:[
+            'var texture = new Texture();',
+            '// 리사이즈 타입 설정',
+            'texture.resizeType = Texture.normal;'
+        ],
         value : 'normal'
     })
     .constant('specularNormal', {
         description : 'specularNormal constant',
+        sample:[
+            'var texture = new Texture();',
+            '// 리사이즈 타입 설정',
+            'texture.resizeType = Texture.specularNormal;'
+        ],
         value : 'specularNormal'
     })
     .build();
