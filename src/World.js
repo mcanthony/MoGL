@@ -375,7 +375,9 @@ var World = (function (makeUtil) {
         description:[
             "현재 화면을 그림."
         ],
-        param:[],
+        param:[
+            "?currentTime:number - 현재시간 milliseconds."
+        ],
         ret:"this - 메서드체이닝을 위해 자신을 반환함.",
         sample:[
             "// Scene과 Camara생성 및 등록",
