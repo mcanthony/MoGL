@@ -1,5 +1,9 @@
 var BlendMode = MoGL.extend('BlendMode', {
     description:'BlendMode',
+    sample:[
+        'var material = Material();'
+        'material.addTexture(Texture.diffuse, new Texture(), null, BlendMode.add);'
+    ],
     value:function BlendMode() {}
 })
 .constant('add', {
