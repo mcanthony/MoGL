@@ -413,7 +413,7 @@ var MoGL = (function() {
             type:'string',
             sample: [
                 "var scene = new Scene();",
-                "scene.uuid // 'uuid:24'"
+                "console.log(scene.uuid); // 'uuid:24'"
             ]
         }, true)
         .field('className', {
@@ -421,7 +421,7 @@ var MoGL = (function() {
             type:'string',
             sample: [
                 "var scene = new Scene();",
-                "scene.className // 'Scene'"
+                "console.log(scene.className); // 'Scene'"
             ]
         }, true)
         .field('classId', {
@@ -429,7 +429,7 @@ var MoGL = (function() {
             type:'string',
             sample: [
                 "var scene = new Scene();",
-                "scene.classId // 'uuid:22'"
+                "console.log(scene.classId); // 'uuid:22'"
             ]
         }, true)
         .method('error', {
@@ -443,7 +443,7 @@ var MoGL = (function() {
             sample:[
                 "fn.action = function(a){",
                 "  if(!a) this.error(0);",
-                "}"
+                "};"
             ],
         }, true)
         .method('toString', {
@@ -486,7 +486,7 @@ var MoGL = (function() {
                 "",
                 "//보간애니메이션실행",
                 "var vo = {x:0, y:0, z:0};",
-                "var ani = {time:1, delay:2, repeat:1, ease:MoGL.easing.sineOut}",
+                "var ani = {time:1, delay:2, repeat:1, ease:MoGL.easing.sineOut};",
                 "mat.setProperties( vo, ani );"
             ],
             value:(function(){
@@ -569,8 +569,8 @@ var MoGL = (function() {
                 "});",
                 "var city2 = Scene();",
                 "city1.addEventListener( 'updated', function(v, added){",
-                "  this == city2",
-                "  added == 10",
+                "  console.log(this == city2);",
+                "  console.log(added == 10);",
                 "}, city2, 10);"
             ],
             value:function addEventListener(ev, f) {
