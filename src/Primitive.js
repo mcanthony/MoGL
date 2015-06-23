@@ -2,6 +2,11 @@ var Primitive = (function () {
     'use strict';
     return MoGL.extend('Primitive', {
         description: "면, 정다각형, 정육면체 등 미리 정의된 기본 기하 객체를 static 방식으로 생성할 수 있게 해주는 객체",
+        sample:[
+            'var cube = Primitive.cube(2, 2);',
+            'var geodesic = Primitive.geodesic(4);',
+            'var plane = Primitive.plane(2, 2);'
+        ],
         value:function Primitive(){}
     })
     .static('plane', {

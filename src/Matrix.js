@@ -29,9 +29,9 @@ var Matrix = (function () {
     return MoGL.extend('Matrix',{
         description:'매트릭스 객체로서 사용되며,\n- position(x, y, z),\n- scale(scaleX, scaleY, scaleZ),\n- rotate(rotateX, rotateY, rotateZ)\n-  관련된 속성도 포함한다. ',
         sample:[
-            'var mtx = new Matrix()',
-            'console.log(mtx.x)',
-            'console.log(mtx.position) // [x,y,z]'
+            'var mtx = new Matrix();',
+            'console.log(mtx.x);',
+            'console.log(mtx.position); // [x,y,z]'
         ],
         value:function Matrix() {
             raw[this] = new Float32Array(16);
@@ -43,9 +43,9 @@ var Matrix = (function () {
     .field('position', {
         description: 'x,y,z값을 배열로 반환하거나 입력',
         sample:[
-            'var mtx = new Matrix()',
-            'mtx.position = [10,20,30]',
-            'console.log(mtx.position) // [10,20,30]'
+            'var mtx = new Matrix();',
+            'mtx.position = [10,20,30];',
+            'console.log(mtx.position); // [10,20,30]'
         ],
         set:setter('x', 'y', 'z'),
         get:getter('x', 'y', 'z')
@@ -53,9 +53,9 @@ var Matrix = (function () {
     .field('scale', {
         description: 'scale값을 배열로 반환하거나 입력',
         sample:[
-            'var mtx = new Matrix()',
-            'mtx.scale = [10,20,30]',
-            'console.log(mtx.scale) // [10,20,30]'
+            'var mtx = new Matrix();',
+            'mtx.scale = [10,20,30];',
+            'console.log(mtx.scale); // [10,20,30]'
         ],
         set:setter('scaleX', 'scaleY', 'scaleZ'),
         get:getter('scaleX', 'scaleY', 'scaleZ')
@@ -63,9 +63,9 @@ var Matrix = (function () {
     .field('rotate', {
         description: 'rotate값을 배열로 반환하거나 입력',
         sample:[
-            'var mtx = new Matrix()',
-            'mtx.rotate = [10,20,30]',
-            'console.log(mtx.rotate) // [10,20,30]'
+            'var mtx = new Matrix();',
+            'mtx.rotate = [10,20,30];',
+            'console.log(mtx.rotate); // [10,20,30]'
         ],
         set:setter('rotateX', 'rotateY', 'rotateZ'),
         get:getter('rotateX', 'rotateY', 'rotateZ')
@@ -73,8 +73,8 @@ var Matrix = (function () {
     .field('matrix', {
         description: '현재 객체내의 position,rotate,scale을 반영한 후 자신을 반환',
         sample:[
-            'var mtx = new Matrix()',
-            'console.log(mtx.matrix)'
+            'var mtx = new Matrix();',
+            'console.log(mtx.matrix);'
         ],
         get:function matrixGet() {
             if(this instanceof Camera) {
@@ -89,8 +89,8 @@ var Matrix = (function () {
     .field('raw', {
         description: '현재 매트릭스 객체의 rawData를 Float32Array 형식으로 반환',
         sample:[
-            'var mtx = new Matrix()',
-            'console.log(mtx.raw)'
+            'var mtx = new Matrix();',
+            'console.log(mtx.raw);'
         ],
         get:function rawGet(){
             return raw[this]
@@ -104,8 +104,8 @@ var Matrix = (function () {
             'z:number - 바라볼 z위치'
         ],
         sample:[
-            'var mtx = new Matrix()',
-            'mtx.lookAt(0,0,0) // 현재위치에서 0,0,0을 바라보는 상태로 rotateX, rotateY, rotateZ가 변경됨'
+            'var mtx = new Matrix();',
+            'mtx.lookAt(0,0,0); // 현재위치에서 0,0,0을 바라보는 상태로 rotateX, rotateY, rotateZ가 변경됨'
         ],
         ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
         value:(function(){
@@ -155,8 +155,8 @@ var Matrix = (function () {
     .method('matIdentity', {
         description:'현재 매트릭스를 초기화한다.',
         sample:[
-            'var mtx = new Matrix()',
-            'mtx.matIdentity()'
+            'var mtx = new Matrix();',
+            'mtx.matIdentity();'
         ],
         ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
         value:function matIdentity() {
@@ -168,8 +168,8 @@ var Matrix = (function () {
     .method('matClone', {
         description: '현재 매트릭스를 복제',
         sample: [
-            'var mtx = new Matrix()',
-            'mtx.matClone()'
+            'var mtx = new Matrix();',
+            'mtx.matClone();'
         ],
         ret: ['Matrix - 복제한 매트릭스를 반환.'],
         value:function matClone() {
@@ -184,9 +184,9 @@ var Matrix = (function () {
     .method('matCopy', {
         description:'대상 매트릭스에 현재 매트릭스의 상태를 복사',
         sample: [
-            'var mtx = new Matrix()',
-            'var mtx2 = new Matrix()',
-            'mtx.matClone(mtx2)// mtx2에 mtx의 속성이 복사됨.'
+            'var mtx = new Matrix();',
+            'var mtx2 = new Matrix();',
+            'mtx.matClone(mtx2);  // mtx2에 mtx의 속성이 복사됨.'
         ],
         ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
         param:[
@@ -209,9 +209,9 @@ var Matrix = (function () {
     .method('matMultiply', {
         description:'현재매트릭스에 대상 매트릭스를 곱한다. ',
         sample: [
-            'var mtx = new Matrix()',
-            'var mtx2 = new Matrix()',
-            'mtx.matMultiply(mtx2)// mtx에 mtx2를 곱한 결과를 반환'
+            'var mtx = new Matrix();',
+            'var mtx2 = new Matrix();',
+            'mtx.matMultiply(mtx2);  // mtx에 mtx2를 곱한 결과를 반환'
         ],
         ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
         param:[
@@ -235,8 +235,8 @@ var Matrix = (function () {
     .method('matTranslate', {
         description:'현재매트릭스에 x,y,z축 증분 평행이동 ',
         sample: [
-            'var mtx = new Matrix()',
-            'mtx.matTranslate(10,20,30)'
+            'var mtx = new Matrix();',
+            'mtx.matTranslate(10,20,30);'
         ],
         ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
         param:[
@@ -256,8 +256,8 @@ var Matrix = (function () {
     .method('matScale', {
         description:'현재매트릭스에 x,y,z축 증분 확대 ',
         sample: [
-            'var mtx = new Matrix()',
-            'mtx.matScale(10,20,30)'
+            'var mtx = new Matrix();',
+            'mtx.matScale(10,20,30);'
         ],
         ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
         param:[
@@ -274,8 +274,8 @@ var Matrix = (function () {
     .method('matRotateX', {
         description:'현재 매트릭스를 X축 기준 증분 회전 ',
         sample: [
-            'var mtx = new Matrix()',
-            'mtx.matRotateX(0.3)'
+            'var mtx = new Matrix();',
+            'mtx.matRotateX(0.3);'
         ],
         ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
         param:[
@@ -290,8 +290,8 @@ var Matrix = (function () {
     .method('matRotateY', {
         description:'현재 매트릭스를 Y축 기준 증분 회전 ',
         sample: [
-            'var mtx = new Matrix()',
-            'mtx.matRotateY(0.3)'
+            'var mtx = new Matrix();',
+            'mtx.matRotateY(0.3);'
         ],
         ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
         param:[
@@ -306,8 +306,8 @@ var Matrix = (function () {
     .method('matRotateZ', {
         description:'현재 매트릭스를 Z축 기준 증분 회전 ',
         sample: [
-            'var mtx = new Matrix()',
-            'mtx.matRotateZ(0.3)'
+            'var mtx = new Matrix();',
+            'mtx.matRotateZ(0.3);'
         ],
         ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
         param:[
@@ -322,8 +322,8 @@ var Matrix = (function () {
     .method('matRotate', {
         description:'현재 매트릭스를 특정축을 기준으로 증분 회전 ',
         sample: [
-            'var mtx = new Matrix()',
-            'mtx.matRotate(0.3,[0,1,2])'
+            'var mtx = new Matrix();',
+            'mtx.matRotate(0.3,[0,1,2]);'
         ],
         ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
         param:[
@@ -352,8 +352,8 @@ var Matrix = (function () {
     .method('matPerspective', {
         description:'퍼스펙티브 매트릭스',
         sample: [
-            'var mtx = new Matrix()',
-            'mtx.matPerspective(55, 4/3,0.1,1000)'
+            'var mtx = new Matrix();',
+            'mtx.matPerspective(55, 4/3,0.1,1000);'
         ],
         ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
         param:[
@@ -390,8 +390,8 @@ var Matrix = (function () {
     .method('matStr', {
         description:'현재 매트릭스를 문자화한다.',
         sample: [
-            'var mtx = new Matrix()',
-            'console.log(mtx.matStr())'
+            'var mtx = new Matrix();',
+            'console.log(mtx.matStr());'
         ],
         ret: ['String - 문자화된 매트릭스 raw를 반환'],
         value:function matStr() {

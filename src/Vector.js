@@ -6,13 +6,13 @@ var Vector = MoGL.extend('Vector', {
         '인자가 없을경우 0,0,0으로 초기화'
     ],
     sample:[
-        'var vector = new Vector( 1, 2, 3 );',
-        'var vector = new Vector( [1, 2, 3] );',
-        'var vector = new Vector( new Float32Array( [1, 2, 3] ) );',
+        'var vector = new Vector(1, 2, 3);',
+        'var vector = new Vector([1, 2, 3]);',
+        'var vector = new Vector(new Float32Array([1, 2, 3]));',
         'var vector = new Vector();',
         '',
         '// 팩토리 함수로도 사용 가능.',
-        'var vector = Vector( 1, 2, 3 );'
+        'var vector = Vector(1, 2, 3);'
     ],
     value: function Vector(x, y, z) {
         if (x instanceof Float32Array || Array.isArray(x)) {
@@ -30,9 +30,9 @@ var Vector = MoGL.extend('Vector', {
     param:['vector:Vector'],
     ret : ['this'],
     sample:[
-        'var vec1 = new Vector()',
-        'var vec2 = new Vector()',
-        'vec1.add(vec2)'
+        'var vec1 = new Vector();',
+        'var vec2 = new Vector();',
+        'vec1.add(vec2);'
     ],
     value:function add(v) {
         var a = this;
@@ -49,8 +49,8 @@ var Vector = MoGL.extend('Vector', {
     ],
     ret : ['this'],
     sample:[
-        'var vec1 = new Vector()',
-        'vec1.addXYZ(10,20,30)'
+        'var vec1 = new Vector();',
+        'vec1.addXYZ(10,20,30);'
     ],
     value:function addXYZ(x, y, z) {
         var a = this;
@@ -63,9 +63,9 @@ var Vector = MoGL.extend('Vector', {
     param:['vector:Vector'],
     ret : ['this'],
     sample:[
-        'var vec1 = new Vector()',
-        'var vec2 = new Vector()',
-        'vec1.subtract(vec2)'
+        'var vec1 = new Vector();',
+        'var vec2 = new Vector();',
+        'vec1.subtract(vec2);'
     ],
     value:function subtract(v) {
         var a = this;
@@ -82,8 +82,8 @@ var Vector = MoGL.extend('Vector', {
     ],
     ret : ['this'],
     sample:[
-        'var vec1 = new Vector()',
-        'vec1.subtractXYZ(10,20,30)'
+        'var vec1 = new Vector();',
+        'vec1.subtractXYZ(10, 20, 30);'
     ],
     value:function subtractXYZ(x, y, z) {
         var a = this;
@@ -98,8 +98,8 @@ var Vector = MoGL.extend('Vector', {
     ],
     ret : ['this'],
     sample:[
-        'var vec1 = new Vector()',
-        'vec1.scaleBy(10)'
+        'var vec1 = new Vector();',
+        'vec1.scaleBy(10);'
     ],
     value:function scaleBy(s) {
         var a = this;
@@ -112,9 +112,9 @@ var Vector = MoGL.extend('Vector', {
     param:['vector:Vector'],
     ret : ['number'],
     sample:[
-        'var vec1 = new Vector()',
-        'var vec2 = new Vector()',
-        'vec1.distance(vec2)'
+        'var vec1 = new Vector();',
+        'var vec2 = new Vector();',
+        'vec1.distance(vec2);'
     ],
     value:function distance(v) {
         var a = this;
@@ -127,8 +127,8 @@ var Vector = MoGL.extend('Vector', {
     param:['vector:Vector'],
     ret : ['this'],
     sample:[
-        'var vec1 = new Vector()',
-        'vec1.negate()'
+        'var vec1 = new Vector();',
+        'vec1.negate();'
     ],
     value:function negate() {
         var a = this;
@@ -140,8 +140,8 @@ var Vector = MoGL.extend('Vector', {
     description:"현재 Vector의 단위벡터화된 길이입니다.",
     ret : ['this'],
     sample:[
-        'var vec1 = new Vector()',
-        'vec1.normalize()'
+        'var vec1 = new Vector();',
+        'vec1.normalize();'
     ],
     value:function normalize() {
         var a = this;
@@ -156,9 +156,9 @@ var Vector = MoGL.extend('Vector', {
     param:['vector:Vector'],
     ret : ['number'],
     sample:[
-        'var vec1 = new Vector()',
-        'var vec2 = new Vector()',
-        'vec1.dot(vec2)'
+        'var vec1 = new Vector();',
+        'var vec2 = new Vector();',
+        'vec1.dot(vec2);'
     ],
     value:function (v) {
         var a = this;
@@ -170,9 +170,9 @@ var Vector = MoGL.extend('Vector', {
     param:['vector:Vector'],
     ret : ['Vector'],
     sample:[
-        'var vec1 = new Vector()',
-        'var vec2 = new Vector()',
-        'vec1.cross(vec2)'
+        'var vec1 = new Vector();',
+        'var vec2 = new Vector();',
+        'vec1.cross(vec2);'
     ],
     value:function (v) {
         var a = this, out = new Float32Array([0, 0, 0]);

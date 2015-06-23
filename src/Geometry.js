@@ -16,7 +16,7 @@ var Geometry = (function () {
             "index : 지오메트리를 구성할 인덱스 배열 정보 (Array or Uint16Array)"
         ],
         sample: [
-            "var geo = new Geometry([],[])"
+            "var geo = new Geometry([],[]);"
         ],
         exception:[
             "'Geometry.vertexSet:0' - 첫번째 인자가 Array나 Float32Array가 아닌 경우",
@@ -116,7 +116,7 @@ var Geometry = (function () {
     .field('vertexCount', {
             description: "지오메트리를 구성하는 버텍스 갯수",
             sample: [
-                'console.log(geometry.vertexCount)'
+                'console.log(geometry.vertexCount);'
             ],
             defaultValue:'null',
             get:$getter(vertexCount)
@@ -125,7 +125,7 @@ var Geometry = (function () {
     .field('triangleCount', {
             description: "지오메트리를 구성하는 삼각형 갯수",
             sample: [
-                'console.log(geometry.triangleCount)'
+                'console.log(geometry.triangleCount);'
             ],
             defaultValue:'null',
             get:$getter(triangleCount)
@@ -134,7 +134,7 @@ var Geometry = (function () {
     .field('volume', {
         description: "지오메트리의 최대 부피값.",
         sample: [
-            'console.log(geometry.volume)'
+            'console.log(geometry.volume);'
         ],
         defaultValue:'null',
         get:function volumeGet() {
@@ -159,7 +159,7 @@ var Geometry = (function () {
     .field('position', {
             description: "지오메트리를 구성하는 버텍스의 포지션 배열을 반환",
             sample: [
-                'console.log(geometry.position)'
+                'console.log(geometry.position);'
             ],
             defaultValue:'null',
             get: $getter(position)
@@ -168,7 +168,7 @@ var Geometry = (function () {
     .field('normal', {
             description: "지오메트리를 구성하는 버텍스의 노멀 배열을 반환",
             sample: [
-                'console.log(geometry.normal)'
+                'console.log(geometry.normal);'
             ],
             get: $getter(normal)
         }
@@ -176,7 +176,7 @@ var Geometry = (function () {
     .field('uv', {
             description: "지오메트리를 구성하는 버텍스의 UV 배열을 반환",
             sample: [
-                'console.log(geometry.uv)'
+                'console.log(geometry.uv);'
             ],
             get: $getter(uv)
         }
@@ -184,7 +184,7 @@ var Geometry = (function () {
     .field('color', {
             description: "지오메트리를 구성하는 버텍스의 컬러 배열을 반환",
             sample: [
-                'console.log(geometry.color)'
+                'console.log(geometry.color);'
             ],
             get: $getter(color)
         }
@@ -192,7 +192,7 @@ var Geometry = (function () {
     .field('index', {
             description: "지오메트리를 인덱스 배열을 반환",
             sample: [
-                'console.log(geometry.index)'
+                'console.log(geometry.index);'
             ],
             get: $getter(index)
         }

@@ -24,7 +24,7 @@ var Mesh = (function () {
             ");",
             "",
             "// scene에 등록된 Geometry, Material 사용",
-            "var mesh2 = new Mesh( scene.getGeometry(geometryID), scene.getMaterial(materialID) )",
+            "var mesh2 = new Mesh( scene.getGeometry(geometryID), scene.getMaterial(materialID) );",
             "",
             "// 팩토리함수로도 사용가능",
             "var mesh3 = Mesh( scene.getGeometry(geometryID), scene.getMaterial(materialID) );"
@@ -42,15 +42,15 @@ var Mesh = (function () {
         description: "현재 Mesh의 Face Culling 정보",
         sample: [
             "// Mesh에 정의 된 상수 입력",
-            "var mesh1 = new Mesh(geometry, material)",
+            "var mesh1 = new Mesh(geometry, material);",
             "mesh1.culling = Mesh.cullingNone; // 페이스 컬링을 하지않음",
             "mesh1.culling = Mesh.cullingFront; // 앞면 페이스 컬링을 함",
             "mesh1.culling = Mesh.cullingBack; // 뒷면 페이스 컬링을 함",
             "",
             "// Mesh에 정의 된 상수의 값을 직접 입력",
-            'mesh1.culling = "cullingNone" // 페이스 컬링을 하지않음',
-            'mesh1.culling = "cullingFront" // 앞면 페이스 컬링을 함',
-            'mesh1.culling = "cullingBack" // 뒷면 페이스 컬링을 함'
+            'mesh1.culling = "cullingNone"; // 페이스 컬링을 하지않음',
+            'mesh1.culling = "cullingFront"; // 앞면 페이스 컬링을 함',
+            'mesh1.culling = "cullingBack"; // 뒷면 페이스 컬링을 함'
         ],
         defaultValue:"cullingNone",
         exception:"* 'Mesh.cullingSet:0' - Mesh에 정의된 culling상수값들과 다른 값을 입력 할 경우",
@@ -104,32 +104,32 @@ var Mesh = (function () {
         }
     })
     .constant('cullingNone', {
-            description: "Mesh Face Culling을 하지 않음.",
-            type:'string',
-            sample: [
-                "var mesh1 = new Mesh(geometry, material)",
-                "mesh1.culling = Mesh.cullingNone;",
-            ],
-            value:"cullingNone"
-        })
+        description: "Mesh Face Culling을 하지 않음.",
+        type:'string',
+        sample: [
+            "var mesh1 = new Mesh(geometry, material);",
+            "mesh1.culling = Mesh.cullingNone;",
+        ],
+        value:"cullingNone"
+    })
     .constant('cullingFront',  {
-            description: "Mesh FrontFace를 그리지 않음.",
-            type:'string',
-            sample: [
-                "var mesh1 = new Mesh(geometry, material)",
-                "mesh1.culling = Mesh.cullingFront;",
-            ],
-            value:"cullingFront"
-        })
+        description: "Mesh FrontFace를 그리지 않음.",
+        type:'string',
+        sample: [
+            "var mesh1 = new Mesh(geometry, material);",
+            "mesh1.culling = Mesh.cullingFront;",
+        ],
+        value:"cullingFront"
+    })
     .constant('cullingBack', {
-            description: "Mesh BackFace를 그리지않음",
-            type:'string',
-            sample: [
-                "var mesh1 = new Mesh(geometry, material)",
-                "mesh1.culling = Mesh.cullingBack;",
-            ],
-            value:"cullingBack"
-        })
+        description: "Mesh BackFace를 그리지않음",
+        type:'string',
+        sample: [
+            "var mesh1 = new Mesh(geometry, material);",
+            "mesh1.culling = Mesh.cullingBack;",
+        ],
+        value:"cullingBack"
+    })
     .event('changed', 'changed')
     .build();
 })();

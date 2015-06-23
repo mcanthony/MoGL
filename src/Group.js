@@ -1,13 +1,25 @@
-var Group = Matrix.extend(function Group(){
-
+var Group = Matrix.extend('Group', {
+    description:[
+        "개발중"
+    ],
+    value:function Group() {}
 })
-.method('addChild', function addChild(mesh) {
-    return this;
+.method('addChild', {
+    description:"개발중..",
+    value:function addChild(mesh) {
+        return this;
+    }
 })
-.method('getChild', function getChild(id) { 
-    return null;
+.method('getChild', {
+    description:"개발중..",
+    value:function getChild(id) {
+        return null;
+    }
 })
-.method('removeChild', function removeChild(id) { 
-    return this;
+.method('removeChild', {
+    description:"개발중..",
+    value:function removeChild(id) {
+        return this;
+    }
 })
 .build();

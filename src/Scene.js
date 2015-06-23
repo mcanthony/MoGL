@@ -22,45 +22,45 @@ var Scene = (function () {
     //lib
     vertexShaderParser = makeUtil.vertexShaderParser,
     fragmentShaderParser = makeUtil.fragmentShaderParser;
-    return MoGL.extend('Scene',{
+    return MoGL.extend('Scene', {
         description:'실제 렌더링될 구조체는 Scene별로 집결됨.\n- ' +
         'Scene은 렌더링과 관련된 [Mesh](Mesh.md), [Camera](Camera.md), [Light](Light.md) 등을 포함하고 이들 객체가 공유하며 활용하는 기초 자원으로서 vertex shader, fragment shader, [Texture](Texture.md), [Material](Material.md), [Geometry](Geometry.md) 등을 등록하여 관리한다',
         sample:[
-            'var scene = new Scene()'
+            'var scene = new Scene();'
         ],
         value:function Scene() {
             // for JS
             children[this] = {},
-                childrenArray[this] = [],
-                cameras[this] = {},
-                textures[this] = {},
-                materials[this] = {},
-                geometrys[this] = {},
-                vertexShaders[this] = {},
-                fragmentShaders[this] = {},
-                updateList[this] = {
-                    mesh : [],
-                    material : [],
-                    camera : []
-                },
-                baseLightRotate[this] = [0, -1, -1],
+            childrenArray[this] = [],
+            cameras[this] = {},
+            textures[this] = {},
+            materials[this] = {},
+            geometrys[this] = {},
+            vertexShaders[this] = {},
+            fragmentShaders[this] = {},
+            updateList[this] = {
+                mesh : [],
+                material : [],
+                camera : []
+            },
+            baseLightRotate[this] = [0, -1, -1];
 
-                this.addVertexShader(Shader.colorVertexShader), this.addFragmentShader(Shader.colorFragmentShader),
-                this.addVertexShader(Shader.wireFrameVertexShader), this.addFragmentShader(Shader.wireFrameFragmentShader),
-                this.addVertexShader(Shader.bitmapVertexShader), this.addFragmentShader(Shader.bitmapFragmentShader),
-                this.addVertexShader(Shader.bitmapVertexShaderGouraud), this.addFragmentShader(Shader.bitmapFragmentShaderGouraud),
-                this.addVertexShader(Shader.colorVertexShaderGouraud), this.addFragmentShader(Shader.colorFragmentShaderGouraud),
-                this.addVertexShader(Shader.colorVertexShaderPhong), this.addFragmentShader(Shader.colorFragmentShaderPhong),
-                this.addVertexShader(Shader.toonVertexShaderPhong), this.addFragmentShader(Shader.toonFragmentShaderPhong),
-                this.addVertexShader(Shader.bitmapVertexShaderPhong), this.addFragmentShader(Shader.bitmapFragmentShaderPhong),
-                this.addVertexShader(Shader.bitmapVertexShaderBlinn), this.addFragmentShader(Shader.bitmapFragmentShaderBlinn),
-                this.addVertexShader(Shader.postBaseVertexShader), this.addFragmentShader(Shader.postBaseFragmentShader);
+            this.addVertexShader(Shader.colorVertexShader), this.addFragmentShader(Shader.colorFragmentShader),
+            this.addVertexShader(Shader.wireFrameVertexShader), this.addFragmentShader(Shader.wireFrameFragmentShader),
+            this.addVertexShader(Shader.bitmapVertexShader), this.addFragmentShader(Shader.bitmapFragmentShader),
+            this.addVertexShader(Shader.bitmapVertexShaderGouraud), this.addFragmentShader(Shader.bitmapFragmentShaderGouraud),
+            this.addVertexShader(Shader.colorVertexShaderGouraud), this.addFragmentShader(Shader.colorFragmentShaderGouraud),
+            this.addVertexShader(Shader.colorVertexShaderPhong), this.addFragmentShader(Shader.colorFragmentShaderPhong),
+            this.addVertexShader(Shader.toonVertexShaderPhong), this.addFragmentShader(Shader.toonFragmentShaderPhong),
+            this.addVertexShader(Shader.bitmapVertexShaderPhong), this.addFragmentShader(Shader.bitmapFragmentShaderPhong),
+            this.addVertexShader(Shader.bitmapVertexShaderBlinn), this.addFragmentShader(Shader.bitmapFragmentShaderBlinn),
+            this.addVertexShader(Shader.postBaseVertexShader), this.addFragmentShader(Shader.postBaseFragmentShader);
         }
     })
     .field('updateList', {
             description: "world가 render 함수를 실행하기전 GPU업데이트가 되어야할 목록.",
             sample: [
-                "console.log(scene.updateList)"
+                "console.log(scene.updateList);"
             ],
             defaultValue: '{ mesh : [], material : [], camera : [] }\n- 업데이트 완료후 각 리스트는 초기화 됨.',
             get: $getter(updateList)
@@ -69,7 +69,7 @@ var Scene = (function () {
     .field('vertexShaders', {
             description: "현재 씬이 가지고있는 버텍스 쉐이더 자바스크립트 정보",
             sample: [
-                "console.log(scene.vertexShaders)"
+                "console.log(scene.vertexShaders);"
             ],
             defaultValue: "{}",
             get: $getter(vertexShaders)
@@ -78,7 +78,7 @@ var Scene = (function () {
     .field('fragmentShaders', {
             description: "현재 씬이 가지고 있는 프레그먼트 쉐이더 자바스크립트 정보",
             sample: [
-                "console.log(scene.fragmentShaders)"
+                "console.log(scene.fragmentShaders);"
             ],
             defaultValue: "{}",
             get: $getter(fragmentShaders)
@@ -87,9 +87,9 @@ var Scene = (function () {
     .field('baseLightRotate', {
             description: "디렉셔널 라이트 방향 설정, -1~1 사이값으로 입력(0.4에서 노멀라이즈처리)",
             sample: [
-                "var scene = new Scene()",
-                "scene.baseLightRotate =[0,1,0]",
-                "console.log(scene.baseLightRotate) "
+                "var scene = new Scene();",
+                "scene.baseLightRotate = [0,1,0];",
+                "console.log(scene.baseLightRotate);"
             ],
             defaultValue: "[0, -1, -1]",
             set: $setter(baseLightRotate),
@@ -99,9 +99,9 @@ var Scene = (function () {
     .field('cameras', {
             description: "씬에 등록된 카메라 리스트",
             sample: [
-                "var scene = new Scene()",
-                "scene.addChild(new Camera)",
-                "console.log(scene.cameras) // 오브젝트 형식의 카메라 리스트를 반환"
+                "var scene = new Scene();",
+                "scene.addChild(new Camera);",
+                "console.log(scene.cameras); // 오브젝트 형식의 카메라 리스트를 반환"
             ],
             defaultValue: "{}",
             get: $getter(cameras)
@@ -110,7 +110,7 @@ var Scene = (function () {
     .field('children', {
             description: "씬에 등록된 자식 리스트를 오브젝트 형식으로 반환",
             sample: [
-                "console.log(scene.children)"
+                "console.log(scene.children);"
             ],
             defaultValue: "{}",
             get: $getter(children)
@@ -127,11 +127,11 @@ var Scene = (function () {
                 'this - 메서드체이닝을 위해 자신을 반환함.'
             ],
             sample: [
-                "var scene = new Scene()",
-                "var geo = new Geometry([],[])",
-                "var mat = new Material()",
-                "var mesh = new Mesh(geo,mat)",
-                "scene.addMesh(mesh)"
+                "var scene = new Scene();",
+                "var geo = new Geometry([],[]);",
+                "var mat = new Material();",
+                "var mesh = new Mesh(geo,mat);",
+                "scene.addMesh(mesh);"
             ],
             exception: [
                 "'Scene.addMesh:0' - 이미 등록된 메쉬객체를 등록하려고 할때",
@@ -142,28 +142,28 @@ var Scene = (function () {
                 if (p[v]) this.error(0);
                 if (!(v instanceof Mesh)) this.error(1);
                 p[v] = v;
-                p2.mesh.push(v)
-                mat = v.material
-                mat.addEventListener(Material.load,function(){
+                p2.mesh.push(v);
+                mat = v.material;
+                mat.addEventListener(Material.load, function() {
                     //console.log('메쉬의 재질이 변경되었다!')
-                    var t= this.diffuse
+                    var t = this.diffuse;
                     if(t){
-                        var i = t.length
+                        var i = t.length;
                         while(i--){
-                            if(p2.material.indexOf(t[i].tex)==-1){
-                                p2.material.push(t[i].tex)
+                            if(p2.material.indexOf(t[i].tex) == -1) {
+                                p2.material.push(t[i].tex);
                                 //console.log('새로운 텍스쳐 업데이트 추가',t[i].tex.isLoaded)
                             }
                         }
                     }
-                })
-                v.addEventListener(Mesh.changed,function(){
-                    p2.mesh.push(v)
-                })
-                mat.dispatch(Material.load,mat)
+                });
+                v.addEventListener(Mesh.changed, function() {
+                    p2.mesh.push(v);
+                });
+                mat.dispatch(Material.load,mat);
 
-                if(childrenArray[this].indexOf(v)==-1){
-                    childrenArray[this].push(v)
+                if(childrenArray[this].indexOf(v) == -1) {
+                    childrenArray[this].push(v);
                 }
                 return this;
             }
@@ -180,9 +180,9 @@ var Scene = (function () {
                 'this - 메서드체이닝을 위해 자신을 반환함.'
             ],
             sample: [
-                "var scene = new Scene()",
-                "var camera = new Camera()",
-                "scene.addCamera(camera)"
+                "var scene = new Scene();",
+                "var camera = new Camera();",
+                "scene.addCamera(camera);"
             ],
             exception: [
                 "'Scene.addCamera:0' : 이미 등록된 카메라객체를 등록하려고 할때",
@@ -193,7 +193,7 @@ var Scene = (function () {
                 if (p[v]) this.error(0);
                 if (!(v instanceof Camera)) this.error(1);
                 p[v] = v;
-                updateList[this].camera.push(v)
+                updateList[this].camera.push(v);
                 return this;
             }
         }
@@ -210,9 +210,9 @@ var Scene = (function () {
                 'this - 메서드체이닝을 위해 자신을 반환함.'
             ],
             sample: [
-                "var scene = new Scene()",
-                "var camera = new Camera()",
-                "scene.addChild(camera)"
+                "var scene = new Scene();",
+                "var camera = new Camera();",
+                "scene.addChild(camera);"
             ],
             exception: [
                 "'Scene.addChild:0' - 카메라나 메쉬객체가 아닌 객체를 추가하려고 할때"
@@ -236,9 +236,9 @@ var Scene = (function () {
                 'this - 메서드체이닝을 위해 자신을 반환함.'
             ],
             sample: [
-                "var scene = new Scene()",
-                "var geo = new Geometry([],[])",
-                "scene.addGeometry(camera)"
+                "var scene = new Scene();",
+                "var geo = new Geometry([],[]);",
+                "scene.addGeometry(camera);"
             ],
             exception: [
                 "'Scene.addGeometry:0' - 이미 등록된 지오메트리를 등록하려 할때",
@@ -264,9 +264,9 @@ var Scene = (function () {
                 'this - 메서드체이닝을 위해 자신을 반환함.'
             ],
             sample: [
-                "var scene = new Scene()",
-                "var mat = new Material()",
-                "scene.addMaterial(mat)"
+                "var scene = new Scene();",
+                "var mat = new Material();",
+                "scene.addMaterial(mat);"
             ],
             exception: [
                 "'Scene.addMaterial:0' - 이미 등록된 재질을 등록하려 할때",
@@ -276,7 +276,7 @@ var Scene = (function () {
                 var p = materials[this];
                 if (p[v]) this.error(0);
                 if (!(v instanceof Material)) this.error(1);
-                p[v] = v
+                p[v] = v;
                 return this;
             }
         }
@@ -292,9 +292,9 @@ var Scene = (function () {
                 'this - 메서드체이닝을 위해 자신을 반환함.'
             ],
             sample: [
-                "var scene = new Scene()",
-                "var texture = new Texture()",
-                "scene.addTexture(texture)"
+                "var scene = new Scene();",
+                "var texture = new Texture();",
+                "scene.addTexture(texture);"
             ],
             exception: [
                 "'Scene.addTexture:0' - 이미 등록된 텍스쳐를 등록하려 할때",
@@ -304,7 +304,7 @@ var Scene = (function () {
                 var p = textures[this];
                 if (p[v]) this.error(0);
                 if (!(v instanceof Texture)) this.error(1);
-                p[v] = v
+                p[v] = v;
                 return this;
             }
         }
@@ -312,21 +312,21 @@ var Scene = (function () {
     .method('addFragmentShader', function addFragmentShader(v) {
         var p = fragmentShaders[this];
         if (p[v.code.id]) this.error(0);
-        p[v.code.id] = fragmentShaderParser(v);;
-        return this
+        p[v.code.id] = fragmentShaderParser(v);
+        return this;
     })
     .method('addVertexShader', function addVertexShader(v) {
         var p = vertexShaders[this];
         if (p[v.code.id]) this.error(0);
         p[v.code.id] = vertexShaderParser(v);
-        return this
+        return this;
     })
     .method('getMesh',{
             description: [
                 '씬에 등록된 Mesh객체를 검색'
             ],
             param: [
-                'id:String - 찾고자 하는 메쉬의 id'
+                'id:String - 찾고자 하는 메쉬의 id;'
             ],
             ret: [
                 'Mesh or null'
@@ -338,10 +338,10 @@ var Scene = (function () {
                 var p = children[this],k;
                 for(k in p){
                     if(p[k].id == id){
-                        return p[k]
+                        return p[k];
                     }
                 }
-                return null
+                return null;
             }
         }
     )
@@ -356,16 +356,16 @@ var Scene = (function () {
                 'Camera or null'
             ],
             sample: [
-                "scene.getCamera('CameraID')"
+                "scene.getCamera('CameraID');"
             ],
             value: function getCamera(id) {
                 var p = cameras[this], k;
                 for (k in p) {
                     if (p[k].id == id) {
-                        return p[k]
+                        return p[k];
                     }
                 }
-                return null
+                return null;
             }
         }
     )
@@ -380,13 +380,13 @@ var Scene = (function () {
                 'Mesh/Camera or null'
             ],
             sample: [
-                "scene.getChild('CameraID')"
+                "scene.getChild('CameraID');"
             ],
             value : function getChild(id) {
                 var t;
-                if(t = this.getMesh(id)) return t
-                if(t = this.getCamera(id)) return t
-                return null
+                if(t = this.getMesh(id)) return t;
+                if(t = this.getCamera(id)) return t;
+                return null;
             }
         }
     )
@@ -401,16 +401,16 @@ var Scene = (function () {
                 'Geometry or null'
             ],
             sample: [
-                "scene.getGeometry('GeometryID')"
+                "scene.getGeometry('GeometryID');"
             ],
             value: function getGeometry(id) {
                 var p = geometrys[this], k;
                 for (k in p) {
                     if (p[k].id == id) {
-                        return p[k]
+                        return p[k];
                     }
                 }
-                return null
+                return null;
             }
         }
     )
@@ -425,16 +425,16 @@ var Scene = (function () {
                 'Material or null'
             ],
             sample: [
-                "scene.getMaterial('MaterialID')"
+                "scene.getMaterial('MaterialID');"
             ],
             value: function getMaterial(id) {
                 var p = materials[this], k;
                 for (k in p) {
                     if (p[k].id == id) {
-                        return p[k]
+                        return p[k];
                     }
                 }
-                return null
+                return null;
             }
         }
     )
@@ -449,16 +449,16 @@ var Scene = (function () {
                 'Texture or null'
             ],
             sample: [
-                "scene.getTexture('TextureID')"
+                "scene.getTexture('TextureID');"
             ],
             value: function getTexture(id) {
                 var p = textures[this], k;
                 for (k in p) {
                     if (p[k].id == id) {
-                        return p[k]
+                        return p[k];
                     }
                 }
-                return null
+                return null;
             }
         }
     )
@@ -473,17 +473,17 @@ var Scene = (function () {
                 'true or false - 삭제성공시 true 반환'
             ],
             sample: [
-                "scene.removeChild('targetID')"
+                "scene.removeChild('targetID');"
             ],
             value: function removeChild(id) {
                 var p, k, result;
                 p = children[this],
-                    result = false
+                    result = false;
                 for (k in p) {
                     if (p[k].id == id) {
-                        childrenArray[this].splice(childrenArray[this].indexOf(p[k]), 1)
+                        childrenArray[this].splice(childrenArray[this].indexOf(p[k]), 1);
                         delete p[k],
-                        result = true
+                        result = true;
                     }
                 }
 
@@ -502,16 +502,16 @@ var Scene = (function () {
                 'true or false - 삭제성공시 true 반환'
             ],
             sample: [
-                "scene.removeGeometry('targetID')"
+                "scene.removeGeometry('targetID');"
             ],
             value: function removeGeometry(id) {
                 var p, k, result;
                 p = geometrys[this],
-                    result = false
+                    result = false;
                 for (k in p) {
                     if (p[k].id == id) {
                         delete p[k],
-                        result = true
+                        result = true;
                     }
                 }
                 return result;
@@ -529,16 +529,16 @@ var Scene = (function () {
                 'true or false - 삭제성공시 true 반환'
             ],
             sample: [
-                "scene.removeMaterial('targetID')"
+                "scene.removeMaterial('targetID');"
             ],
             value: function removeMaterial(id) {
                 var p, k, result;
                 p = materials[this],
-                    result = false
+                    result = false;
                 for (k in p) {
                     if (p[k].id == id) {
                         delete p[k],
-                        result = true
+                        result = true;
                     }
                 }
                 return result;
@@ -556,15 +556,15 @@ var Scene = (function () {
                 'true or false - 삭제성공시 true 반환'
             ],
             sample: [
-                "scene.removeTexture('targetID')"
+                "scene.removeTexture('targetID');"
             ],
             value: function removeTexture(id) {
                 var p, result;
                 p = textures[this],
-                    result = false
+                    result = false;
                 if (p[id]) {
                     delete p[id],
-                    result = true
+                    result = true;
                 }
                 return result;
             }
