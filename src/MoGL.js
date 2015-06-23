@@ -74,15 +74,14 @@ var MoGL = (function() {
                 ],
                 description:[
                     '이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Defineder)를 얻음',
-                    '\n**Defineder class의 메소드**\n',
-                    '* 각 메서드는 체이닝됨',
-                    "* Matrix = MoGL.extend('Matrix', function(){..}).static(..).field(..).build(); 형태로 사용",
-                    "* field('x',{value:30}) - 속성을 정의함",
-                    "* method('rotate',{value:function(){}}) - 메서드를 정의함",
-                    "* constant('normalX',{value:'normalX'}) - 상수를 정의함",
-                    "* event('updated',{value:'updated'}) - 이벤트를 정의함",
-                    "* static('toString',{value:function(){}}) - 정적메서드를 정의함",
-                    "* build() - 입력된 결과를 종합하여 클래스를 생성함"
+                    '각 메서드는 체이닝됨',
+                    "Matrix = MoGL.extend('Matrix', function(){..}).static(..).field(..).build(); 형태로 사용",
+                    "field('x',{value:30}) - 속성을 정의함",
+                    "method('rotate',{value:function(){}}) - 메서드를 정의함",
+                    "constant('normalX',{value:'normalX'}) - 상수를 정의함",
+                    "event('updated',{value:'updated'}) - 이벤트를 정의함",
+                    "static('toString',{value:function(){}}) - 정적메서드를 정의함",
+                    "build() - 입력된 결과를 종합하여 클래스를 생성함"
                 ],
                 ret:'Defineder - 클래스를 정의할 수 있는 생성전용객체',
                 value:function extend(k) {
