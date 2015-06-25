@@ -36,11 +36,19 @@ var Texture = (function() {
         context.clearRect(0, 0, tw, th);
         switch(resizeType){
             case Texture.crop:
-                if (v.width < tw) dw = tw / 2;
-                if (v.height < th) dh = th / 2;
+                if (v.width < tw) {
+                    dw = tw / 2;
+                    tw = v.width;
+                }
+                if (v.height < th) {
+                    dh = th / 2;
+                    th = v.height;
+                }
                 context.drawImage(v, 0, 0, tw, th, 0, 0, dw, dh);
                 break;
             case Texture.addSpace:
+                if (v.width < tw) tw = v.width;
+                if (v.height < th) th = v.height;
                 context.drawImage(v, 0, 0, tw, th, 0, 0, tw, th);
                 break;
             default:
