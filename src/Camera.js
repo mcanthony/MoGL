@@ -242,12 +242,12 @@ var Camera = (function () {
             }
         }
     )
-    .constant('resize', {
-        description: '',
-        type:'string',
-        sample: '',
-        value:'resize'
-    })
+    //.constant('resize', {
+    //    description: '',
+    //    type:'string',
+    //    sample: '',
+    //    value:'resize'
+    //})
     .constant('orthogonal',{
         description: '카메라 정사 모드',
         type:'string',
