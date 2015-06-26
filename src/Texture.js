@@ -19,32 +19,35 @@ var Texture = (function() {
     empty = document.createElement('img'),
     empty.src = canvas.toDataURL(),
     resizer = function(resizeType, v){
-        var tw, th, dw, dh;
+        var tw, th;
         //texture size
         tw = th = 1;
         while (v.width > tw) tw *= 2;
         while (v.height > th) th *= 2;
-        //fit size
-        if (v.width == tw && v.height == th) {}
 
         if (resizeType == Texture.zoomOut) {
             if (v.width < tw) tw /= 2;
             if (v.height < th) th /= 2;
         }
-        canvas.width = dw = tw,
-        canvas.height = dh = th,
+        canvas.width = tw,
+        canvas.height = th,
         context.clearRect(0, 0, tw, th);
-        switch(resizeType){
+        switch (resizeType) {
             case Texture.crop:
-                if (v.width < tw) dw = tw / 2;
-                if (v.height < th) dh = th / 2;
-                context.drawImage(v, 0, 0, tw, th, 0, 0, dw, dh);
+                var ratio = v.height / v.width
+                if (v.height < th) {
+                    v.height = th
+                    v.width = v.height / ratio
+                }
+                context.drawImage(v, 0, 0, v.width, v.height);
                 break;
             case Texture.addSpace:
-                context.drawImage(v, 0, 0, tw, th, 0, 0, tw, th);
+                if (v.width < tw) tw = Math.round(v.width);
+                if (v.height < th) th = Math.round(v.height);
+                context.drawImage(v, 0, 0, tw, th);
                 break;
             default:
-                context.drawImage(v, 0, 0, dw, dh);
+                context.drawImage(v, 0, 0, tw, th);
         }
         v.src = canvas.toDataURL();
         //console.log('리사이저처리결과', v.src,dw,dh)
