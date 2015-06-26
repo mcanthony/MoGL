@@ -26,13 +26,13 @@
             position: absolute
         }
     </style>
-    <script src="lib/mogl.js"></script>
+    <script src="lib/mogl.min.js"></script>
 </head>
 <body>
-<img src="smithHead/Map-COL.jpg" id="testIMG" style="position: absolute;top:0px;" width="128" height="128">
-<img src="monkey/Suzanne.jpg" id="testIMG2" style="position: absolute;top:0px;" width="128" height="128">
+<img src="smithHead/Map-COL.jpg" id="testIMG" style="position: absolute;top:0px;display:none" width="128" height="128">
+<img src="monkey/Suzanne.jpg" id="testIMG2" style="position: absolute;top:0px;;display:none" width="128" height="128">
 <canvas id="canvas"></canvas>
-<button style="position:absolute;top:0px; margin:10px" id='fxaa'>FXAA ON</button>
+<button style="position:absolute;top:0px; margin-top:20px" id='fxaa'>FXAA ON</button>
 <div class="FPS">
     Current FPS: <span id="currentFPS"></span>
     Average FPS: <span id="averageFPS"></span>
@@ -103,7 +103,7 @@
         mesh2.x = 3
 
         camera2.z = 10
-        camera2.renderArea = [100, 10, 128, 128]
+        camera2.renderArea = [100, 30, 128, 128]
         camera3.renderArea = [10, 200, 300, 300]
         camera2.backgroundColor = [Math.random(), Math.random(), Math.random(), 1]
         camera3.backgroundColor = [Math.random(), Math.random(), Math.random(), 1]

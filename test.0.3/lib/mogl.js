@@ -106,7 +106,7 @@ SIN = Math.sin, COS = Math.cos, TAN = Math.tan, ATAN = Math.atan, ATAN2 = Math.a
 SQRT = Math.sqrt, CEIL = Math.ceil, ABS = Math.abs, PI = Math.PI, PIH = PI * 0.5, PID = PI * 2, D2R = PI / 180, R2D = 180 / PI;
 //markdown
 $md = function(classes){
-    var list, val, func, sort, toStr,toStr2, fieldDetail, methodDetail;
+    var list, val, func, sort, toStr, fieldDetail, methodDetail;
     sort = function(a,b){
         return a.name < b.name;
     },
@@ -116,21 +116,13 @@ $md = function(classes){
             v.sort(sort);
             md[md.length] = '\n**' + type + '**\n';
             for (i = 0, j = v.length; i < j; i++){
-                md[md.length] = '* [' + v[i].name + '](#' + v[i].name + ') - ' + v[i].description.substr(0, 20).trim() + (v[i].description.length > 20 ? '...' : '');
+                md[md.length] = '* [' + v[i].name + '](#' + v[i].name + ') - ' + v[i].description.split('\n')[0].substr(0, 20).trim() + (v[i].description.length > 20 ? '...' : '');
             }
         }
     },
     toStr = function(v){
         if (Array.isArray(v)) {
             return v.join('\n');
-        }else if (!v) {
-            return '';
-        }
-        return v;
-    },
-    toStr2 = function(v){
-        if (Array.isArray(v)) {
-            return v.join('\n- ');
         }else if (!v) {
             return '';
         }
@@ -143,10 +135,10 @@ $md = function(classes){
                 temp[k].type = temp[k].type || '?',
                 temp[k].defaultValue = temp[k].defaultValue || 'none', 
                 temp[k].sample = toStr(temp[k].sample || '//none'),
-                temp[k].description = toStr2(temp[k].description),
+                temp[k].description = toStr(temp[k].description),
                 temp[k].enumerable = temp1[k] && temp1[k].enumerable ? true : false, 
                 temp[k].configurable = temp1[k] && temp1[k].configurable ? true : false;
-                temp[k].exception = toStr2(temp[k].exception || 'none');
+                temp[k].exception = toStr(temp[k].exception || 'none');
                 if (temp1[k]){
                     if ('writable' in temp1[k]) {
                         temp[k].writable = temp1[k].writable ? true : false;
@@ -168,8 +160,8 @@ $md = function(classes){
             temp[k].param = toStr(temp[k].param || 'none');
             temp[k].ret = toStr(temp[k].ret || 'none');
             temp[k].sample = toStr(temp[k].sample || '//none');
-            temp[k].exception = toStr2(temp[k].exception || 'none');
-            temp[k].description = toStr2(temp[k].description);
+            temp[k].exception = toStr(temp[k].exception || 'none');
+            temp[k].description = toStr(temp[k].description);
             v[v.length] = temp[k];
         }
         list(type, md, v);
@@ -185,18 +177,18 @@ $md = function(classes){
                 md[md.length] = '###' + k.name;
                 md[md.length] = '\n_' + type + '_\n';
                 md[md.length] = '\n**description**\n';
-                md[md.length] = '- '+k.description;
+                md[md.length] = '\n- '+k.description;
                 md[md.length] = '\n**setting**\n';
-                md[md.length] = '- *writable*:' + k.writable + '\n- *enumerable*:' + k.enumerable + '\n- *configurable*:' + k.configurable;
+                md[md.length] = '- *writable*:' + k.writable + '\n-  *enumerable*:' + k.enumerable + '\n-  *configurable*:' + k.configurable;
                 if ('value' in k) {
                     md[md.length] = '\n**value**\n';
-                    md[md.length] = k.value;
+                    md[md.length] = '\n- '+k.value;
                 } else if ('defaultValue' in k) {
                     md[md.length] = '\n**defaultValue**\n';
-                    md[md.length] ='- '+k.defaultValue;
+                    md[md.length] = '\n- '+k.defaultValue;
                 }
                 md[md.length] = '\n**exception**\n';
-                md[md.length] = '- '+k.exception;
+                md[md.length] = '\n- '+k.exception;
                 md[md.length] = '\n**sample**\n';
                 md[md.length] = '```javascript';
                 md[md.length] = k.sample;
@@ -225,7 +217,7 @@ $md = function(classes){
                 }
                 md[md.length] = '\n_' + type + '_\n';
                 md[md.length] = '\n**description**\n';
-                md[md.length] =  '- '+k.description;
+                md[md.length] = '\n- '+k.description;
                 md[md.length] = '\n**param**\n';
                 if (k.param != 'none' && n) {
                     for(m = 0; m < n ; m++){
@@ -241,9 +233,9 @@ $md = function(classes){
                     md[md.length] = 'none';
                 }
                 md[md.length] = '\n**exception**\n';
-                md[md.length] = '- '+k.exception;
+                md[md.length] = '\n- '+k.exception;
                 md[md.length] = '\n**return**\n';
-                md[md.length] =  '- ' +(k.ret.length ? k.ret.replace('this', 'this - 메소드체이닝을 위해 자신을 반환함') : 'none');
+                md[md.length] = '\n- '+(k.ret.length ? k.ret.replace('this', 'this - 메소드체이닝을 위해 자신을 반환함') : 'none');
                 md[md.length] = '\n**sample**\n';
                 md[md.length] = '```javascript';
                 md[md.length] = k.sample;
@@ -296,7 +288,7 @@ $md = function(classes){
         md[md.length] = '\n**description**\n';
         md[md.length] = '- '+toStr(temp.description);
         md[md.length] = '\n**param**\n';
-        md[md.length] = '- '+toStr(temp.param || 'none'),
+        md[md.length] =  toStr(temp.param || 'none'),
         md[md.length] = '\n**exception**\n';
         md[md.length] = '- '+toStr(temp.exception || 'none');
         md[md.length] = '\n**sample**\n';
@@ -487,76 +479,76 @@ var makeUtil = (function(){
                 texture:texture
             };
         },
-	    vertexShaderParser: function vertexShaderParser(source) {
-		    var i, temp, str, resultObject, code;
-		    code = source.code,
-		    resultObject = {
-			    uniforms: [],
-			    attributes: [],
-			    id: code.id,
-			    shaderStr: null
-		    },
-		    str = "",
-		    temp = code.attributes,
-		    i = temp.length;
-		    while (i--) {
-			    str += 'attribute ' + temp[i] + ';\n',
-			    resultObject.attributes.push(temp[i].split(' ')[1]);
-		    }
-		    temp = code.uniforms,
-			    i = temp.length;
-		    while (i--) {
-			    str += 'uniform ' + temp[i] + ';\n',
-			    resultObject.uniforms.push(temp[i].split(' ')[1]);
-		    }
-		    temp = code.varyings,
-		    i = temp.length;
-		    while (i--) {
-			    str += 'varying ' + temp[i] + ';\n';
-		    }
-		    str += VertexShader.baseFunction,
-		    str += 'void main(void){\n',
-		    str += code.main + ';\n',
-		    str += '}\n'
-		    resultObject.shaderStr = str
-		    return resultObject;
-	    },
-	    fragmentShaderParser : function fragmentShaderParser(source) {
-		    var i, temp, str, resultObject, code;
-		    code = source.code,
-		    resultObject = {
-			    uniforms: [],
-			    id: code.id,
-			    shaderStr: null
-		    },
-		    str = "";
-		    if (code.precision) {
-			    str += 'precision ' + code.precision + ';\n';
-		    }
-		    else {
-			    str += 'precision mediump float;\n';
-		    }
-		    temp = code.uniforms,
-		    i = temp.length;
-		    while (i--) {
-			    str += 'uniform ' + temp[i] + ';\n',
-			    resultObject.uniforms.push(temp[i].split(' ')[1]);
-		    }
-		    temp = code.varyings,
-		    i = temp.length;
-		    while (i--) {
-			    str += 'varying ' + temp[i] + ';\n';
-		    }
-		    str += 'void main(void){\n',
-		    str += code.main + ';\n',
-		    str += '}\n'
-		    resultObject.shaderStr = str
-		    return resultObject;
-	    }
+        vertexShaderParser: function vertexShaderParser(source) {
+            var i, temp, str, resultObject, code;
+            code = source.code,
+            resultObject = {
+                uniforms: [],
+                attributes: [],
+                id: code.id,
+                shaderStr: null
+            },
+            str = "",
+            temp = code.attributes,
+            i = temp.length;
+            while (i--) {
+                str += 'attribute ' + temp[i] + ';\n',
+                resultObject.attributes.push(temp[i].split(' ')[1]);
+            }
+            temp = code.uniforms,
+                i = temp.length;
+            while (i--) {
+                str += 'uniform ' + temp[i] + ';\n',
+                resultObject.uniforms.push(temp[i].split(' ')[1]);
+            }
+            temp = code.varyings,
+            i = temp.length;
+            while (i--) {
+                str += 'varying ' + temp[i] + ';\n';
+            }
+            str += VertexShader.baseFunction,
+            str += 'void main(void){\n',
+            str += code.main + ';\n',
+            str += '}\n'
+            resultObject.shaderStr = str
+            return resultObject;
+        },
+        fragmentShaderParser : function fragmentShaderParser(source) {
+            var i, temp, str, resultObject, code;
+            code = source.code,
+            resultObject = {
+                uniforms: [],
+                id: code.id,
+                shaderStr: null
+            },
+            str = "";
+            if (code.precision) {
+                str += 'precision ' + code.precision + ';\n';
+            }
+            else {
+                str += 'precision mediump float;\n';
+            }
+            temp = code.uniforms,
+            i = temp.length;
+            while (i--) {
+                str += 'uniform ' + temp[i] + ';\n',
+                resultObject.uniforms.push(temp[i].split(' ')[1]);
+            }
+            temp = code.varyings,
+            i = temp.length;
+            while (i--) {
+                str += 'varying ' + temp[i] + ';\n';
+            }
+            str += 'void main(void){\n',
+            str += code.main + ';\n',
+            str += '}\n'
+            resultObject.shaderStr = str
+            return resultObject;
+        }
     };
 })();
 var MoGL = (function() {
-    var Defineder, build, func, keys, val, param, checker,
+    var Definer, build, func, keys, val, param, checker,
         MoGL, idProp, destroy, classGet, totalCount, error;
     checker = {};
     param = function(v){
@@ -569,9 +561,9 @@ var MoGL = (function() {
             return v;
         }
     },
-    Defineder = function(k, v, parent, check){
+    Definer = function(k, v, parent, check){
         var p, i;
-        if (check !== checker) throw new Error('Defineder는 extend를 통해서만 사용할 수 있습니다');
+        if (check !== checker) throw new Error('Definer는 extend를 통해서만 사용할 수 있습니다');
         this.parent = parent;
         if (typeof v == 'function') {
             this._construct = {
@@ -629,8 +621,8 @@ var MoGL = (function() {
                     'constructor:function - 자식클래스의 생성자'
                 ],
                 description:[
-                    '이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Defineder)를 얻음',
-                    '\n**Defineder class의 메소드**\n',
+                    '이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Definer)를 얻음',
+                    '\n**Definer class의 메소드**\n',
                     '* 각 메서드는 체이닝됨',
                     "* Matrix = MoGL.extend('Matrix', function(){..}).static(..).field(..).build(); 형태로 사용",
                     "* field('x',{value:30}) - 속성을 정의함",
@@ -640,7 +632,10 @@ var MoGL = (function() {
                     "* static('toString',{value:function(){}}) - 정적메서드를 정의함",
                     "* build() - 입력된 결과를 종합하여 클래스를 생성함"
                 ],
-                ret:'Defineder - 클래스를 정의할 수 있는 생성전용객체',
+                ret:'Definer - 클래스를 정의할 수 있는 생성전용객체',
+                sample:[
+                    "var classA = MoGL.extend('classA', function(){}).build();"
+                ],
                 value:function extend(k) {
                     var v;
                     if(arguments.length == 1) {
@@ -648,13 +643,16 @@ var MoGL = (function() {
                     } else {
                         v = arguments[1];
                     }
-                    return new Defineder(k, v, this, checker);
+                    return new Definer(k, v, this, checker);
                 }
             },
             getInstance:{
                 param:'uuid:string - 얻고 싶은 인스턴스의 uuid 또는 id',
                 description:'uuid 또는 id를 기반으로 인스턴스를 얻어냄',
                 ret:'Object - 해당되는 인스턴스',
+                sample:[
+                    "var instance = Mesh.getInstance(uuid);"
+                ],
                 value:function getInstance(v) {
                     var inst, p, k;
                     if (v in allInstance) {
@@ -674,6 +672,9 @@ var MoGL = (function() {
             count:{
                 description:'이 클래스로 부터 만들어져 활성화된 인스턴스의 수',
                 ret:'int - 활성화된 인스턴스의 수',
+                sample:[
+                    "var meshCount = Mesh.count();"
+                ],
                 value:function count() {
                     return counter[this.uuid];
                 }
@@ -683,6 +684,13 @@ var MoGL = (function() {
                 param:[
                     'method:string - 예외가 발생한 함수명',
                     'id:int - 예외고유 id'
+                ],
+                sample:[
+                    "var classA = MoGL.extend('classA', function(){})",
+                    "    .static('test', function(){",
+                    "	     this.error('test', 0);",
+                    "    })",
+                    "    .build();"
                 ],
                 value:function error(method, id) {
                     throw new Error(this.className + '.' + method + ':' + id);
@@ -919,7 +927,7 @@ var MoGL = (function() {
             return this;
         }};
     },
-    Object.defineProperties(Defineder.prototype, {
+    Object.defineProperties(Definer.prototype, {
         method:func('_method'),
         static:func('_static'),
         field:val('_field'),
@@ -927,13 +935,13 @@ var MoGL = (function() {
         event:val('_event'),
         build:{value:build}
     });
-    Object.freeze(Defineder),
-    Object.freeze(Defineder.prototype);
+    Object.freeze(Definer),
+    Object.freeze(Definer.prototype);
     MoGL = (function(){
         var init, updated, listener;
         listener = {},
         updated = {},
-        init = new Defineder('MoGL', {
+        init = new Definer('MoGL', {
             description:[
                 'MoGL 라이브러리의 모든 클래스는 MoGL을 상속함',
                 '* 보통 직접적으로 MoGL 클래스를 사용하는 경우는 없음'
@@ -2138,544 +2146,611 @@ var VertexShader = {
 Object.freeze(VertexShader);
 
 var Shader = (function () {
-	var code;
-	//private
-	code = {},
-	$setPrivate('Shader', {});
-	return MoGL.extend('Shader', {
-			description: "쉐이더 클래스. 버텍스쉐이더와 프레그먼트 쉐이더를 생성.",
-			param : [
-				"1. v:Object - 오브젝트 형태로 쉐이더 정보를 입력",
-				"2. 버텍스쉐이더 - { id:'', attributes:[], uniforms:[], varyings[], function:[], main[]",
-				"3. 프레그먼트쉐이더 - { id:'', uniforms:[], varyings[], function:[], main[]"
-			],
-			value: function Shader(v) {
-				code[this] = v;
-			}
-		}
-	)
-	.field('code', {
-			description : '쉐이더 구성정보 코드(JS)를 반환',
-			get: $getter(code)
-		}
-	)
-	.constant('colorVertexShader', {
-		description: "컬러 버텍스 쉐이더",
-		get: (function () {
-			var cache;
-			return function () {
-				return cache || (cache = new Shader({
-						id: 'colorVertexShader',
-						attributes: ['vec3 aVertexPosition'],
-						uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition', 'vec4 uColor'],
-						varyings: ['vec4 vColor'],
-						function: [VertexShader.baseFunction],
-						main: [
-							'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
-							'vColor = uColor;'
-						]
-					}))
-			}
-		})()
-	})
-	.constant('colorFragmentShader', {
-		description: "컬러 프레그먼트 쉐이더",
-		get: (function () {
-			var cache;
-			return function () {
-				return cache || (cache = new Shader({
-						id: 'colorFragmentShader',
-						precision: 'mediump float',
-						uniforms: [],
-						varyings: ['vec4 vColor'],
-						function: [],
-						main: [
-							'gl_FragColor =  vColor'
-						]
-					}))
-			}
-		})()
-	})
-	.constant('wireFrameVertexShader', {
-		description: "와이어프레임 버텍스 쉐이더",
-		get: (function () {
-			var cache;
-			return function () {
-				return cache || (cache = new Shader({
-						id: 'wireFrameVertexShader',
-						attributes: ['vec3 aVertexPosition'],
-						uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition', 'vec4 uColor'],
-						varyings: ['vec4 vColor'],
-						function: [VertexShader.baseFunction],
-						main: [
-							'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
-							'vColor = uColor ;'
-						]
-					}))
-			}
-		})()
-	})
-	.constant('wireFrameFragmentShader', {
-		description: "와이어프레임 프레그먼트 쉐이더",
-		get: (function () {
-			var cache;
-			return function () {
-				return cache || (cache = new Shader({
-						id: 'wireFrameFragmentShader',
-						precision: 'mediump float',
-						uniforms: [],
-						varyings: ['vec4 vColor'],
-						function: [],
-						main: [
-							'gl_FragColor =  vColor;'
-						]
-					}))
-			}
-		})()
-	})
-	.constant('bitmapVertexShader', {
-		description: "비트맵 버텍스 쉐이더",
-		get: (function () {
-			var cache;
-			return function () {
-				return cache || (cache = new Shader({
-						id: 'bitmapVertexShader',
-						attributes: ['vec3 aVertexPosition', 'vec2 aUV'],
-						uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
-						varyings: ['vec2 vUV'],
-						function: [VertexShader.baseFunction],
-						main: [
-							'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
-							'vUV = aUV;'
-						]
-					}))
-			}
-		})()
-	})
-	.constant('bitmapFragmentShader', {
-		description: "비트맵 프레그먼트 쉐이더",
-		get: (function () {
-			var cache;
-			return function () {
-				return cache || (cache = new Shader({
-						id: 'bitmapFragmentShader',
-						precision: 'mediump float',
-						uniforms: ['sampler2D uSampler'],
-						varyings: ['vec2 vUV'],
-						function: [],
-						main: [
-							'gl_FragColor =  texture2D(uSampler, vec2(vUV.s, vUV.t))'
-						]
-					}))
-			}
-		})()
-	})
-	.constant('colorVertexShaderGouraud', {
-		description: "컬러 고라우드 버텍스 쉐이더",
-		get: (function () {
-			var cache;
-			return function () {
-				return cache || (cache = new Shader({
-						id: 'colorVertexShaderGouraud',
-						attributes: ['vec3 aVertexPosition', 'vec3 aVertexNormal'],
-						uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uDLite', 'float uLambert', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition', 'vec4 uColor'],
-						varyings: ['vec4 vColor'],
-						function: [VertexShader.baseFunction],
-						main: [
-							' mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
-							' gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
-							' vec3 N = (mv * vec4(aVertexNormal, 0.0)).xyz;\n' +
-							' vec3 LD = normalize(vec4(uDLite, 0.0)).xyz;\n' +
-							' float df = max(0.1,dot(N,-LD)*uLambert);\n' +
-							' vColor = uColor*df;' +
-							' vColor[3] = uColor[3];'
-						]
-					}))
-			}
-		})()
-	})
-	.constant('colorFragmentShaderGouraud', {
-		description: "컬러 고라우드 프레그먼트 쉐이더",
-		get: (function () {
-			var cache;
-			return function () {
-				return cache || (cache = new Shader({
-						id: 'colorFragmentShaderGouraud',
-						precision: 'mediump float',
-						uniforms: ['sampler2D uSampler'],
-						varyings: ['vec4 vColor'],
-						function: [],
-						main: [
-							'gl_FragColor =  vColor;\n'
-						]
-					}))
-			}
-		})()
-	})
-	.constant('bitmapVertexShaderGouraud', {
-		description: "비트맵 고라우드 버텍스 쉐이더",
-		get: (function () {
-			var cache;
-			return function () {
-				return cache || (cache = new Shader({
-						id: 'bitmapVertexShaderGouraud',
-						attributes: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
-						uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uDLite', 'float uLambert', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
-						varyings: ['vec2 vUV', 'vec4 vLight'],
-						function: [VertexShader.baseFunction],
-						main: [
-							' mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
-							' gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
-							' vec3 N = (mv * vec4(aVertexNormal, 0.0)).xyz;\n' +
-							' vec3 LD = normalize(vec4(uDLite, 0.0)).xyz;\n' +
-							' float df = max(0.1,dot(N,-LD)*uLambert);\n' +
-							' vLight = vec4(1.0,1.0,1.0,1.0)*df;\n' +
-							' vLight[3] = 1.0;\n' +
-							' vUV = aUV;'
-						]
-					}))
-			}
-		})()
-	})
-	.constant('bitmapFragmentShaderGouraud', {
-		description: "비트맵 고라우드 프레그먼트 쉐이더",
-		get: (function () {
-			var cache;
-			return function () {
-				return cache || (cache = new Shader({
-						id: 'bitmapFragmentShaderGouraud',
-						precision: 'mediump float',
-						uniforms: ['sampler2D uSampler'],
-						varyings: ['vec2 vUV', 'vec4 vLight'],
-						function: [],
-						main: [
-							'gl_FragColor =  (vLight*texture2D(uSampler, vec2(vUV.s, vUV.t)));\n' +
-							'gl_FragColor.a = 1.0;'
-						]
-					}))
-			}
-		})()
-	})
-	.constant('colorVertexShaderPhong', {
-		description: "컬러 퐁 버텍스 쉐이더",
-		get: (function () {
-			var cache;
-			return function () {
-				return cache || (cache = new Shader({
-						id: 'colorVertexShaderPhong',
-						attributes: ['vec3 aVertexPosition', 'vec3 aVertexNormal'],
-						uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition', 'vec4 uColor'],
-						varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec4 vColor'],
-						function: [VertexShader.baseFunction],
-						main: ['' +
-						'mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
-						'gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
-						'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
-						'vNormal = vec3(mv * vec4(-aVertexNormal, 0.0));\n' +
-						'vColor = uColor;'
-						]
-					}))
-			}
-		})()
-	})
-	.constant('colorFragmentShaderPhong', {
-		description: "컬러 퐁 프레그먼트 쉐이더",
-		get: (function () {
-			var cache;
-			return function () {
-				return cache || (cache = new Shader({
-						id: 'colorFragmentShaderPhong',
-						precision: 'mediump float',
-						uniforms: ['float uLambert', 'vec3 uDLite'],
-						varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec4 vColor'],
-						function: [],
-						main: [
-							'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
-							'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
-							'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
+    var code;
+    //private
+    code = {};
+    $setPrivate('Shader', {});
+    return MoGL.extend('Shader', {
+            description: "쉐이더 클래스. 버텍스쉐이더와 프레그먼트 쉐이더를 생성.",
+            param : [
+                "1. v:Object - 오브젝트 형태로 쉐이더 정보를 입력",
+                "2. 버텍스쉐이더 - { id:'', attributes:[], uniforms:[], varyings[], function:[], main[]",
+                "3. 프레그먼트쉐이더 - { id:'', uniforms:[], varyings[], function:[], main[]"
+            ],
+            sample: [
+                "var shader = new Shader();"
+            ],
+            value: function Shader(v) {
+                code[this] = v;
+            }
+        }
+    )
+        .field('code', {
+            description : '쉐이더 구성정보 코드(JS)를 반환',
+            get: $getter(code),
+            sample: [
+                "var shader = new Shader();",
+                "console.log(shader.code);"
+            ]
+        }
+    )
+        .constant('colorVertexShader', {
+            description: "컬러 버텍스 쉐이더",
+            sample: [
+                "console.log(Shader.colorVertexShader);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'colorVertexShader',
+                            attributes: ['vec3 aVertexPosition'],
+                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition', 'vec4 uColor'],
+                            varyings: ['vec4 vColor'],
+                            function: [VertexShader.baseFunction],
+                            main: [
+                                'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
+                                'vColor = uColor;'
+                            ]
+                        }))
+                }
+            })()
+        })
+        .constant('colorFragmentShader', {
+            description: "컬러 프레그먼트 쉐이더",
+            sample: [
+                "console.log(Shader.colorFragmentShader);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'colorFragmentShader',
+                            precision: 'mediump float',
+                            uniforms: [],
+                            varyings: ['vec4 vColor'],
+                            function: [],
+                            main: [
+                                'gl_FragColor =  vColor'
+                            ]
+                        }))
+                }
+            })()
+        })
+        .constant('wireFrameVertexShader', {
+            description: "와이어프레임 버텍스 쉐이더",
+            sample: [
+                "console.log(Shader.wireFrameVertexShader);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'wireFrameVertexShader',
+                            attributes: ['vec3 aVertexPosition'],
+                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition', 'vec4 uColor'],
+                            varyings: ['vec4 vColor'],
+                            function: [VertexShader.baseFunction],
+                            main: [
+                                'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
+                                'vColor = uColor ;'
+                            ]
+                        }))
+                }
+            })()
+        })
+        .constant('wireFrameFragmentShader', {
+            description: "와이어프레임 프레그먼트 쉐이더",
+            sample: [
+                "console.log(Shader.wireFrameFragmentShader);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'wireFrameFragmentShader',
+                            precision: 'mediump float',
+                            uniforms: [],
+                            varyings: ['vec4 vColor'],
+                            function: [],
+                            main: [
+                                'gl_FragColor =  vColor;'
+                            ]
+                        }))
+                }
+            })()
+        })
+        .constant('bitmapVertexShader', {
+            description: "비트맵 버텍스 쉐이더",
+            sample: [
+                "console.log(Shader.bitmapVertexShader);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'bitmapVertexShader',
+                            attributes: ['vec3 aVertexPosition', 'vec2 aUV'],
+                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
+                            varyings: ['vec2 vUV'],
+                            function: [VertexShader.baseFunction],
+                            main: [
+                                'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
+                                'vUV = aUV;'
+                            ]
+                        }))
+                }
+            })()
+        })
+        .constant('bitmapFragmentShader', {
+            description: "비트맵 프레그먼트 쉐이더",
+            sample: [
+                "console.log(Shader.bitmapFragmentShader);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'bitmapFragmentShader',
+                            precision: 'mediump float',
+                            uniforms: ['sampler2D uSampler'],
+                            varyings: ['vec2 vUV'],
+                            function: [],
+                            main: [
+                                'gl_FragColor =  texture2D(uSampler, vec2(vUV.s, vUV.t))'
+                            ]
+                        }))
+                }
+            })()
+        })
+        .constant('colorVertexShaderGouraud', {
+            description: "컬러 고라우드 버텍스 쉐이더",
+            sample: [
+                "console.log(Shader.colorVertexShaderGouraud);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'colorVertexShaderGouraud',
+                            attributes: ['vec3 aVertexPosition', 'vec3 aVertexNormal'],
+                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uDLite', 'float uLambert', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition', 'vec4 uColor'],
+                            varyings: ['vec4 vColor'],
+                            function: [VertexShader.baseFunction],
+                            main: [
+                                ' mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
+                                ' gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
+                                ' vec3 N = (mv * vec4(aVertexNormal, 0.0)).xyz;\n' +
+                                ' vec3 LD = normalize(vec4(uDLite, 0.0)).xyz;\n' +
+                                ' float df = max(0.1,dot(N,-LD)*uLambert);\n' +
+                                ' vColor = uColor*df;' +
+                                ' vColor[3] = uColor[3];'
+                            ]
+                        }))
+                }
+            })()
+        })
+        .constant('colorFragmentShaderGouraud', {
+            description: "컬러 고라우드 프레그먼트 쉐이더",
+            sample: [
+                "console.log(Shader.colorFragmentShaderGouraud);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'colorFragmentShaderGouraud',
+                            precision: 'mediump float',
+                            uniforms: ['sampler2D uSampler'],
+                            varyings: ['vec4 vColor'],
+                            function: [],
+                            main: [
+                                'gl_FragColor =  vColor;\n'
+                            ]
+                        }))
+                }
+            })()
+        })
+        .constant('bitmapVertexShaderGouraud', {
+            description: "비트맵 고라우드 버텍스 쉐이더",
+            sample: [
+                "console.log(Shader.bitmapVertexShaderGouraud);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'bitmapVertexShaderGouraud',
+                            attributes: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
+                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uDLite', 'float uLambert', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
+                            varyings: ['vec2 vUV', 'vec4 vLight'],
+                            function: [VertexShader.baseFunction],
+                            main: [
+                                ' mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
+                                ' gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
+                                ' vec3 N = (mv * vec4(aVertexNormal, 0.0)).xyz;\n' +
+                                ' vec3 LD = normalize(vec4(uDLite, 0.0)).xyz;\n' +
+                                ' float df = max(0.1,dot(N,-LD)*uLambert);\n' +
+                                ' vLight = vec4(1.0,1.0,1.0,1.0)*df;\n' +
+                                ' vLight[3] = 1.0;\n' +
+                                ' vUV = aUV;'
+                            ]
+                        }))
+                }
+            })()
+        })
+        .constant('bitmapFragmentShaderGouraud', {
+            description: "비트맵 고라우드 프레그먼트 쉐이더",
+            sample: [
+                "console.log(Shader.bitmapFragmentShaderGouraud);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'bitmapFragmentShaderGouraud',
+                            precision: 'mediump float',
+                            uniforms: ['sampler2D uSampler'],
+                            varyings: ['vec2 vUV', 'vec4 vLight'],
+                            function: [],
+                            main: [
+                                'gl_FragColor =  (vLight*texture2D(uSampler, vec2(vUV.s, vUV.t)));\n' +
+                                'gl_FragColor.a = 1.0;'
+                            ]
+                        }))
+                }
+            })()
+        })
+        .constant('colorVertexShaderPhong', {
+            description: "컬러 퐁 버텍스 쉐이더",
+            sample: [
+                "console.log(Shader.colorVertexShaderPhong);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'colorVertexShaderPhong',
+                            attributes: ['vec3 aVertexPosition', 'vec3 aVertexNormal'],
+                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition', 'vec4 uColor'],
+                            varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec4 vColor'],
+                            function: [VertexShader.baseFunction],
+                            main: ['' +
+                            'mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
+                            'gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
+                            'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
+                            'vNormal = vec3(mv * vec4(-aVertexNormal, 0.0));\n' +
+                            'vColor = uColor;'
+                            ]
+                        }))
+                }
+            })()
+        })
+        .constant('colorFragmentShaderPhong', {
+            description: "컬러 퐁 프레그먼트 쉐이더",
+            sample: [
+                "console.log(Shader.colorFragmentShaderPhong);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'colorFragmentShaderPhong',
+                            precision: 'mediump float',
+                            uniforms: ['float uLambert', 'vec3 uDLite'],
+                            varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec4 vColor'],
+                            function: [],
+                            main: [
+                                'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
+                                'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
+                                'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
 
-							'vec3 normal = normalize(vNormal);\n' +
-							'vec3 lightDir = uDLite;\n' +
-							'vec3 reflectDir = reflect(lightDir, normal);\n' +
-							'vec3 viewDir = normalize(-vPosition);\n' +
+                                'vec3 normal = normalize(vNormal);\n' +
+                                'vec3 lightDir = uDLite;\n' +
+                                'vec3 reflectDir = reflect(lightDir, normal);\n' +
+                                'vec3 viewDir = normalize(-vPosition);\n' +
 
-							'float lambertian = max(dot(lightDir,normal), 0.1)*uLambert;\n' +
-							'float specular = 0.0;\n' +
+                                'float lambertian = max(dot(lightDir,normal), 0.1)*uLambert;\n' +
+                                'float specular = 0.0;\n' +
 
-							'if(lambertian > 0.0) {\n' +
-							'float specAngle = max(dot(reflectDir, viewDir), 0.0);\n' +
-							'   specular = pow(specAngle, 4.0);\n' +
-							'}\n' +
-							'gl_FragColor = vColor*vec4(ambientColor +lambertian*diffuseColor +specular*specColor, 1.0);\n' +
-							'gl_FragColor.a = vColor[3];'
-						]
-					}))
-			}
-		})()
-	})
-	.constant('toonVertexShaderPhong', {
-		description: "툰 퐁 버텍스 쉐이더",
-		get: (function () {
-			var cache;
-			return function () {
-				return cache || (cache = new Shader({
-						id: 'toonVertexShaderPhong',
-						attributes: ['vec3 aVertexPosition', 'vec3 aVertexNormal'],
-						uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition', 'vec4 uColor'],
-						varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec4 vColor'],
-						function: [VertexShader.baseFunction],
-						main: [
-							'mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
-							'gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
-							'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
-							'vNormal = (vec3( mv * vec4(-aVertexNormal, 0.0)));\n' +
+                                'if(lambertian > 0.0) {\n' +
+                                'float specAngle = max(dot(reflectDir, viewDir), 0.0);\n' +
+                                '   specular = pow(specAngle, 4.0);\n' +
+                                '}\n' +
+                                'gl_FragColor = vColor*vec4(ambientColor +lambertian*diffuseColor +specular*specColor, 1.0);\n' +
+                                'gl_FragColor.a = vColor[3];'
+                            ]
+                        }))
+                }
+            })()
+        })
+        .constant('toonVertexShaderPhong', {
+            description: "툰 퐁 버텍스 쉐이더",
+            sample: [
+                "console.log(Shader.toonVertexShaderPhong);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'toonVertexShaderPhong',
+                            attributes: ['vec3 aVertexPosition', 'vec3 aVertexNormal'],
+                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition', 'vec4 uColor'],
+                            varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec4 vColor'],
+                            function: [VertexShader.baseFunction],
+                            main: [
+                                'mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
+                                'gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
+                                'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
+                                'vNormal = (vec3( mv * vec4(-aVertexNormal, 0.0)));\n' +
 
-							'vColor = uColor;'
-						]
-					}))
-			}
-		})()
-	})
-	.constant('toonFragmentShaderPhong', {
-		description: "툰 퐁 프레그먼트 쉐이더",
-		get: (function () {
-			var cache;
-			return function () {
-				return cache || (cache = new Shader({
-						id: 'toonFragmentShaderPhong',
-						precision: 'mediump float',
-						uniforms: ['float uLambert', 'vec3 uDLite'],
-						varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec4 vColor'],
-						function: [],
-						main: [
-							'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
-							'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
-							'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
+                                'vColor = uColor;'
+                            ]
+                        }))
+                }
+            })()
+        })
+        .constant('toonFragmentShaderPhong', {
+            description: "툰 퐁 프레그먼트 쉐이더",
+            sample: [
+                "console.log(Shader.toonFragmentShaderPhong);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'toonFragmentShaderPhong',
+                            precision: 'mediump float',
+                            uniforms: ['float uLambert', 'vec3 uDLite'],
+                            varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec4 vColor'],
+                            function: [],
+                            main: [
+                                'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
+                                'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
+                                'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
 
-							'vec3 normal = normalize(vNormal);\n' +
-							'vec3 lightDir = uDLite;\n' +
-							'vec3 reflectDir = reflect(lightDir, normal);\n' +
-							'vec3 viewDir = normalize(-vPosition);\n' +
+                                'vec3 normal = normalize(vNormal);\n' +
+                                'vec3 lightDir = uDLite;\n' +
+                                'vec3 reflectDir = reflect(lightDir, normal);\n' +
+                                'vec3 viewDir = normalize(-vPosition);\n' +
 
-							'float lambertian = max(dot(lightDir,normal), 0.1)*uLambert;\n' +
-							'float specular = 0.0;\n' +
+                                'float lambertian = max(dot(lightDir,normal), 0.1)*uLambert;\n' +
+                                'float specular = 0.0;\n' +
 
-							'vec3 src = vColor.rgb;\n' +
+                                'vec3 src = vColor.rgb;\n' +
 
-							'if(lambertian > 0.0) {\n' +
-							'float specAngle = max(dot(reflectDir, viewDir), 0.0);\n' +
-							'   specular = pow(specAngle, 4.0);\n' +
-							'}\n' +
-							'src = src*(ambientColor +lambertian*diffuseColor +specular*specColor);\n' +
+                                'if(lambertian > 0.0) {\n' +
+                                'float specAngle = max(dot(reflectDir, viewDir), 0.0);\n' +
+                                '   specular = pow(specAngle, 4.0);\n' +
+                                '}\n' +
+                                'src = src*(ambientColor +lambertian*diffuseColor +specular*specColor);\n' +
 
-							' if(lambertian>0.95-0.5) src.rgb*=0.95;\n' +
-							' else if(lambertian>0.4-0.5) src.rgb*=0.5;\n' +
-							' else if(lambertian>0.3-0.5) src.rgb*=0.3;\n' +
-							' else src.rgb*=0.1;\n' +
+                                ' if(lambertian>0.95-0.5) src.rgb*=0.95;\n' +
+                                ' else if(lambertian>0.4-0.5) src.rgb*=0.5;\n' +
+                                ' else if(lambertian>0.3-0.5) src.rgb*=0.3;\n' +
+                                ' else src.rgb*=0.1;\n' +
 
-							'gl_FragColor.rgb = src.rgb;\n' +
-							'gl_FragColor.a = vColor[3];'
-						]
-					}))
-			}
-		})()
-	})
-	.constant('bitmapVertexShaderPhong', {
-		description: "비트맵 퐁 버텍스 쉐이더",
-		get: (function () {
-			var cache;
-			return function () {
-				return cache || (cache = new Shader({
-						id: 'bitmapVertexShaderPhong',
-						attributes: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
-						uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
-						varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition'],
-						function: [VertexShader.baseFunction],
-						main: [
-							'mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
-							'gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
-							'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
-							'vNormal = (vec3( mv * vec4(-aVertexNormal, 0.0)));\n' +
-							'vUV = aUV;'
-						]
-					}))
-			}
-		})()
-	})
-	.constant('bitmapFragmentShaderPhong', {
-		description: "비트맵 퐁 프레그먼트 쉐이더",
-		get: (function () {
-			var cache;
-			return function () {
-				return cache || (cache = new Shader({
-						id: 'bitmapFragmentShaderPhong',
-						precision: 'mediump float',
-						uniforms: ['sampler2D uSampler', 'float uLambert', 'vec3 uDLite'],
-						varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition'],
-						function: [],
-						main: [
-							'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
-							'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
-							'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
+                                'gl_FragColor.rgb = src.rgb;\n' +
+                                'gl_FragColor.a = vColor[3];'
+                            ]
+                        }))
+                }
+            })()
+        })
+        .constant('bitmapVertexShaderPhong', {
+            description: "비트맵 퐁 버텍스 쉐이더",
+            sample: [
+                "console.log(Shader.bitmapVertexShaderPhong);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'bitmapVertexShaderPhong',
+                            attributes: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
+                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
+                            varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition'],
+                            function: [VertexShader.baseFunction],
+                            main: [
+                                'mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
+                                'gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
+                                'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
+                                'vNormal = (vec3( mv * vec4(-aVertexNormal, 0.0)));\n' +
+                                'vUV = aUV;'
+                            ]
+                        }))
+                }
+            })()
+        })
+        .constant('bitmapFragmentShaderPhong', {
+            description: "비트맵 퐁 프레그먼트 쉐이더",
+            sample: [
+                "console.log(Shader.bitmapFragmentShaderPhong);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'bitmapFragmentShaderPhong',
+                            precision: 'mediump float',
+                            uniforms: ['sampler2D uSampler', 'float uLambert', 'vec3 uDLite'],
+                            varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition'],
+                            function: [],
+                            main: [
+                                'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
+                                'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
+                                'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
 
-							'vec3 normal = normalize(vNormal);\n' +
-							'vec3 lightDir = uDLite;\n' +
-							'vec3 reflectDir = reflect(lightDir, normal);\n' +
-							'vec3 viewDir = normalize(-vPosition);\n' +
+                                'vec3 normal = normalize(vNormal);\n' +
+                                'vec3 lightDir = uDLite;\n' +
+                                'vec3 reflectDir = reflect(lightDir, normal);\n' +
+                                'vec3 viewDir = normalize(-vPosition);\n' +
 
-							'float lambertian = max(dot(lightDir,normal), 0.1)*uLambert;\n' +
-							'float specular = 0.0;\n' +
+                                'float lambertian = max(dot(lightDir,normal), 0.1)*uLambert;\n' +
+                                'float specular = 0.0;\n' +
 
-							'if(lambertian > 0.0) {\n' +
-							'float specAngle = max(dot(reflectDir, viewDir), 0.1);\n' +
-							'   specular = pow(specAngle, 4.0)*uLambert;\n' +
-							'}\n' +
+                                'if(lambertian > 0.0) {\n' +
+                                'float specAngle = max(dot(reflectDir, viewDir), 0.1);\n' +
+                                '   specular = pow(specAngle, 4.0)*uLambert;\n' +
+                                '}\n' +
 
-							'gl_FragColor = texture2D(uSampler, vec2(vUV.s, vUV.t))*vec4(ambientColor +lambertian*diffuseColor +specular*specColor, 1.0);\n' +
-							'gl_FragColor.a = 1.0;'
-						]
-					}))
-			}
-		})()
-	})
-	.constant('bitmapVertexShaderBlinn', {
-		description: "비트맵 블린 버텍스 쉐이더",
-		get: (function () {
-			var cache;
-			return function () {
-				return cache || (cache = new Shader({
-						id: 'bitmapVertexShaderBlinn',
-						attributes: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
-						uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
-						varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition'],
-						function: [VertexShader.baseFunction],
-						main: ['' +
-						'mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
-						'gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
-						'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
-						'vNormal = vec3( mv * vec4(-aVertexNormal, 0.0));\n' +
-						'vUV = aUV;'
-						]
-					}))
-			}
-		})()
-	})
-	.constant('bitmapFragmentShaderBlinn', {
-		description: "비트맵 블린 프레그먼트 쉐이더",
-		get: (function () {
-			var cache;
-			return function () {
-				return cache || (cache = new Shader({
-						id: 'bitmapFragmentShaderBlinn',
-						precision: 'mediump float',
-						uniforms: ['sampler2D uSampler', 'float uLambert', 'vec3 uDLite'],
-						varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition'],
-						function: [],
-						main: ['' +
-						'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
-						'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
-						'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
+                                'gl_FragColor = texture2D(uSampler, vec2(vUV.s, vUV.t))*vec4(ambientColor +lambertian*diffuseColor +specular*specColor, 1.0);\n' +
+                                'gl_FragColor.a = 1.0;'
+                            ]
+                        }))
+                }
+            })()
+        })
+        .constant('bitmapVertexShaderBlinn', {
+            description: "비트맵 블린 버텍스 쉐이더",
+            sample: [
+                "console.log(Shader.bitmapVertexShaderBlinn);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'bitmapVertexShaderBlinn',
+                            attributes: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
+                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
+                            varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition'],
+                            function: [VertexShader.baseFunction],
+                            main: ['' +
+                            'mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
+                            'gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
+                            'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
+                            'vNormal = vec3( mv * vec4(-aVertexNormal, 0.0));\n' +
+                            'vUV = aUV;'
+                            ]
+                        }))
+                }
+            })()
+        })
+        .constant('bitmapFragmentShaderBlinn', {
+            description: "비트맵 블린 프레그먼트 쉐이더",
+            sample: [
+                "console.log(Shader.bitmapFragmentShaderBlinn);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'bitmapFragmentShaderBlinn',
+                            precision: 'mediump float',
+                            uniforms: ['sampler2D uSampler', 'float uLambert', 'vec3 uDLite'],
+                            varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition'],
+                            function: [],
+                            main: ['' +
+                            'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
+                            'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
+                            'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
 
-						'vec3 normal = normalize(vNormal);\n' +
-						'vec3 lightDir = uDLite;\n' +
+                            'vec3 normal = normalize(vNormal);\n' +
+                            'vec3 lightDir = uDLite;\n' +
 
-						'float lambertian = max(dot(lightDir,normal), 0.1)*uLambert;\n' +
-						'float specular = 0.0;\n' +
+                            'float lambertian = max(dot(lightDir,normal), 0.1)*uLambert;\n' +
+                            'float specular = 0.0;\n' +
 
-						'vec3 viewDir = normalize(vPosition);\n' +
+                            'vec3 viewDir = normalize(vPosition);\n' +
 
-						'if(lambertian > 0.0) {\n' +
-						'	vec3 halfDir = normalize(lightDir + viewDir);\n' +
-						'	float specAngle = max(dot(halfDir, normal), 0.0);\n' +
-						'	specular = pow(specAngle, 16.0);\n' +
-						'}\n' +
-						'gl_FragColor = texture2D(uSampler, vec2(vUV.s, vUV.t))*vec4(ambientColor +lambertian*diffuseColor +specular*specColor, 1.0);\n' +
-						'gl_FragColor.a = 1.0;'
-						]
-					}))
-			}
-		})()
-	})
-	.constant('postBaseVertexShader', {
-		description: "후처리 베이스 버텍스 쉐이더",
-		get: (function () {
-			var cache;
-			return function () {
-				return cache || (cache = new Shader({
-						id: 'postBaseVertexShader',
-						attributes: ['vec3 aVertexPosition', 'vec2 aUV'],
-						uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
-						varyings: ['vec2 vUV'],
-						function: [VertexShader.baseFunction],
-						main: ['' +
-						'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
-						'vUV = aUV;'
-						]
-					}))
-			}
-		})()
-	})
-	.constant('postBaseFragmentShader', {
-		description: "후처리 베이스 프레그먼트 쉐이더",
-		get: (function () {
-			var cache;
-			return function () {
-				return cache || (cache = new Shader({
-						id: 'postBaseFragmentShader',
-						precision: 'mediump float',
-						uniforms: ['sampler2D uSampler', 'vec2 uTexelSize', 'int uFXAA'],
-						varyings: ['vec2 vUV'],
-						function: [],
-						main: ['' +
-						'if(uFXAA==1){\n' +
-						'float FXAA_REDUCE_MIN = (1.0/128.0);\n' +
-						'float FXAA_REDUCE_MUL = (1.0/8.0);\n' +
-						'float FXAA_SPAN_MAX = 8.0;\n' +
+                            'if(lambertian > 0.0) {\n' +
+                            '   vec3 halfDir = normalize(lightDir + viewDir);\n' +
+                            '   float specAngle = max(dot(halfDir, normal), 0.0);\n' +
+                            '   specular = pow(specAngle, 16.0);\n' +
+                            '}\n' +
+                            'gl_FragColor = texture2D(uSampler, vec2(vUV.s, vUV.t))*vec4(ambientColor +lambertian*diffuseColor +specular*specColor, 1.0);\n' +
+                            'gl_FragColor.a = 1.0;'
+                            ]
+                        }))
+                }
+            })()
+        })
+        .constant('postBaseVertexShader', {
+            description: "후처리 베이스 버텍스 쉐이더",
+            sample: [
+                "console.log(Shader.postBaseVertexShader);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'postBaseVertexShader',
+                            attributes: ['vec3 aVertexPosition', 'vec2 aUV'],
+                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
+                            varyings: ['vec2 vUV'],
+                            function: [VertexShader.baseFunction],
+                            main: ['' +
+                            'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
+                            'vUV = aUV;'
+                            ]
+                        }))
+                }
+            })()
+        })
+        .constant('postBaseFragmentShader', {
+            description: "후처리 베이스 프레그먼트 쉐이더",
+            sample: [
+                "console.log(Shader.postBaseFragmentShader);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'postBaseFragmentShader',
+                            precision: 'mediump float',
+                            uniforms: ['sampler2D uSampler', 'vec2 uTexelSize', 'int uFXAA'],
+                            varyings: ['vec2 vUV'],
+                            function: [],
+                            main: ['' +
+                            'if(uFXAA==1){\n' +
+                            'float FXAA_REDUCE_MIN = (1.0/128.0);\n' +
+                            'float FXAA_REDUCE_MUL = (1.0/8.0);\n' +
+                            'float FXAA_SPAN_MAX = 8.0;\n' +
 
-						'vec4 rgbNW = texture2D(uSampler, (vUV + vec2(-1.0, -1.0) * uTexelSize));\n' +
-						'vec4 rgbNE = texture2D(uSampler, (vUV + vec2(1.0, -1.0) * uTexelSize));\n' +
-						'vec4 rgbSW = texture2D(uSampler, (vUV + vec2(-1.0, 1.0) * uTexelSize));\n' +
-						'vec4 rgbSE = texture2D(uSampler, (vUV + vec2(1.0, 1.0) * uTexelSize));\n' +
-						'vec4 rgbM = texture2D(uSampler, vUV);\n' +
-						'vec4 luma = vec4(0.299, 0.587, 0.114, 1.0);\n' +
-						'float lumaNW = dot(rgbNW, luma);\n' +
-						'float lumaNE = dot(rgbNE, luma);\n' +
-						'float lumaSW = dot(rgbSW, luma);\n' +
-						'float lumaSE = dot(rgbSE, luma);\n' +
-						'float lumaM = dot(rgbM, luma);\n' +
-						'float lumaMin = min(lumaM, min(min(lumaNW, lumaNE), min(lumaSW, lumaSE)));\n' +
-						'float lumaMax = max(lumaM, max(max(lumaNW, lumaNE), max(lumaSW, lumaSE)));\n' +
+                            'vec4 rgbNW = texture2D(uSampler, (vUV + vec2(-1.0, -1.0) * uTexelSize));\n' +
+                            'vec4 rgbNE = texture2D(uSampler, (vUV + vec2(1.0, -1.0) * uTexelSize));\n' +
+                            'vec4 rgbSW = texture2D(uSampler, (vUV + vec2(-1.0, 1.0) * uTexelSize));\n' +
+                            'vec4 rgbSE = texture2D(uSampler, (vUV + vec2(1.0, 1.0) * uTexelSize));\n' +
+                            'vec4 rgbM = texture2D(uSampler, vUV);\n' +
+                            'vec4 luma = vec4(0.299, 0.587, 0.114, 1.0);\n' +
+                            'float lumaNW = dot(rgbNW, luma);\n' +
+                            'float lumaNE = dot(rgbNE, luma);\n' +
+                            'float lumaSW = dot(rgbSW, luma);\n' +
+                            'float lumaSE = dot(rgbSE, luma);\n' +
+                            'float lumaM = dot(rgbM, luma);\n' +
+                            'float lumaMin = min(lumaM, min(min(lumaNW, lumaNE), min(lumaSW, lumaSE)));\n' +
+                            'float lumaMax = max(lumaM, max(max(lumaNW, lumaNE), max(lumaSW, lumaSE)));\n' +
 
-						'vec2 dir = vec2(-((lumaNW + lumaNE) - (lumaSW + lumaSE)), ((lumaNW + lumaSW) - (lumaNE + lumaSE)));\n' +
+                            'vec2 dir = vec2(-((lumaNW + lumaNE) - (lumaSW + lumaSE)), ((lumaNW + lumaSW) - (lumaNE + lumaSE)));\n' +
 
-						'float dirReduce = max((lumaNW + lumaNE + lumaSW + lumaSE) * (0.25 * FXAA_REDUCE_MUL),FXAA_REDUCE_MIN);\n' +
-						'float rcpDirMin = 1.0 / (min(abs(dir.x), abs(dir.y)) + dirReduce);\n' +
-						'dir = min(vec2(FXAA_SPAN_MAX, FXAA_SPAN_MAX),\n' +
-						'max(vec2(-FXAA_SPAN_MAX, -FXAA_SPAN_MAX),\n' +
-						'dir * rcpDirMin)) * uTexelSize;\n' +
+                            'float dirReduce = max((lumaNW + lumaNE + lumaSW + lumaSE) * (0.25 * FXAA_REDUCE_MUL),FXAA_REDUCE_MIN);\n' +
+                            'float rcpDirMin = 1.0 / (min(abs(dir.x), abs(dir.y)) + dirReduce);\n' +
+                            'dir = min(vec2(FXAA_SPAN_MAX, FXAA_SPAN_MAX),\n' +
+                            'max(vec2(-FXAA_SPAN_MAX, -FXAA_SPAN_MAX),\n' +
+                            'dir * rcpDirMin)) * uTexelSize;\n' +
 
-						'vec4 rgbA = 0.5 * (' +
-						'	texture2D(uSampler, vUV + dir * (1.0 / 3.0 - 0.5))+' +
-						'	texture2D(uSampler, vUV + dir * (2.0 / 3.0 - 0.5))' +
-						');\n' +
+                            'vec4 rgbA = 0.5 * (' +
+                            '   texture2D(uSampler, vUV + dir * (1.0 / 3.0 - 0.5))+' +
+                            '   texture2D(uSampler, vUV + dir * (2.0 / 3.0 - 0.5))' +
+                            ');\n' +
 
-						'vec4 rgbB = rgbA * 0.5 + 0.25 * (texture2D(uSampler, vUV + dir *  -0.5)+texture2D(uSampler, vUV + dir * 0.5));\n' +
-						'float lumaB = dot(rgbB, luma);\n' +
-						'if ((lumaB < lumaMin) || (lumaB > lumaMax)) {\n' +
-						'	gl_FragColor = rgbA;\n' +
-						'}\n' +
-						'else {\n' +
-						'	gl_FragColor = rgbB;\n' +
-						'}\n' +
-						'}else{\n' +
-						'	gl_FragColor =  texture2D(uSampler, vec2(vUV.s, vUV.t));' +
-						'}' +
-						'']
-					}))
-			}
-		})()
-	})
-	.build();
+                            'vec4 rgbB = rgbA * 0.5 + 0.25 * (texture2D(uSampler, vUV + dir *  -0.5)+texture2D(uSampler, vUV + dir * 0.5));\n' +
+                            'float lumaB = dot(rgbB, luma);\n' +
+                            'if ((lumaB < lumaMin) || (lumaB > lumaMax)) {\n' +
+                            '   gl_FragColor = rgbA;\n' +
+                            '}\n' +
+                            'else {\n' +
+                            '   gl_FragColor = rgbB;\n' +
+                            '}\n' +
+                            '}else{\n' +
+                            '   gl_FragColor =  texture2D(uSampler, vec2(vUV.s, vUV.t));' +
+                            '}' +
+                            '']
+                        }))
+                }
+            })()
+        })
+        .build();
 })();
 var Matrix = (function () {
     var temp, setter, getter,
@@ -3021,11 +3096,24 @@ var Matrix = (function () {
             return this;
         }
     })
-    .method('_frustum', function _frustum(a, b, c, d, e, g) {
-        var f = raw[this];
-        var h = b - a, i = d - c, j = g - e;
-        f[0] = e * 2 / h, f[1] = 0, f[2] = 0, f[3] = 0, f[4] = 0, f[5] = e * 2 / i, f[6] = 0, f[7] = 0, f[8] = (b + a) / h, f[9] = (d + c) / i, f[10] = -(g + e) / j, f[11] = -1, f[12] = 0, f[13] = 0, f[14] = -(g * e * 2) / j, f[15] = 0;
-        return this;
+    .method('frustum', {
+        description:['보이는 화면 영역'],
+        sample:[],
+        ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
+        param:[
+            'a:number - 가로세로 비율',
+            'b:number - 가로세로 비율',
+            'c:number - 시야각, degree 단위로 입력',
+            'd:number - 시야각, degree 단위로 입력',
+            'e:number - 절두체의 죄소 z값, 0.0보다 큰 값으로 설정',
+            'g:number - 절두체의 최대 z값'
+        ],
+        value:function frustum(a, b, c, d, e, g) {
+            var f = raw[this];
+            var h = b - a, i = d - c, j = g - e;
+            f[0] = e * 2 / h, f[1] = 0, f[2] = 0, f[3] = 0, f[4] = 0, f[5] = e * 2 / i, f[6] = 0, f[7] = 0, f[8] = (b + a) / h, f[9] = (d + c) / i, f[10] = -(g + e) / j, f[11] = -1, f[12] = 0, f[13] = 0, f[14] = -(g * e * 2) / j, f[15] = 0;
+            return this;
+        }
     })
     .method('matPerspective', {
         description:'퍼스펙티브 매트릭스',
@@ -3043,11 +3131,22 @@ var Matrix = (function () {
         value:function matPerspective(fov, aspect, near, far) {
             fov = near * Math.tan(fov * Math.PI / 360),
             aspect = fov * aspect,
-            this._frustum(-aspect, aspect, -fov, fov, near, far);
-            return this
+            this.frustum(-aspect, aspect, -fov, fov, near, far);
+            return this;
         }
     })
     .method('matLookAt', {
+        description:'eye 벡터가 center 벡터를 바라보는 회전 행렬 생성',
+        sample:[
+            'var matrix = new Matrix();',
+            'matrix.matLookAt([100, 100, 100], [0, 0, 0], [0, 1, 0]);'
+        ],
+        ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
+        param:[
+            'eye:Array - [x, y, z] 형태의 eye 좌표',
+            'center:Array - [x, y, z] 형태의 center 좌표',
+            'up:Array - [x, y, z] 형태의 up 벡터'
+        ],
         value:function matLookAt(eye, center, up) {
             var a = raw[this];
             var x0, x1, x2, y0, y1, y2, z0, z1, z2, len, eyex = eye[0], eyey = eye[1], eyez = eye[2], upx = up[0], upy = up[1], upz = up[2], centerx = center[0], centery = center[1], centerz = center[2];
@@ -3103,32 +3202,35 @@ var Texture = (function() {
     empty = document.createElement('img'),
     empty.src = canvas.toDataURL(),
     resizer = function(resizeType, v){
-        var tw, th, dw, dh;
+        var tw, th;
         //texture size
         tw = th = 1;
         while (v.width > tw) tw *= 2;
         while (v.height > th) th *= 2;
-        //fit size
-        if (v.width == tw && v.height == th) {}
 
         if (resizeType == Texture.zoomOut) {
             if (v.width < tw) tw /= 2;
             if (v.height < th) th /= 2;
         }
-        canvas.width = dw = tw,
-        canvas.height = dh = th,
+        canvas.width = tw,
+        canvas.height = th,
         context.clearRect(0, 0, tw, th);
-        switch(resizeType){
+        switch (resizeType) {
             case Texture.crop:
-                if (v.width < tw) dw = tw / 2;
-                if (v.height < th) dh = th / 2;
-                context.drawImage(v, 0, 0, tw, th, 0, 0, dw, dh);
+                var ratio = v.height / v.width
+                if (v.height < th) {
+                    v.height = th
+                    v.width = v.height / ratio
+                }
+                context.drawImage(v, 0, 0, v.width, v.height);
                 break;
             case Texture.addSpace:
-                context.drawImage(v, 0, 0, tw, th, 0, 0, tw, th);
+                if (v.width < tw) tw = Math.round(v.width);
+                if (v.height < th) th = Math.round(v.height);
+                context.drawImage(v, 0, 0, tw, th);
                 break;
             default:
-                context.drawImage(v, 0, 0, dw, dh);
+                context.drawImage(v, 0, 0, tw, th);
         }
         v.src = canvas.toDataURL();
         //console.log('리사이저처리결과', v.src,dw,dh)
@@ -3997,370 +4099,402 @@ var Group = Matrix.extend('Group', {
 })
 .build();
 var Camera = (function () {
-	var PERPIR, prop;
-	//lib
-	PERPIR = D2R * .5,
-	//private
-	prop = {},
-	//shared private
-	$setPrivate('Camera', {});
-	return Matrix.extend('Camera',{
-		description: "씬을 실제로 렌더링할 카메라 객체를 생성함",
-		sample: [
-			"var camera = new Camera();"
-		],
-		value : function Camera() {
-			Object.seal(prop[this] = {
-				r: 0, g: 0, b: 0, a: 1,
-				fov: 55, near: 0.1, far: 10000,
-				fog: false, fogColor: null, fogNear: 0, fogFar: 0,
-				visible: true,
-				antialias: false,
-				mode: Camera.perspective,
-				//filters:{},
-				renderArea: null,
-				projectionMatrix: Matrix()
-			}),
-			this.z = 10,
-			this.lookAt(0, 0, 0);
-		}
-	})
-	.field('clipPlaneNear', {
-		description: "현재 절두체의 최소z값",
-		sample: [
-			'var camera = new Camera();',
-			'camera.clipPlaneNear = 10;'
-		],
-		defaultValue:"0.1",
-		get: $getter(prop, 'near'),
-		set: $setter(prop, 'near')
-	})
-	.field('clipPlaneFar', {
-		description: "현재 절두체의 최대z값",
-		sample: [
-			'var camera = new Camera();',
-			'camera.clipPlaneFar = 1000;'
-		],
-		defaultValue:"10000",
-		get: $getter(prop, 'far'),
-		set: $setter(prop, 'far')
-	})
-	.field('visible', {
-		get: $getter(prop, 'visible'),
+    var PERPIR, prop;
+    //lib
+    PERPIR = D2R * .5,
+    //private
+    prop = {},
+    //shared private
+    $setPrivate('Camera', {});
+    return Matrix.extend('Camera',{
+        description: "씬을 실제로 렌더링할 카메라 객체를 생성함",
+        sample: [
+            "var camera = new Camera();"
+        ],
+        value : function Camera() {
+            Object.seal(prop[this] = {
+                r: 0, g: 0, b: 0, a: 1,
+                fov: 55, near: 0.1, far: 10000,
+                fog: false, fogColor: null, fogNear: 0, fogFar: 0,
+                visible: true,
+                antialias: false,
+                mode: Camera.perspective,
+                //filters:{},
+                renderArea: null,
+                projectionMatrix: Matrix()
+            }),
+            this.z = 10,
+            this.lookAt(0, 0, 0);
+        }
+    })
+    .field('clipPlaneNear', {
+        description: "현재 절두체의 최소z값",
+        sample: [
+            'var camera = new Camera();',
+            'camera.clipPlaneNear = 10;'
+        ],
+        defaultValue:"0.1",
+        get: $getter(prop, 'near'),
+        set: $setter(prop, 'near')
+    })
+    .field('clipPlaneFar', {
+        description: "현재 절두체의 최대z값",
+        sample: [
+            'var camera = new Camera();',
+            'camera.clipPlaneFar = 1000;'
+        ],
+        defaultValue:"10000",
+        get: $getter(prop, 'far'),
+        set: $setter(prop, 'far')
+    })
+    .field('visible', {
+        get: $getter(prop, 'visible'),
         sample:[
             "var camera = Camera();",
             "camera.visible = false;"
         ],
-		set: function visibleSet(v) {
-			if (typeof v == 'number') {
-				v = v ? true : false
-			}
-			prop[this].visible = v
-		}
-	})
-	.field('antialias', {
-		description: "쉐이더 레벨의 안티알리어싱 적용여부",
-		sample: [
-			'var camera = new Camera();',
-			'camera.antialias = true;'
-		],
-		defaultValue:"false",
-		get: $getter(prop, 'antialias'),
-		set: function antialiasSet(v) {
-			if (typeof v == 'number') {
-				v = v ? true : false
-			}
-			prop[this].antialias = v
-		}
-	})
-	.field('fogColor', {
-		description: "안개 효과 컬러 지정",
-		sample: [
-			'var camera = new Camera();',
-			'camera.fogColor = [Math.random(),Math.random(),Math.random(),1];'
-		],
-		defaultValue:'null',
-		get: $getter(prop, 'fogColor'),
-		set: function fogColorSet(v) {
-			var p = prop[this];
-			p.fogColor = $color(v).slice(0),
-				p.fog = true;
-		}
-	})
-	.field('fogNear', {
-		description: "안개효과가 시작되는 z축 거리",
-		sample: [
-			'var camera = new Camera();',
-			'camera.fogNear = 10;'
-		],
-		defaultValue:'0',
-		get: $getter(prop, 'fogNear'),
-		set: function fogNearSet(v) {
-			var p = prop[this];
-			p.fogNear = v,
-				p.fog = true;
-		}
-	})
-	.field('fogFar', {
-		description: "안개효과만 남고 아무것도 보이지 않는  z축 거리",
-		sample: [
-			'var camera = new Camera();',
-			'camera.fogFar = 1000;'
-		],
-		defaultValue:'0',
-		get: $getter(prop, 'fogFar'),
-		set: function fogFarSet(v) {
-			var p = prop[this];
-			p.fogFar = v,
-				p.fog = true;
-		}
-	})
-	.field('fov', {
-		description: "FOV(Field of view) 시야각을 정의.",
-		sample: [
-			'var camera = new Camera();',
-			"// number형으로 입력",
-			'camera.fov = 45;', // 시야각입력을 통한 fov계산
-			"// [width,height,angle] - 화면사이즈와 각도의 직접적 입력을 통한 fov 지정도 가능" ,
-			'camera.fov = [width,height,angle];' // 화면사이즈와 각도의 직접적 입력을 통한 fov 지정
-		],
-		defaultValue:'55',
-		get: $getter(prop, 'fov'),
-		set: function fovSet(v) {
-			var p = prop[this];
-			if (typeof v == 'number') {
-				p.fov = v;
-			} else if ('0' in v && '1' in v) {
-				p.fov = CEIL(2 * ATAN(TAN(v[2] * PERPIR) * (v[1] / v[0])) * R2D);
-			}
-		}
-	})
-	.field('backgroundColor', {
-		description: "렌더링 배경화면 색상을 지정",
-		sample: [
-			'var camera = new Camera();',
-			"// [r,g,b,a] number형으로 입력",
-			'camera.backgroundColor = [Math.random(),Math.random(),Math.random(),1];'
-		],
-		defaultValue:'{r: 0, g: 0, b: 0, a: 1}}',
-		get: (function () {
-			var a = [];
-			return function backgroundColorGet() {
-				var p = prop[this];
-				a[0] = p.r, a[1] = p.g, a[2] = p.b, a[3] = p.a
-				return a;
-			};
-		})(),
-		set: function backgroundColorSet(v) {
-			var p = prop[this];
-			v = $color(v);
-			p.r = v[0], p.g = v[1], p.b = v[2], p.a = v[3];
-		}
-	})
-	.field('fog', {
-		description: "안개효과 지정여부" ,
-		sample: [
-			'var camera = new Camera();',
-			'// true or false - false로 지정시 안개효과 삭제' ,
-			'camera.fog = true;'
-		],
-		defaultValue:'false',
-		get: function fogGet() {
-			return prop[this].fog ? true : false;
-		}
-	})
-	.field('mode', {
-		description:"카메라모드 지정",
-		sample: [
-			'var camera = new Camera();',
-			"// Camera.perspective or Camera.othogonal",
-			'camera.mode = Camera.perspective;',
-			'camera.mode = Camera.othogonal;'
-		],
-		defaultValue:'Camera.perspective',
-		get: $getter(prop, 'mode'),
-		set: function modeSet(v) {
-			if (Camera[v]) {
-				prop[this].mode = v;
-			} else {
-				this.error(0);
-			}
-		}
-	})
-	.field('renderArea', {
-		description: "카메라 렌더링 영역지정, 렌더링 영역을 지정하지 않을경우 캔버스 영역 전체로 자동 지정됨.",
-		sample: [
-			'var camera = new Camera();',
-			"// [x,y, width, height] - number형으로 입력, %단위도 입력가능",
-			'camera.renderArea = [10,100,200,300];',
-			'camera.renderArea = ["10%","10%",200,300];',
-		],
-		defaultValue:'null',
-		get: $getter(prop, 'renderArea'),
-		set: function renderAreaSet(v) {
-			prop[this].renderArea = v
-		}
-	})
-	.field('projectionMatrix', {
-		description: "현재 프로젝션 매트릭스를 반환",
-		get: function projectionMatrixGet() {
-			return prop[this].projectionMatrix
-		}
-	})
-	.method('resetProjectionMatrix', {
-			description: "현재 프로퍼티들을 기준으로 프로젝션 매트릭스를 갱신",
-			value: function resetProjectionMatrix() {
-				var tMatrix, tArea, p;
-				p = prop[this]
-				tMatrix = p.projectionMatrix,
-					tArea = p.renderArea,
-					tMatrix.matIdentity()
-				if (this._mode == '2d') {
-					tMatrix.raw[0] = 2 / tArea[2]
-					tMatrix.raw[5] = -2 / tArea[3]
-					tMatrix.raw[10] = 0
-					tMatrix.raw[12] = -1
-					tMatrix.raw[13] = 1
-				} else {
-					tMatrix.matPerspective(p.fov, tArea[2] / tArea[3], p.near, p.far);
-				}
-				return this;
-			}
-		}
-	)
-	.constant('resize', 'resize')
-	.constant('othogonal', 'othogonal')
-	.constant('perspective', 'perspective')
-	.build();
-	/*마일스톤0.5
-	 fn.getFilters = function getFilters(){
-	 var result = [],t = this._filters;
-	 for(var k in t) result.push(k);
-	 return result;
-	 },
-	 fn.setFilter = function setFilter(filter,needIe){
-	 var result;
-	 if(arguments[1]) result = arguments[1];
-	 else {
-	 switch (filter) {
-	 case Filter.anaglyph :
-	 result = {
-	 offsetL: 0.008,
-	 offsetR: 0.008,
-	 gIntensity: 0.7,
-	 bIntensity: 0.7
-	 };
-	 break;
-	 case Filter.bevel :
-	 result = {
-	 distance: 4.0,
-	 angle: 45,
-	 highlightColor: '#FFF',
-	 highlightAlpha: 1.0,
-	 shadowColor: '#000',
-	 shadowAlpha: 1.0,
-	 blurX: 4.0,
-	 blurY: 4.0,
-	 strength: 1,
-	 quality: 1,
-	 type: "inner",
-	 knockout: false
-	 };
-	 break;
-	 case Filter.bloom :
-	 result = {
-	 threshold: 0.3,
-	 sourceSaturation: 1.0,
-	 bloomSaturation: 1.3,
-	 sourceIntensity: 1.0,
-	 bloomIntensity: 1.0
-	 };
-	 break;
-	 case Filter.blur :
-	 result = {
-	 blurX: 4.0,
-	 blurY: 4.0,
-	 quality: 1
-	 };
-	 break;
-	 case Filter.colorMatrix :
-	 result = {};
-	 break;
-	 case Filter.convolution :
-	 result = {
-	 matrixX: 0,
-	 matrixY: 0,
-	 matrix: null,
-	 divisor: 1.0,
-	 bias: 0.0,
-	 preserveAlpha: true,
-	 clamp: true,
-	 color: 0,
-	 alpha: 0.0
-	 };
-	 break;
-	 case Filter.displacementMap :
-	 result = {
-	 mapTextureID: null,
-	 mapPoint: null,
-	 componentX: 0,
-	 componentY: 0,
-	 scaleX: 0.0,
-	 scaleY: 0.0,
-	 mode: "wrap",
-	 color: 0,
-	 alpha: 0.0
-	 };
-	 break;
-	 case Filter.fxaa :
-	 result = {};
-	 break;
-	 case Filter.glow :
-	 result = {
-	 color: '#F00',
-	 alpha: 1.0,
-	 blurX: 6.0,
-	 blurY: 6.0,
-	 strength: 2,
-	 quality: 1,
-	 inner: false,
-	 knockout: false
-	 };
-	 break;
-	 case Filter.invert :
-	 result = {};
-	 break;
-	 case Filter.mono :
-	 result = {};
-	 break;
-	 case Filter.sepia :
-	 result = {};
-	 break;
-	 case Filter.shadow :
-	 result = {
-	 distance: 4.0,
-	 angle: 45,
-	 color: 0,
-	 alpha: 1.0,
-	 blurX: 4.0,
-	 blurY: 4.0,
-	 strength: 1.0,
-	 quality: 1,
-	 inner: false,
-	 knockout: false,
-	 hideObject: false
-	 };
-	 break;
-	 }
-	 }
-	 this._filters[filter] = result;
-	 return this;
-	 },
-	 fn.removeFilter = function removeFilter(filter){
-	 delete this._filters[filter];
-	 return this;
-	 },
-	 */
+        set: function visibleSet(v) {
+            if (typeof v == 'number') {
+                v = v ? true : false
+            }
+            prop[this].visible = v
+        }
+    })
+    .field('antialias', {
+        description: "쉐이더 레벨의 안티알리어싱 적용여부",
+        sample: [
+            'var camera = new Camera();',
+            'camera.antialias = true;'
+        ],
+        defaultValue:"false",
+        get: $getter(prop, 'antialias'),
+        set: function antialiasSet(v) {
+            if (typeof v == 'number') {
+                v = v ? true : false
+            }
+            prop[this].antialias = v
+        }
+    })
+    .field('fogColor', {
+        description: "안개 효과 컬러 지정",
+        sample: [
+            'var camera = new Camera();',
+            'camera.fogColor = [Math.random(),Math.random(),Math.random(),1];'
+        ],
+        defaultValue:'null',
+        get: $getter(prop, 'fogColor'),
+        set: function fogColorSet(v) {
+            var p = prop[this];
+            p.fogColor = $color(v).slice(0),
+                p.fog = true;
+        }
+    })
+    .field('fogNear', {
+        description: "안개효과가 시작되는 z축 거리",
+        sample: [
+            'var camera = new Camera();',
+            'camera.fogNear = 10;'
+        ],
+        defaultValue:'0',
+        get: $getter(prop, 'fogNear'),
+        set: function fogNearSet(v) {
+            var p = prop[this];
+            p.fogNear = v,
+                p.fog = true;
+        }
+    })
+    .field('fogFar', {
+        description: "안개효과만 남고 아무것도 보이지 않는  z축 거리",
+        sample: [
+            'var camera = new Camera();',
+            'camera.fogFar = 1000;'
+        ],
+        defaultValue:'0',
+        get: $getter(prop, 'fogFar'),
+        set: function fogFarSet(v) {
+            var p = prop[this];
+            p.fogFar = v,
+                p.fog = true;
+        }
+    })
+    .field('fov', {
+        description: "FOV(Field of view) 시야각을 정의.",
+        sample: [
+            'var camera = new Camera();',
+            "// number형으로 입력",
+            'camera.fov = 45;', // 시야각입력을 통한 fov계산
+            "// [width,height,angle] - 화면사이즈와 각도의 직접적 입력을 통한 fov 지정도 가능" ,
+            'camera.fov = [width,height,angle];' // 화면사이즈와 각도의 직접적 입력을 통한 fov 지정
+        ],
+        defaultValue:'55',
+        get: $getter(prop, 'fov'),
+        set: function fovSet(v) {
+            var p = prop[this];
+            if (typeof v == 'number') {
+                p.fov = v;
+            } else if ('0' in v && '1' in v) {
+                p.fov = CEIL(2 * ATAN(TAN(v[2] * PERPIR) * (v[1] / v[0])) * R2D);
+            }
+        }
+    })
+    .field('backgroundColor', {
+        description: "렌더링 배경화면 색상을 지정",
+        sample: [
+            'var camera = new Camera();',
+            "// [r,g,b,a] number형으로 입력",
+            'camera.backgroundColor = [Math.random(),Math.random(),Math.random(),1];'
+        ],
+        defaultValue:'{r: 0, g: 0, b: 0, a: 1}}',
+        get: (function () {
+            var a = [];
+            return function backgroundColorGet() {
+                var p = prop[this];
+                a[0] = p.r, a[1] = p.g, a[2] = p.b, a[3] = p.a
+                return a;
+            };
+        })(),
+        set: function backgroundColorSet(v) {
+            var p = prop[this];
+            v = $color(v);
+            p.r = v[0], p.g = v[1], p.b = v[2], p.a = v[3];
+        }
+    })
+    .field('fog', {
+        description: "안개효과 지정여부" ,
+        sample: [
+            'var camera = new Camera();',
+            '// true or false - false로 지정시 안개효과 삭제' ,
+            'camera.fog = true;'
+        ],
+        defaultValue:'false',
+        get: function fogGet() {
+            return prop[this].fog ? true : false;
+        }
+    })
+    .field('mode', {
+        description:"카메라모드 지정",
+        sample: [
+            'var camera = new Camera();',
+            "// Camera.perspective or Camera.othogonal",
+            'camera.mode = Camera.perspective;',
+            'camera.mode = Camera.othogonal;'
+        ],
+        defaultValue:'Camera.perspective',
+        get: $getter(prop, 'mode'),
+        set: function modeSet(v) {
+            if (Camera[v]) {
+                prop[this].mode = v;
+            } else {
+                this.error(0);
+            }
+        }
+    })
+    .field('renderArea', {
+        description: "카메라 렌더링 영역지정, 렌더링 영역을 지정하지 않을경우 캔버스 영역 전체로 자동 지정됨.",
+        sample: [
+            'var camera = new Camera();',
+            "// [x,y, width, height] - number형으로 입력, %단위도 입력가능",
+            'camera.renderArea = [10,100,200,300];',
+            'camera.renderArea = ["10%","10%",200,300];',
+        ],
+        defaultValue:'null',
+        get: $getter(prop, 'renderArea'),
+        set: function renderAreaSet(v) {
+            prop[this].renderArea = v
+        }
+    })
+    .field('projectionMatrix', {
+        description: "현재 프로젝션 매트릭스를 반환",
+        sample: [
+            'var camera = new Camera();',
+            'var matrix = camera.projectionMatrix;'
+        ],
+        get: function projectionMatrixGet() {
+            return prop[this].projectionMatrix
+        }
+    })
+    .method('resetProjectionMatrix', {
+            description: "현재 프로퍼티들을 기준으로 프로젝션 매트릭스를 갱신",
+            sample: [
+                'var camera = new Camera();',
+                'camera.fov = 10;',
+                'camera.renderArea = [10,100,200,300];',
+                '// 새로운 속성 기준으로 프로젝션 매트릭스 갱신',
+                'camera.resetProjectionMatrix();'
+            ],
+            value: function resetProjectionMatrix() {
+                var tMatrix, tArea, p;
+                p = prop[this]
+                tMatrix = p.projectionMatrix,
+                    tArea = p.renderArea,
+                    tMatrix.matIdentity()
+                if (this._mode == '2d') {
+                    tMatrix.raw[0] = 2 / tArea[2]
+                    tMatrix.raw[5] = -2 / tArea[3]
+                    tMatrix.raw[10] = 0
+                    tMatrix.raw[12] = -1
+                    tMatrix.raw[13] = 1
+                } else {
+                    tMatrix.matPerspective(p.fov, tArea[2] / tArea[3], p.near, p.far);
+                }
+                return this;
+            }
+        }
+    )
+    //.constant('resize', {
+    //    description: '',
+    //    type:'string',
+    //    sample: '',
+    //    value:'resize'
+    //})
+    .constant('orthogonal',{
+        description: '카메라 정사 모드',
+        type:'string',
+        sample: [
+            'var camera = new Camera();',
+            'camera.mode = Camera.orthogonal;'
+        ],
+        value:'orthogonal'
+    })
+    .constant('perspective', {
+        description: '카메라 원근 모드',
+        type:'string',
+        sample: [
+            'var camera = new Camera();',
+            'camera.mode = Camera.perspective;'
+        ],
+        value:'perspective'
+    })
+    .build();
+    /*마일스톤0.5
+     fn.getFilters = function getFilters(){
+     var result = [],t = this._filters;
+     for(var k in t) result.push(k);
+     return result;
+     },
+     fn.setFilter = function setFilter(filter,needIe){
+     var result;
+     if(arguments[1]) result = arguments[1];
+     else {
+     switch (filter) {
+     case Filter.anaglyph :
+     result = {
+     offsetL: 0.008,
+     offsetR: 0.008,
+     gIntensity: 0.7,
+     bIntensity: 0.7
+     };
+     break;
+     case Filter.bevel :
+     result = {
+     distance: 4.0,
+     angle: 45,
+     highlightColor: '#FFF',
+     highlightAlpha: 1.0,
+     shadowColor: '#000',
+     shadowAlpha: 1.0,
+     blurX: 4.0,
+     blurY: 4.0,
+     strength: 1,
+     quality: 1,
+     type: "inner",
+     knockout: false
+     };
+     break;
+     case Filter.bloom :
+     result = {
+     threshold: 0.3,
+     sourceSaturation: 1.0,
+     bloomSaturation: 1.3,
+     sourceIntensity: 1.0,
+     bloomIntensity: 1.0
+     };
+     break;
+     case Filter.blur :
+     result = {
+     blurX: 4.0,
+     blurY: 4.0,
+     quality: 1
+     };
+     break;
+     case Filter.colorMatrix :
+     result = {};
+     break;
+     case Filter.convolution :
+     result = {
+     matrixX: 0,
+     matrixY: 0,
+     matrix: null,
+     divisor: 1.0,
+     bias: 0.0,
+     preserveAlpha: true,
+     clamp: true,
+     color: 0,
+     alpha: 0.0
+     };
+     break;
+     case Filter.displacementMap :
+     result = {
+     mapTextureID: null,
+     mapPoint: null,
+     componentX: 0,
+     componentY: 0,
+     scaleX: 0.0,
+     scaleY: 0.0,
+     mode: "wrap",
+     color: 0,
+     alpha: 0.0
+     };
+     break;
+     case Filter.fxaa :
+     result = {};
+     break;
+     case Filter.glow :
+     result = {
+     color: '#F00',
+     alpha: 1.0,
+     blurX: 6.0,
+     blurY: 6.0,
+     strength: 2,
+     quality: 1,
+     inner: false,
+     knockout: false
+     };
+     break;
+     case Filter.invert :
+     result = {};
+     break;
+     case Filter.mono :
+     result = {};
+     break;
+     case Filter.sepia :
+     result = {};
+     break;
+     case Filter.shadow :
+     result = {
+     distance: 4.0,
+     angle: 45,
+     color: 0,
+     alpha: 1.0,
+     blurX: 4.0,
+     blurY: 4.0,
+     strength: 1.0,
+     quality: 1,
+     inner: false,
+     knockout: false,
+     hideObject: false
+     };
+     break;
+     }
+     }
+     this._filters[filter] = result;
+     return this;
+     },
+     fn.removeFilter = function removeFilter(filter){
+     delete this._filters[filter];
+     return this;
+     },
+     */
 })();
 var Scene = (function () {
     var vertexShaderParser, fragmentShaderParser,
@@ -4496,8 +4630,8 @@ var Scene = (function () {
                 "scene.addMesh(mesh);"
             ],
             exception: [
-                "'Scene.addMesh:0' - 이미 등록된 메쉬객체를 등록하려고 할때",
-                "'Scene.addMesh:1' - 메쉬가 아닌 객체를 등록하려고 할때"
+                "'Scene.addMesh:0' - 이미 등록된 메쉬객체를 등록하려고 할 때",
+                "'Scene.addMesh:1' - 메쉬가 아닌 객체를 등록하려고 할 때"
             ],
             value : function(v){
                 var p = children[this], p2 = updateList[this], mat;
@@ -4547,8 +4681,8 @@ var Scene = (function () {
                 "scene.addCamera(camera);"
             ],
             exception: [
-                "'Scene.addCamera:0' : 이미 등록된 카메라객체를 등록하려고 할때",
-                "'Scene.addCamera:1' : 카메라가 아닌 객체를 등록하려고 할때"
+                "'Scene.addCamera:0' : 이미 등록된 카메라객체를 등록하려고 할 때",
+                "'Scene.addCamera:1' : 카메라가 아닌 객체를 등록하려고 할 때"
             ],
             value: function addCamera(v) {
                 var p = cameras[this];
@@ -4562,7 +4696,7 @@ var Scene = (function () {
     )
     .method('addChild', {
             description: [
-                '자식 객체를 추가함. 메쉬나 카메라 객체가 자식으로 올수 있음'
+                '자식 객체를 추가함. 메쉬나 카메라 객체가 자식으로 올 수 있음'
             ],
             param: [
                 'mesh:Mesh - 메쉬 객체',
@@ -4577,7 +4711,7 @@ var Scene = (function () {
                 "scene.addChild(camera);"
             ],
             exception: [
-                "'Scene.addChild:0' - 카메라나 메쉬객체가 아닌 객체를 추가하려고 할때"
+                "'Scene.addChild:0' - 카메라나 메쉬객체가 아닌 객체를 추가하려고 할 때"
             ],
             value: function addChild(v) {
                 if (v instanceof Mesh)  this.addMesh(v);
@@ -4603,8 +4737,8 @@ var Scene = (function () {
                 "scene.addGeometry(camera);"
             ],
             exception: [
-                "'Scene.addGeometry:0' - 이미 등록된 지오메트리를 등록하려 할때",
-                "'Scene.addGeometry:1' - 지오메트리 타입이 아닌 객체를 등록하려 할때"
+                "'Scene.addGeometry:0' - 이미 등록된 지오메트리를 등록하려 할 때",
+                "'Scene.addGeometry:1' - 지오메트리 타입이 아닌 객체를 등록하려 할 때"
             ],
             value: function (v) {
                 var p = geometrys[this];
@@ -4631,8 +4765,8 @@ var Scene = (function () {
                 "scene.addMaterial(mat);"
             ],
             exception: [
-                "'Scene.addMaterial:0' - 이미 등록된 재질을 등록하려 할때",
-                "'Scene.addMaterial:1' - Material 타입이 아닌 객체를 등록하려 할때"
+                "'Scene.addMaterial:0' - 이미 등록된 재질을 등록하려 할 때",
+                "'Scene.addMaterial:1' - Material 타입이 아닌 객체를 등록하려 할 때"
             ],
             value: function addMaterial(v) {
                 var p = materials[this];
@@ -4659,8 +4793,8 @@ var Scene = (function () {
                 "scene.addTexture(texture);"
             ],
             exception: [
-                "'Scene.addTexture:0' - 이미 등록된 텍스쳐를 등록하려 할때",
-                "'Scene.addTexture:1' - Texture 타입이 아닌 객체를 등록하려 할때"
+                "'Scene.addTexture:0' - 이미 등록된 텍스쳐를 등록하려 할 때",
+                "'Scene.addTexture:1' - Texture 타입이 아닌 객체를 등록하려 할 때"
             ],
             value: function addTexture(v) {
                 var p = textures[this];
@@ -4671,17 +4805,51 @@ var Scene = (function () {
             }
         }
     )
-    .method('addFragmentShader', function addFragmentShader(v) {
-        var p = fragmentShaders[this];
-        if (p[v.code.id]) this.error(0);
-        p[v.code.id] = fragmentShaderParser(v);
-        return this;
+    .method('addFragmentShader', {
+            description: [
+                '프레그먼트 쉐이더 객체를 추가함'
+            ],
+            param: [
+                'fragmentShader:Shader - 프레그먼트 쉐이더 객체'
+            ],
+            ret: [
+                'this - 메서드체이닝을 위해 자신을 반환함.'
+            ],
+            sample: [
+                "scene.addFragmentShader(fragmentShader);"
+            ],
+            exception: [
+                "'Scene.addFragmentShader:0' - 이미 등록된 프레그먼트 쉐이더를 등록하려 할 때"
+            ],
+            value: function addFragmentShader(v) {
+                var p = fragmentShaders[this];
+                if (p[v.code.id]) this.error(0);
+                p[v.code.id] = fragmentShaderParser(v);
+                return this;
+        }
     })
-    .method('addVertexShader', function addVertexShader(v) {
-        var p = vertexShaders[this];
-        if (p[v.code.id]) this.error(0);
-        p[v.code.id] = vertexShaderParser(v);
-        return this;
+    .method('addVertexShader', {
+            description: [
+                '버텍스 쉐이더 객체를 추가함'
+            ],
+            param: [
+                'vertexShader:Shader - 버텍스 쉐이더 객체'
+            ],
+            ret: [
+                'this - 메서드체이닝을 위해 자신을 반환함.'
+            ],
+            sample: [
+                "scene.addVertexShader(vertexShader);"
+            ],
+            exception: [
+                "'Scene.addVertexShader:0' - 이미 등록된 버텍스 쉐이더를 등록하려 할 때"
+            ],
+            value: function addVertexShader(v) {
+                var p = vertexShaders[this];
+                if (p[v.code.id]) this.error(0);
+                p[v.code.id] = vertexShaderParser(v);
+                return this;
+            }
     })
     .method('getMesh',{
             description: [
@@ -4952,6 +5120,7 @@ var Scene = (function () {
 //    return this;
 //}
 })();
+
 var World = (function (makeUtil) {
     var getGL, glSetting, glContext, rectMatrix = Matrix();
     var makeVBO, makeVNBO, makeIBO, makeUVBO, makeProgram, makeTexture, makeFrameBuffer;
@@ -5066,7 +5235,7 @@ var World = (function (makeUtil) {
     return MoGL.extend('World', {
         description:"World는 MoGL의 기본 시작객체로 내부에 다수의 Scene을 소유할 수 있으며, 실제 렌더링되는 대상임.",
         param:[
-            "1. id:string - canvasID"
+            "id:string - canvasID"
         ],
         sample:[
             "var world = new World('canvasID1);",
@@ -5112,7 +5281,7 @@ var World = (function (makeUtil) {
             "생성시 기본값은 false"
         ],
         param:[
-            "1. isAutoSize:boolean - 자동으로 캔버스의 크기를 조정하는지에 대한 여부."
+            "isAutoSize:boolean - 자동으로 캔버스의 크기를 조정하는지에 대한 여부."
         ],
         ret:"this - 메서드체이닝을 위해 자신을 반환함.",
         sample:[
@@ -5155,7 +5324,7 @@ var World = (function (makeUtil) {
             "[Scene](Scene.md)객체를 world에 추가함."
         ],
         param:[
-            "1. scene:[Scene](Scene.md) - [Scene](Scene.md)의 인스턴스"
+            "scene:[Scene](Scene.md) - [Scene](Scene.md)의 인스턴스"
         ],
         ret:"this - 메서드체이닝을 위해 자신을 반환함.",
         exception:[
@@ -5190,7 +5359,7 @@ var World = (function (makeUtil) {
             "sceneId에 해당되는 [Scene](Scene.md)을 얻음."
         ],
         param:[
-            "1. sceneId:string - 등록시 scene의 id. 없으면 null을 반환함."
+            "sceneId:string - 등록시 scene의 id. 없으면 null을 반환함."
         ],
         ret:"[Scene](Scene.md) - sceneId에 해당되는 [Scene](Scene.md) 인스턴스.",
         sample:[
@@ -5217,7 +5386,7 @@ var World = (function (makeUtil) {
             "실제로는 본인과 바인딩된 render함수를 반환하고 한 번 반환한 이후는 캐쉬로 잡아둠."
         ],
         param:[
-            "1. isRequestAnimationFrame:boolean - 애니메이션프레임용으로 반환하는 경우는 내부에서 다시 requestAnimationFrame을 호출하는 기능이 추가됨."
+            "isRequestAnimationFrame:boolean - 애니메이션프레임용으로 반환하는 경우는 내부에서 다시 requestAnimationFrame을 호출하는 기능이 추가됨."
         ],
         ret:"function - this.render.bind(this) 형태로 본인과 바인딩된 함수를 반환함.",
         sample:[
@@ -5291,7 +5460,7 @@ var World = (function (makeUtil) {
             "[Scene](Scene.md)을 제거하면 관련된 카메라가 지정된 render도 자동으로 제거됨."
         ],
         param:[
-            "1. sceneId:string - [Scene](Scene.md)객체에 정의된 id."
+            "sceneId:string - [Scene](Scene.md)객체에 정의된 id."
         ],
         ret:"this - 메서드체이닝을 위해 자신을 반환함.",
         exception:[
@@ -5327,6 +5496,9 @@ var World = (function (makeUtil) {
     .method('render', {
         description:[
             "현재 화면을 그림."
+        ],
+        param:[
+            "?currentTime:number - 현재시간 milliseconds."
         ],
         ret:"this - 메서드체이닝을 위해 자신을 반환함.",
         sample:[
@@ -5667,8 +5839,24 @@ var World = (function (makeUtil) {
             }
         })()
     })
-    .constant('renderBefore', 'WORLD_RENDER_BEFORE')
-    .constant('renderAfter', 'WORLD_RENDER_AFTER')
+    .constant('renderBefore', {
+        description:'renderBefore constant',
+        sample:[
+            "world.addEventListener(World.renderBefore, function() {",
+            "   //job",
+            "});"
+        ],
+        value:'WORLD_RENDER_BEFORE'
+    })
+    .constant('renderAfter', {
+        description:'renderAfter constant',
+        sample:[
+            "world.addEventListener(World.renderAfter, function () {",
+            "   //job",
+            "});"
+        ],
+        value:'WORLD_RENDER_AFTER'
+    })
     .build();
 })(makeUtil);
 
