@@ -43,7 +43,7 @@
 
 **param**
 
-- ?color:string - 재질의 기본적인 색상. 생략하면 색상 없음. 다음과 같은 형태가 올 수 있음.
+?color:string - 재질의 기본적인 색상. 생략하면 색상 없음. 다음과 같은 형태가 올 수 있음.
 r, g, b, a : 각각 0~1 사이의 소수를 받으며 각각 대응함.
 
 **exception**
@@ -72,27 +72,30 @@ _field_
 
 **description**
 
+
 - 와이어 프레임 컬러
 
 **setting**
 
 - *writable*:true
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - [Math.random(),Math.random(),Math.random(),1]
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-material.wireFrameColor = [1,0.5,1,1] // r,g,b,a
-console.log(material.wireFrameColor)
+material.wireFrameColor = [1,0.5,1,1]; // r,g,b,a
+console.log(material.wireFrameColor);
 ```
 
 [top](#)
@@ -105,27 +108,30 @@ _field_
 
 **description**
 
+
 - 와이어 프레임 표현여부
 
 **setting**
 
 - *writable*:true
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - false
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-material.wireFrame = true
-console.log(material.wireFrame)
+material.wireFrame = true;
+console.log(material.wireFrame);
 ```
 
 [top](#)
@@ -138,27 +144,30 @@ _field_
 
 **description**
 
+
 - 재질 쉐이딩 적용
 
 **setting**
 
 - *writable*:true
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - Shading.none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-material.shading = Shading.phong
-console.log(material.shading)
+material.shading = Shading.phong;
+console.log(material.shading);
 ```
 
 [top](#)
@@ -171,27 +180,30 @@ _field_
 
 **description**
 
+
 - 재질 쉐이딩 적용 강도 설정
 
 **setting**
 
 - *writable*:true
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - 1.0
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-material.lambert = 1.5
-console.log(material.lambert)
+material.lambert = 1.5;
+console.log(material.lambert);
 ```
 
 [top](#)
@@ -204,26 +216,29 @@ _field_
 
 **description**
 
+
 - 재질에 적용된 텍스쳐들이 모두 로딩되었는지 확인
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - false
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-console.log(material.isLoaded)
+console.log(material.isLoaded);
 ```
 
 [top](#)
@@ -236,26 +251,29 @@ _field_
 
 **description**
 
+
 - 재질에 적용된 디퓨즈 리스트 반환
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - []
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-console.log(material.diffuse)
+console.log(material.diffuse);
 ```
 
 [top](#)
@@ -268,19 +286,22 @@ _field_
 
 **description**
 
+
 - 재질이 사용된 횟수
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
 
-- none
+
+- 0
 
 **exception**
+
 
 - none
 
@@ -288,7 +309,7 @@ _field_
 
 ```javascript
 // 미구현상태임
-console.log(material.count)
+console.log(material.count);
 ```
 
 [top](#)
@@ -301,28 +322,31 @@ _field_
 
 **description**
 
+
 - 재질 컬러색
 
 **setting**
 
 - *writable*:true
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - [1,1,1,1]
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-material.color = [0,1,2,1] // 배열형식으로 입력
-material.color = "#ff2233 // 16진수로 입력"
-console.log(material.color)
+material.color = [0,1,2,1]; // 배열형식으로 입력
+material.color = "#ff2233; // 16진수로 입력"
+console.log(material.color);
 ```
 
 [top](#)
@@ -334,6 +358,7 @@ _method_
 
 
 **description**
+
 
 - removeTexture를 통해 등록된 텍스쳐를 제거함.
 
@@ -349,9 +374,11 @@ _method_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
@@ -371,6 +398,7 @@ _method_
 
 
 **description**
+
 
 - [Mesh](Mesh.md)를 통해 최종적으로 포함될 Texture를 등록
 * [Scene](Scene.md)에 직접 등록되는 경우는 id를 [addMaterial](Scene.md#addmaterial-idstring-materialmaterial-)시점에 평가함.
@@ -402,14 +430,16 @@ _method_
 
 **exception**
 
+
 - * 'Material.addTexture:0' - 1번째 param 값이 Texture 타입이 아닐 경우.
-- * 'Material.addTexture:1' - 2번째 param 값이 Texture 인스턴스가 아닐 경우.
-- * 'Material.addTexture:2' - 2번째 param 값이 이미 등록 되어있는 Texture 일 경우.
-- * 'Material.addTexture:3' - 3번째 param 값이 index:int or Texture 외 다른 형식이 들어오는 경우.
-- * 'Material.addTexture:4' - 3번째 param 값이 index:int 일 경우 0 보다 작거나 등록되어 있는 Texture 수보다 많을 경우.
-- * 'Material.addTexture:5' - 3번째 param 값이 Texture 일 경우 미리 등록된 Texture 가 아닐 경우.
+* 'Material.addTexture:1' - 2번째 param 값이 Texture 인스턴스가 아닐 경우.
+* 'Material.addTexture:2' - 2번째 param 값이 이미 등록 되어있는 Texture 일 경우.
+* 'Material.addTexture:3' - 3번째 param 값이 index:int or Texture 외 다른 형식이 들어오는 경우.
+* 'Material.addTexture:4' - 3번째 param 값이 index:int 일 경우 0 보다 작거나 등록되어 있는 Texture 수보다 많을 경우.
+* 'Material.addTexture:5' - 3번째 param 값이 Texture 일 경우 미리 등록된 Texture 가 아닐 경우.
 
 **return**
+
 
 - this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
@@ -421,14 +451,14 @@ var indexTestMaterial = Material('#ffffff127.8');
 var indexTexture1 = new Texture();
 indexTestMaterial.addTexture(Texture.diffuse, indexTexture1, null, BlendMode.add);
 
-var indexTexture2 = new Texture()
+var indexTexture2 = new Texture();
 indexTestMaterial.addTexture(Texture.diffuse, indexTexture2, undefined, BlendMode.screen);
 
-var indexTexture3 = new Texture()
-indexTestMaterial.addTexture(Texture.diffuse, indexTexture3, 1, BlendMode.darken)
+var indexTexture3 = new Texture();
+indexTestMaterial.addTexture(Texture.diffuse, indexTexture3, 1, BlendMode.darken);
 
-var indexTexture4 = new Texture()
-indexTestMaterial.addTexture(Texture.diffuse, indexTexture4)
+var indexTexture4 = new Texture();
+indexTestMaterial.addTexture(Texture.diffuse, indexTexture4);
 
 ```
 
@@ -442,6 +472,7 @@ _static_
 
 **description**
 
+
 - 해당 클래스를 마크다운 형식으로 문서화하여 출력함
 
 **param**
@@ -449,9 +480,11 @@ _static_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - string - 클래스에 대한 문서 마크다운
 
@@ -471,6 +504,7 @@ _static_
 
 **description**
 
+
 - uuid 또는 id를 기반으로 인스턴스를 얻어냄
 
 **param**
@@ -479,16 +513,18 @@ _static_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - Object - 해당되는 인스턴스
 
 **sample**
 
 ```javascript
-//none
+var instance = Mesh.getInstance(uuid);
 ```
 
 [top](#)
@@ -501,9 +537,10 @@ _static_
 
 **description**
 
-- 이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Defineder)를 얻음
 
-**Defineder class의 메소드**
+- 이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Definer)를 얻음
+
+**Definer class의 메소드**
 
 * 각 메서드는 체이닝됨
 * Matrix = MoGL.extend('Matrix', function(){..}).static(..).field(..).build(); 형태로 사용
@@ -521,16 +558,18 @@ _static_
 
 **exception**
 
+
 - none
 
 **return**
 
-- Defineder - 클래스를 정의할 수 있는 생성전용객체
+
+- Definer - 클래스를 정의할 수 있는 생성전용객체
 
 **sample**
 
 ```javascript
-//none
+var classA = MoGL.extend('classA', function(){}).build();
 ```
 
 [top](#)
@@ -543,6 +582,7 @@ _static_
 
 **description**
 
+
 - 정적함수에서 표준화된 예외를 처리함(정적함수 내부에서 사용)
 
 **param**
@@ -552,16 +592,22 @@ _static_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+var classA = MoGL.extend('classA', function(){})
+    .static('test', function(){
+	     this.error('test', 0);
+    })
+    .build();
 ```
 
 [top](#)
@@ -574,6 +620,7 @@ _static_
 
 **description**
 
+
 - 이 클래스로 부터 만들어져 활성화된 인스턴스의 수
 
 **param**
@@ -581,16 +628,18 @@ _static_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - int - 활성화된 인스턴스의 수
 
 **sample**
 
 ```javascript
-//none
+var meshCount = Mesh.count();
 ```
 
 [top](#)
@@ -603,19 +652,22 @@ _event_
 
 **description**
 
+
 - Event of Material
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **value**
 
-changed
+
+- changed
 
 **exception**
+
 
 - none
 

@@ -1,23 +1,18 @@
-**Shader spec**
-
-* [MoGL Fragment Shader Interface](Interface_MoGLFragmentShader.md)
-* [MoGL Vertex Shader Interface](Interface_MoGLVertexShader.md)
-
 **APIs**
 
 * [BlendMode](BlendMode.md)
 * [Camera](Camera.md)
-* [Filter](Filter.md)
 * [Geometry](Geometry.md)
-* [Shader](Shader.md)
 * [Group](Group.md)
-* [Light](Light.md)
 * [Material](Material.md)
 * [Matrix](Matrix.md)
 * [Mesh](Mesh.md)
 * [MoGL](MoGL.md)
 * [Primitive](Primitive.md)
 * [Scene](Scene.md)
+* [Shader](Shader.md)
+* [Shading](Shading.md)
 * [Texture](Texture.md)
+* [Vector](Vector.md)
 * [Vertex](Vertex.md)
 * [World](World.md)

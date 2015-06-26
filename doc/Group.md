@@ -5,9 +5,9 @@
 
 **method**
 
-* [removeChild](#removeChild) - Method of Group
-* [getChild](#getChild) - Method of Group
-* [addChild](#addChild) - Method of Group
+* [removeChild](#removeChild) - 개발중..
+* [getChild](#getChild) - 개발중..
+* [addChild](#addChild) - 개발중..
 
 **static**
 
@@ -24,15 +24,15 @@
 
 **description**
 
-Constructor of Group
+- 개발중
 
 **param**
 
-
+none
 
 **exception**
 
-none
+- none
 
 **sample**
 
@@ -50,7 +50,8 @@ _method_
 
 **description**
 
-Method of Group
+
+- 개발중..
 
 **param**
 
@@ -58,11 +59,13 @@ Method of Group
 
 **exception**
 
-none
+
+- none
 
 **return**
 
-?
+
+- none
 
 **sample**
 
@@ -80,7 +83,8 @@ _method_
 
 **description**
 
-Method of Group
+
+- 개발중..
 
 **param**
 
@@ -88,11 +92,13 @@ Method of Group
 
 **exception**
 
-none
+
+- none
 
 **return**
 
-?
+
+- none
 
 **sample**
 
@@ -103,27 +109,29 @@ none
 [top](#)
 
 <a name="addChild"></a>
-###addChild(id, mesh)
+###addChild(mesh)
 
 _method_
 
 
 **description**
 
-Method of Group
+
+- 개발중..
 
 **param**
 
-1. id
-2. mesh
+1. mesh
 
 **exception**
 
-none
+
+- none
 
 **return**
 
-?
+
+- none
 
 **sample**
 
@@ -141,18 +149,21 @@ _static_
 
 **description**
 
-해당 클래스를 마크다운 형식으로 문서화하여 출력함
+
+- 해당 클래스를 마크다운 형식으로 문서화하여 출력함
 
 **param**
 
 
 **exception**
 
-none
+
+- none
 
 **return**
 
-string - 클래스에 대한 문서 마크다운
+
+- string - 클래스에 대한 문서 마크다운
 
 **sample**
 
@@ -170,24 +181,27 @@ _static_
 
 **description**
 
-uuid 또는 id를 기반으로 인스턴스를 얻어냄
+
+- uuid 또는 id를 기반으로 인스턴스를 얻어냄
 
 **param**
 
-1. uuid:string
+1. uuid:string - 얻고 싶은 인스턴스의 uuid 또는 id
 
 **exception**
 
-undefined.getInstance:u
+
+- none
 
 **return**
 
-Object - 해당되는 인스턴스
+
+- Object - 해당되는 인스턴스
 
 **sample**
 
 ```javascript
-//none
+var instance = Mesh.getInstance(uuid);
 ```
 
 [top](#)
@@ -200,9 +214,10 @@ _static_
 
 **description**
 
-이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Defineder)를 얻음
 
-**Defineder class의 메소드**
+- 이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Definer)를 얻음
+
+**Definer class의 메소드**
 
 * 각 메서드는 체이닝됨
 * Matrix = MoGL.extend('Matrix', function(){..}).static(..).field(..).build(); 형태로 사용
@@ -215,21 +230,23 @@ _static_
 
 **param**
 
-1. className:string
-2. constructor:function
+1. className:string - 자식클래스의 이름
+2. constructor:function - 자식클래스의 생성자
 
 **exception**
 
-none
+
+- none
 
 **return**
 
-Defineder - 클래스를 정의할 수 있는 생성전용객체
+
+- Definer - 클래스를 정의할 수 있는 생성전용객체
 
 **sample**
 
 ```javascript
-//none
+var classA = MoGL.extend('classA', function(){}).build();
 ```
 
 [top](#)
@@ -242,25 +259,32 @@ _static_
 
 **description**
 
-정적함수에서 표준화된 예외를 처리함(정적함수 내부에서 사용)
+
+- 정적함수에서 표준화된 예외를 처리함(정적함수 내부에서 사용)
 
 **param**
 
-1. method:string
-2. id:int
+1. method:string - 예외가 발생한 함수명
+2. id:int - 예외고유 id
 
 **exception**
 
-none
+
+- none
 
 **return**
 
-none
+
+- none
 
 **sample**
 
 ```javascript
-//none
+var classA = MoGL.extend('classA', function(){})
+    .static('test', function(){
+	     this.error('test', 0);
+    })
+    .build();
 ```
 
 [top](#)
@@ -273,23 +297,26 @@ _static_
 
 **description**
 
-이 클래스로 부터 만들어져 활성화된 인스턴스의 수
+
+- 이 클래스로 부터 만들어져 활성화된 인스턴스의 수
 
 **param**
 
 
 **exception**
 
-none
+
+- none
 
 **return**
 
-int - 활성화된 인스턴스의 수
+
+- int - 활성화된 인스턴스의 수
 
 **sample**
 
 ```javascript
-//none
+var meshCount = Mesh.count();
 ```
 
 [top](#)

@@ -16,8 +16,7 @@
 * [setProperties](#setProperties) - vo로 넘어온 속성을 일시에 설정함...
 * [setId](#setId) - id는 본래 속성값이나 메서드체이닝목...
 * [removeEventListener](#removeEventListener) - 해당 이벤트에 리스너를 제거함
-* [error](#error) - MoGL 표준 예외처리를 함
-주어진...
+* [error](#error) - MoGL 표준 예외처리를 함...
 * [dispatch](#dispatch) - 해당 event의 리스너들에게 이벤트...
 * [destroy](#destroy) - 해당 event의 리스너들에게 이벤트...
 * [addEventListener](#addEventListener) - 해당 이벤트에 리스너를 추가함
@@ -48,7 +47,7 @@
 
 **description**
 
-MoGL 라이브러리의 모든 클래스는 MoGL을 상속함
+- MoGL 라이브러리의 모든 클래스는 MoGL을 상속함
 * 보통 직접적으로 MoGL 클래스를 사용하는 경우는 없음
 
 **param**
@@ -57,7 +56,7 @@ none
 
 **exception**
 
-none
+- none
 
 **sample**
 
@@ -75,21 +74,30 @@ _field_
 
 **description**
 
-현재 인스턴스의 고유한 uuid
+
+- 현재 인스턴스의 고유한 uuid
 
 **setting**
 
-*writable*:undefined, *enumerable*:false, *configurable*:false
+- *writable*:undefined
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
 
-none
+
+- none
+
+**exception**
+
+
+- none
 
 **sample**
 
 ```javascript
 var scene = new Scene();
-scene.uuid // 'uuid:24'
+console.log(scene.uuid); // 'uuid:24'
 ```
 
 [top](#)
@@ -102,16 +110,25 @@ _field_
 
 **description**
 
-현재 인스턴스의 업데이트여부를 관리하는 플래그
+
+- 현재 인스턴스의 업데이트여부를 관리하는 플래그
 * 상태가 바뀌면 MoGL.updated 이벤트가 발생함
 
 **setting**
 
-*writable*:true, *enumerable*:false, *configurable*:false
+- *writable*:true
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
 
-false
+
+- false
+
+**exception**
+
+
+- none
 
 **sample**
 
@@ -134,15 +151,24 @@ _field_
 
 **description**
 
-사용자가 임의로 정의한 id
+
+- 사용자가 임의로 정의한 id
 
 **setting**
 
-*writable*:true, *enumerable*:false, *configurable*:false
+- *writable*:true
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
 
-null
+
+- null
+
+**exception**
+
+
+- none
 
 **sample**
 
@@ -162,21 +188,30 @@ _field_
 
 **description**
 
-인스턴스의 클래스이름
+
+- 인스턴스의 클래스이름
 
 **setting**
 
-*writable*:undefined, *enumerable*:false, *configurable*:false
+- *writable*:undefined
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
 
-none
+
+- none
+
+**exception**
+
+
+- none
 
 **sample**
 
 ```javascript
 var scene = new Scene();
-scene.className // 'Scene'
+console.log(scene.className); // 'Scene'
 ```
 
 [top](#)
@@ -189,21 +224,30 @@ _field_
 
 **description**
 
-인스턴스의 클래스uuid
+
+- 인스턴스의 클래스uuid
 
 **setting**
 
-*writable*:undefined, *enumerable*:false, *configurable*:false
+- *writable*:undefined
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
 
-none
+
+- none
+
+**exception**
+
+
+- none
 
 **sample**
 
 ```javascript
 var scene = new Scene();
-scene.classId // 'uuid:22'
+console.log(scene.classId); // 'uuid:22'
 ```
 
 [top](#)
@@ -216,7 +260,8 @@ _method_
 
 **description**
 
-MoGL을 상속하는 모든 인스턴스는 toString상황에서 'uuid:고유번호' 형태의 문자열을 반환함
+
+- MoGL을 상속하는 모든 인스턴스는 toString상황에서 'uuid:고유번호' 형태의 문자열을 반환함
 
 **param**
 
@@ -225,9 +270,12 @@ none
 **exception**
 
 
+- none
+
 **return**
 
-string - this - 메소드체이닝을 위해 자신을 반환함.uuid에 해당되는 'uuid:고유번호' 형태의 문자열
+
+- string - this - 메소드체이닝을 위해 자신을 반환함.uuid에 해당되는 'uuid:고유번호' 형태의 문자열
 
 **sample**
 
@@ -246,20 +294,23 @@ _method_
 
 **description**
 
-vo로 넘어온 속성을 일시에 설정함
+
+- vo로 넘어온 속성을 일시에 설정함
 * vo에 MoGL.time이 포함되면 애니메이션으로 간주하여 보간애니메이션으로 처리됨
 
 **param**
 
-1. vo:Object
+1. vo:Object - 키,값 쌍으로 되어있는 설정용 객체(delay time ease repeat yoyo 등의 상수키를 포함할 수 있음)
 
 **exception**
 
-none
+
+- none
 
 **return**
 
-this - 메소드체이닝을 위해 자신을 반환함
+
+- this - 메소드체이닝을 위해 자신을 반환함
 
 **sample**
 
@@ -270,7 +321,7 @@ mat.setProperties( {x:10, y:20, z:30} );
 
 //보간애니메이션실행
 var vo = {x:0, y:0, z:0};
-var ani = {time:1, delay:2, repeat:1, ease:MoGL.easing.sineOut}
+var ani = {time:1, delay:2, repeat:1, ease:MoGL.easing.sineOut};
 mat.setProperties( vo, ani );
 ```
 
@@ -284,19 +335,22 @@ _method_
 
 **description**
 
-id는 본래 속성값이나 메서드체이닝목적으로 사용하는 경우 setId를 쓰면 편리함
+
+- id는 본래 속성값이나 메서드체이닝목적으로 사용하는 경우 setId를 쓰면 편리함
 
 **param**
 
-1. id:string
+1. id:string - 설정할 id값. null로 설정시 삭제됨
 
 **exception**
 
-none
+
+- none
 
 **return**
 
-this - 메소드체이닝을 위해 자신을 반환함
+
+- this - 메소드체이닝을 위해 자신을 반환함
 
 **sample**
 
@@ -314,20 +368,23 @@ _method_
 
 **description**
 
-해당 이벤트에 리스너를 제거함
+
+- 해당 이벤트에 리스너를 제거함
 
 **param**
 
-1. event:string
-2. ?listener:string or function
+1. event:string - 이벤트타입
+2. ?listener:string or function - 삭제할 리스너. string인 경우는 함수의 이름으로 탐색하고 생략시 해당 이벤트리스너전부를 제거함
 
 **exception**
 
-none
+
+- none
 
 **return**
 
-this - 메소드체이닝을 위해 자신을 반환함
+
+- this - 메소드체이닝을 위해 자신을 반환함
 
 **sample**
 
@@ -346,27 +403,31 @@ _method_
 
 **description**
 
-MoGL 표준 예외처리를 함
+
+- MoGL 표준 예외처리를 함
 주어진 인자에 따라 className + '.' + methodName + ':' + id 형태로 예외메세지가 출력됨
 클래스의 메서드 내에서 사용함
 
 **param**
 
-1. id:int
+1. id:int - 예외의 고유 식별번호
 
 **exception**
 
 
+- none
+
 **return**
 
-Object - 인자로보낸 context 또는 생략시 임의로 생성된 오브젝트
+
+- Object - 인자로보낸 context 또는 생략시 임의로 생성된 오브젝트
 
 **sample**
 
 ```javascript
 fn.action = function(a){
   if(!a) this.error(0);
-}
+};
 ```
 
 [top](#)
@@ -379,20 +440,23 @@ _method_
 
 **description**
 
-해당 event의 리스너들에게 이벤트를 통지함. 추가인자를 기술하면 그 인자도 전달됨
+
+- 해당 event의 리스너들에게 이벤트를 통지함. 추가인자를 기술하면 그 인자도 전달됨
 
 **param**
 
-1. event:string
-2. ?...arg
+1. event:string - 이벤트타입
+2. ?...arg - 추가적으로 보낼 인자
 
 **exception**
 
-none
+
+- none
 
 **return**
 
-this - 메소드체이닝을 위해 자신을 반환함
+
+- this - 메소드체이닝을 위해 자신을 반환함
 
 **sample**
 
@@ -411,7 +475,8 @@ _method_
 
 **description**
 
-해당 event의 리스너들에게 이벤트를 통지함. 추가인자를 기술하면 그 인자도 전달됨
+
+- 해당 event의 리스너들에게 이벤트를 통지함. 추가인자를 기술하면 그 인자도 전달됨
 
 **param**
 
@@ -419,11 +484,13 @@ none
 
 **exception**
 
-none
+
+- none
 
 **return**
 
-none
+
+- none
 
 **sample**
 
@@ -442,22 +509,25 @@ _method_
 
 **description**
 
-해당 이벤트에 리스너를 추가함
+
+- 해당 이벤트에 리스너를 추가함
 
 **param**
 
-1. event:string
-2. listener:function
-3. ?context:*
-4. ?...arg
+1. event:string - 이벤트타입
+2. listener:function - 등록할 리스너
+3. ?context:* - this에 매핑될 컨텍스트(false무시)
+4. ?...arg - 추가적인 인자(dispatch시점의 인자 뒤에 붙음)
 
 **exception**
 
-none
+
+- none
 
 **return**
 
-this - 메소드체이닝을 위해 자신을 반환함
+
+- this - 메소드체이닝을 위해 자신을 반환함
 
 **sample**
 
@@ -468,8 +538,8 @@ city1.addEventListener( 'updated', function(v){
 });
 var city2 = Scene();
 city1.addEventListener( 'updated', function(v, added){
-  this == city2
-  added == 10
+  console.log(this == city2);
+  console.log(added == 10);
 }, city2, 10);
 ```
 
@@ -483,7 +553,8 @@ _static_
 
 **description**
 
-전체 인스턴스의 수를 반환함
+
+- 전체 인스턴스의 수를 반환함
 
 **param**
 
@@ -491,11 +562,13 @@ none
 
 **exception**
 
-none
+
+- none
 
 **return**
 
-int - 활성화된 인스턴스의 수
+
+- int - 활성화된 인스턴스의 수
 
 **sample**
 
@@ -513,7 +586,8 @@ _static_
 
 **description**
 
-해당 클래스를 마크다운 형식으로 문서화하여 출력함
+
+- 해당 클래스를 마크다운 형식으로 문서화하여 출력함
 
 **param**
 
@@ -521,11 +595,13 @@ none
 
 **exception**
 
-none
+
+- none
 
 **return**
 
-string - 클래스에 대한 문서 마크다운
+
+- string - 클래스에 대한 문서 마크다운
 
 **sample**
 
@@ -543,24 +619,27 @@ _static_
 
 **description**
 
-uuid 또는 id를 기반으로 인스턴스를 얻어냄
+
+- uuid 또는 id를 기반으로 인스턴스를 얻어냄
 
 **param**
 
-1. uuid:string
+1. uuid:string - 얻고 싶은 인스턴스의 uuid 또는 id
 
 **exception**
 
-undefined.getInstance:u
+
+- none
 
 **return**
 
-Object - 해당되는 인스턴스
+
+- Object - 해당되는 인스턴스
 
 **sample**
 
 ```javascript
-//none
+var instance = Mesh.getInstance(uuid);
 ```
 
 [top](#)
@@ -573,9 +652,10 @@ _static_
 
 **description**
 
-이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Defineder)를 얻음
 
-**Defineder class의 메소드**
+- 이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Definer)를 얻음
+
+**Definer class의 메소드**
 
 * 각 메서드는 체이닝됨
 * Matrix = MoGL.extend('Matrix', function(){..}).static(..).field(..).build(); 형태로 사용
@@ -588,21 +668,23 @@ _static_
 
 **param**
 
-1. className:string
-2. constructor:function
+1. className:string - 자식클래스의 이름
+2. constructor:function - 자식클래스의 생성자
 
 **exception**
 
-none
+
+- none
 
 **return**
 
-Defineder - 클래스를 정의할 수 있는 생성전용객체
+
+- Definer - 클래스를 정의할 수 있는 생성전용객체
 
 **sample**
 
 ```javascript
-//none
+var classA = MoGL.extend('classA', function(){}).build();
 ```
 
 [top](#)
@@ -615,25 +697,32 @@ _static_
 
 **description**
 
-정적함수에서 표준화된 예외를 처리함(정적함수 내부에서 사용)
+
+- 정적함수에서 표준화된 예외를 처리함(정적함수 내부에서 사용)
 
 **param**
 
-1. method:string
-2. id:int
+1. method:string - 예외가 발생한 함수명
+2. id:int - 예외고유 id
 
 **exception**
 
-none
+
+- none
 
 **return**
 
-none
+
+- none
 
 **sample**
 
 ```javascript
-//none
+var classA = MoGL.extend('classA', function(){})
+    .static('test', function(){
+	     this.error('test', 0);
+    })
+    .build();
 ```
 
 [top](#)
@@ -646,7 +735,8 @@ _static_
 
 **description**
 
-이 클래스로 부터 만들어져 활성화된 인스턴스의 수
+
+- 이 클래스로 부터 만들어져 활성화된 인스턴스의 수
 
 **param**
 
@@ -654,16 +744,18 @@ none
 
 **exception**
 
-none
+
+- none
 
 **return**
 
-int - 활성화된 인스턴스의 수
+
+- int - 활성화된 인스턴스의 수
 
 **sample**
 
 ```javascript
-//none
+var meshCount = Mesh.count();
 ```
 
 [top](#)
@@ -676,20 +768,23 @@ _static_
 
 **description**
 
-MoGL로 생성된 모든 서브클래스를 해당 객체에 키로 복사함
+
+- MoGL로 생성된 모든 서브클래스를 해당 객체에 키로 복사함
 * new MoGL.Mesh 등의 코드가 길고 귀찮은 경우 임의의 네임스페이스나 window에 복사하는 기능
 
 **param**
 
-1. context:Object
+1. context:Object - 클래스를 복사할 객체. 생략시 빈 오브젝트가 생성됨
 
 **exception**
 
-none
+
+- none
 
 **return**
 
-Object - 인자로보낸 context 또는 생략시 임의로 생성된 오브젝트
+
+- Object - 인자로보낸 context 또는 생략시 임의로 생성된 오브젝트
 
 **sample**
 
@@ -713,7 +808,8 @@ _const_
 
 **description**
 
-setProperties의 애니메이션에 사용될 보간함수
+
+- setProperties의 애니메이션에 사용될 보간함수
 다음과 같은 값이 올 수 있음
 * MoGL.ease.linear
 * MoGL.ease.backIn
@@ -731,11 +827,19 @@ setProperties의 애니메이션에 사용될 보간함수
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **value**
 
-[object Object]
+
+- [object Object]
+
+**exception**
+
+
+- none
 
 **sample**
 
@@ -754,16 +858,25 @@ _event_
 
 **description**
 
-isUpdated 속성이 변경될 때마다 발생함
+
+- isUpdated 속성이 변경될 때마다 발생함
 * 리스너에는 첫 번째 인자로 현재의 isUpdated상태가 주어짐
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **value**
 
-updated
+
+- updated
+
+**exception**
+
+
+- none
 
 **sample**
 
@@ -784,17 +897,26 @@ _event_
 
 **description**
 
-setProperties 호출시 설정이 완료되면 발생함
+
+- setProperties 호출시 설정이 완료되면 발생함
 * 애니메이션인 경우는 애니메이션 완료 후 발생
 * 리스너에 주어지는 인자는 없음
 
 **setting**
 
-*writable*:false, *enumerable*:false, *configurable*:false
+- *writable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **value**
 
-propertyChanged
+
+- propertyChanged
+
+**exception**
+
+
+- none
 
 **sample**
 

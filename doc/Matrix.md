@@ -18,7 +18,7 @@
 * [matTranslate](#matTranslate) - 현재매트릭스에 x,y,z축 증분 평행...
 * [matRotateZ](#matRotateZ) - 현재 매트릭스를 Z축 기준 증분 회전...
 * [matCopy](#matCopy) - 대상 매트릭스에 현재 매트릭스의 상태...
-* [matLookAt](#matLookAt) - 
+* [matLookAt](#matLookAt) - eye 벡터가 center 벡터를 바...
 * [matScale](#matScale) - 현재매트릭스에 x,y,z축 증분 확대...
 * [matIdentity](#matIdentity) - 현재 매트릭스를 초기화한다.
 * [matRotateY](#matRotateY) - 현재 매트릭스를 Y축 기준 증분 회전...
@@ -27,7 +27,7 @@
 * [matPerspective](#matPerspective) - 퍼스펙티브 매트릭스
 * [matClone](#matClone) - 현재 매트릭스를 복제
 * [lookAt](#lookAt) - 현재매트릭스를 대상지점을 바라보도록...
-* [_frustum](#_frustum) - Method of Matrix
+* [frustum](#frustum) - 보이는 화면 영역
 
 **static**
 
@@ -52,7 +52,7 @@
 
 **param**
 
-- none
+none
 
 **exception**
 
@@ -61,9 +61,9 @@
 **sample**
 
 ```javascript
-var mtx = new Matrix()
-console.log(mtx.x)
-console.log(mtx.position) // [x,y,z]
+var mtx = new Matrix();
+console.log(mtx.x);
+console.log(mtx.position); // [x,y,z]
 ```
 
 [top](#)
@@ -76,28 +76,31 @@ _field_
 
 **description**
 
+
 - scale값을 배열로 반환하거나 입력
 
 **setting**
 
 - *writable*:true
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-var mtx = new Matrix()
-mtx.scale = [10,20,30]
-console.log(mtx.scale) // [10,20,30]
+var mtx = new Matrix();
+mtx.scale = [10,20,30];
+console.log(mtx.scale); // [10,20,30]
 ```
 
 [top](#)
@@ -110,28 +113,31 @@ _field_
 
 **description**
 
+
 - rotate값을 배열로 반환하거나 입력
 
 **setting**
 
 - *writable*:true
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-var mtx = new Matrix()
-mtx.rotate = [10,20,30]
-console.log(mtx.rotate) // [10,20,30]
+var mtx = new Matrix();
+mtx.rotate = [10,20,30];
+console.log(mtx.rotate); // [10,20,30]
 ```
 
 [top](#)
@@ -144,27 +150,30 @@ _field_
 
 **description**
 
+
 - 현재 매트릭스 객체의 rawData를 Float32Array 형식으로 반환
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-var mtx = new Matrix()
-console.log(mtx.raw)
+var mtx = new Matrix();
+console.log(mtx.raw);
 ```
 
 [top](#)
@@ -177,28 +186,31 @@ _field_
 
 **description**
 
+
 - x,y,z값을 배열로 반환하거나 입력
 
 **setting**
 
 - *writable*:true
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-var mtx = new Matrix()
-mtx.position = [10,20,30]
-console.log(mtx.position) // [10,20,30]
+var mtx = new Matrix();
+mtx.position = [10,20,30];
+console.log(mtx.position); // [10,20,30]
 ```
 
 [top](#)
@@ -211,27 +223,30 @@ _field_
 
 **description**
 
+
 - 현재 객체내의 position,rotate,scale을 반영한 후 자신을 반환
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-var mtx = new Matrix()
-console.log(mtx.matrix)
+var mtx = new Matrix();
+console.log(mtx.matrix);
 ```
 
 [top](#)
@@ -244,6 +259,7 @@ _method_
 
 **description**
 
+
 - 현재 매트릭스를 X축 기준 증분 회전 
 
 **param**
@@ -252,17 +268,19 @@ _method_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
 ```javascript
-var mtx = new Matrix()
-mtx.matRotateX(0.3)
+var mtx = new Matrix();
+mtx.matRotateX(0.3);
 ```
 
 [top](#)
@@ -275,6 +293,7 @@ _method_
 
 **description**
 
+
 - 현재 매트릭스를 문자화한다.
 
 **param**
@@ -282,17 +301,19 @@ _method_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - String - 문자화된 매트릭스 raw를 반환
 
 **sample**
 
 ```javascript
-var mtx = new Matrix()
-console.log(mtx.matStr())
+var mtx = new Matrix();
+console.log(mtx.matStr());
 ```
 
 [top](#)
@@ -305,6 +326,7 @@ _method_
 
 **description**
 
+
 - 현재매트릭스에 x,y,z축 증분 평행이동 
 
 **param**
@@ -315,17 +337,19 @@ _method_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
 ```javascript
-var mtx = new Matrix()
-mtx.matTranslate(10,20,30)
+var mtx = new Matrix();
+mtx.matTranslate(10,20,30);
 ```
 
 [top](#)
@@ -338,6 +362,7 @@ _method_
 
 **description**
 
+
 - 현재 매트릭스를 Z축 기준 증분 회전 
 
 **param**
@@ -346,17 +371,19 @@ _method_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
 ```javascript
-var mtx = new Matrix()
-mtx.matRotateZ(0.3)
+var mtx = new Matrix();
+mtx.matRotateZ(0.3);
 ```
 
 [top](#)
@@ -369,6 +396,7 @@ _method_
 
 **description**
 
+
 - 대상 매트릭스에 현재 매트릭스의 상태를 복사
 
 **param**
@@ -377,50 +405,56 @@ _method_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
 ```javascript
-var mtx = new Matrix()
-var mtx2 = new Matrix()
-mtx.matClone(mtx2)// mtx2에 mtx의 속성이 복사됨.
+var mtx = new Matrix();
+var mtx2 = new Matrix();
+mtx.matClone(mtx2);  // mtx2에 mtx의 속성이 복사됨.
 ```
 
 [top](#)
 
 <a name="matLookAt"></a>
-###matLookAt(eye, center, up)
+###matLookAt(eye:Array, center:Array, up:Array)
 
 _method_
 
 
 **description**
 
-- 
+
+- eye 벡터가 center 벡터를 바라보는 회전 행렬 생성
 
 **param**
 
-1. eye
-2. center
-3. up
+1. eye:Array - [x, y, z] 형태의 eye 좌표
+2. center:Array - [x, y, z] 형태의 center 좌표
+3. up:Array - [x, y, z] 형태의 up 벡터
 
 **exception**
+
 
 - none
 
 **return**
 
-- none
+
+- this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
 ```javascript
-//none
+var matrix = new Matrix();
+matrix.matLookAt([100, 100, 100], [0, 0, 0], [0, 1, 0]);
 ```
 
 [top](#)
@@ -433,6 +467,7 @@ _method_
 
 **description**
 
+
 - 현재매트릭스에 x,y,z축 증분 확대 
 
 **param**
@@ -443,17 +478,19 @@ _method_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
 ```javascript
-var mtx = new Matrix()
-mtx.matScale(10,20,30)
+var mtx = new Matrix();
+mtx.matScale(10,20,30);
 ```
 
 [top](#)
@@ -466,6 +503,7 @@ _method_
 
 **description**
 
+
 - 현재 매트릭스를 초기화한다.
 
 **param**
@@ -473,17 +511,19 @@ _method_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
 ```javascript
-var mtx = new Matrix()
-mtx.matIdentity()
+var mtx = new Matrix();
+mtx.matIdentity();
 ```
 
 [top](#)
@@ -496,6 +536,7 @@ _method_
 
 **description**
 
+
 - 현재 매트릭스를 Y축 기준 증분 회전 
 
 **param**
@@ -504,17 +545,19 @@ _method_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
 ```javascript
-var mtx = new Matrix()
-mtx.matRotateY(0.3)
+var mtx = new Matrix();
+mtx.matRotateY(0.3);
 ```
 
 [top](#)
@@ -527,6 +570,7 @@ _method_
 
 **description**
 
+
 - 현재매트릭스에 대상 매트릭스를 곱한다. 
 
 **param**
@@ -535,18 +579,20 @@ _method_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
 ```javascript
-var mtx = new Matrix()
-var mtx2 = new Matrix()
-mtx.matMultiply(mtx2)// mtx에 mtx2를 곱한 결과를 반환
+var mtx = new Matrix();
+var mtx2 = new Matrix();
+mtx.matMultiply(mtx2);  // mtx에 mtx2를 곱한 결과를 반환
 ```
 
 [top](#)
@@ -559,6 +605,7 @@ _method_
 
 **description**
 
+
 - 현재 매트릭스를 특정축을 기준으로 증분 회전 
 
 **param**
@@ -568,17 +615,19 @@ _method_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
 ```javascript
-var mtx = new Matrix()
-mtx.matRotate(0.3,[0,1,2])
+var mtx = new Matrix();
+mtx.matRotate(0.3,[0,1,2]);
 ```
 
 [top](#)
@@ -591,6 +640,7 @@ _method_
 
 **description**
 
+
 - 퍼스펙티브 매트릭스
 
 **param**
@@ -602,17 +652,19 @@ _method_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
 ```javascript
-var mtx = new Matrix()
-mtx.matPerspective(55, 4/3,0.1,1000)
+var mtx = new Matrix();
+mtx.matPerspective(55, 4/3,0.1,1000);
 ```
 
 [top](#)
@@ -625,6 +677,7 @@ _method_
 
 **description**
 
+
 - 현재 매트릭스를 복제
 
 **param**
@@ -632,17 +685,19 @@ _method_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - Matrix - 복제한 매트릭스를 반환.
 
 **sample**
 
 ```javascript
-var mtx = new Matrix()
-mtx.matClone()
+var mtx = new Matrix();
+mtx.matClone();
 ```
 
 [top](#)
@@ -655,6 +710,7 @@ _method_
 
 **description**
 
+
 - 현재매트릭스를 대상지점을 바라보도록 변경
 - 현재 매트릭스의 rotateX,rotateY,rotateZ, 속성을 자동으로 변경
 
@@ -666,52 +722,57 @@ _method_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
 ```javascript
-var mtx = new Matrix()
-mtx.lookAt(0,0,0) // 현재위치에서 0,0,0을 바라보는 상태로 rotateX, rotateY, rotateZ가 변경됨
+var mtx = new Matrix();
+mtx.lookAt(0,0,0); // 현재위치에서 0,0,0을 바라보는 상태로 rotateX, rotateY, rotateZ가 변경됨
 ```
 
 [top](#)
 
-<a name="_frustum"></a>
-###_frustum(a, b, c, d, e, g)
+<a name="frustum"></a>
+###frustum(a:number, b:number, c:number, d:number, e:number, g:number)
 
 _method_
 
 
 **description**
 
-- Method of Matrix
+
+- 보이는 화면 영역
 
 **param**
 
-1. a
-2. b
-3. c
-4. d
-5. e
-6. g
+1. a:number - 가로세로 비율
+2. b:number - 가로세로 비율
+3. c:number - 시야각, degree 단위로 입력
+4. d:number - 시야각, degree 단위로 입력
+5. e:number - 절두체의 죄소 z값, 0.0보다 큰 값으로 설정
+6. g:number - 절두체의 최대 z값
 
 **exception**
+
 
 - none
 
 **return**
 
-- ?
+
+- this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
 ```javascript
-//none
+
 ```
 
 [top](#)
@@ -724,6 +785,7 @@ _static_
 
 **description**
 
+
 - 해당 클래스를 마크다운 형식으로 문서화하여 출력함
 
 **param**
@@ -731,9 +793,11 @@ _static_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - string - 클래스에 대한 문서 마크다운
 
@@ -753,6 +817,7 @@ _static_
 
 **description**
 
+
 - uuid 또는 id를 기반으로 인스턴스를 얻어냄
 
 **param**
@@ -761,16 +826,18 @@ _static_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - Object - 해당되는 인스턴스
 
 **sample**
 
 ```javascript
-//none
+var instance = Mesh.getInstance(uuid);
 ```
 
 [top](#)
@@ -783,18 +850,19 @@ _static_
 
 **description**
 
-- 이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Defineder)를 얻음
-- 
-**Defineder class의 메소드**
 
-- * 각 메서드는 체이닝됨
-- * Matrix = MoGL.extend('Matrix', function(){..}).static(..).field(..).build(); 형태로 사용
-- * field('x',{value:30}) - 속성을 정의함
-- * method('rotate',{value:function(){}}) - 메서드를 정의함
-- * constant('normalX',{value:'normalX'}) - 상수를 정의함
-- * event('updated',{value:'updated'}) - 이벤트를 정의함
-- * static('toString',{value:function(){}}) - 정적메서드를 정의함
-- * build() - 입력된 결과를 종합하여 클래스를 생성함
+- 이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Definer)를 얻음
+
+**Definer class의 메소드**
+
+* 각 메서드는 체이닝됨
+* Matrix = MoGL.extend('Matrix', function(){..}).static(..).field(..).build(); 형태로 사용
+* field('x',{value:30}) - 속성을 정의함
+* method('rotate',{value:function(){}}) - 메서드를 정의함
+* constant('normalX',{value:'normalX'}) - 상수를 정의함
+* event('updated',{value:'updated'}) - 이벤트를 정의함
+* static('toString',{value:function(){}}) - 정적메서드를 정의함
+* build() - 입력된 결과를 종합하여 클래스를 생성함
 
 **param**
 
@@ -803,16 +871,18 @@ _static_
 
 **exception**
 
+
 - none
 
 **return**
 
-- Defineder - 클래스를 정의할 수 있는 생성전용객체
+
+- Definer - 클래스를 정의할 수 있는 생성전용객체
 
 **sample**
 
 ```javascript
-//none
+var classA = MoGL.extend('classA', function(){}).build();
 ```
 
 [top](#)
@@ -825,6 +895,7 @@ _static_
 
 **description**
 
+
 - 정적함수에서 표준화된 예외를 처리함(정적함수 내부에서 사용)
 
 **param**
@@ -834,16 +905,22 @@ _static_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+var classA = MoGL.extend('classA', function(){})
+    .static('test', function(){
+	     this.error('test', 0);
+    })
+    .build();
 ```
 
 [top](#)
@@ -856,6 +933,7 @@ _static_
 
 **description**
 
+
 - 이 클래스로 부터 만들어져 활성화된 인스턴스의 수
 
 **param**
@@ -863,16 +941,18 @@ _static_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - int - 활성화된 인스턴스의 수
 
 **sample**
 
 ```javascript
-//none
+var meshCount = Mesh.count();
 ```
 
 [top](#)

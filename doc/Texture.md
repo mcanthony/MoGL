@@ -44,7 +44,7 @@
 
 **param**
 
-- none
+none
 
 **exception**
 
@@ -53,7 +53,7 @@
 **sample**
 
 ```javascript
-var texture = new Texture()
+var texture = new Texture();
 ```
 
 [top](#)
@@ -66,28 +66,31 @@ _field_
 
 **description**
 
+
 - resize type get/set field.
 
 **setting**
 
 - *writable*:true
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - null
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-var texture = new Texture()
-texture.resizeType = Texture.zoomIn
-console.log(texture.resizeType)
+var texture = new Texture();
+texture.resizeType = Texture.zoomIn;
+console.log(texture.resizeType);
 ```
 
 [top](#)
@@ -100,28 +103,31 @@ _field_
 
 **description**
 
+
 - Load check field.
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - null
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-var texture = new Texture()
-texture.img = document.getElementID("imgElement")
-console.log(texture.isLoaded)
+var texture = new Texture();
+texture.img = document.getElementID("imgElement");
+console.log(texture.isLoaded);
 ```
 
 [top](#)
@@ -134,27 +140,30 @@ _field_
 
 **description**
 
+
 - Image get/set field.
 
 **setting**
 
 - *writable*:true
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - null
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-var texture = new Texture()
-texture.img = document.getElementID("imgElement")
+var texture = new Texture();
+texture.img = document.getElementID("imgElement");
 ```
 
 [top](#)
@@ -167,6 +176,7 @@ _static_
 
 **description**
 
+
 - 해당 클래스를 마크다운 형식으로 문서화하여 출력함
 
 **param**
@@ -174,9 +184,11 @@ _static_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - string - 클래스에 대한 문서 마크다운
 
@@ -196,6 +208,7 @@ _static_
 
 **description**
 
+
 - uuid 또는 id를 기반으로 인스턴스를 얻어냄
 
 **param**
@@ -204,16 +217,18 @@ _static_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - Object - 해당되는 인스턴스
 
 **sample**
 
 ```javascript
-//none
+var instance = Mesh.getInstance(uuid);
 ```
 
 [top](#)
@@ -226,9 +241,10 @@ _static_
 
 **description**
 
-- 이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Defineder)를 얻음
 
-**Defineder class의 메소드**
+- 이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Definer)를 얻음
+
+**Definer class의 메소드**
 
 * 각 메서드는 체이닝됨
 * Matrix = MoGL.extend('Matrix', function(){..}).static(..).field(..).build(); 형태로 사용
@@ -246,16 +262,18 @@ _static_
 
 **exception**
 
+
 - none
 
 **return**
 
-- Defineder - 클래스를 정의할 수 있는 생성전용객체
+
+- Definer - 클래스를 정의할 수 있는 생성전용객체
 
 **sample**
 
 ```javascript
-//none
+var classA = MoGL.extend('classA', function(){}).build();
 ```
 
 [top](#)
@@ -268,6 +286,7 @@ _static_
 
 **description**
 
+
 - 정적함수에서 표준화된 예외를 처리함(정적함수 내부에서 사용)
 
 **param**
@@ -277,16 +296,22 @@ _static_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+var classA = MoGL.extend('classA', function(){})
+    .static('test', function(){
+	     this.error('test', 0);
+    })
+    .build();
 ```
 
 [top](#)
@@ -299,6 +324,7 @@ _static_
 
 **description**
 
+
 - 이 클래스로 부터 만들어져 활성화된 인스턴스의 수
 
 **param**
@@ -306,16 +332,18 @@ _static_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - int - 활성화된 인스턴스의 수
 
 **sample**
 
 ```javascript
-//none
+var meshCount = Mesh.count();
 ```
 
 [top](#)
@@ -328,26 +356,31 @@ _const_
 
 **description**
 
+
 - zoom out constant
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **value**
 
-zoomOut
+
+- zoomOut
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+var texture = new Texture();
+// 리사이즈 타입 설정
+texture.resizeType = Texture.zoomOut;
 ```
 
 [top](#)
@@ -360,26 +393,31 @@ _const_
 
 **description**
 
+
 - zoom in constant
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **value**
 
-zoomIn
+
+- zoomIn
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+var texture = new Texture();
+// 리사이즈 타입 설정
+texture.resizeType = Texture.zoomIn;
 ```
 
 [top](#)
@@ -392,26 +430,31 @@ _const_
 
 **description**
 
+
 - specularNormal constant
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **value**
 
-specularNormal
+
+- specularNormal
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+var texture = new Texture();
+// 리사이즈 타입 설정
+texture.resizeType = Texture.specularNormal;
 ```
 
 [top](#)
@@ -424,26 +467,31 @@ _const_
 
 **description**
 
+
 - specular constant
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **value**
 
-specular
+
+- specular
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+var texture = new Texture();
+// 리사이즈 타입 설정
+texture.resizeType = Texture.specular;
 ```
 
 [top](#)
@@ -456,26 +504,31 @@ _const_
 
 **description**
 
+
 - normal constant
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **value**
 
-normal
+
+- normal
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+var texture = new Texture();
+// 리사이즈 타입 설정
+texture.resizeType = Texture.normal;
 ```
 
 [top](#)
@@ -488,26 +541,31 @@ _const_
 
 **description**
 
+
 - diffuseWrap constant
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **value**
 
-diffuseWrap
+
+- diffuseWrap
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+var texture = new Texture();
+// 리사이즈 타입 설정
+texture.resizeType = Texture.diffuseWrap;
 ```
 
 [top](#)
@@ -520,26 +578,31 @@ _const_
 
 **description**
 
+
 - diffuse constant
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **value**
 
-diffuse
+
+- diffuse
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+var texture = new Texture();
+// 리사이즈 타입 설정
+texture.resizeType = Texture.diffuse;
 ```
 
 [top](#)
@@ -552,26 +615,31 @@ _const_
 
 **description**
 
+
 - crop constant
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **value**
 
-crop
+
+- crop
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+var texture = new Texture();
+// 리사이즈 타입 설정
+texture.resizeType = Texture.crop;
 ```
 
 [top](#)
@@ -584,26 +652,31 @@ _const_
 
 **description**
 
+
 - addSpace constant
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **value**
 
-addSpace
+
+- addSpace
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+var texture = new Texture();
+// 리사이즈 타입 설정
+texture.resizeType = Texture.addSpace;
 ```
 
 [top](#)
@@ -616,19 +689,22 @@ _event_
 
 **description**
 
+
 - load event
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **value**
 
-load
+
+- load
 
 **exception**
+
 
 - none
 

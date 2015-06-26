@@ -1,102 +1,201 @@
-/**
- * Created by redcamel on 2015-05-05.
- * description
- 정점배열과 인덱스 배열을 이용하여 기하구조를 정의함.
- 생성자에서 지정된 버퍼 및 정보는 변경불가로 생성 이후는 읽기만 가능함.
- */
 var Geometry = (function () {
-    //그중에 자신의 4좌표랑 7uv랑 8rgba랑 9노말은 지오메트리거고
-    var Geometry, fn;
-    Geometry = function Geometry(vertex, index, info) {
-        var i, len, t, t2,
-        isFloat32 = vertex instanceof Float32Array,
-        isUint16 = index instanceof Uint16Array
-        if (!(Array.isArray(vertex) || isFloat32 )) MoGL.error('Geometry', 'constructor', 0)
-        if (!(Array.isArray(index) || isUint16  )) MoGL.error('Geometry', 'constructor', 1)
-        if (info) {
-            i = info.length
-            if(vertex.length % i) MoGL.error('Geometry', 'constructor', 2)
-            while(i--) info[info[i]] = i
-            //console.log(info)
+    'use strict';
+    var position, vertexCount, triangleCount, vertexShaders, normal,index, uv, color, volume, key;
+
+    //private
+    position = {}, normal = {}, uv = {}, color = {},index = {},
+    vertexCount = {}, triangleCount = {}, vertexShaders = {},
+    volume = {};
+    //shared private
+    $setPrivate('Geometry', {
+    });
+    return MoGL.extend('Geometry',{
+        description: "Geometry 클래스",
+        param : [
+            "vertex : 지오메트리를 구성할 버텍스 배열 정보 (Array or Float32Array)",
+            "index : 지오메트리를 구성할 인덱스 배열 정보 (Array or Uint16Array)"
+        ],
+        sample: [
+            "var geo = new Geometry([],[]);"
+        ],
+        exception:[
+            "'Geometry.vertexSet:0' - 첫번째 인자가 Array나 Float32Array가 아닌 경우",
+            "'Geometry.indexSet:1' - 두번째 인자가 Array나 Uint16Array가 아닌 경우",
+            "'Geometry.infoSet:2' - 첫번째 인자가 세번째 인자의 갯수로 나누어 떨어지지 않는 경우 ",
+            "'Geometry.infoSet:3' - 세번째 인자가 Array가 아닌 경우",
+            "'Geometry.infoSet:4' - 세번째 인자내 요소가 올바른 상수가 아닌 경우"
+        ],
+        value:(function(){
+            var calcNormal, infoCheck, pos, nm, tUV, tCo;
+            calcNormal = (function () {
+                var sqr, v1, v2;
+                sqr = Math.sqrt,
+                v1 = {x: 0, y: 0, z: 0}, v2 = {x: 0, y: 0, z: 0};
+                return function calcNormal(ns, pos, idx) {
+                    var i, j, k, l;
+                    for (ns.length = 0, i = 0, j = pos.length; i < j; i++) ns[i] = 0.0;
+                    for (i = 0, j = idx.length; i < j; i += 3) {
+                        k = 3 * idx[i + 1],
+                        l = 3 * idx[i],
+                        v1.x = pos[k] - pos[l],
+                        v1.y = pos[k + 1] - pos[l + 1],
+                        v1.z = pos[k + 2] - pos[l + 2],
+                        l = 3 * idx[i + 2],
+                        v2.x = pos[l] - pos[k],
+                        v2.y = pos[l + 1] - pos[k + 1],
+                        v2.z = pos[l + 2] - pos[k + 2];
+                        for (k = 0; k < 3; k++) {
+                            l = 3 * idx[i + k],
+                            ns[l] += v1.y * v2.z - v1.z * v2.y,
+                            ns[l + 1] += v1.z * v2.x - v1.x * v2.z,
+                            ns[l + 2] += v1.x * v2.y - v1.y * v2.x;
+                        }
+                    }
+                    for (i = 0, j = pos.length; i < j; i += 3) {
+                        v1.x = ns[i],
+                        v1.y = ns[i + 1],
+                        v1.z = ns[i + 2],
+                        k = sqr(v1.x * v1.x + v1.y * v1.y + v1.z * v1.z) || 0.00001,
+                        ns[i] = v1.x / k,
+                        ns[i + 1] = v1.y / k,
+                        ns[i + 2] = v1.z / k;
+                    }
+                    return ns;
+                };
+            })(),
+            infoCheck = function (v) {
+                return Vertex[v];
+            },
+            pos = [], nm = [], tUV = [], tCo = [];
+            return function Geometry(vertex, tIndex, info) {
+                var len, i, j, k, isNormal, isUV, isColor;
+                if (!Array.isArray(vertex) && !(vertex instanceof Float32Array)) {
+                    this.error(0);
+                } else if (!Array.isArray(tIndex) && !(tIndex instanceof Uint16Array)) {
+                    this.error(1);
+                }
+                pos.length = nm.length = tUV.length = tCo.length = 0;
+                if (info) {
+                    if (!Array.isArray(info)) {
+                        this.error(3);
+                    } else if (!info.some(infoCheck)) {
+                        this.error(4);
+                    }
+
+                    len = info.length;
+                    if (vertex.length % len) this.error(2);
+
+                    i = len;
+                    while (i--) info[info[i]] = i;
+                    isNormal = info.normalX && info.normalY && info.normalZ,
+                    isUV = info.u && info.v,
+                    isColor = info.r && info.g && info.b && info.a;
+
+                    for (i = 0, j = vertex.length / len; i < j; i++) {
+                        k = len * i,
+                        pos.push(vertex[k+info.x], vertex[k+info.y], vertex[k+info.z]);
+                        if (isNormal) nm.push(vertex[k+info.normalX], vertex[k+info.normalY], vertex[k+info.normalZ]);
+                        if (isUV) tUV.push(vertex[k+info.u], vertex[k+info.v]);
+                        if (isColor) tCo.push(vertex[k+info.r], vertex[k+info.g], vertex[k+info.b], vertex[k+info.a]);
+                    }
+                    position[this] = new Float32Array(pos);
+                } else {
+                    len = 3;
+                    position[this] = vertex instanceof Float32Array ? vertex : new Float32Array(vertex);
+                }
+                if (!isNormal) calcNormal(nm, info ? pos : vertex, tIndex);
+                normal[this] = new Float32Array(nm);
+                vertexCount[this] = vertex.length / len,
+                triangleCount[this] = tIndex.length / 3,
+                uv[this] = new Float32Array(tUV),
+                color[this] = new Float32Array(tCo),
+                index[this] = tIndex instanceof Uint16Array ? tIndex : new Uint16Array(tIndex);
+            };
+        })()
+    })
+    .field('vertexCount', {
+            description: "지오메트리를 구성하는 버텍스 갯수",
+            sample: [
+                'console.log(geometry.vertexCount);'
+            ],
+            defaultValue:'null',
+            get:$getter(vertexCount)
         }
-        /////////////////////////////////////
-        t = arguments[2] ? arguments[2].length : 3
-        this._vertexCount = vertex.length / t,
-        this._triangleCount = index.length / 3,
-        this._vertexShaders = {},
-        this._position = [],
-        this._normal = [],
-        this._uv = [],
-        this._color = [],
-        this._volume=null,
-        this._key = null
-        ///////////////////////////////
-        //TODO 노말,UV,컬러없을떄 판별
-        if (arguments[2]) {
-            for (i = 0, len = vertex.length / t; i < len; i++) {
-                t2 = t * i,
-                this._position.push(vertex[t2 + info.x], vertex[t2 + info.y], vertex[t2 + info.z]),
-                info.nx ? this._normal.push(vertex[t2 + info.nx], vertex[t2 + info.ny], vertex[t2 + info.nz]) : 0,
-                info.u ? this._uv.push(vertex[t2 + info.u], vertex[t2 + info.v]) : 0,
-                info.r ? this._color.push(vertex[t2 + info.r], vertex[t2 + info.g], vertex[t2 + info.b], vertex[t2 + info.a]) : 0
+    )
+    .field('triangleCount', {
+            description: "지오메트리를 구성하는 삼각형 갯수",
+            sample: [
+                'console.log(geometry.triangleCount);'
+            ],
+            defaultValue:'null',
+            get:$getter(triangleCount)
+        }
+    )
+    .field('volume', {
+        description: "지오메트리의 최대 부피값.",
+        sample: [
+            'console.log(geometry.volume);'
+        ],
+        defaultValue:'null',
+        get:function volumeGet() {
+            var minX, minY, minZ, maxX, maxY, maxZ, t0, t1, t2, t, i;
+            if (!volume[this]) {
+                minX = minY = minZ = maxX = maxY = maxZ = 0,
+                t = position[this], i = t.length;
+                while (i--) {
+                    t0 = i * 3, t1 = t0 + 1, t2 = t0 + 2,
+                    minX = t[t0] < minX ? t[t0] : minX,
+                    maxX = t[t0] > maxX ? t[t0] : maxX,
+                    minY = t[t1] < minY ? t[t1] : minY,
+                    maxY = t[t1] > maxY ? t[t1] : maxY,
+                    minZ = t[t2] < minZ ? t[t2] : minZ,
+                    maxZ = t[t2] > maxZ ? t[t2] : maxZ;
+                }
+                volume[this] = [maxX - minX, maxY - minY, maxZ - minZ];
             }
-            this._position = new Float32Array(this._position),
-            this._uv = new Float32Array(this._uv),
-            this._color = new Float32Array(this._color)
-        } else this._position = isFloat32 ? vertex : new Float32Array(vertex)
-        //TODO Uint32Array을 받아줄것인가! 고민해야됨..
-        this._index = isUint16 ? index : new Uint16Array(index)
-        if(this._normal.length==0) this._normal = new Float32Array(calculateNormals(this._position, this._index))
-        else this._normal = new Float32Array(this._normal)
-        ///////////////////////////////
-    }
-    var calculateNormals = function calculateNormals(v, i) {
-        var x = 0, y = 1, z = 2, j, k, len, mSqt = Math.sqrt, ns = [], v1 = [], v2 = [], n0 = [], n1 = [];
-        for (j = 0, len = v.length; j < len; j++) ns[j] = 0.0;
-        for (j = 0, len = i.length; j < len; j = j + 3) {
-            v1 = [], v2 = [], n0 = [], v1[x] = v[3 * i[j + 1] + x] - v[3 * i[j] + x], v1[y] = v[3 * i[j + 1] + y] - v[3 * i[j] + y], v1[z] = v[3 * i[j + 1] + z] - v[3 * i[j] + z], v2[x] = v[3 * i[j + 2] + x] - v[3 * i[j + 1] + x], v2[y] = v[3 * i[j + 2] + y] - v[3 * i[j + 1] + y], v2[z] = v[3 * i[j + 2] + z] - v[3 * i[j + 1] + z], n0[x] = v1[y] * v2[z] - v1[z] * v2[y], n0[y] = v1[z] * v2[x] - v1[x] * v2[z], n0[z] = v1[x] * v2[y] - v1[y] * v2[x];
-            for (k = 0; k < 3; k++) ns[3 * i[j + k] + x] = ns[3 * i[j + k] + x] + n0[x], ns[3 * i[j + k] + y] = ns[3 * i[j + k] + y] + n0[y], ns[3 * i[j + k] + z] = ns[3 * i[j + k] + z] + n0[z]
+            return volume[this];
         }
-        for (var i = 0, len = v.length; i < len; i = i + 3) {
-            n1 = [], n1[x] = ns[i + x], n1[y] = ns[i + y], n1[z] = ns[i + z];
-            var len = mSqt((n1[x] * n1[x]) + (n1[y] * n1[y]) + (n1[z] * n1[z]));
-            if (len == 0) len = 0.00001;
-            n1[x] = n1[x] / len, n1[y] = n1[y] / len, n1[z] = n1[z] / len, ns[i + x] = n1[x], ns[i + y] = n1[y], ns[i + z] = n1[z];
+    })
+    .field('position', {
+            description: "지오메트리를 구성하는 버텍스의 포지션 배열을 반환",
+            sample: [
+                'console.log(geometry.position);'
+            ],
+            defaultValue:'null',
+            get: $getter(position)
         }
-        return ns;
-    }
-    fn = Geometry.prototype,
-    fn.addVertexShader = function addVertexShader(id) { MoGL.isAlive(this);
-        // TODO 마일스톤0.5
-        this._vertexShaders[id] = id
-        return this
-    },
-    fn.getVertexCount = function getVertexCount() { MoGL.isAlive(this);
-        return this._vertexCount
-    },
-    fn.getTriangleCount = function getTriangleCount() { MoGL.isAlive(this);
-        return this._triangleCount
-    },
-    fn.getVolume = function getVolume() { MoGL.isAlive(this);
-        if (!this._volume) {
-            var minX = 0, minY = 0, minZ = 0, maxX = 0, maxY = 0, maxZ = 0
-            var t0, t1, t2, t = this._position, i = t.length
-            while (i--) {
-                t0 = i * 3, t1 = t0 + 1, t2 = t0 + 2
-                minX = t[t0] < minX ? t[t0] : minX,
-                maxX = t[t0] > maxX ? t[t0] : maxX,
-                minY = t[t1] < minY ? t[t1] : minY,
-                maxY = t[t1] > maxY ? t[t1] : maxY,
-                minZ = t[t2] < minZ ? t[t2] : minZ,
-                maxZ = t[t2] > maxZ ? t[t2] : maxZ
-            }
-            this._volume = [maxX - minX, maxY - minY, maxZ - minZ]
+    )
+    .field('normal', {
+            description: "지오메트리를 구성하는 버텍스의 노멀 배열을 반환",
+            sample: [
+                'console.log(geometry.normal);'
+            ],
+            get: $getter(normal)
         }
-        return this._volume
-    },
-    fn.removeVertexShader = function removeVertexShader(id) { MoGL.isAlive(this);
-        // TODO 마일스톤0.5
-        return delete this._vertexShaders[id], this
-    }
-    return MoGL.ext(Geometry, MoGL);
+    )
+    .field('uv', {
+            description: "지오메트리를 구성하는 버텍스의 UV 배열을 반환",
+            sample: [
+                'console.log(geometry.uv);'
+            ],
+            get: $getter(uv)
+        }
+    )
+    .field('color', {
+            description: "지오메트리를 구성하는 버텍스의 컬러 배열을 반환",
+            sample: [
+                'console.log(geometry.color);'
+            ],
+            get: $getter(color)
+        }
+    )
+    .field('index', {
+            description: "지오메트리를 인덱스 배열을 반환",
+            sample: [
+                'console.log(geometry.index);'
+            ],
+            get: $getter(index)
+        }
+    )
+    .build();
 })();

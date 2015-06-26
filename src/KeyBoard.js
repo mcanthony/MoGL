@@ -1,9 +1,5 @@
-/**
- * Created by redcamel on 2015-05-21.
- * description
-
- */
 var KeyBoard = (function () {
+    'use strict';
     var W, KeyBoard;
     W = window,
     KeyBoard =  {
@@ -15,14 +11,14 @@ var KeyBoard = (function () {
         "*": 106, "+": 107, "-": 109, ".": 110, "/": 111,
         F1: 112, F2: 113, F3: 114, F4: 115, F5: 116, F6: 117, F7: 118, F8: 119, F9: 120, F10: 121, F11: 122, F12: 123,
         "=": 187, COMA: 188, "SLASH/": 191, "BACKSLASH": 220
-    }
-    KeyBoard.downed = {}
+    };
+    KeyBoard.downed = {};
     for (var k in KeyBoard) KeyBoard.downed[k] = 0;
         W.addEventListener('keydown', function (e) {
-            KeyBoard.downed[e.keyCode] = 1
+            KeyBoard.downed[e.keyCode] = 1;
         }),
         W.addEventListener('keyup', function (e) {
-            KeyBoard.downed[e.keyCode] = 0
+            KeyBoard.downed[e.keyCode] = 0;
         })
     return KeyBoard;
 })();

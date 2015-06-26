@@ -3,6 +3,7 @@
 * [BlendMode](BlendMode.md)
 * [Camera](Camera.md)
 * [Geometry](Geometry.md)
+* [Group](Group.md)
 * [Material](Material.md)
 * [Matrix](Matrix.md)
 * [Mesh](Mesh.md)

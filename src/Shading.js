@@ -1,25 +1,57 @@
-/**
- * Created by redcamel on 2015-05-18.
- */
-var Shading = {
-    none: function none() {
-        this._shading.type = 'none';
-    },
-    gouraud: function gouraud() {
-        this._shading.type = 'gouraud';
-    },
-    phong: function phong() {
-        this._shading.type = 'phong';
-    },
-    blinn: function blinn() {
-        this._shading.type = 'blinn';
-    },
-    flat: function flat() {
-        this._shading.type = 'flat';
-    },
-    toon: function toon() {
-        this._shading.type = 'toon';
-    }
-};
-Object.freeze(Shading);
-
+var Shading = MoGL.extend('Shading', {
+    description:'Shading',
+    sample:[
+        "var material = new Material('#fff');",
+        "material.shading = Shading.phong;"
+    ],
+    value:function Shading() {}
+})
+.constant('none', {
+    description:'none constant',
+    sample:[
+        "var material = new Material('#fff');",
+        "material.shading = Shading.none;"
+    ],
+    value:'none'
+})
+.constant('gouraud', {
+    description:'gouraud constant',
+    sample:[
+        "var material = new Material('#fff');",
+        "material.shading = Shading.gouraud;"
+    ],
+    value:'gouraud'
+})
+.constant('phong', {
+    description:'phong constant',
+    sample:[
+        "var material = new Material('#fff');",
+        "material.shading = Shading.phong;"
+    ],
+    value:'phong'
+})
+.constant('blinn', {
+    description:'blinn constant',
+    sample:[
+        "var material = new Material('#fff');",
+        "material.shading = Shading.blinn;"
+    ],
+    value:'blinn'
+})
+.constant('flat', {
+    description:'flat constant',
+    sample:[
+        "var material = new Material('#fff');",
+        "material.shading = Shading.flat;"
+    ],
+    value:'flat'
+})
+.constant('toon', {
+    description:'toon',
+    sample:[
+        "var material = new Material('#fff');",
+        "material.shading = Shading.toon;"
+    ],
+    value:'toon'
+})
+.build();

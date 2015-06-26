@@ -49,7 +49,7 @@
 
 **param**
 
-- 1. v:Object - 오브젝트 형태로 쉐이더 정보를 입력
+1. v:Object - 오브젝트 형태로 쉐이더 정보를 입력
 2. 버텍스쉐이더 - { id:'', attributes:[], uniforms:[], varyings[], function:[], main[]
 3. 프레그먼트쉐이더 - { id:'', uniforms:[], varyings[], function:[], main[]
 
@@ -60,7 +60,7 @@
 **sample**
 
 ```javascript
-//none
+var shader = new Shader();
 ```
 
 [top](#)
@@ -73,26 +73,30 @@ _field_
 
 **description**
 
+
 - 쉐이더 구성정보 코드(JS)를 반환
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+var shader = new Shader();
+console.log(shader.code);
 ```
 
 [top](#)
@@ -105,6 +109,7 @@ _static_
 
 **description**
 
+
 - 해당 클래스를 마크다운 형식으로 문서화하여 출력함
 
 **param**
@@ -112,9 +117,11 @@ _static_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - string - 클래스에 대한 문서 마크다운
 
@@ -134,6 +141,7 @@ _static_
 
 **description**
 
+
 - uuid 또는 id를 기반으로 인스턴스를 얻어냄
 
 **param**
@@ -142,16 +150,18 @@ _static_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - Object - 해당되는 인스턴스
 
 **sample**
 
 ```javascript
-//none
+var instance = Mesh.getInstance(uuid);
 ```
 
 [top](#)
@@ -164,18 +174,19 @@ _static_
 
 **description**
 
-- 이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Defineder)를 얻음
-- 
-**Defineder class의 메소드**
 
-- * 각 메서드는 체이닝됨
-- * Matrix = MoGL.extend('Matrix', function(){..}).static(..).field(..).build(); 형태로 사용
-- * field('x',{value:30}) - 속성을 정의함
-- * method('rotate',{value:function(){}}) - 메서드를 정의함
-- * constant('normalX',{value:'normalX'}) - 상수를 정의함
-- * event('updated',{value:'updated'}) - 이벤트를 정의함
-- * static('toString',{value:function(){}}) - 정적메서드를 정의함
-- * build() - 입력된 결과를 종합하여 클래스를 생성함
+- 이 클래스를 상속하는 자식클래스를 만들 수 있는 정의자(Definer)를 얻음
+
+**Definer class의 메소드**
+
+* 각 메서드는 체이닝됨
+* Matrix = MoGL.extend('Matrix', function(){..}).static(..).field(..).build(); 형태로 사용
+* field('x',{value:30}) - 속성을 정의함
+* method('rotate',{value:function(){}}) - 메서드를 정의함
+* constant('normalX',{value:'normalX'}) - 상수를 정의함
+* event('updated',{value:'updated'}) - 이벤트를 정의함
+* static('toString',{value:function(){}}) - 정적메서드를 정의함
+* build() - 입력된 결과를 종합하여 클래스를 생성함
 
 **param**
 
@@ -184,16 +195,18 @@ _static_
 
 **exception**
 
+
 - none
 
 **return**
 
-- Defineder - 클래스를 정의할 수 있는 생성전용객체
+
+- Definer - 클래스를 정의할 수 있는 생성전용객체
 
 **sample**
 
 ```javascript
-//none
+var classA = MoGL.extend('classA', function(){}).build();
 ```
 
 [top](#)
@@ -206,6 +219,7 @@ _static_
 
 **description**
 
+
 - 정적함수에서 표준화된 예외를 처리함(정적함수 내부에서 사용)
 
 **param**
@@ -215,16 +229,22 @@ _static_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+var classA = MoGL.extend('classA', function(){})
+    .static('test', function(){
+	     this.error('test', 0);
+    })
+    .build();
 ```
 
 [top](#)
@@ -237,6 +257,7 @@ _static_
 
 **description**
 
+
 - 이 클래스로 부터 만들어져 활성화된 인스턴스의 수
 
 **param**
@@ -244,16 +265,18 @@ _static_
 
 **exception**
 
+
 - none
 
 **return**
+
 
 - int - 활성화된 인스턴스의 수
 
 **sample**
 
 ```javascript
-//none
+var meshCount = Mesh.count();
 ```
 
 [top](#)
@@ -266,26 +289,29 @@ _const_
 
 **description**
 
+
 - 컬러 퐁 버텍스 쉐이더
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+console.log(Shader.colorVertexShaderPhong);
 ```
 
 [top](#)
@@ -298,26 +324,29 @@ _const_
 
 **description**
 
+
 - 후처리 베이스 프레그먼트 쉐이더
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+console.log(Shader.postBaseFragmentShader);
 ```
 
 [top](#)
@@ -330,26 +359,29 @@ _const_
 
 **description**
 
+
 - 와이어프레임 버텍스 쉐이더
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+console.log(Shader.wireFrameVertexShader);
 ```
 
 [top](#)
@@ -362,26 +394,29 @@ _const_
 
 **description**
 
+
 - 와이어프레임 프레그먼트 쉐이더
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+console.log(Shader.wireFrameFragmentShader);
 ```
 
 [top](#)
@@ -394,26 +429,29 @@ _const_
 
 **description**
 
+
 - 후처리 베이스 버텍스 쉐이더
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+console.log(Shader.postBaseVertexShader);
 ```
 
 [top](#)
@@ -426,26 +464,29 @@ _const_
 
 **description**
 
+
 - 툰 퐁 프레그먼트 쉐이더
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+console.log(Shader.toonFragmentShaderPhong);
 ```
 
 [top](#)
@@ -458,26 +499,29 @@ _const_
 
 **description**
 
+
 - 툰 퐁 버텍스 쉐이더
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+console.log(Shader.toonVertexShaderPhong);
 ```
 
 [top](#)
@@ -490,26 +534,29 @@ _const_
 
 **description**
 
+
 - 비트맵 프레그먼트 쉐이더
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+console.log(Shader.bitmapFragmentShader);
 ```
 
 [top](#)
@@ -522,26 +569,29 @@ _const_
 
 **description**
 
+
 - 컬러 버텍스 쉐이더
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+console.log(Shader.colorVertexShader);
 ```
 
 [top](#)
@@ -554,26 +604,29 @@ _const_
 
 **description**
 
+
 - 컬러 고라우드 버텍스 쉐이더
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+console.log(Shader.colorVertexShaderGouraud);
 ```
 
 [top](#)
@@ -586,26 +639,29 @@ _const_
 
 **description**
 
+
 - 컬러 퐁 프레그먼트 쉐이더
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+console.log(Shader.colorFragmentShaderPhong);
 ```
 
 [top](#)
@@ -618,26 +674,29 @@ _const_
 
 **description**
 
+
 - 컬러 고라우드 프레그먼트 쉐이더
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+console.log(Shader.colorFragmentShaderGouraud);
 ```
 
 [top](#)
@@ -650,26 +709,29 @@ _const_
 
 **description**
 
+
 - 컬러 프레그먼트 쉐이더
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+console.log(Shader.colorFragmentShader);
 ```
 
 [top](#)
@@ -682,26 +744,29 @@ _const_
 
 **description**
 
+
 - 비트맵 퐁 버텍스 쉐이더
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+console.log(Shader.bitmapVertexShaderPhong);
 ```
 
 [top](#)
@@ -714,26 +779,29 @@ _const_
 
 **description**
 
+
 - 비트맵 고라우드 버텍스 쉐이더
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+console.log(Shader.bitmapVertexShaderGouraud);
 ```
 
 [top](#)
@@ -746,26 +814,29 @@ _const_
 
 **description**
 
+
 - 비트맵 블린 버텍스 쉐이더
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+console.log(Shader.bitmapVertexShaderBlinn);
 ```
 
 [top](#)
@@ -778,26 +849,29 @@ _const_
 
 **description**
 
+
 - 비트맵 버텍스 쉐이더
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+console.log(Shader.bitmapVertexShader);
 ```
 
 [top](#)
@@ -810,26 +884,29 @@ _const_
 
 **description**
 
+
 - 비트맵 퐁 프레그먼트 쉐이더
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+console.log(Shader.bitmapFragmentShaderPhong);
 ```
 
 [top](#)
@@ -842,26 +919,29 @@ _const_
 
 **description**
 
+
 - 비트맵 고라우드 프레그먼트 쉐이더
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+console.log(Shader.bitmapFragmentShaderGouraud);
 ```
 
 [top](#)
@@ -874,26 +954,29 @@ _const_
 
 **description**
 
+
 - 비트맵 블린 프레그먼트 쉐이더
 
 **setting**
 
 - *writable*:false
-- *enumerable*:false
-- *configurable*:false
+-  *enumerable*:false
+-  *configurable*:false
 
 **defaultValue**
+
 
 - none
 
 **exception**
+
 
 - none
 
 **sample**
 
 ```javascript
-//none
+console.log(Shader.bitmapFragmentShaderBlinn);
 ```
 
 [top](#)
