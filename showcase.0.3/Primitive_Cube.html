@@ -21,7 +21,7 @@
     </style>
 </head>
 <body>
-<script src="lib/mogl.js"></script>
+<script src="lib/mogl.min.js"></script>
 <script src="../showcase/dat.gui.min.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
 <script>
@@ -124,7 +124,7 @@
         }
     };
     var gui = new dat.GUI();
-    var shading = gui.addFolder('Split');
+    var shading = gui.addFolder('Shading');
     shading.add(shadingParams, 'cube');
     shading.add(shadingParams, 'cube2_2');
     shading.add(shadingParams, 'cube3_3');

@@ -26,11 +26,11 @@
             position: absolute
         }
     </style>
-    <script src="lib/mogl.js"></script>
+    <script src="lib/mogl.min.js"></script>
 </head>
 <body>
-<img src="smithHead/Map-COL.jpg" id="testIMG" style="position: absolute;top:0px;" width="128" height="128">
-<img src="monkey/Suzanne.jpg" id="testIMG2" style="position: absolute;top:0px;" width="128" height="128">
+<img src="smithHead/Map-COL.jpg" id="testIMG" style="position: absolute;top:0px;;display:none" width="128" height="128">
+<img src="monkey/Suzanne.jpg" id="testIMG2" style="position: absolute;top:0px;;display:none" width="128" height="128">
 <canvas id="canvas"></canvas>
 <div class="FPS">
     Current FPS: <span id="currentFPS"></span>
@@ -117,7 +117,19 @@
 
             mat1.addTexture(Texture.diffuse, texture2)
             mat2.addTexture(Texture.diffuse, texture3)
+            check1()
+
         }, 1000)
+        var check1 = function(){
+            mesh.material = mat1
+            mesh2.material = mat2
+            setTimeout(check2, 1000)
+        }
+        var check2 = function(){
+            mesh.material = mat2
+            mesh2.material = mat1
+            setTimeout(check1, 1000)
+        }
         var currentFPS, prevTime = 0, count = 0, sum = 0
         world.addEventListener(World.renderBefore, function (currTime) {
                     currentFPS = 1000 / ( currTime - prevTime );
