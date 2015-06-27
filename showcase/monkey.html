@@ -9,7 +9,8 @@
     <meta name="format-detection" content="telephone=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
     <style>
         body {
             background-color: #000;
@@ -45,6 +46,7 @@
     <script src="../src/Camera.js"></script>
     <script src="../src/Scene.js"></script>
     <script src="../src/World.js"></script>
+    <script src="../showcase/dat.gui.min.js"></script>
 </head>
 <body>
 <img src="monkey/Suzanne.jpg" id="testIMG2" style="position: absolute;top:0px; display:none" width="256" height="256">
@@ -53,6 +55,7 @@
     Current FPS: <span id="currentFPS"></span>
     Average FPS: <span id="averageFPS"></span>
 </div>
+
 <script>
     'use strict';
     // basic settings
@@ -67,28 +70,10 @@
     scene = new Scene()
     camera = new Camera()
 
+
     world.addScene(scene)
     scene.addChild(camera)
 
-    var mat, mat2, mat3, mat4, mat5, mat6;
-    var texture;
-
-    // make materials
-    mat = new Material(Math.random(), Math.random(), Math.random(), 0.5)
-    mat2 = new Material(1, 1, 1, 1)
-    mat3 = new Material(1, 1, 1, 1)
-    mat4 = new Material(1, 1, 1, 1)
-    mat5 = new Material(1, 1, 1, 1)
-    mat6 = new Material(1, 1, 1, 1)
-
-    // make texture
-    texture = new Texture
-    texture.img = document.getElementById('testIMG2')
-    mat4.addTexture(Texture.diffuse, texture);
-    mat5.addTexture(Texture.diffuse, texture);
-    mat6.addTexture(Texture.diffuse, texture);
-
-    ////////////////////////////////////////////////////////////////////////////
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open('GET', 'monkey/monkey.babylon', true);
     xmlhttp.onreadystatechange = function () {
@@ -102,58 +87,90 @@
     xmlhttp.send(null);
     ////////////////////////////////////////////////////////////////////////////
     function makeItems(geo) {
-        var mesh1, mesh2, mesh3, mesh4, mesh5, mesh6
-        mesh1 = new Mesh(geo, mat)
-        scene.addChild(mesh1)
-        mesh1.x = -3
-        mesh1.y = 1
-        mesh1.z = -5
-        mat.wireFrame = 1
+        var testItem, testItem2, testItem3, testItem4, testItem5, testItem6, testItem7, testItem8, testItem9;
+        var testMat, testMat2, testMat3, testMat4, testMat5, testMat6, testMat7, testMat8, testMat9;
+        var texture;
+        texture = new Texture()
+        texture.img = document.getElementById('testIMG2')
 
-        mesh2 = new Mesh(geo, mat2)
-        mesh2.position = [0, 1, 0]
-        mat2.shading = Shading.phong
-        scene.addChild(mesh2)
+        testMat = new Material()
+        testMat.shading = Shading.gouraud
+        testItem = new Mesh(geo, testMat);
+        scene.addChild(testItem);
 
-        mesh3 = new Mesh(geo, mat3)
-        mesh3.position = [3, 1, 0]
-        mat3.shading = Shading.toon
-        scene.addChild(mesh3)
+        testMat2 = new Material()
+        testMat2.shading = Shading.gouraud
+        testMat2.addTexture(Texture.diffuse, texture)
+        testItem2 = new Mesh(geo, testMat2);
+        testItem2.x = 3
+        scene.addChild(testItem2);
 
-        mesh4 = new Mesh(geo, mat4)
-        mesh4.position = [-3, -1, 0]
-        mat4.shading = Shading.gouraud
-        scene.addChild(mesh4)
+        testMat3 = new Material()
+        testMat3.shading = Shading.phong
+        testItem3 = new Mesh(geo, testMat3);
+        testItem3.y = 3
+        scene.addChild(testItem3);
 
-        mesh5 = new Mesh(geo, mat5)
-        mesh5.position = [0, -1, 0]
-        mat5.shading = Shading.phong
-        scene.addChild(mesh5)
+        testMat4 = new Material()
+        testMat4.shading = Shading.phong
+        testMat4.addTexture(Texture.diffuse, texture)
+        testItem4 = new Mesh(geo, testMat4);
+        testItem4.x = 3
+        testItem4.y = 3
+        scene.addChild(testItem4);
 
-        mesh6 = new Mesh(geo, mat6)
-        mesh6.position = [3, -1, 0]
-        mat6.shading = Shading.blinn
-        scene.addChild(mesh6)
+        testMat5 = new Material()
+        testMat5.shading = Shading.toon
+        testItem5 = new Mesh(geo, testMat5);
+        testItem5.x = -3
+        scene.addChild(testItem5);
+
+        testMat6 = new Material()
+        testItem6 = new Mesh(geo, testMat6);
+        testItem6.x = -3
+        testItem6.y = 3
+        scene.addChild(testItem6);
+
+        testMat7 = new Material()
+        testItem7 = new Mesh(geo, testMat7);
+        testMat7.addTexture(Texture.diffuse, texture)
+        testItem7.x = -3
+        testItem7.y = -3
+        scene.addChild(testItem7);
+
+        testMat8 = new Material()
+        testItem8 = new Mesh(geo, testMat8);
+        testMat8.addTexture(Texture.diffuse, texture)
+        testMat8.wireFrame=true
+        testItem8.y = -3
+        scene.addChild(testItem8);
+
+        testMat9 = new Material()
+        testItem9 = new Mesh(geo, testMat9);
+        testMat9.wireFrame=true
+        testItem9.x = 3
+        testItem9.y = -3
+        scene.addChild(testItem9);
+
 
         var currentFPS, prevTime = 0, count = 0, sum = 0
         world.addEventListener(World.renderAfter, function (currTime) {
-            // check FPS
-            currentFPS = 1000 / ( currTime - prevTime );
+            var currentFPS = 1000 / ( currTime - prevTime );
             prevTime = currTime;
             count++
             divCurrentFPS.textContent = currentFPS.toFixed(2);
             divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
-            // animation
-            mesh1.rotateY -= 0.02
-            mesh2.rotateY -= 0.02
-            mesh3.rotateY -= 0.02
-            mesh4.rotateY -= 0.02
-            mesh5.rotateY -= 0.02
-            mesh6.rotateY -= 0.02
+            testItem.rotateY+=0.01
+            testItem2.rotateY+=0.01
+            testItem3.rotateY+=0.01
+            testItem4.rotateY+=0.01
+            testItem5.rotateY+=0.01
+            testItem6.rotateY+=0.01
+            testItem7.rotateY+=0.01
+            testItem8.rotateY+=0.01
+            testItem9.rotateY+=0.01
         })
-
     }
-
     function getGeometry(json) {
         var tMesh, tVertices, tIndices;
         var uvCount, verticesStep, verticesCount, facesCount;
@@ -191,14 +208,13 @@
                 vertex.push(0, 0);
             }
         }
-
         for (i = 0; i < facesCount; i++) {
             j = i * 3;
             index.push(tIndices[j], tIndices[j + 1], tIndices[j + 2]);
         }
         return new Geometry(vertex, index, [Vertex.x, Vertex.y, Vertex.z, Vertex.normalX, Vertex.normalY, Vertex.normalZ, Vertex.u, Vertex.v])
     }
-    ////////////////////////////////////////////////////////////////////////////
+
 </script>
 </body>
 </html>
