@@ -397,8 +397,8 @@ var World = (function (makeUtil) {
             var tScene, tSceneList, tCameraList, tCamera, tGPU, tGL, tChildren,tChildrenArray;
             var tCvs, tCvsW, tCvsH;
             var tItem, tMaterial;
-            var tProgram, tCulling, tVBO, tVNBO, tUVBO, tIBO, tDiffuseID, tFrameBuffer, tShading;
-            var pProgram, pCulling, pVBO, pVNBO, pUVBO, pIBO, pDiffuseID;
+            var tProgram, tCulling, tVBO, tVNBO, tUVBO, tIBO, tDiffuse, tFrameBuffer, tShading;
+            var pProgram, pCulling, pVBO, pVNBO, pUVBO, pIBO, pDiffuse;
             var tMatUUID;
 
             var privateChildren;
@@ -413,6 +413,7 @@ var World = (function (makeUtil) {
             var priMatShading;
             var priMatLambert;
             var priMatDiffuse;
+            var priMatNormal;
 
             var tGeo;
             var tItemUUID;
@@ -430,6 +431,7 @@ var World = (function (makeUtil) {
             priMatShading = $getPrivate('Material', 'shading'),
             priMatLambert = $getPrivate('Material', 'lambert'),
             priMatDiffuse = $getPrivate('Material', 'diffuse');
+            priMatNormal = $getPrivate('Material', 'normal');
 
             return function(currentTime) {
                 len = 0,
@@ -439,7 +441,7 @@ var World = (function (makeUtil) {
                 pVNBO = null,
                 pUVBO = null,
                 pIBO = null,
-                pDiffuseID = null,
+                pDiffuse = null,
                 tCvs = cvsList[this.uuid],
                 tSceneList = sceneList[this.uuid],
                 tGPU = gpu[this.uuid],
@@ -584,7 +586,7 @@ var World = (function (makeUtil) {
                                 // 쉐이딩 변경시 캐쉬 삭제
                                 if (pProgram != tProgram) {
                                     pProgram = null , pVBO = null, pVNBO = null, pUVBO = null, pIBO = null,
-                                    pDiffuseID = null,
+                                    pDiffuse = null,
                                     tGL.useProgram(tProgram);
                                 }
 
@@ -609,14 +611,24 @@ var World = (function (makeUtil) {
                                         tGL.vertexAttribPointer(tProgram.aUV, tUVBO.stride, tGL.FLOAT, false, 0, 0);
                                     }
                                     var imsi = priMatDiffuse[tMatUUID];
-                                    if (imsi.length) {
+                                    //if (imsi.length) {
                                         //tGL.activeTexture(tGL.TEXTURE0);
-                                        tDiffuseID = tGPU.textures[imsi[imsi.length - 1].tex.uuid];
-                                        if (tDiffuseID != pDiffuseID) {
-                                            tGL.bindTexture(tGL.TEXTURE_2D, tDiffuseID);
-                                        }
-                                        tGL.uniform1i(tProgram.uSampler, 0);
+                                    //}
+                                    tDiffuse = tGPU.textures[imsi[imsi.length - 1].tex.uuid];
+                                    if (tDiffuse != pDiffuse) {
+                                        tGL.bindTexture(tGL.TEXTURE_2D, tDiffuse);
                                     }
+                                    tGL.uniform1i(tProgram.uSampler, 0);
+                                }
+                                // 노말 텍스쳐 세팅
+                                var imsi = priMatNormal[tMatUUID];
+                                if (imsi) {
+                                    tGL.activeTexture(tGL.TEXTURE1);
+                                    tGL.bindTexture(tGL.TEXTURE_2D, tGPU.textures[imsi[imsi.length - 1].tex.uuid]);
+                                    tGL.uniform1i(tProgram.uNormalSampler, 1);
+                                    tGL.uniform1i(tProgram.useNormalMap, true);
+                                }else{
+                                    tGL.uniform1i(tProgram.useNormalMap, false);
                                 }
 
                                 f3[0] = tItem.rotateX, f3[1] = tItem.rotateY, f3[2] = tItem.rotateZ,
@@ -649,7 +661,7 @@ var World = (function (makeUtil) {
                                 }
 
                                 pProgram = tProgram , pCulling = tCulling,
-                                pVBO = tVBO, pVNBO = tVNBO, pUVBO = tUVBO, pIBO = tIBO, pDiffuseID = tDiffuseID;
+                                pVBO = tVBO, pVNBO = tVNBO, pUVBO = tUVBO, pIBO = tIBO, pDiffuse = tDiffuse;
                             }
                             //gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture);
                             //gl.bindTexture(gl.TEXTURE_2D, null);

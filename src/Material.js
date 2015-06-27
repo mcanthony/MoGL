@@ -23,7 +23,8 @@ var Material = (function () {
         wireFrameColor:wireFrameColor,
         shading:shading,
         lambert:lambert,
-        diffuse:diffuse
+        diffuse:diffuse,
+        normal:normal
     }),
     //lib
     textureLoaded = function(mat){
@@ -145,6 +146,15 @@ var Material = (function () {
         get:$getter(diffuse)
         //set:$setter(diffuse)
     })
+    .field('normal', {
+        description: "재질에 적용된 normal 리스트 반환",
+        sample: [
+            'console.log(material.normal);'
+        ],
+        defaultValue:'[]',
+        get:$getter(normal)
+        //set:$setter(normal)
+    })
     .field('isLoaded', {
         description: "재질에 적용된 텍스쳐들이 모두 로딩되었는지 확인",
         sample: [
@@ -243,6 +253,7 @@ var Material = (function () {
 
             //실제 텍스쳐구조체에는 텍스쳐와 블랜드모드가 포함됨
             texture = {tex:texture};
+            console.log(texture)
 
             //블랜드모드가 들어온 경우의 처리
             if (arguments.length > 3) {
@@ -267,7 +278,6 @@ var Material = (function () {
             } else {
                 this.error(3);
             }
-
             //changed이벤트는 무조건 발생함.
             this.dispatch(Material.changed);
             if (this.isLoaded) this.dispatch(Material.load);
