@@ -6,7 +6,7 @@ var Shader = (function () {
     $setPrivate('Shader', {});
     return MoGL.extend('Shader', {
             description: "쉐이더 클래스. 버텍스쉐이더와 프레그먼트 쉐이더를 생성.",
-            param : [
+            param: [
                 "1. v:Object - 오브젝트 형태로 쉐이더 정보를 입력",
                 "2. 버텍스쉐이더 - { id:'', attributes:[], uniforms:[], varyings[], function:[], main[]",
                 "3. 프레그먼트쉐이더 - { id:'', uniforms:[], varyings[], function:[], main[]"
@@ -20,7 +20,7 @@ var Shader = (function () {
         }
     )
         .field('code', {
-            description : '쉐이더 구성정보 코드(JS)를 반환',
+            description: '쉐이더 구성정보 코드(JS)를 반환',
             get: $getter(code),
             sample: [
                 "var shader = new Shader();",
@@ -174,10 +174,9 @@ var Shader = (function () {
                             main: [
                                 ' mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
                                 ' gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
-                                ' vec3 N = (mv * vec4(aVertexNormal, 0.0)).xyz;\n' +
-                                ' vec3 LD = normalize(vec4(uDLite, 0.0)).xyz;\n' +
-                                ' float df = max(0.1,dot(N,-LD)*uLambert);\n' +
-                                ' vColor = uColor*df;' +
+                                ' vec3 normal = normalize(mv * vec4(-aVertexNormal, 0.0)).xyz;\n' +
+                                ' float light = max( 0.05, dot(normal, normalize(uDLite)) * uLambert);\n' + 
+                                ' vColor = uColor*light;' +
                                 ' vColor[3] = uColor[3];'
                             ]
                         }))
@@ -222,11 +221,10 @@ var Shader = (function () {
                             main: [
                                 ' mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
                                 ' gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
-                                ' vec3 N = (mv * vec4(aVertexNormal, 0.0)).xyz;\n' +
-                                ' vec3 LD = normalize(vec4(uDLite, 0.0)).xyz;\n' +
-                                ' float df = max(0.1,dot(N,-LD)*uLambert);\n' +
-                                ' vLight = vec4(1.0,1.0,1.0,1.0)*df;\n' +
-                                ' vLight[3] = 1.0;\n' +
+                                ' vec3 normal = normalize(mv * vec4(-aVertexNormal, 0.0)).xyz;\n' +
+                                ' float light = max( 0.05, dot(normal,normalize(uDLite)) * uLambert);\n' + 
+                                ' vLight = vec4(1.0,1.0,1.0,1.0)*light;\n' +
+                                ' vLight[3] = 1.0;\n' + 
                                 ' vUV = aUV;'
                             ]
                         }))
@@ -248,7 +246,7 @@ var Shader = (function () {
                             varyings: ['vec2 vUV', 'vec4 vLight'],
                             function: [],
                             main: [
-                                'gl_FragColor =  (vLight*texture2D(uSampler, vec2(vUV.s, vUV.t)));\n' +
+                                'gl_FragColor =  (texture2D(uSampler, vec2(vUV.s, vUV.t))*vLight);\n' +
                                 'gl_FragColor.a = 1.0;'
                             ]
                         }))
@@ -271,9 +269,10 @@ var Shader = (function () {
                             function: [VertexShader.baseFunction],
                             main: ['' +
                             'mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
-                            'gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
-                            'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
-                            'vNormal = vec3(mv * vec4(-aVertexNormal, 0.0));\n' +
+                            'vec4 position = mv * vec4(aVertexPosition, 1.0);\n' +
+                            'gl_Position = uPixelMatrix*position;\n' +
+                            'vPosition = position.xyz;\n' +
+                            'vNormal =  (mv * vec4(-aVertexNormal, 0.0)).xyz;\n' +
                             'vColor = uColor;'
                             ]
                         }))
@@ -299,19 +298,15 @@ var Shader = (function () {
                                 'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
                                 'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
 
+                                'vec3 position = normalize(vPosition);\n' +
                                 'vec3 normal = normalize(vNormal);\n' +
-                                'vec3 lightDir = uDLite;\n' +
-                                'vec3 reflectDir = reflect(lightDir, normal);\n' +
-                                'vec3 viewDir = normalize(-vPosition);\n' +
+                                'vec3 lightDir = normalize(uDLite);\n' +
+                                'vec3 reflectDir = reflect(-lightDir, normal);\n' +
+                                'float specular = max( dot(reflectDir, position), 0.0 );\n' +
+                                'specular = pow(specular,20.0);\n' +
 
-                                'float lambertian = max(dot(lightDir,normal), 0.1)*uLambert;\n' +
-                                'float specular = 0.0;\n' +
-
-                                'if(lambertian > 0.0) {\n' +
-                                'float specAngle = max(dot(reflectDir, viewDir), 0.0);\n' +
-                                '   specular = pow(specAngle, 4.0);\n' +
-                                '}\n' +
-                                'gl_FragColor = vColor*vec4(ambientColor +lambertian*diffuseColor +specular*specColor, 1.0);\n' +
+                                'float light = max( 0.05, dot(normal,lightDir) * uLambert);\n' +
+                                'gl_FragColor = vColor*light*vec4( ambientColor+ diffuseColor + specular*specColor , 1.0);\n' +
                                 'gl_FragColor.a = vColor[3];'
                             ]
                         }))
@@ -334,10 +329,10 @@ var Shader = (function () {
                             function: [VertexShader.baseFunction],
                             main: [
                                 'mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
-                                'gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
-                                'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
-                                'vNormal = (vec3( mv * vec4(-aVertexNormal, 0.0)));\n' +
-
+                                'vec4 position = mv * vec4(aVertexPosition, 1.0);\n' +
+                                'gl_Position = uPixelMatrix*position;\n' +
+                                'vPosition = position.xyz;\n' +
+                                'vNormal =  (mv * vec4(-aVertexNormal, 0.0)).xyz;\n' +
                                 'vColor = uColor;'
                             ]
                         }))
@@ -363,28 +358,21 @@ var Shader = (function () {
                                 'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
                                 'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
 
+                                'vec3 position = normalize(vPosition);\n' +
                                 'vec3 normal = normalize(vNormal);\n' +
-                                'vec3 lightDir = uDLite;\n' +
-                                'vec3 reflectDir = reflect(lightDir, normal);\n' +
-                                'vec3 viewDir = normalize(-vPosition);\n' +
+                                'vec3 lightDir = normalize(uDLite);\n' +
+                                'vec3 reflectDir = reflect(-lightDir, normal);\n' +
+                                'float specular = max( dot(reflectDir, position), 0.0 );\n' +
+                                'specular = pow(specular,20.0);\n' +
 
-                                'float lambertian = max(dot(lightDir,normal), 0.1)*uLambert;\n' +
-                                'float specular = 0.0;\n' +
+                                'float light = max( 0.05, dot(normal,lightDir) * uLambert);\n' +
+                                'gl_FragColor = vColor*light*vec4( ambientColor+ diffuseColor + specular*specColor , 1.0);\n' +
 
-                                'vec3 src = vColor.rgb;\n' +
+                                ' if(light>0.95-0.5) gl_FragColor.rgb*=0.95;\n' +
+                                ' else if(light>0.4-0.5) gl_FragColor.rgb*=0.5;\n' +
+                                ' else if(light>0.3-0.5) gl_FragColor.rgb*=0.3;\n' +
+                                ' else gl_FragColor.rgb*=0.1;\n' +
 
-                                'if(lambertian > 0.0) {\n' +
-                                'float specAngle = max(dot(reflectDir, viewDir), 0.0);\n' +
-                                '   specular = pow(specAngle, 4.0);\n' +
-                                '}\n' +
-                                'src = src*(ambientColor +lambertian*diffuseColor +specular*specColor);\n' +
-
-                                ' if(lambertian>0.95-0.5) src.rgb*=0.95;\n' +
-                                ' else if(lambertian>0.4-0.5) src.rgb*=0.5;\n' +
-                                ' else if(lambertian>0.3-0.5) src.rgb*=0.3;\n' +
-                                ' else src.rgb*=0.1;\n' +
-
-                                'gl_FragColor.rgb = src.rgb;\n' +
                                 'gl_FragColor.a = vColor[3];'
                             ]
                         }))
@@ -407,9 +395,10 @@ var Shader = (function () {
                             function: [VertexShader.baseFunction],
                             main: [
                                 'mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
-                                'gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
-                                'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
-                                'vNormal = (vec3( mv * vec4(-aVertexNormal, 0.0)));\n' +
+                                'vec4 position = mv * vec4(aVertexPosition, 1.0);\n' +
+                                'gl_Position = uPixelMatrix*position;\n' +
+                                'vPosition = position.xyz;\n' +
+                                'vNormal = (mv * vec4(-aVertexNormal, 0.0)).xyz;\n' +
                                 'vUV = aUV;'
                             ]
                         }))
@@ -435,20 +424,15 @@ var Shader = (function () {
                                 'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
                                 'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
 
+                                'vec3 position = normalize(vPosition);\n' +
                                 'vec3 normal = normalize(vNormal);\n' +
-                                'vec3 lightDir = uDLite;\n' +
-                                'vec3 reflectDir = reflect(lightDir, normal);\n' +
-                                'vec3 viewDir = normalize(-vPosition);\n' +
+                                'vec3 lightDir = normalize(uDLite);\n' +
+                                'vec3 reflectDir = reflect(-lightDir, normal);\n' +
+                                'float specular = max( dot(reflectDir, position), 0.05 );\n' +
+                                'specular = pow(specular,20.0);\n' +
 
-                                'float lambertian = max(dot(lightDir,normal), 0.1)*uLambert;\n' +
-                                'float specular = 0.0;\n' +
-
-                                'if(lambertian > 0.0) {\n' +
-                                'float specAngle = max(dot(reflectDir, viewDir), 0.1);\n' +
-                                '   specular = pow(specAngle, 4.0)*uLambert;\n' +
-                                '}\n' +
-
-                                'gl_FragColor = texture2D(uSampler, vec2(vUV.s, vUV.t))*vec4(ambientColor +lambertian*diffuseColor +specular*specColor, 1.0);\n' +
+                                'float light = max( 0.05, dot(normal,lightDir) * uLambert);\n' +
+                                'gl_FragColor = texture2D( uSampler, vec2(vUV.s, vUV.t) )*light*vec4( ambientColor + diffuseColor + specular*specColor , 1.0);\n' +
                                 'gl_FragColor.a = 1.0;'
                             ]
                         }))
