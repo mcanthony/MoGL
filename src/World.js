@@ -584,6 +584,7 @@ var World = (function (makeUtil) {
                                 // 쉐이딩 변경시 캐쉬 삭제
                                 if (pProgram != tProgram) {
                                     pProgram = null , pVBO = null, pVNBO = null, pUVBO = null, pIBO = null,
+                                    pDiffuseID = null,
                                     tGL.useProgram(tProgram);
                                 }
 
