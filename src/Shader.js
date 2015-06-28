@@ -427,7 +427,7 @@ var Shader = (function () {
                                 'vec3 normal = normalize(vNormal);\n' +
                                 'vec3 lightDir = normalize(uDLite);\n' +
                                 'vec3 reflectDir = reflect(-lightDir, normal);\n' +
-                                'float specular = max( dot(reflectDir, position), 0.05 );\n' +
+                                'float specular = max( dot(reflectDir, position), 0.5 );\n' +
                                 'specular = pow(specular,20.0)*uSpecular;\n' +
 
                                 'float light = max( 0.05, dot(normal,lightDir) * uLambert);\n' +
@@ -436,7 +436,7 @@ var Shader = (function () {
                                 'if( useNormalMap ){\n' +
                                 '   vec4 bump = texture2D( uNormalSampler, vec2(vUV.s, vUV.t) );\n' +
                                 '   bump.rgb= bump.rgb*2.0-1.0 ;\n' +
-                                '   float specular2 = max( dot(reflectDir, position-bump.g), 0.5 );\n' +
+                                '   float specular2 = max( dot(reflectDir, position-bump.g), 0.25 );\n' +
                                 '   gl_FragColor = (diffuse * ambientColor + specular * specColor)+specular2*bump.g ;\n' +
                                 '}else{' +
                                 '   gl_FragColor = diffuse * ambientColor +specular * specColor ;\n' +
