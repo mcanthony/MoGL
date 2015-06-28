@@ -412,6 +412,7 @@ var World = (function (makeUtil) {
             var priMatWireFrameColor;
             var priMatShading;
             var priMatLambert;
+            var priMatSpecularValue;
             var priMatDiffuse;
             var priMatNormal;
 
@@ -419,6 +420,8 @@ var World = (function (makeUtil) {
             var tItemUUID;
             var baseLightRotate, useNormalBuffer, useTexture;
             var tColor;
+            var tDiffuses;
+            var tNormals;
 
             privateChildren = $getPrivate('Scene', 'children'),
             privateChildrenArray = $getPrivate('Scene', 'childrenArray'),
@@ -430,6 +433,7 @@ var World = (function (makeUtil) {
             priMatWireFrameColor = $getPrivate('Material', 'wireFrameColor'),
             priMatShading = $getPrivate('Material', 'shading'),
             priMatLambert = $getPrivate('Material', 'lambert'),
+            priMatSpecularValue = $getPrivate('Material', 'specularValue'),
             priMatDiffuse = $getPrivate('Material', 'diffuse');
             priMatNormal = $getPrivate('Material', 'normal');
 
@@ -448,7 +452,9 @@ var World = (function (makeUtil) {
                 tGL = tGPU.gl,
                 tCvsW = tCvs.width,
                 tCvsH = tCvs.height,
-                i = tSceneList.length;
+                i = tSceneList.length,
+                tDiffuses = null,
+                tNormals = null
 
                 this.dispatch(World.renderBefore, currentTime);
 
@@ -545,8 +551,10 @@ var World = (function (makeUtil) {
 
                                 // 쉐이딩 결정
                                 tMatUUID = tMaterial.uuid,
-                                tShading = priMatShading[tMatUUID];
-                                if(priMatDiffuse[tMatUUID]){
+                                tShading = priMatShading[tMatUUID],
+                                tDiffuses = priMatDiffuse[tMatUUID],
+                                tNormals = priMatNormal[tMatUUID];
+                                if(tDiffuses){
                                     useTexture = 1;
                                 }
                                 switch (tShading) {
@@ -610,21 +618,20 @@ var World = (function (makeUtil) {
                                         tGL.bindBuffer(tGL.ARRAY_BUFFER, tUVBO),
                                         tGL.vertexAttribPointer(tProgram.aUV, tUVBO.stride, tGL.FLOAT, false, 0, 0);
                                     }
-                                    var imsi = priMatDiffuse[tMatUUID];
-                                    //if (imsi.length) {
+                                    //if (tDiffuses.length) {
                                         //tGL.activeTexture(tGL.TEXTURE0);
                                     //}
-                                    tDiffuse = tGPU.textures[imsi[imsi.length - 1].tex.uuid];
+                                    tDiffuse = tGPU.textures[tDiffuses[tDiffuses.length - 1].tex.uuid];
                                     if (tDiffuse != pDiffuse) {
                                         tGL.bindTexture(tGL.TEXTURE_2D, tDiffuse);
                                     }
                                     tGL.uniform1i(tProgram.uSampler, 0);
+                                    tGL.uniform1f(tProgram.uSpecular,priMatSpecularValue[tMatUUID])
                                 }
                                 // 노말 텍스쳐 세팅
-                                var imsi = priMatNormal[tMatUUID];
-                                if (imsi) {
+                                if (tNormals) {
                                     tGL.activeTexture(tGL.TEXTURE1);
-                                    tGL.bindTexture(tGL.TEXTURE_2D, tGPU.textures[imsi[imsi.length - 1].tex.uuid]);
+                                    tGL.bindTexture(tGL.TEXTURE_2D, tGPU.textures[tNormals[tNormals.length - 1].tex.uuid]);
                                     tGL.uniform1i(tProgram.uNormalSampler, 1);
                                     tGL.uniform1i(tProgram.useNormalMap, true);
                                 }else{

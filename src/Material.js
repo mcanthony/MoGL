@@ -2,11 +2,12 @@ var Material = (function () {
     'use strict';
     var textureLoaded, texType,
         diffuse, normal, specular, diffuseWrap, specularNormal, 
-        shading, lambert,  wireFrame, wireFrameColor, count,color;
+        shading, lambert, specularValue, wireFrame, wireFrameColor, count,color;
     
     //private
     shading = {},
     lambert = {},
+    specularValue = {},
     diffuse = {},
     normal = {},
     specular = {},
@@ -23,6 +24,7 @@ var Material = (function () {
         wireFrameColor:wireFrameColor,
         shading:shading,
         lambert:lambert,
+        specularValue:specularValue,
         diffuse:diffuse,
         normal:normal
     }),
@@ -64,7 +66,8 @@ var Material = (function () {
             }
             wireFrameColor[this] = [Math.random(),Math.random(),Math.random(),1]
             wireFrame[this] = false;
-            lambert[this] = 1
+            lambert[this] = 1.0
+            specularValue[this] = 1.0
             shading[this] = Shading.none
         }
     })
@@ -136,6 +139,16 @@ var Material = (function () {
         defaultValue:'1.0',
         get:$getter(lambert),
         set:$setter(lambert)
+    })
+    .field('specularValue', {
+        description: "재질 specularValue 적용 강도 설정",
+        sample: [
+            'material.specularValue = 1.5;',
+            'console.log(material.specularValue);'
+        ],
+        defaultValue:'1.0',
+        get:$getter(specularValue),
+        set:$setter(specularValue)
     })
     .field('diffuse', {
         description: "재질에 적용된 디퓨즈 리스트 반환",
