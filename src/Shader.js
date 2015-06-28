@@ -366,7 +366,7 @@ var Shader = (function () {
                                 'specular = pow(specular,20.0);\n' +
 
                                 'float light = max( 0.05, dot(normal,lightDir) * uLambert);\n' +
-                                'gl_FragColor = vColor*light*vec4( ambientColor+ diffuseColor + specular*specColor , 1.0);\n' +
+                                'gl_FragColor = vColor*light*vec4( ambientColor + diffuseColor + specular*specColor , 1.0);\n' +
 
                                 ' if(light>0.95-0.5) gl_FragColor.rgb*=0.95;\n' +
                                 ' else if(light>0.4-0.5) gl_FragColor.rgb*=0.5;\n' +
@@ -416,36 +416,30 @@ var Shader = (function () {
                     return cache || (cache = new Shader({
                             id: 'bitmapFragmentShaderPhong',
                             precision: 'mediump float',
-                            uniforms: ['sampler2D uSampler', 'sampler2D uNormalSampler', 'bool useNormalMap','float uLambert', 'vec3 uDLite'],
+                            uniforms: ['sampler2D uSampler', 'sampler2D uNormalSampler', 'bool useNormalMap','float uLambert', 'float uSpecular','vec3 uDLite'],
                             varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition'],
                             function: [],
                             main: [
-                                'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
-                                'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
-                                'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
+                                'vec4 ambientColor = vec4(1.0, 1.0, 1.0, 1.0);\n' +
+                                'vec4 specColor = vec4(1.0, 1.0, 1.0, 1.0);\n' +
 
                                 'vec3 position = normalize(vPosition);\n' +
                                 'vec3 normal = normalize(vNormal);\n' +
                                 'vec3 lightDir = normalize(uDLite);\n' +
                                 'vec3 reflectDir = reflect(-lightDir, normal);\n' +
                                 'float specular = max( dot(reflectDir, position), 0.05 );\n' +
-                                'specular = pow(specular,20.0);\n' +
+                                'specular = pow(specular,20.0)*uSpecular;\n' +
 
-                                'float light;\n' +
+                                'float light = max( 0.05, dot(normal,lightDir) * uLambert);\n' +
+                                'vec4 diffuse = texture2D( uSampler, vec2(vUV.s, vUV.t) )*light;\n'+
+
                                 'if( useNormalMap ){\n' +
-
-                                '   vec3 bump = texture2D( uNormalSampler, vec2(vUV.s, vUV.t) ).rgb;\n' +
-                                '   position = normalize(vPosition);\n' +
-                                '   normal = normalize(vNormal);\n' +
-                                '   lightDir = normalize(uDLite);\n' +
-                                '   reflectDir = reflect(-lightDir, normal);\n' +
-                                '   specular = max( dot(reflectDir, position), 0.05 );\n' +
-                                '   specular = pow(specular,20.0);\n' +
-                                '   light = max( 0.05, dot(normal,lightDir) * uLambert);\n' +
-                                '   gl_FragColor = texture2D( uSampler, vec2(vUV.s, vUV.t) )*light*vec4( ambientColor + diffuseColor + specular*specColor , 1.0);\n' +
+                                '   vec4 bump = texture2D( uNormalSampler, vec2(vUV.s, vUV.t) );\n' +
+                                '   bump.rgb= bump.rgb*2.0-1.0 ;\n' +
+                                '   float specular2 = max( dot(reflectDir, position-bump.g), 0.5 );\n' +
+                                '   gl_FragColor = (diffuse * ambientColor + specular * specColor)+specular2*bump.g ;\n' +
                                 '}else{' +
-                                '   light = max( 0.05, dot(normal,lightDir) * uLambert);\n' +
-                                '   gl_FragColor = texture2D( uSampler, vec2(vUV.s, vUV.t) )*light*vec4( ambientColor + diffuseColor + specular*specColor , 1.0);\n' +
+                                '   gl_FragColor = diffuse * ambientColor +specular * specColor ;\n' +
                                 '}\n' +
                                 'gl_FragColor.a = 1.0;'
                             ]

@@ -99,6 +99,7 @@
 
         testMat = new Material()
         testMat.shading = Shading.phong
+        testMat.specularValue = 0.1
         testMat.addTexture(Texture.diffuse, texture)
         testItem = new Mesh(geo, testMat);
         testItem.x = -3
@@ -107,6 +108,7 @@
 
         testMat2 = new Material()
         testMat2.shading = Shading.phong
+        testMat2.specularValue = 0.1
         testMat2.addTexture(Texture.diffuse, texture)
         testMat2.addTexture(Texture.normal, normalTexture)
         testItem2 = new Mesh(geo, testMat2);
