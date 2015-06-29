@@ -1,16 +1,27 @@
 var Mesh = (function () {
     'use strict';
-    var geometry, material, culling;
+    var geometry, material, culling,pickingColors,pickingMeshs;
     //private
     geometry = {},
     material = {},
     culling = {};
+    pickingColors = {}
+    pickingMeshs = {}
     //shared private
     $setPrivate('Mesh', {
         geometry : geometry,
         material : material,
-        culling : culling
+        culling : culling,
+        pickingColors : pickingColors,
+        pickingMeshs : pickingMeshs
     });
+    var getUniqueColor = (function () {
+        var color = 1677215, r = 0, g = 0, b = 0, r1 = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i, r, g, b, t0;
+        return function () {
+            return t0 = r1.exec(color.toString(16)), color--, r = parseInt(t0[1], 16), g = parseInt(t0[2], 16), b = parseInt(t0[3], 16),
+                [r/255, g/255 , b/255, 1]
+        }
+    })()
     return Matrix.extend('Mesh', {
         description: "기하구조와 재질을 포함할 수 있는 하나의 렌더링 단위인 Mesh를 생성함.",
         param: [
@@ -36,6 +47,9 @@ var Mesh = (function () {
         value:function Mesh(geometry, material) {
             this.geometry = geometry;
             this.material = material;
+            pickingColors[this] = getUniqueColor()
+            var t = pickingColors[this]
+            pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')] = this
         }
     })
     .field('culling', {
