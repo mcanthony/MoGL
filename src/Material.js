@@ -1,22 +1,26 @@
 var Material = (function () {
     'use strict';
     var textureLoaded, texType,
-        diffuse, normal, specular, diffuseWrap, specularNormal, 
-        shading, lambert, specularValue, wireFrame, wireFrameColor, count,color;
+        diffuse, normal, specular, diffuseWrap, specularNormal,
+        shading, lambert, specularValue, specularColor, wireFrame, wireFrameColor, count, color;
     
     //private
     shading = {},
+
     lambert = {},
     specularValue = {},
+    specularColor = {},
+    wireFrame = {},
+    wireFrameColor = {},
+
+    count = {},
+    color = {},
+
+    diffuseWrap = {},
     diffuse = {},
     normal = {},
     specular = {},
-    diffuseWrap = {},
     specularNormal = {},
-    wireFrame = {},
-    wireFrameColor = {},
-    count = {},
-    color = {},
     //shared private
     $setPrivate('Material', {
         color:color,
@@ -25,6 +29,7 @@ var Material = (function () {
         shading:shading,
         lambert:lambert,
         specularValue:specularValue,
+        specularColor:specularColor,
         diffuse:diffuse,
         normal:normal
     }),
@@ -67,7 +72,8 @@ var Material = (function () {
             wireFrameColor[this] = [Math.random(),Math.random(),Math.random(),1]
             wireFrame[this] = false;
             lambert[this] = 1.0
-            specularValue[this] = 1.0
+            specularValue[this] = 20.0
+            specularColor[this] = [1,1,1,1]
             shading[this] = Shading.none
         }
     })
@@ -143,12 +149,27 @@ var Material = (function () {
     .field('specularValue', {
         description: "재질 specularValue 적용 강도 설정",
         sample: [
-            'material.specularValue = 1.5;',
+            'material.specularValue = 20.0;',
             'console.log(material.specularValue);'
         ],
-        defaultValue:'1.0',
+        defaultValue:'20.0',
         get:$getter(specularValue),
         set:$setter(specularValue)
+    })
+    .field('specularColor', {
+        description: "specular 컬러색",
+        sample: [
+            'material.specularColor = [0,1,2,1]; // 배열형식으로 입력',
+            'material.specularColor = "#ff2233; // 16진수로 입력"',
+            'console.log(material.specularColor);'
+        ],
+        defaultValue:'[1,1,1,1]',
+        get:$getter(color),
+        set:function specularColorrSet(v) {
+            var p = specularColor[this];
+            v = $color(v);
+            p[0] = v[0], p[1] = v[1], p[2] = v[2], p[3] = v[3];
+        }
     })
     .field('diffuse', {
         description: "재질에 적용된 디퓨즈 리스트 반환",

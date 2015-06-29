@@ -49,8 +49,10 @@
     <script src="../showcase/dat.gui.min.js"></script>
 </head>
 <body>
-<img src="smithHead/Map-COL.jpg" id="testIMG2" style="position: absolute;top:0px; display:none" width="256" height="256">
-<img src="smithHead/normal.jpg" id="testNormal" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="smithHead/Map-COL.jpg" id="testIMG2" style="position: absolute;top:0px; display:none" width="256"
+     height="256">
+<img src="smithHead/normal.jpg" id="testNormal" style="position: absolute;top:0px; display:none" width="256"
+     height="256">
 <canvas id="canvas"></canvas>
 <div class="FPS">
     Current FPS: <span id="currentFPS"></span>
@@ -83,13 +85,14 @@
             makeItems(geo)
             world.setAutoSize(1)
             world.start()
+            setUI()
         }
     };
     xmlhttp.send(null);
     ////////////////////////////////////////////////////////////////////////////
+    var testMat, testMat2;
     function makeItems(geo) {
-        var testItem, testItem2, testItem3, testItem4, testItem5, testItem6, testItem7, testItem8, testItem9;
-        var testMat, testMat2, testMat3, testMat4, testMat5, testMat6, testMat7, testMat8, testMat9;
+        var testItem, testItem2;
         var texture, normalTexture;
         texture = new Texture()
         texture.img = document.getElementById('testIMG2')
@@ -99,7 +102,7 @@
 
         testMat = new Material()
         testMat.shading = Shading.phong
-        testMat.specularValue = 0.1
+
         testMat.addTexture(Texture.diffuse, texture)
         testItem = new Mesh(geo, testMat);
         testItem.x = -3
@@ -108,7 +111,7 @@
 
         testMat2 = new Material()
         testMat2.shading = Shading.phong
-        testMat2.specularValue = 0.1
+
         testMat2.addTexture(Texture.diffuse, texture)
         testMat2.addTexture(Texture.normal, normalTexture)
         testItem2 = new Mesh(geo, testMat2);
@@ -116,7 +119,7 @@
         testItem2.y = -2
         scene.addChild(testItem2);
 
-        testItem.scale = testItem2.scale = [15,15,15]
+        testItem.scale = testItem2.scale = [15, 15, 15]
 
         var currentFPS, prevTime = 0, count = 0, sum = 0
         world.addEventListener(World.renderAfter, function (currTime) {
@@ -125,9 +128,8 @@
             count++
             divCurrentFPS.textContent = currentFPS.toFixed(2);
             divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
-            testItem.rotateY+=0.01
-            testItem2.rotateY+=0.01
-
+            testItem.rotateY += 0.01
+            testItem2.rotateY += 0.01
         })
     }
     function getGeometryFromJSON(json) {
@@ -151,6 +153,32 @@
             indexBuffer.push(faces[i][0], faces[i][2], faces[i][3]);
         }
         return new Geometry(vertexBuffer, indexBuffer, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v])
+    }
+    function setUI() {
+        var controllerParams = {
+            specularValue: 20.0,
+            r: 1, g: 1, b: 1,a:1
+
+        };
+
+        var gui = new dat.GUI();
+        var panel = gui.addFolder('Material');
+        panel.add(controllerParams, 'specularValue', 5, 100).onChange(function (value) {
+            testMat2.specularValue = value
+        })
+        panel.add(controllerParams, 'r', 0, 1).onChange(function (value) {
+            testMat2.specularColor = [value, testMat2.specularColor[1], testMat2.specularColor[2], testMat2.specularColor[3]]
+        })
+        panel.add(controllerParams, 'g', 0, 1).onChange(function (value) {
+            testMat2.specularColor = [testMat2.specularColor[0], value, testMat2.specularColor[2], testMat2.specularColor[3]]
+        })
+        panel.add(controllerParams, 'b', 0, 1).onChange(function (value) {
+            testMat2.specularColor = [testMat2.specularColor[0], testMat2.specularColor[1], value, testMat2.specularColor[3]]
+        })
+        panel.add(controllerParams, 'a', 0, 1).onChange(function (value) {
+            testMat2.specularColor = [testMat2.specularColor[0], testMat2.specularColor[1], testMat2.specularColor[2], value]
+        })
+        panel.open()
     }
 
 </script>
