@@ -159,11 +159,19 @@ var World = (function (makeUtil) {
             window.addEventListener('mousemove', function(e){
                 mouse[self].x = e.x
                 mouse[self].y = cvsList[self].height-e.y
-                mouse[self].down = false
             })
             window.addEventListener('mousedown', function(e){
                 mouse[self].down = true
             })
+            window.addEventListener('touchmove', function(e){
+                mouse[self].x = e.touches[0].clientX*window.devicePixelRatio
+                mouse[self].y = cvsList[self].height-e.touches[0].clientY*window.devicePixelRatio
+            },true)
+            window.addEventListener('touchstart', function(e){
+                mouse[self].x = e.touches[0].clientX*window.devicePixelRatio
+                mouse[self].y = cvsList[self].height-e.touches[0].clientY*window.devicePixelRatio
+                mouse[self].down = true
+            },true)
         }
     })
     .method('setAutoSize', {
@@ -581,7 +589,9 @@ var World = (function (makeUtil) {
                         }
                     }
                     ///////////////////////// mouse end
+
                     for (k in tCameraList) {
+                    //for (k in {}) {
                         tCamera = tCameraList[k];
                         if (tCamera.visible) {
                             if (len > 1) {
