@@ -417,8 +417,10 @@ var Shader = (function () {
                             id: 'bitmapFragmentShaderPhong',
                             precision: 'mediump float',
                             uniforms: [
-                                'sampler2D uSampler', 'sampler2D uNormalSampler',
-                                'bool useNormalMap', 'float uLambert', 'float uSpecularValue', 'vec4 uSpecularColor', 'vec3 uDLite'
+                                'sampler2D uSampler',
+                                'sampler2D uNormalSampler','bool useNormalMap', 'float uNormalPower',
+                                'float uLambert', 'float uSpecularValue', 'vec4 uSpecularColor',
+                                'vec3 uDLite'
                             ],
                             varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition'],
                             function: [],
@@ -439,10 +441,10 @@ var Shader = (function () {
                                 'if( useNormalMap ){\n' +
                                 '   vec4 bump = texture2D( uNormalSampler, vec2(vUV.s, vUV.t) );\n' +
                                 '   bump.rgb= bump.rgb*2.0-1.0 ;\n' +
-                                '   float specular2 = max( dot(reflectDir, position-bump.g), 0.25 );\n' +
-                                '   gl_FragColor = ( diffuse * ambientColor + specular * specColor ) + specular2 * bump.g  ;\n' +
+                                '   float normalPower = max( dot(reflectDir, position-bump.g), 0.3 );\n' +
+                                '   gl_FragColor = ( diffuse * ambientColor + specular * specColor ) + normalPower * bump.g * uNormalPower  ;\n' +
                                 '}else{' +
-                                '   gl_FragColor = diffuse * ambientColor +specular * specColor ;\n' +
+                                '   gl_FragColor = diffuse * ambientColor + specular * specColor ;\n' +
                                 '}\n' +
                                 'gl_FragColor.a = 1.0;'
                             ]

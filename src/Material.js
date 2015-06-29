@@ -2,12 +2,13 @@ var Material = (function () {
     'use strict';
     var textureLoaded, texType,
         diffuse, normal, specular, diffuseWrap, specularNormal,
-        shading, lambert, specularValue, specularColor, wireFrame, wireFrameColor, count, color;
+        shading, lambert, normalPower,specularValue, specularColor, wireFrame, wireFrameColor, count, color;
     
     //private
     shading = {},
 
     lambert = {},
+    normalPower = {},
     specularValue = {},
     specularColor = {},
     wireFrame = {},
@@ -23,15 +24,16 @@ var Material = (function () {
     specularNormal = {},
     //shared private
     $setPrivate('Material', {
-        color:color,
-        wireFrame:wireFrame,
-        wireFrameColor:wireFrameColor,
-        shading:shading,
-        lambert:lambert,
-        specularValue:specularValue,
-        specularColor:specularColor,
-        diffuse:diffuse,
-        normal:normal
+        color: color,
+        wireFrame: wireFrame,
+        wireFrameColor: wireFrameColor,
+        shading: shading,
+        lambert: lambert,
+        normalPower: normalPower,
+        specularValue: specularValue,
+        specularColor: specularColor,
+        diffuse: diffuse,
+        normal: normal
     }),
     //lib
     textureLoaded = function(mat){
@@ -72,6 +74,7 @@ var Material = (function () {
             wireFrameColor[this] = [Math.random(),Math.random(),Math.random(),1]
             wireFrame[this] = false;
             lambert[this] = 1.0
+            normalPower[this] = 1.0
             specularValue[this] = 20.0
             specularColor[this] = [1,1,1,1]
             shading[this] = Shading.none
@@ -145,6 +148,16 @@ var Material = (function () {
         defaultValue:'1.0',
         get:$getter(lambert),
         set:$setter(lambert)
+    })
+    .field('normalPower', {
+        description: "재질 Normal 적용 강도 설정",
+        sample: [
+            'material.normalPower = 1.5;',
+            'console.log(material.normalPower);'
+        ],
+        defaultValue:'1.0',
+        get:$getter(normalPower),
+        set:$setter(normalPower)
     })
     .field('specularValue', {
         description: "재질 specularValue 적용 강도 설정",

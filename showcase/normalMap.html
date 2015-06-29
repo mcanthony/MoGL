@@ -156,15 +156,18 @@
     }
     function setUI() {
         var controllerParams = {
+            normalPower: 1.0,
             specularValue: 20.0,
-            r: 1, g: 1, b: 1,a:1
-
+            r: 1, g: 1, b: 1, a: 1
         };
 
         var gui = new dat.GUI();
         var panel = gui.addFolder('Material');
         panel.add(controllerParams, 'specularValue', 5, 100).onChange(function (value) {
             testMat2.specularValue = value
+        })
+        panel.add(controllerParams, 'normalPower', 0, 3).onChange(function (value) {
+            testMat2.normalPower = value
         })
         panel.add(controllerParams, 'r', 0, 1).onChange(function (value) {
             testMat2.specularColor = [value, testMat2.specularColor[1], testMat2.specularColor[2], testMat2.specularColor[3]]
@@ -178,7 +181,6 @@
         panel.add(controllerParams, 'a', 0, 1).onChange(function (value) {
             testMat2.specularColor = [testMat2.specularColor[0], testMat2.specularColor[1], testMat2.specularColor[2], value]
         })
-        panel.open()
     }
 
 </script>
