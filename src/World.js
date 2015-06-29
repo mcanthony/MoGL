@@ -396,32 +396,25 @@ var World = (function (makeUtil) {
             var f3 = new Float32Array(3), f4 = new Float32Array(4);
             var tScene, tSceneList, tCameraList, tCamera, tGPU, tGL, tChildren,tChildrenArray;
             var tCvs, tCvsW, tCvsH;
-            var tItem, tMaterial;
+            var tItem, tMaterial,tItemUUID,tMatUUID;
             var tProgram, tCulling, tVBO, tVNBO, tUVBO, tIBO, tDiffuse, tFrameBuffer, tShading;
             var pProgram, pCulling, pVBO, pVNBO, pUVBO, pIBO, pDiffuse;
-            var tMatUUID;
 
-            var privateChildren;
-            var privateChildrenArray;
-            var priGeo;
-            var priMat;
+            var privateChildren, privateChildrenArray;
+            var priGeo, priMat;
             var priCull;
-
+            // 재질관련 private property
             var priMatColor;
-            var priMatWireFrame;
-            var priMatWireFrameColor;
-            var priMatShading;
-            var priMatLambert;
-            var priMatSpecularValue;
-            var priMatDiffuse;
-            var priMatNormal;
+            var priMatWireFrame, priMatWireFrameColor;
+            var priMatShading, priMatLambert, priMatSpecularValue, priMatSpecularColor;
+            var priMatDiffuseMaps;
+            var priMatNormalMaps;
 
             var tGeo;
-            var tItemUUID;
-            var baseLightRotate, useNormalBuffer, useTexture;
             var tColor;
-            var tDiffuses;
-            var tNormals;
+            var baseLightRotate;
+            var useNormalBuffer, useTexture;
+            var tDiffuseMaps, tNormalMaps;
 
             privateChildren = $getPrivate('Scene', 'children'),
             privateChildrenArray = $getPrivate('Scene', 'childrenArray'),
@@ -434,8 +427,9 @@ var World = (function (makeUtil) {
             priMatShading = $getPrivate('Material', 'shading'),
             priMatLambert = $getPrivate('Material', 'lambert'),
             priMatSpecularValue = $getPrivate('Material', 'specularValue'),
-            priMatDiffuse = $getPrivate('Material', 'diffuse');
-            priMatNormal = $getPrivate('Material', 'normal');
+            priMatSpecularColor = $getPrivate('Material', 'specularColor'),
+            priMatDiffuseMaps = $getPrivate('Material', 'diffuse');
+            priMatNormalMaps = $getPrivate('Material', 'normal');
 
             return function(currentTime) {
                 len = 0,
@@ -453,8 +447,8 @@ var World = (function (makeUtil) {
                 tCvsW = tCvs.width,
                 tCvsH = tCvs.height,
                 i = tSceneList.length,
-                tDiffuses = null,
-                tNormals = null
+                tDiffuseMaps = null,
+                tNormalMaps = null
 
                 this.dispatch(World.renderBefore, currentTime);
 
@@ -552,9 +546,9 @@ var World = (function (makeUtil) {
                                 // 쉐이딩 결정
                                 tMatUUID = tMaterial.uuid,
                                 tShading = priMatShading[tMatUUID],
-                                tDiffuses = priMatDiffuse[tMatUUID],
-                                tNormals = priMatNormal[tMatUUID];
-                                if(tDiffuses){
+                                tDiffuseMaps = priMatDiffuseMaps[tMatUUID],
+                                tNormalMaps = priMatNormalMaps[tMatUUID];
+                                if(tDiffuseMaps){
                                     useTexture = 1;
                                 }
                                 switch (tShading) {
@@ -621,17 +615,18 @@ var World = (function (makeUtil) {
                                     //if (tDiffuses.length) {
                                         //tGL.activeTexture(tGL.TEXTURE0);
                                     //}
-                                    tDiffuse = tGPU.textures[tDiffuses[tDiffuses.length - 1].tex.uuid];
+                                    tDiffuse = tGPU.textures[tDiffuseMaps[tDiffuseMaps.length - 1].tex.uuid];
                                     if (tDiffuse != pDiffuse) {
                                         tGL.bindTexture(tGL.TEXTURE_2D, tDiffuse);
                                     }
                                     tGL.uniform1i(tProgram.uSampler, 0);
-                                    tGL.uniform1f(tProgram.uSpecular,priMatSpecularValue[tMatUUID])
+                                    tGL.uniform1f(tProgram.uSpecularValue,priMatSpecularValue[tMatUUID])
+                                    tGL.uniform4fv(tProgram.uSpecularColor,priMatSpecularColor[tMatUUID])
                                 }
                                 // 노말 텍스쳐 세팅
-                                if (tNormals) {
+                                if (tNormalMaps) {
                                     tGL.activeTexture(tGL.TEXTURE1);
-                                    tGL.bindTexture(tGL.TEXTURE_2D, tGPU.textures[tNormals[tNormals.length - 1].tex.uuid]);
+                                    tGL.bindTexture(tGL.TEXTURE_2D, tGPU.textures[tNormalMaps[tNormalMaps.length - 1].tex.uuid]);
                                     tGL.uniform1i(tProgram.uNormalSampler, 1);
                                     tGL.uniform1i(tProgram.useNormalMap, true);
                                 }else{
