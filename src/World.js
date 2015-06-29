@@ -185,6 +185,7 @@ var World = (function (makeUtil) {
                         canvas.style.height = height + 'px',
                         canvas._autoSize = isAutoSize,
                         cameraRenderAreaUpdate(self);
+                        gpu[self].gl.viewport(0, 0, canvas.width, canvas.height);
                     };
                 }
                 window.addEventListener('resize', autoSizer[this]),
@@ -406,15 +407,15 @@ var World = (function (makeUtil) {
             // 재질관련 private property
             var priMatColor;
             var priMatWireFrame, priMatWireFrameColor;
-            var priMatShading, priMatLambert, priMatSpecularValue, priMatSpecularColor;
+            var priMatShading, priMatLambert, priMatNormalPower, priMatSpecularValue, priMatSpecularColor;
             var priMatDiffuseMaps;
             var priMatNormalMaps;
 
             var tGeo;
+            var tDiffuseMaps, tNormalMaps;
             var tColor;
             var baseLightRotate;
             var useNormalBuffer, useTexture;
-            var tDiffuseMaps, tNormalMaps;
 
             privateChildren = $getPrivate('Scene', 'children'),
             privateChildrenArray = $getPrivate('Scene', 'childrenArray'),
@@ -426,6 +427,7 @@ var World = (function (makeUtil) {
             priMatWireFrameColor = $getPrivate('Material', 'wireFrameColor'),
             priMatShading = $getPrivate('Material', 'shading'),
             priMatLambert = $getPrivate('Material', 'lambert'),
+            priMatNormalPower = $getPrivate('Material', 'normalPower'),
             priMatSpecularValue = $getPrivate('Material', 'specularValue'),
             priMatSpecularColor = $getPrivate('Material', 'specularColor'),
             priMatDiffuseMaps = $getPrivate('Material', 'diffuse');
@@ -491,7 +493,7 @@ var World = (function (makeUtil) {
                                 tGL.bindFramebuffer(tGL.FRAMEBUFFER, tFrameBuffer);
                                 tGL.viewport(0, 0, tFrameBuffer.width, tFrameBuffer.height);
                             } else {
-                                tGL.viewport(0, 0, tCvsW, tCvsH);
+
                             }
                             tChildren = privateChildren[tScene.uuid];
                             tChildrenArray = privateChildrenArray[tScene.uuid];
@@ -504,7 +506,6 @@ var World = (function (makeUtil) {
                             //tGL.enable(tGL.SCISSOR_TEST);
                             //tGL.scissor(0, 0,  tCvsW, tCvsH);
 
-                            // 라이팅 세팅
                             tColor = tCamera.backgroundColor,
                             tGL.clearColor(tColor[0], tColor[1], tColor[2], tColor[3]),
                             tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
@@ -629,6 +630,7 @@ var World = (function (makeUtil) {
                                     tGL.bindTexture(tGL.TEXTURE_2D, tGPU.textures[tNormalMaps[tNormalMaps.length - 1].tex.uuid]);
                                     tGL.uniform1i(tProgram.uNormalSampler, 1);
                                     tGL.uniform1i(tProgram.useNormalMap, true);
+                                    tGL.uniform1f(tProgram.uNormalPower,priMatNormalPower[tMatUUID])
                                 }else{
                                     tGL.uniform1i(tProgram.useNormalMap, false);
                                 }
