@@ -432,19 +432,20 @@ var Shader = (function () {
                                 'vec3 normal = normalize(vNormal);\n' +
                                 'vec3 lightDir = normalize(uDLite);\n' +
                                 'vec3 reflectDir = reflect(-lightDir, normal);\n' +
-                                'float specular = max( dot(reflectDir, position), 0.5 );\n' +
-                                'specular = pow(specular,uSpecularValue)*specColor[3];\n' +
-
+                                'float specular\n;'+
                                 'float light = max( 0.05, dot(normal,lightDir) * uLambert);\n' +
                                 'vec4 diffuse = texture2D( uSampler, vec2(vUV.s, vUV.t) )*light;\n' +
 
                                 'if( useNormalMap ){\n' +
                                 '   vec4 bump = texture2D( uNormalSampler, vec2(vUV.s, vUV.t) );\n' +
                                 '   bump.rgb= bump.rgb*2.0-1.0 ;\n' +
-                                '   float normalPower = max( dot(reflectDir, position-bump.g), 0.3 );\n' +
-                                '   gl_FragColor = ( diffuse * ambientColor + specular * specColor ) + normalPower * bump.g * uNormalPower  ;\n' +
+                                '   float normalPower = max( dot(reflectDir, position-bump.g), 0.5 );\n' +
+                                '   specular = pow(normalPower,uSpecularValue)*specColor[3];\n' +
+                                '   gl_FragColor = ( diffuse * ambientColor * ambientColor[3] + specular * specColor ) + normalPower * bump.g * uNormalPower  ;\n' +
                                 '}else{' +
-                                '   gl_FragColor = diffuse * ambientColor + specular * specColor ;\n' +
+                                '   specular = max( dot(reflectDir, position), 0.5 );\n' +
+                                '   specular = pow(specular,uSpecularValue)*specColor[3];\n' +
+                                '   gl_FragColor = diffuse * ambientColor * ambientColor[3] + specular * specColor ;\n' +
                                 '}\n' +
                                 'gl_FragColor.a = 1.0;'
                             ]

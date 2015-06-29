@@ -185,6 +185,7 @@ var World = (function (makeUtil) {
                         canvas.style.height = height + 'px',
                         canvas._autoSize = isAutoSize,
                         cameraRenderAreaUpdate(self);
+                        gpu[self].gl.viewport(0, 0, canvas.width, canvas.height);
                     };
                 }
                 window.addEventListener('resize', autoSizer[this]),
@@ -411,10 +412,10 @@ var World = (function (makeUtil) {
             var priMatNormalMaps;
 
             var tGeo;
+            var tDiffuseMaps, tNormalMaps;
             var tColor;
             var baseLightRotate;
             var useNormalBuffer, useTexture;
-            var tDiffuseMaps, tNormalMaps;
 
             privateChildren = $getPrivate('Scene', 'children'),
             privateChildrenArray = $getPrivate('Scene', 'childrenArray'),
@@ -492,7 +493,7 @@ var World = (function (makeUtil) {
                                 tGL.bindFramebuffer(tGL.FRAMEBUFFER, tFrameBuffer);
                                 tGL.viewport(0, 0, tFrameBuffer.width, tFrameBuffer.height);
                             } else {
-                                tGL.viewport(0, 0, tCvsW, tCvsH);
+
                             }
                             tChildren = privateChildren[tScene.uuid];
                             tChildrenArray = privateChildrenArray[tScene.uuid];

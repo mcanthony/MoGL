@@ -300,7 +300,7 @@ var Material = (function () {
 
             //실제 텍스쳐구조체에는 텍스쳐와 블랜드모드가 포함됨
             texture = {tex:texture};
-            console.log(texture)
+            //console.log(texture)
 
             //블랜드모드가 들어온 경우의 처리
             if (arguments.length > 3) {
