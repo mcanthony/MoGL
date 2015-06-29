@@ -18,5 +18,9 @@ MOGL is a lightweight & high performance **MO**bile web**GL** library.
 
 **ShowCase**
 
-* [Monkey](http://projectbs.github.io/MoGL/showcase.0.2/monkey.html)
-* [Monkeys](http://projectbs.github.io/MoGL/showcase.0.2/monkeys.html)
+* [Walt](http://projectbs.github.io/MoGL/showcase.0.3/walt.html)
+* [Monkey](http://projectbs.github.io/MoGL/showcase.0.3/monkey.html)
+* [Monkeys](http://projectbs.github.io/MoGL/showcase.0.3/monkeys.html)
+* [MonkeyXYZ](http://projectbs.github.io/MoGL/showcase.0.3/monkeyXYZ.html)
+* [SmithHead](http://projectbs.github.io/MoGL/showcase.0.3/smithHead.html)
+* [SmithHeads](http://projectbs.github.io/MoGL/showcase.0.3/smithHeads.html)
