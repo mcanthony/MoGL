@@ -45,9 +45,29 @@ var Mesh = (function () {
             "* 'Mesh.materialSet:0' - 두번째 인자가 material 객체가 아닌 경우"
         ],
         value:function Mesh(geometry, material) {
-            this.geometry = geometry;
-            this.material = material;
+            this.geometry = geometry,
+            this.material = material,
             pickingColors[this] = getUniqueColor()
+
+            var self = this;
+            (function () {
+                var result = 0
+                self.addEventListener(MoGL.eventChanged, function (ev, cnt, allCnt) {
+                    console.log('테스트', ev, cnt, allCnt);
+                    var t = pickingColors[self]
+                    var temp = pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')]
+                    result=0
+                    for(var k in allCnt){
+                        result += allCnt[k]
+                    }
+                    if(result<3){
+                        console.log('마우스이벤트를 그리면안됨',result)
+                        delete pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')]
+                    }else{
+                        pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')] = {mesh: this}
+                    }
+                });
+            })()
         }
     })
     .field('culling', {
@@ -142,47 +162,48 @@ var Mesh = (function () {
         ],
         value:"cullingBack"
     })
-    .method('addMouseEvent', {
-        description: "",
-        sample: [
-            ""
-        ],
-        exception:"",
-        value:function addMouseEvent(type, f) {
-            var t = pickingColors[this]
-            var temp = pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')]
-            if(!temp){
-                temp = pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')] = {
-                    mesh : this
-                }
-            }
-            temp[type] = 1
-            this.addEventListener(type,f)
-            console.log(temp)
-        }
-    })
-    .method('removeMouseEvent', {
-        description: "",
-        sample: [
-            ""
-        ],
-        exception:"",
-        value:function removeMouseEvent(type) {
-            var t = pickingColors[this]
-            var temp = pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')]
-            if(temp){
-                this.removeEventListener(type)
-                temp[type] = null
-                if(!temp.over && !temp.out && !temp.down && !temp.move){
-                    delete pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')]
-                }
-            }
-        }
-    })
+    //.method('addMouseEvent', {
+    //    description: "",
+    //    sample: [
+    //        ""
+    //    ],
+    //    exception:"",
+    //    value:function addMouseEvent(type, f) {
+    //        var t = pickingColors[this]
+    //        var temp = pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')]
+    //        if(!temp){
+    //            temp = pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')] = {
+    //                mesh : this
+    //            }
+    //        }
+    //        temp[type] = 1
+    //        this.addEventListener(type,f)
+    //        console.log(temp)
+    //    }
+    //})
+    //.method('removeMouseEvent', {
+    //    description: "",
+    //    sample: [
+    //        ""
+    //    ],
+    //    exception:"",
+    //    value:function removeMouseEvent(type) {
+    //        var t = pickingColors[this]
+    //        var temp = pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')]
+    //        if(temp){
+    //            this.removeEventListener(type)
+    //            temp[type] = null
+    //            if(!temp.over && !temp.out && !temp.down && !temp.move){
+    //                delete pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')]
+    //            }
+    //        }
+    //    }
+    //})
     .event('changed', 'changed')
     .event('over', 'over')
     .event('out', 'out')
     .event('down', 'down')
+    .event('up', 'up')
     .event('move', 'move')
     .build();
 })();

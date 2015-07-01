@@ -164,6 +164,9 @@ var World = (function (makeUtil) {
             window.addEventListener('mousedown', function(e){
                 mouse[self].down = true
             })
+            window.addEventListener('mouseup', function(e){
+                mouse[self].up = true
+            })
             window.addEventListener('touchmove', function(e){
                 mouse[self].x = e.touches[0].clientX*window.devicePixelRatio
                 mouse[self].y = cvsList[self].height-e.touches[0].clientY*window.devicePixelRatio
@@ -174,6 +177,9 @@ var World = (function (makeUtil) {
                 mouse[self].y = cvsList[self].height-e.touches[0].clientY*window.devicePixelRatio
                 mouse[self].down = true
             },false)
+            window.addEventListener('touchend', function(e){
+                mouse[self].up = true
+            })
         }
     })
     .method('setAutoSize', {
@@ -565,6 +571,8 @@ var World = (function (makeUtil) {
                             currentMouseItem = priPickingMeshs[key]
                             if (mouse[this].down && currentMouseItem) {
                                 currentMouseItem.mesh.dispatch(Mesh.down)
+                            }else if (mouse[this].up && currentMouseItem) {
+                                currentMouseItem.mesh.dispatch(Mesh.up)
                             } else {
                                 if (currentMouseItem != oldMouseItem) {
                                     if (oldMouseItem) {
@@ -574,14 +582,15 @@ var World = (function (makeUtil) {
                                         currentMouseItem.mesh.dispatch(Mesh.over)
                                     }
                                     oldMouseItem = currentMouseItem
-                                }else{
-                                    if(oldMouseItem && mouse[this].move){
+                                } else {
+                                    if (oldMouseItem && mouse[this].move) {
                                         oldMouseItem.mesh.dispatch(Mesh.move)
                                     }
                                 }
                             }
                             mouse[this].down = false
                             mouse[this].move = false
+                            mouse[this].up = false
                             tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS),
                             tGL.disable(tGL.BLEND),
                             tGL.clearColor(0,0,0,0),

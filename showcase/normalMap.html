@@ -119,37 +119,43 @@
         testItem2.y = -2
         scene.addChild(testItem2);
 
-        testItem.addMouseEvent(Mesh.over, function(){
+        testItem.addEventListener(Mesh.over, function(){
             console.log(this, '가 오버')
             this.material.wireFrame = true
         })
-        testItem.addMouseEvent(Mesh.out, function(){
+        testItem.addEventListener(Mesh.out, function(){
             console.log(this, '가 아웃')
             this.material.wireFrame = false
         })
-        testItem.addMouseEvent(Mesh.down, function(){
+        testItem.addEventListener(Mesh.down, function(){
             console.log(this, '가 다운')
         })
-        testItem.addMouseEvent(Mesh.move, function(){
+        testItem.addEventListener(Mesh.move, function(){
             console.log(this, '가 무브')
         })
+        testItem.addEventListener(Mesh.up, function(){
+            console.log(this, '가 업')
+        })
 
-        testItem2.addMouseEvent(Mesh.over, function(){
+        testItem2.addEventListener(Mesh.over, function(){
             console.log(this, '가 오버')
             this.material.wireFrame = true
         })
-        testItem2.addMouseEvent(Mesh.out, function(){
+        testItem2.addEventListener(Mesh.out, function(){
             console.log(this, '가 아웃')
             this.material.wireFrame = false
         })
-        testItem2.addMouseEvent(Mesh.down, function(){
+        testItem2.addEventListener(Mesh.down, function(){
             console.log(this, '가 다운')
         })
-        testItem2.addMouseEvent(Mesh.move, function(){
+        testItem2.addEventListener(Mesh.move, function(){
             console.log(this, '가 무브')
         })
 
-        testItem2.removeMouseEvent(Mesh.move)
+        testItem2.removeEventListener(Mesh.over)
+        testItem2.removeEventListener(Mesh.out)
+        testItem2.removeEventListener(Mesh.down)
+        testItem2.removeEventListener(Mesh.move)
 
 
         testItem.scale = testItem2.scale = [15, 15, 15]
