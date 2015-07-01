@@ -159,6 +159,7 @@ var World = (function (makeUtil) {
             window.addEventListener('mousemove', function(e){
                 mouse[self].x = e.x
                 mouse[self].y = cvsList[self].height-e.y
+                mouse[self].move = true
             })
             window.addEventListener('mousedown', function(e){
                 mouse[self].down = true
@@ -166,12 +167,13 @@ var World = (function (makeUtil) {
             window.addEventListener('touchmove', function(e){
                 mouse[self].x = e.touches[0].clientX*window.devicePixelRatio
                 mouse[self].y = cvsList[self].height-e.touches[0].clientY*window.devicePixelRatio
-            },true)
+                mouse[self].move = true
+            },false)
             window.addEventListener('touchstart', function(e){
                 mouse[self].x = e.touches[0].clientX*window.devicePixelRatio
                 mouse[self].y = cvsList[self].height-e.touches[0].clientY*window.devicePixelRatio
                 mouse[self].down = true
-            },true)
+            },false)
         }
     })
     .method('setAutoSize', {
@@ -522,7 +524,6 @@ var World = (function (makeUtil) {
                             } else {
 
                             }
-                            tChildrenArray = privateChildrenArray[tScene.uuid];
 
                             tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS),
                             tGL.disable(tGL.BLEND),
@@ -539,9 +540,8 @@ var World = (function (makeUtil) {
                             useNormalBuffer = 0,
                             useTexture = 0;
 
-                            i2 = tChildrenArray.length;
-                            while(i2--) {
-                                tItem = tChildrenArray[i2],
+                            for(k in priPickingMeshs){
+                                tItem = priPickingMeshs[k],
                                 tItemUUID = tItem.uuid,
                                 tGeo = priGeo[tItemUUID].uuid,
                                 tVBO = tGPU.vbo[tGeo],
@@ -571,21 +571,24 @@ var World = (function (makeUtil) {
                             var key = [currentMouse[0], currentMouse[1], currentMouse[2], 255].join('')
                             currentMouseItem = priPickingMeshs[key]
                             if (mouse[this].down && currentMouseItem) {
-                                console.log(currentMouseItem.uuid, '가 다운')
-                                mouse[this].down = false
+                                currentMouseItem.dispatch(Mesh.down)
                             } else {
                                 if (currentMouseItem != oldMouseItem) {
-                                    if(oldMouseItem){
-                                        oldMouseItem.material.wireFrame = false
-                                        console.log(oldMouseItem, '가 아웃')
+                                    if (oldMouseItem) {
+                                        oldMouseItem.dispatch(Mesh.out)
+                                    }
+                                    if (currentMouseItem) {
+                                        currentMouseItem.dispatch(Mesh.over)
                                     }
                                     oldMouseItem = currentMouseItem
-                                    if(oldMouseItem){
-                                        oldMouseItem.material.wireFrame = true
-                                        console.log(oldMouseItem, '가 오버')
+                                }else{
+                                    if(oldMouseItem && mouse[this].move){
+                                        oldMouseItem.dispatch(Mesh.move)
                                     }
                                 }
                             }
+                            mouse[this].down = false
+                            mouse[this].move = false
                         }
                     }
                     ///////////////////////// mouse end
