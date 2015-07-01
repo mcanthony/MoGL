@@ -522,7 +522,9 @@ var World = (function (makeUtil) {
                                 tGL.bindFramebuffer(tGL.FRAMEBUFFER, tFrameBuffer);
                                 tGL.viewport(0, 0, tFrameBuffer.width, tFrameBuffer.height);
                             } else {
-
+                                tFrameBuffer = tGPU.framebuffers[tCamera.uuid].frameBuffer;
+                                tGL.bindFramebuffer(tGL.FRAMEBUFFER, tFrameBuffer);
+                                tGL.viewport(0, 0, tFrameBuffer.width, tFrameBuffer.height);
                             }
 
                             tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS),
@@ -539,7 +541,6 @@ var World = (function (makeUtil) {
 
                             useNormalBuffer = 0,
                             useTexture = 0;
-
                             for(k2 in priPickingMeshs){
                                 tItem = priPickingMeshs[k2],
                                 tItemUUID = tItem.uuid,
@@ -591,6 +592,8 @@ var World = (function (makeUtil) {
                             mouse[this].move = false
                         }
                     }
+                    tGL.bindFramebuffer(tGL.FRAMEBUFFER, null);
+                    tGL.bindTexture(tGL.TEXTURE_2D, null);
                     ///////////////////////// mouse end
 
                     for (k in tCameraList) {
