@@ -597,17 +597,14 @@ var MoGL = (function() {
 					listenerCounter[this] = {};
 				}
                 target = listener[this];
-				cnt = listenerCounter[this];
-                if (!target[ev]) {
-					target[ev] = [];//해당 이벤트용 공간 초기화
-					cnt[ev] = 0;
-				}
-                target = target[ev];
+                if (!target[ev]) target[ev] = [];//해당 이벤트용 공간 초기화
+                target = target[ev],
                 target[target.length] = {
                     f:f, 
                     cx:arguments[2] || this, 
                     arg:arguments.length > 3 ? Array.prototype.slice.call(arguments, 3) : null
-                };
+                },
+				cnt = listenerCounter[this],
 				this.dispatch('eventChanged', ev, cnt[ev] = target.length, cnt);
                 return this;
             }
