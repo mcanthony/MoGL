@@ -119,6 +119,18 @@
         mesh.x = -3
         mesh2.x = 3
 
+        mesh2.mouseEvent(Mesh.over, function(){
+            console.log(this, '가 오버')
+            this.material.wireFrame = true
+        })
+        mesh2.mouseEvent(Mesh.out, function(){
+            console.log(this, '가 아웃')
+            this.material.wireFrame = false
+        })
+        mesh2.mouseEvent(Mesh.down, function(){
+            console.log(this, '가 다운')
+        })
+
         camera2.z = 10
         camera2.renderArea = [100, 30, 128, 128]
         camera3.renderArea = [10, 200, 300, 300]
