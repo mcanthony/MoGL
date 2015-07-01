@@ -53,7 +53,7 @@ var Mesh = (function () {
             (function () {
                 var result = 0
                 self.addEventListener(MoGL.eventChanged, function (ev, cnt, allCnt) {
-                    console.log('테스트', ev, cnt, allCnt);
+                    //console.log('테스트', ev, cnt, allCnt);
                     var t = pickingColors[self]
                     var temp = pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')]
                     result=0
@@ -61,7 +61,7 @@ var Mesh = (function () {
                         result += allCnt[k]
                     }
                     if(result<3){
-                        console.log('마우스이벤트를 그리면안됨',result)
+                        //console.log('마우스이벤트를 그리면안됨',result)
                         delete pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')]
                     }else{
                         pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')] = {mesh: this}
@@ -162,48 +162,89 @@ var Mesh = (function () {
         ],
         value:"cullingBack"
     })
-    //.method('addMouseEvent', {
-    //    description: "",
-    //    sample: [
-    //        ""
-    //    ],
-    //    exception:"",
-    //    value:function addMouseEvent(type, f) {
-    //        var t = pickingColors[this]
-    //        var temp = pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')]
-    //        if(!temp){
-    //            temp = pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')] = {
-    //                mesh : this
-    //            }
-    //        }
-    //        temp[type] = 1
-    //        this.addEventListener(type,f)
-    //        console.log(temp)
-    //    }
-    //})
-    //.method('removeMouseEvent', {
-    //    description: "",
-    //    sample: [
-    //        ""
-    //    ],
-    //    exception:"",
-    //    value:function removeMouseEvent(type) {
-    //        var t = pickingColors[this]
-    //        var temp = pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')]
-    //        if(temp){
-    //            this.removeEventListener(type)
-    //            temp[type] = null
-    //            if(!temp.over && !temp.out && !temp.down && !temp.move){
-    //                delete pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')]
-    //            }
-    //        }
-    //    }
-    //})
-    .event('changed', 'changed')
-    .event('over', 'over')
-    .event('out', 'out')
-    .event('down', 'down')
-    .event('up', 'up')
-    .event('move', 'move')
+    .event('changed', {
+        description:[
+            '체인지 이벤트',
+            '* 메쉬의 재질이나 지오메트리가 변경될때 발생하는 이벤트'
+        ],
+        type:'string',
+        sample: [
+            "var mesh = new Mesh();",
+            "mesh.addEventListener( Mesh.over, function(){",
+            "  console.log(this)",
+            "});"
+        ],
+        value : 'changed'
+    })
+    .event('over', {
+        description:[
+            '오버이벤트',
+            '* 모바일일 경우 터치로 이벤트가 걸림'
+        ],
+        type:'string',
+        sample: [
+            "var mesh = new Mesh();",
+            "mesh.addEventListener( Mesh.over, function(){",
+            "  console.log(this)",
+            "});"
+        ],
+        value : 'over'
+    })
+    .event('out', {
+        description:[
+            '아웃이벤트',
+            '* 모바일일 경우 터치로 이벤트가 걸림'
+        ],
+        type:'string',
+        sample: [
+            "var mesh = new Mesh();",
+            "mesh.addEventListener( Mesh.out, function(){",
+            "  console.log(this)",
+            "});"
+        ],
+        value : 'out'
+    })
+    .event('down', {
+        description:[
+            '다운이벤트',
+            '* 모바일일 경우 터치로 이벤트가 걸림'
+        ],
+        type:'string',
+        sample: [
+            "var mesh = new Mesh();",
+            "mesh.addEventListener( Mesh.down, function(){",
+            "  console.log(this)",
+            "});"
+        ],
+        value : 'down'
+    })
+    .event('up', {
+        description:[
+            '업이벤트',
+            '* 모바일일 경우 터치로 이벤트가 걸림'
+        ],
+        type:'string',
+        sample: [
+            "var mesh = new Mesh();",
+            "mesh.addEventListener( Mesh.up, function(){",
+            "  console.log(this)",
+            "});"
+        ],
+        value : 'up'
+    })
+    .event('move', {
+        description:[
+            '무브이벤트',
+            '* 모바일일 경우 터치로 이벤트가 걸림'
+        ],
+        type:'string',
+        sample: [
+            "var mesh = new Mesh();",
+            "mesh.addEventListener( Mesh.move, function(){",
+            "  console.log(this)",
+            "});"
+        ],
+        value : 'move'
+    })
     .build();
 })();
