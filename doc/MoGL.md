@@ -39,6 +39,7 @@
 
 * [updated](#updated) - isUpdated 속성이 변경될 때마...
 * [propertyChanged](#propertyChanged) - setProperties 호출시 설정...
+* [eventChanged](#eventChanged) - 이벤트리스너가 추가, 삭제되면 발생함...
 
 [top](#)
 
@@ -480,7 +481,6 @@ _method_
 
 **param**
 
-none
 
 **exception**
 
@@ -558,7 +558,6 @@ _static_
 
 **param**
 
-none
 
 **exception**
 
@@ -591,7 +590,6 @@ _static_
 
 **param**
 
-none
 
 **exception**
 
@@ -740,7 +738,6 @@ _static_
 
 **param**
 
-none
 
 **exception**
 
@@ -926,6 +923,46 @@ mat.addEventListener( MoGL.propertyChanged, function(){
   console.log('changed');
 } );
 mat.setProperties({x:50}, {time:1});
+```
+
+[top](#)
+
+<a name="eventChanged"></a>
+###eventChanged
+
+_event_
+
+
+**description**
+
+
+- 이벤트리스너가 추가, 삭제되면 발생함
+* 리스너 형식 - function(changedEvent, changedEventListenerCount, allEventListenerCount)
+
+**setting**
+
+- *writable*:false
+-  *enumerable*:false
+-  *configurable*:false
+
+**value**
+
+
+- eventChanged
+
+**exception**
+
+
+- none
+
+**sample**
+
+```javascript
+var scene = new Scene();
+scene.addEventListener( MoGL.eventChanged, function(ev, cnt, allCnt){
+  console.log(ev, cnt, allCnt);// - 'updated, 1, {updated:1, eventChanged:1}
+} );
+scene.addEventListener( MoGL.updated, function(){} ); //1
 ```
 
 [top](#)
