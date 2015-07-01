@@ -25,7 +25,12 @@
 
 **event**
 
-* [changed](#changed) - Event of Mesh
+* [up](#up) - 업이벤트...
+* [over](#over) - 오버이벤트...
+* [out](#out) - 아웃이벤트...
+* [move](#move) - 무브이벤트...
+* [down](#down) - 다운이벤트...
+* [changed](#changed) - 체인지 이벤트...
 
 [top](#)
 
@@ -472,6 +477,201 @@ mesh1.culling = Mesh.cullingBack;
 
 [top](#)
 
+<a name="up"></a>
+###up
+
+_event_
+
+
+**description**
+
+
+- 업이벤트
+* 모바일일 경우 터치로 이벤트가 걸림
+
+**setting**
+
+- *writable*:false
+-  *enumerable*:false
+-  *configurable*:false
+
+**value**
+
+
+- up
+
+**exception**
+
+
+- none
+
+**sample**
+
+```javascript
+var mesh = new Mesh();
+mesh.addEventListener( Mesh.up, function(){
+  console.log(this)
+});
+```
+
+[top](#)
+
+<a name="over"></a>
+###over
+
+_event_
+
+
+**description**
+
+
+- 오버이벤트
+* 모바일일 경우 터치로 이벤트가 걸림
+
+**setting**
+
+- *writable*:false
+-  *enumerable*:false
+-  *configurable*:false
+
+**value**
+
+
+- over
+
+**exception**
+
+
+- none
+
+**sample**
+
+```javascript
+var mesh = new Mesh();
+mesh.addEventListener( Mesh.over, function(){
+  console.log(this)
+});
+```
+
+[top](#)
+
+<a name="out"></a>
+###out
+
+_event_
+
+
+**description**
+
+
+- 아웃이벤트
+* 모바일일 경우 터치로 이벤트가 걸림
+
+**setting**
+
+- *writable*:false
+-  *enumerable*:false
+-  *configurable*:false
+
+**value**
+
+
+- out
+
+**exception**
+
+
+- none
+
+**sample**
+
+```javascript
+var mesh = new Mesh();
+mesh.addEventListener( Mesh.out, function(){
+  console.log(this)
+});
+```
+
+[top](#)
+
+<a name="move"></a>
+###move
+
+_event_
+
+
+**description**
+
+
+- 무브이벤트
+* 모바일일 경우 터치로 이벤트가 걸림
+
+**setting**
+
+- *writable*:false
+-  *enumerable*:false
+-  *configurable*:false
+
+**value**
+
+
+- move
+
+**exception**
+
+
+- none
+
+**sample**
+
+```javascript
+var mesh = new Mesh();
+mesh.addEventListener( Mesh.move, function(){
+  console.log(this)
+});
+```
+
+[top](#)
+
+<a name="down"></a>
+###down
+
+_event_
+
+
+**description**
+
+
+- 다운이벤트
+* 모바일일 경우 터치로 이벤트가 걸림
+
+**setting**
+
+- *writable*:false
+-  *enumerable*:false
+-  *configurable*:false
+
+**value**
+
+
+- down
+
+**exception**
+
+
+- none
+
+**sample**
+
+```javascript
+var mesh = new Mesh();
+mesh.addEventListener( Mesh.down, function(){
+  console.log(this)
+});
+```
+
+[top](#)
+
 <a name="changed"></a>
 ###changed
 
@@ -481,7 +681,8 @@ _event_
 **description**
 
 
-- Event of Mesh
+- 체인지 이벤트
+* 메쉬의 재질이나 지오메트리가 변경될때 발생하는 이벤트
 
 **setting**
 
@@ -502,7 +703,10 @@ _event_
 **sample**
 
 ```javascript
-//none
+var mesh = new Mesh();
+mesh.addEventListener( Mesh.over, function(){
+  console.log(this)
+});
 ```
 
 [top](#)
