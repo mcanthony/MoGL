@@ -122,39 +122,48 @@
         testItem.addEventListener(Mesh.over, function(){
             console.log(this, '가 오버')
             this.material.wireFrame = true
+            this.material.specularValue = 20
         })
         testItem.addEventListener(Mesh.out, function(){
             console.log(this, '가 아웃')
             this.material.wireFrame = false
+            this.material.specularValue = 20
         })
         testItem.addEventListener(Mesh.down, function(){
             console.log(this, '가 다운')
+            this.material.specularValue = 100
         })
         testItem.addEventListener(Mesh.move, function(){
             console.log(this, '가 무브')
         })
         testItem.addEventListener(Mesh.up, function(){
             console.log(this, '가 업')
+            this.material.specularValue = 20
         })
 
         testItem2.addEventListener(Mesh.over, function(){
             console.log(this, '가 오버')
             this.material.wireFrame = true
+            this.material.specularValue = 20
         })
         testItem2.addEventListener(Mesh.out, function(){
             console.log(this, '가 아웃')
             this.material.wireFrame = false
+            this.material.specularValue = 20
         })
         testItem2.addEventListener(Mesh.down, function(){
             console.log(this, '가 다운')
+            this.material.specularValue = 100
         })
         testItem2.addEventListener(Mesh.move, function(){
             console.log(this, '가 무브')
         })
+        testItem2.addEventListener(Mesh.up, function(){
+            console.log(this, '가 업')
+            this.material.specularValue = 20
+        })
 
-        testItem2.removeEventListener(Mesh.over)
-        testItem2.removeEventListener(Mesh.out)
-        testItem2.removeEventListener(Mesh.down)
+
         testItem2.removeEventListener(Mesh.move)
 
 
