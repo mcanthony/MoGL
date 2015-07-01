@@ -514,23 +514,13 @@ var World = (function (makeUtil) {
                     baseLightRotate = tScene.baseLightRotate
                     for (k in tCameraList) len++
                     ///////////////////////// mouse start
+                    var pickLength = 0
                     for (k in tCameraList) {
                         tCamera = tCameraList[k];
                         if (tCamera.visible) {
-                            if (len > 1) {
-                                tFrameBuffer = tGPU.framebuffers[tCamera.uuid].frameBuffer;
-                                tGL.bindFramebuffer(tGL.FRAMEBUFFER, tFrameBuffer);
-                                tGL.viewport(0, 0, tFrameBuffer.width, tFrameBuffer.height);
-                            } else {
-                                tFrameBuffer = tGPU.framebuffers[tCamera.uuid].frameBuffer;
-                                tGL.bindFramebuffer(tGL.FRAMEBUFFER, tFrameBuffer);
-                                tGL.viewport(0, 0, tFrameBuffer.width, tFrameBuffer.height);
-                            }
-
-                            tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS),
-                            tGL.disable(tGL.BLEND),
-                            tGL.clearColor(0,0,0,0),
-                            tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
+                            tFrameBuffer = tGPU.framebuffers[tCamera.uuid].frameBuffer;
+                            tGL.bindFramebuffer(tGL.FRAMEBUFFER, tFrameBuffer);
+                            tGL.viewport(0, 0, tFrameBuffer.width, tFrameBuffer.height);
 
                             var tProjectionMtx = tCamera.projectionMatrix.raw;
                             var tCameraMtx = tCamera.matrix.raw;
@@ -542,6 +532,7 @@ var World = (function (makeUtil) {
                             useNormalBuffer = 0,
                             useTexture = 0;
                             for(k2 in priPickingMeshs){
+                                pickLength++
                                 tItem = priPickingMeshs[k2],
                                 tItemUUID = tItem.uuid,
                                 tGeo = priGeo[tItemUUID].uuid,
@@ -567,8 +558,8 @@ var World = (function (makeUtil) {
                                 pVBO = tVBO, pIBO = tIBO;
                             }
                         }
-                        tGL.readPixels(mouse[this].x, mouse[this].y, 1, 1, tGL.RGBA, tGL.UNSIGNED_BYTE, currentMouse)
-                        if (currentMouse) {
+                        if(pickLength){
+                            tGL.readPixels(mouse[this].x, mouse[this].y, 1, 1, tGL.RGBA, tGL.UNSIGNED_BYTE, currentMouse)
                             var key = [currentMouse[0], currentMouse[1], currentMouse[2], 255].join('')
                             currentMouseItem = priPickingMeshs[key]
                             if (mouse[this].down && currentMouseItem) {
@@ -590,6 +581,10 @@ var World = (function (makeUtil) {
                             }
                             mouse[this].down = false
                             mouse[this].move = false
+                            tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS),
+                            tGL.disable(tGL.BLEND),
+                            tGL.clearColor(0,0,0,0),
+                            tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
                         }
                     }
                     tGL.bindFramebuffer(tGL.FRAMEBUFFER, null);
