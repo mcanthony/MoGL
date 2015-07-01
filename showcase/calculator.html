@@ -95,7 +95,7 @@ height="256">
         tempMat.shading = Shading.phong
         // 메쉬 설정
         temp = new Mesh(Primitive.cube(), tempMat);
-        temp.x = i*0.31-4
+        temp.x = i*0.33-4
         temp.y = 2
         temp.scale = [0.3,0.3,0.3]
         scene.addChild(temp);
@@ -103,6 +103,7 @@ height="256">
     }
 
     var nullMaterial = new Material('#ee4455')
+    nullMaterial.shading = Shading.phong
     function resetView() {
         console.log(tempValue)
         var i = 30,j
@@ -233,7 +234,12 @@ height="256">
         rotateCube = []
         var HD_down = function HD_down() {
             this.material.lambert = 2
-            tempValue += (numberCube.indexOf(this) + 1).toString()
+            if(numberCube.indexOf(this)==9){
+                tempValue += '0'
+            }else{
+                tempValue += (numberCube.indexOf(this) + 1).toString()
+            }
+
             console.log('누른숫자', (numberCube.indexOf(this) + 1).toString())
             console.log('표시결과', tempValue)
             rotateCube[numberCube.indexOf(this)]++
