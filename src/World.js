@@ -416,7 +416,7 @@ var World = (function (makeUtil) {
             "world.render();"
         ],
         value:(function render(){
-            var i,i2, j, k, len = 0;
+            var i,i2, j, k,k2, len = 0;
             var f3 = new Float32Array(3), f4 = new Float32Array(4);
             var tScene, tSceneList, tCameraList, tCamera, tGPU, tGL, tChildren,tChildrenArray;
             var tCvs, tCvsW, tCvsH;
@@ -540,8 +540,8 @@ var World = (function (makeUtil) {
                             useNormalBuffer = 0,
                             useTexture = 0;
 
-                            for(k in priPickingMeshs){
-                                tItem = priPickingMeshs[k],
+                            for(k2 in priPickingMeshs){
+                                tItem = priPickingMeshs[k2],
                                 tItemUUID = tItem.uuid,
                                 tGeo = priGeo[tItemUUID].uuid,
                                 tVBO = tGPU.vbo[tGeo],
