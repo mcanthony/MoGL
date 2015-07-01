@@ -162,24 +162,31 @@ var World = (function (makeUtil) {
                 mouse[self].move = true
             })
             window.addEventListener('mousedown', function(e){
+                mouse[self].x = e.x
+                mouse[self].y = cvsList[self].height-e.y
                 mouse[self].down = true
             })
             window.addEventListener('mouseup', function(e){
+                mouse[self].x = e.x
+                mouse[self].y = cvsList[self].height-e.y
                 mouse[self].up = true
             })
             window.addEventListener('touchmove', function(e){
-                mouse[self].x = e.touches[0].clientX*window.devicePixelRatio
-                mouse[self].y = cvsList[self].height-e.touches[0].clientY*window.devicePixelRatio
+                e.preventDefault();
+                mouse[self].x = e.touches[0].pageX*window.devicePixelRatio
+                mouse[self].y = cvsList[self].height-e.touches[0].pageY*window.devicePixelRatio
                 mouse[self].move = true
             },false)
             window.addEventListener('touchstart', function(e){
-                mouse[self].x = e.touches[0].clientX*window.devicePixelRatio
-                mouse[self].y = cvsList[self].height-e.touches[0].clientY*window.devicePixelRatio
+                mouse[self].x = e.touches[0].pageX*window.devicePixelRatio
+                mouse[self].y = cvsList[self].height-e.touches[0].pageY*window.devicePixelRatio
                 mouse[self].down = true
             },false)
             window.addEventListener('touchend', function(e){
+                mouse[self].x = e.changedTouches[0].pageX*window.devicePixelRatio
+                mouse[self].y = cvsList[self].height-e.changedTouches[0].pageY*window.devicePixelRatio
                 mouse[self].up = true
-            })
+            },false)
         }
     })
     .method('setAutoSize', {
@@ -565,14 +572,16 @@ var World = (function (makeUtil) {
                                 pVBO = tVBO, pIBO = tIBO;
                             }
                         }
-                        if(pickLength){
-                            tGL.readPixels(mouse[this].x, mouse[this].y, 1, 1, tGL.RGBA, tGL.UNSIGNED_BYTE, currentMouse)
+                        var tMouse = mouse[this.uuid]
+                        if(pickLength && tMouse.x){
+                            tGL.readPixels(tMouse.x, tMouse.y, 1, 1, tGL.RGBA, tGL.UNSIGNED_BYTE, currentMouse)
                             var key = [currentMouse[0], currentMouse[1], currentMouse[2], 255].join('')
                             currentMouseItem = priPickingMeshs[key]
-                            if (mouse[this].down && currentMouseItem) {
+                            if (tMouse.down && currentMouseItem ) {
                                 currentMouseItem.mesh.dispatch(Mesh.down)
-                            }else if (mouse[this].up && currentMouseItem) {
+                            }else if (tMouse.up && currentMouseItem) {
                                 currentMouseItem.mesh.dispatch(Mesh.up)
+                                tMouse.x = null
                             } else {
                                 if (currentMouseItem != oldMouseItem) {
                                     if (oldMouseItem) {
@@ -583,14 +592,14 @@ var World = (function (makeUtil) {
                                     }
                                     oldMouseItem = currentMouseItem
                                 } else {
-                                    if (oldMouseItem && mouse[this].move) {
+                                    if (oldMouseItem && tMouse.move) {
                                         oldMouseItem.mesh.dispatch(Mesh.move)
                                     }
                                 }
                             }
-                            mouse[this].down = false
-                            mouse[this].move = false
-                            mouse[this].up = false
+                            if(tMouse.move) tMouse.move =false
+                            if(tMouse.up) tMouse.up =false
+                            if(tMouse.down) tMouse.down =false
                             tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS),
                             tGL.disable(tGL.BLEND),
                             tGL.clearColor(0,0,0,0),
