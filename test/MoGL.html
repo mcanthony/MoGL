@@ -418,7 +418,67 @@
             );
         }, 1010 );
     }
-})();   
+})();
+(function () {
+    var result = 0
+    var Scene;
+    Scene = MoGL.extend(function Scene(){
+
+    })
+    .event('test1','test1')
+    .event('test2','test2')
+    .build();
+    bsTest('eventChanged', function () {
+        var scene = new Scene();
+        scene.addEventListener(MoGL.eventChanged, function (ev, cnt, allCnt) {
+            result = cnt
+        });
+        scene.addEventListener(MoGL.updated, function () {
+        }); //1
+        return result
+    },1)
+    bsTest('eventChanged2', function () {
+        var result = 0
+        var scene = new Scene();
+        scene.addEventListener(MoGL.eventChanged, function (ev, cnt, allCnt) {
+//            console.log('테스트',ev, cnt, allCnt);
+            result=0
+            for(var k in allCnt){
+                result += allCnt[k]
+            }
+            result-=1
+        });
+        var testFunc = function () {
+        }
+        var testFunc2 = function () {
+        }
+        scene.addEventListener(Scene.test1, testFunc);
+        scene.addEventListener(Scene.test1, testFunc2);
+        scene.addEventListener(Scene.test2, testFunc);
+        scene.removeEventListener(Scene.test1, testFunc);
+        return result
+    },2)
+    bsTest('eventChanged3', function () {
+        var result = 0
+        var scene = new Scene();
+        scene.addEventListener(MoGL.eventChanged, function (ev, cnt, allCnt) {
+            result=0
+            for(var k in allCnt){
+                result += allCnt[k]
+            }
+            result-=1
+        });
+        var testFunc = function () {
+        }
+        var testFunc2 = function () {
+        }
+        scene.addEventListener(Scene.test1, testFunc);
+        scene.addEventListener(Scene.test1, testFunc2);
+        scene.addEventListener(Scene.test2, testFunc);
+        scene.removeEventListener(Scene.test1);
+        return result
+    },1)
+})()
     console.log('this is top? ' + (window.top === window.self));
 </script>
 </body>

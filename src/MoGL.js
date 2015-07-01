@@ -716,7 +716,7 @@ var MoGL = (function() {
             sample: [
                 "var scene = new Scene();",
                 "scene.addEventListener( MoGL.eventChanged, function(ev, cnt, allCnt){",
-                "  console.log(ev, cnt, allCnt);//2 - 'updated, 1, {updated:1, eventChanged:1}",
+                "  console.log(ev, cnt, allCnt);// - 'updated, 1, {updated:1, eventChanged:1}",
                 "} );",
 				"scene.addEventListener( MoGL.updated, function(){} ); //1"
             ],
