@@ -602,14 +602,13 @@ var MoGL = (function() {
 					target[ev] = [];//해당 이벤트용 공간 초기화
 					cnt[ev] = 0;
 				}
-				cnt[ev]++;
                 target = target[ev];
                 target[target.length] = {
                     f:f, 
                     cx:arguments[2] || this, 
                     arg:arguments.length > 3 ? Array.prototype.slice.call(arguments, 3) : null
                 };
-				this.dispatch('eventChanged', ev, cnt[ev], cnt);
+				this.dispatch('eventChanged', ev, cnt[ev] = target.length, cnt);
                 return this;
             }
         })
@@ -634,9 +633,9 @@ var MoGL = (function() {
                         while (i--) {
                             if ((typeof f == 'string' && target[i].f.name == f) || target[i].f === f) {//삭제하려는 값이 문자열인 경우 리스너이름에 매칭, 함수인 경우는 리스너와 직접 매칭
                                 target.splice(i, 1),
-								cnt[ev]--;
                             }
                         }
+						cnt[ev] = target.length;
                     }
                 }else{
                     if (listener[this] && listener[this][ev]) {
