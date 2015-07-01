@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL Showcase - calculator</title>
+    <meta charset="utf-8"/>
+    <meta property="og:title" content="Monkey"/>
+    <meta property="og:description" content="MoGL.js version"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .FPS {
+            color: #FFF;
+            left: 0px;
+            top: 0px;
+            position: absolute
+        }
+    </style>
+    <script src="../src/$.js"></script>
+    <script src="../src/make.js"></script>
+    <script src="../src/MoGL.js"></script>
+    <script src="../src/BlendMode.js"></script>
+    <script src="../src/Filter.js"></script>
+    <script src="../src/Primitive.js"></script>
+    <script src="../src/Vertex.js"></script>
+    <script src="../src/Shading.js"></script>
+    <script src="../src/VertexShaderFunctions.js"></script>
+    <script src="../src/Shader.js"></script>
+    <script src="../src/Matrix.js"></script>
+    <script src="../src/Texture.js"></script>
+    <script src="../src/Geometry.js"></script>
+    <script src="../src/Material.js"></script>
+    <script src="../src/Mesh.js"></script>
+    <script src="../src/Group.js"></script>
+    <script src="../src/Camera.js"></script>
+    <script src="../src/Scene.js"></script>
+    <script src="../src/World.js"></script>
+    <script src="../showcase/dat.gui.min.js"></script>
+</head>
+<body>
+<img src="calulator/1.png" id="img0" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="calulator/2.png" id="img1" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="calulator/3.png" id="img2" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="calulator/4.png" id="img3" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="calulator/5.png" id="img4" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="calulator/6.png" id="img5" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="calulator/7.png" id="img6" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="calulator/8.png" id="img7" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="calulator/9.png" id="img8" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="calulator/0.png" id="img9" style="position: absolute;top:0px; display:none" width="256" height="256">
+height="256">
+<canvas id="canvas"></canvas>
+<div class="FPS">
+    Current FPS: <span id="currentFPS"></span>
+    Average FPS: <span id="averageFPS"></span>
+</div>
+
+<script>
+    'use strict';
+    // basic settings
+    var divCurrentFPS, divAverageFPS, prevTime;
+    var world, scene, camera;
+    divCurrentFPS = document.getElementById('currentFPS')
+    divAverageFPS = document.getElementById('averageFPS')
+    prevTime = 0
+    world = new World('canvas')
+    scene = new Scene()
+    camera = new Camera()
+    world.addScene(scene)
+    scene.addChild(camera)
+    world.setAutoSize(1)
+    world.start()
+
+    var tempValue = ''
+    var mats = []
+    makeNumbers(Primitive.cube())
+    makeBts(Primitive.geodesic())
+    ////////////////////////////////////////////////////////////////////////////
+
+    var resultMeshs = []
+    for(var i = 0;i<30; i++){
+        var temp,tempMat
+        tempMat = new Material()
+        tempMat.shading = Shading.phong
+        // 메쉬 설정
+        temp = new Mesh(Primitive.cube(), tempMat);
+        temp.x = i*0.31-4
+        temp.y = 2
+        temp.scale = [0.3,0.3,0.3]
+        scene.addChild(temp);
+        resultMeshs.push(temp)
+    }
+
+    var nullMaterial = new Material('#ee4455')
+    function resetView() {
+        console.log(tempValue)
+        var i = 30,j
+        while(i--){
+            resultMeshs[i].material = nullMaterial
+        }
+
+        i = tempValue.toString().length
+        j=1
+        while(i--){
+            var t = tempValue.toString()[i]-1
+            if (t == -1) t = 9
+            var test = mats[t]
+            if(test) resultMeshs[30-j].material = test
+            else resultMeshs[30-j].material = nullMaterial
+            j++
+        }
+    }
+    ////////////////////////////////////////////////////////////////////////////
+    var checkTable = {
+        '+': 1,
+        '-': 1,
+        '*': 1,
+        '/': 1
+    }
+    function makeBts(geo) {
+        var HD_down = function HD_down() {
+            this.material.lambert = 2
+            switch (this) {
+                case addBt :
+                    if (!checkTable[tempValue[tempValue.length - 1]]) {
+                        tempValue += '+'
+                        resetView()
+                    }
+                    break
+                case minusBt :
+                    if (!checkTable[tempValue[tempValue.length - 1]]) {
+                        tempValue += '-'
+                        resetView()
+                    }
+                    break
+                case mulBt :
+                    if (!checkTable[tempValue[tempValue.length - 1]]) {
+                        tempValue += '*'
+                        resetView()
+                    }
+                    break
+                case divBt :
+                    if (!checkTable[tempValue[tempValue.length - 1]]) {
+                        tempValue += '/'
+                        resetView()
+                    }
+                    break
+                case resultBt :
+                    if (checkTable[tempValue[tempValue.length - 1]]) {
+                        tempValue += 0
+                    }
+                    console.log('계산결과', eval(tempValue))
+                    tempValue = eval(tempValue)
+                    resetView()
+                    break
+            }
+        }
+        var HD_up = function HD_up() {
+            this.material.lambert = 1
+        }
+
+        var addBt, minusBt, mulBt, divBt, resultBt;
+        var tempMat;
+
+        // 메쉬 설정
+        tempMat = new Material()
+        tempMat.shading = Shading.phong
+        addBt = new Mesh(geo, tempMat);
+        addBt.x = 3
+        addBt.y = 1
+        scene.addChild(addBt);
+        // 이벤트 설정
+        addBt.addEventListener(Mesh.down, HD_down)
+        addBt.addEventListener(Mesh.up, HD_up)
+
+        tempMat = new Material()
+        tempMat.shading = Shading.phong
+        minusBt = new Mesh(geo, tempMat);
+        minusBt.x = 4.2
+        minusBt.y = 1
+        scene.addChild(minusBt);
+        // 이벤트 설정
+        minusBt.addEventListener(Mesh.down, HD_down)
+        minusBt.addEventListener(Mesh.up, HD_up)
+
+        tempMat = new Material()
+        tempMat.shading = Shading.phong
+        mulBt = new Mesh(geo, tempMat);
+        mulBt.x = 3
+        mulBt.y = 0
+        scene.addChild(mulBt);
+        // 이벤트 설정
+        mulBt.addEventListener(Mesh.down, HD_down)
+        mulBt.addEventListener(Mesh.up, HD_up)
+
+        tempMat = new Material()
+        tempMat.shading = Shading.phong
+        divBt = new Mesh(geo, tempMat);
+        divBt.x = 4.2
+        divBt.y = 0
+        scene.addChild(divBt);
+        // 이벤트 설정
+        divBt.addEventListener(Mesh.down, HD_down)
+        divBt.addEventListener(Mesh.up, HD_up)
+
+        tempMat = new Material()
+        tempMat.shading = Shading.phong
+        resultBt = new Mesh(geo, tempMat);
+        resultBt.x = 3
+        resultBt.y = -1.2
+        scene.addChild(resultBt);
+        // 이벤트 설정
+        resultBt.addEventListener(Mesh.down, HD_down)
+        resultBt.addEventListener(Mesh.up, HD_up)
+    }
+    function makeNumbers(geo) {
+        var i;
+        var numberCube, temp, tempMat;
+        var rotateCube
+        var texture;
+        numberCube = []
+        rotateCube = []
+        var HD_down = function HD_down() {
+            this.material.lambert = 2
+            tempValue += (numberCube.indexOf(this) + 1).toString()
+            console.log('누른숫자', (numberCube.indexOf(this) + 1).toString())
+            console.log('표시결과', tempValue)
+            rotateCube[numberCube.indexOf(this)]++
+            this.setProperties({rotateY: +rotateCube[numberCube.indexOf(this)] * Math.PI / 2, z: -1}, {
+                time: 0.4,
+                ease: MoGL.ease.sineOut
+            });
+            resetView()
+        }
+        var out = function out() {
+            this.material.lambert = 1
+            rotateCube[numberCube.indexOf(this)]++
+            this.setProperties({rotateY: +rotateCube[numberCube.indexOf(this)] * Math.PI / 2, z: 0}, {
+                time: 0.4,
+                ease: MoGL.ease.sineInOut
+            });
+        }
+        for (i = 0; i < 10; i++) {
+            // 재질 설정
+            texture = new Texture()
+            texture.img = document.getElementById('img' + i)
+            tempMat = new Material()
+            tempMat.shading = Shading.phong
+            tempMat.addTexture(Texture.diffuse, texture)
+            // 메쉬 설정
+            temp = new Mesh(geo, tempMat);
+            temp.x = i % 3 * 1.1 - 1
+            temp.y = -Math.floor(i / 3) * 1.1 + 1
+            scene.addChild(temp);
+            numberCube.push(temp)
+            rotateCube.push(0)
+            mats.push(tempMat)
+            // 이벤트 설정
+            temp.addEventListener(Mesh.down, HD_down)
+            temp.addEventListener(Mesh.out, out)
+        }
+
+
+        var currentFPS, prevTime = 0, count = 0, sum = 0
+        world.addEventListener(World.renderAfter, function (currTime) {
+            var currentFPS = 1000 / ( currTime - prevTime );
+            prevTime = currTime;
+            count++
+            divCurrentFPS.textContent = currentFPS.toFixed(2);
+            divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
+        })
+    }
+
+</script>
+</body>
+</html>

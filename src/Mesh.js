@@ -53,7 +53,7 @@ var Mesh = (function () {
             (function () {
                 var result = 0
                 self.addEventListener(MoGL.eventChanged, function (ev, cnt, allCnt) {
-                    console.log('테스트', ev, cnt, allCnt);
+                    //console.log('테스트', ev, cnt, allCnt);
                     var t = pickingColors[self]
                     var temp = pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')]
                     result=0
@@ -61,7 +61,7 @@ var Mesh = (function () {
                         result += allCnt[k]
                     }
                     if(result<3){
-                        console.log('마우스이벤트를 그리면안됨',result)
+                        //console.log('마우스이벤트를 그리면안됨',result)
                         delete pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')]
                     }else{
                         pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')] = {mesh: this}
