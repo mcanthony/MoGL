@@ -629,7 +629,7 @@ var MoGL = (function() {
                         i = target.length;//해당이벤트의 리스너를 루프돌며 삭제
                         while (i--) {
                             if ((typeof f == 'string' && target[i].f.name == f) || target[i].f === f) {//삭제하려는 값이 문자열인 경우 리스너이름에 매칭, 함수인 경우는 리스너와 직접 매칭
-                                target.splice(i, 1),
+                                target.splice(i, 1)
                             }
                         }
 						cnt[ev] = target.length;
