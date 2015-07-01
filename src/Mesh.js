@@ -48,8 +48,6 @@ var Mesh = (function () {
             this.geometry = geometry;
             this.material = material;
             pickingColors[this] = getUniqueColor()
-            var t = pickingColors[this]
-            pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')] = this
         }
     })
     .field('culling', {
@@ -144,6 +142,22 @@ var Mesh = (function () {
         ],
         value:"cullingBack"
     })
+    .method('mouseEvent', {
+        description: "",
+        sample: [
+            ""
+        ],
+        exception:"",
+        value:function mouseEvent(type, f) {
+            var t = pickingColors[this]
+            pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')] = this
+            this.addEventListener(type,f)
+        }
+    })
     .event('changed', 'changed')
+    .event('over', 'over')
+    .event('out', 'out')
+    .event('down', 'down')
+    .event('move', 'move')
     .build();
 })();
