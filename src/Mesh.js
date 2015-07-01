@@ -142,16 +142,41 @@ var Mesh = (function () {
         ],
         value:"cullingBack"
     })
-    .method('mouseEvent', {
+    .method('addMouseEvent', {
         description: "",
         sample: [
             ""
         ],
         exception:"",
-        value:function mouseEvent(type, f) {
+        value:function addMouseEvent(type, f) {
             var t = pickingColors[this]
-            pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')] = this
+            var temp = pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')]
+            if(!temp){
+                temp = pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')] = {
+                    mesh : this
+                }
+            }
+            temp[type] = 1
             this.addEventListener(type,f)
+            console.log(temp)
+        }
+    })
+    .method('removeMouseEvent', {
+        description: "",
+        sample: [
+            ""
+        ],
+        exception:"",
+        value:function removeMouseEvent(type) {
+            var t = pickingColors[this]
+            var temp = pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')]
+            if(temp){
+                this.removeEventListener(type)
+                temp[type] = null
+                if(!temp.over && !temp.out && !temp.down && !temp.move){
+                    delete pickingMeshs[[t[0] * 255, t[1] * 255, t[2] * 255, 255].join('')]
+                }
+            }
         }
     })
     .event('changed', 'changed')

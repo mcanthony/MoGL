@@ -531,9 +531,10 @@ var World = (function (makeUtil) {
 
                             useNormalBuffer = 0,
                             useTexture = 0;
+                            pickLength = 0
                             for(k2 in priPickingMeshs){
                                 pickLength++
-                                tItem = priPickingMeshs[k2],
+                                tItem = priPickingMeshs[k2].mesh,
                                 tItemUUID = tItem.uuid,
                                 tGeo = priGeo[tItemUUID].uuid,
                                 tVBO = tGPU.vbo[tGeo],
@@ -563,19 +564,19 @@ var World = (function (makeUtil) {
                             var key = [currentMouse[0], currentMouse[1], currentMouse[2], 255].join('')
                             currentMouseItem = priPickingMeshs[key]
                             if (mouse[this].down && currentMouseItem) {
-                                currentMouseItem.dispatch(Mesh.down)
+                                currentMouseItem.mesh.dispatch(Mesh.down)
                             } else {
                                 if (currentMouseItem != oldMouseItem) {
                                     if (oldMouseItem) {
-                                        oldMouseItem.dispatch(Mesh.out)
+                                        oldMouseItem.mesh.dispatch(Mesh.out)
                                     }
                                     if (currentMouseItem) {
-                                        currentMouseItem.dispatch(Mesh.over)
+                                        currentMouseItem.mesh.dispatch(Mesh.over)
                                     }
                                     oldMouseItem = currentMouseItem
                                 }else{
                                     if(oldMouseItem && mouse[this].move){
-                                        oldMouseItem.dispatch(Mesh.move)
+                                        oldMouseItem.mesh.dispatch(Mesh.move)
                                     }
                                 }
                             }
