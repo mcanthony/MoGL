@@ -318,12 +318,11 @@
 
     function setMouseRotate() {
         var t = scene.childrenArray
-        var c = document.getElementById('canvas')
-        var checkX = c.clientWidth / 2
+        var checkX = window.innerWidth / 2
 
         t[0].addEventListener(Mesh.move, function (e) {
             console.log(e.x)
-            checkX = c.clientWidth / 2
+            checkX = window.innerWidth / 2
             cameraX = (checkX- e.x)/75
         })
 
