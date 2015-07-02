@@ -91,7 +91,7 @@
     var score = {
         result: 0,
         currentNum: '',
-        lastCal:'',
+        lastCal: '',
         temp: ''
     }
     function setintroText() {
@@ -108,8 +108,8 @@
         scene.addChild(mesh)
     }
 
-    function resetCalCanvas(v){
-        resultContext.clearRect(0,0,551,129)
+    function resetCalCanvas(v) {
+        resultContext.clearRect(0, 0, 551, 129)
         resultContext.font = "48px serif";
         resultContext.textAlign = 'right'
         resultContext.fillStyle = '#fff'
@@ -117,21 +117,23 @@
 
         introText = new Texture()
         introText.img = resultCanvas.toDataURL();
-        introTextMaterial.addTexture(Texture.diffuse, introText)
+        setTimeout(function () {
+            introTextMaterial.addTexture(Texture.diffuse, introText)
+        }, 16)
     }
 
     function makeNum(v) {
         if (score.currentNum.length == 0 && v == 0) {
             score.currentNum = v.toString()
         } else {
-            if(score.lastCal=='=') {
+            if (score.lastCal == '=') {
                 score.lastCal = null
                 score.temp = ''
                 score.currentNum = v.toString()
             }
             else score.currentNum += v.toString()
         }
-        resetCalCanvas(score.temp+score.currentNum)
+        resetCalCanvas(score.temp + score.currentNum)
 
     }
     function makeCal(v) {

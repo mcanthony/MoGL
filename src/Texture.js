@@ -58,7 +58,7 @@ var Texture = (function() {
         imgs[texture] = resizer(texture.resizeType, this),
         this.removeEventListener('load', loaded);
         texture.dispatch('load');
-    };
+     };
     return MoGL.extend('Texture',{
         description: "텍스쳐 객체 클래스",
         sample: [
