@@ -81,6 +81,12 @@
     world.setAutoSize(1)
     world.start()
 
+    var resultBgColor = [0, 0, 0, 0]
+    world.addEventListener(World.renderAfter, function () {
+        var t = camera.backgroundColor
+        camera.backgroundColor = [t[0] + (resultBgColor[0] - t[0]) * 0.3, t[1] + (resultBgColor[1] - t[1]) * 0.3, t[2] + (resultBgColor[2] - t[2]) * 0.3, 1]
+    })
+
     var cals = [], numbers = [];
     var introText;
     var introTextMaterial
@@ -134,7 +140,7 @@
             else score.currentNum += v.toString()
         }
         resetCalCanvas(score.temp + score.currentNum)
-
+        resultBgColor = [Math.random(), Math.random(), Math.random(), 1]
     }
     function makeCal(v) {
         switch (v) {
