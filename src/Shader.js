@@ -65,7 +65,7 @@ var Shader = (function () {
                             varyings: ['vec4 vColor'],
                             function: [],
                             main: [
-                                'gl_FragColor =  vColor'
+                                'gl_FragColor =  vColor;'
                             ]
                         }))
                 }
@@ -151,7 +151,7 @@ var Shader = (function () {
                             varyings: ['vec2 vUV'],
                             function: [],
                             main: [
-                                'gl_FragColor =  texture2D(uSampler, vec2(vUV.s, vUV.t))'
+                                'gl_FragColor =  texture2D(uSampler, vec2(vUV.s, vUV.t));\n'
                             ]
                         }))
                 }

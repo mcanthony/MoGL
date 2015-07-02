@@ -158,32 +158,32 @@ var World = (function (makeUtil) {
             mouse[this] = {x:0,y:0}
             window.addEventListener('mousemove', function(e){
                 mouse[self].x = e.x
-                mouse[self].y = cvsList[self].height-e.y
+                mouse[self].y = cvsList[self].height-e.offsetY
                 mouse[self].move = true
             })
             window.addEventListener('mousedown', function(e){
                 mouse[self].x = e.x
-                mouse[self].y = cvsList[self].height-e.y
+                mouse[self].y = cvsList[self].height-e.offsetY
                 mouse[self].down = true
             })
             window.addEventListener('mouseup', function(e){
                 mouse[self].x = e.x
-                mouse[self].y = cvsList[self].height-e.y
+                mouse[self].y = cvsList[self].height-e.offsetY
                 mouse[self].up = true
             })
             window.addEventListener('touchmove', function(e){
                 e.preventDefault();
-                mouse[self].x = e.touches[0].pageX*window.devicePixelRatio
+                mouse[self].x = e.touches[0].clientX*window.devicePixelRatio
                 mouse[self].y = cvsList[self].height-e.touches[0].pageY*window.devicePixelRatio
                 mouse[self].move = true
             },false)
             window.addEventListener('touchstart', function(e){
-                mouse[self].x = e.touches[0].pageX*window.devicePixelRatio
+                mouse[self].x = e.touches[0].clientX*window.devicePixelRatio
                 mouse[self].y = cvsList[self].height-e.touches[0].pageY*window.devicePixelRatio
                 mouse[self].down = true
             },false)
             window.addEventListener('touchend', function(e){
-                mouse[self].x = e.changedTouches[0].pageX*window.devicePixelRatio
+                mouse[self].x = e.changedTouches[0].clientX*window.devicePixelRatio
                 mouse[self].y = cvsList[self].height-e.changedTouches[0].pageY*window.devicePixelRatio
                 mouse[self].up = true
             },false)
@@ -624,7 +624,7 @@ var World = (function (makeUtil) {
                             tChildren = privateChildren[tScene.uuid];
                             tChildrenArray = privateChildrenArray[tScene.uuid];
 
-                            tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS),
+                            tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LEQUAL),
                             // TODO 이놈도 상황에 따라 캐쉬해야겠군
                             tGL.enable(tGL.BLEND),
                             tGL.blendFunc(tGL.SRC_ALPHA, tGL.ONE_MINUS_SRC_ALPHA),
@@ -646,12 +646,11 @@ var World = (function (makeUtil) {
                                     tGL.uniform3fv(tProgram.uDLite, baseLightRotate);
                                 }
                             }
-                            tItem = tMaterial = tProgram = tVBO = tIBO = null;
 
                             // 대상 씬의 차일드 루프
                             i2 = tChildrenArray.length;
-                            while(i2--){
-                                tItem = tChildrenArray[i2],
+                            for (var i3 = 0; i3 < i2; i3++) {
+                                tItem = tChildrenArray[i3],
                                 tItemUUID = tItem.uuid,
                                 tGeo = priGeo[tItemUUID].uuid,
                                 tVBO = tGPU.vbo[tGeo],
