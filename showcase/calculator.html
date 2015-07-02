@@ -82,10 +82,14 @@
     world.start()
 
     var resultBgColor = [0, 0, 0, 0]
+    var cameraX = 0
     world.addEventListener(World.renderAfter, function () {
         var t = camera.backgroundColor
         camera.backgroundColor = [t[0] + (resultBgColor[0] - t[0]) * 0.3, t[1] + (resultBgColor[1] - t[1]) * 0.3, t[2] + (resultBgColor[2] - t[2]) * 0.3, 1]
+        camera.x += (cameraX - camera.x) * 0.1
+        camera.lookAt(0, 0, 0)
     })
+    camera.clipPlaneNear = 0.001
 
     var cals = [], numbers = [];
     var introText;
@@ -181,12 +185,21 @@
 
     function setBg() {
         var mesh, geo, mat, texture;
+        mat = new Material(0, 0, 0, 0)
+        geo = Primitive.plane()
+        mesh = new Mesh(geo, mat)
+        mesh.rotateX = Math.PI / 2
+        mesh.scale = [50, 1, 10]
+        mesh.z = -0.3
+        scene.addChild(mesh)
+
         mat = new Material()
         texture = new Texture()
-        geo = Primitive.plane()
+
         texture.img = document.getElementById('iphone')
         mat.addTexture(Texture.diffuse, texture)
         mesh = new Mesh(geo, mat)
+        mesh.z = -0.1
         mesh.scale = [4.29, 1, 8.85]
         mesh.rotateX = Math.PI / 2
         scene.addChild(mesh)
@@ -205,7 +218,8 @@
             ease: MoGL.ease.sineOut
         });
     }
-    function HD_numberDown() {
+    function HD_numberDown(e) {
+        console.log(e)
         this.setProperties({scaleX: 0.5, scaleZ: 0.5}, {
             time: 0.1,
             ease: MoGL.ease.sineOut
@@ -244,6 +258,7 @@
             mesh.rotateX = Math.PI / 2
             mesh.y = -2.6
             mesh.x = i * 0.6 - 0.25 * max
+            mesh.z = 0.02
             scene.addChild(mesh)
             cals.push(mesh)
             mesh.setProperties({scaleX: 0.5, scaleZ: 0.5}, {
@@ -270,6 +285,7 @@
             mesh.rotateX = Math.PI / 2
             mesh.y = -2.6
             mesh.x = i * 0.6 - 0.25 * max
+
             scene.addChild(mesh)
             numbers.push(mesh)
             mesh.addEventListener(Mesh.down, HD_numberDown)
@@ -299,6 +315,20 @@
     setintroText()
     setCal()
     setNumbers()
+
+    function setMouseRotate() {
+        var t = scene.childrenArray
+        var c = document.getElementById('canvas')
+        var checkX = c.clientWidth / 2
+
+        t[0].addEventListener(Mesh.move, function (e) {
+            console.log(e.x)
+            checkX = c.clientWidth / 2
+            cameraX = (checkX- e.x)/75
+        })
+
+    }
+    setMouseRotate()
 </script>
 </body>
 </html>
