@@ -246,8 +246,9 @@ var Shader = (function () {
                             varyings: ['vec2 vUV', 'vec4 vLight'],
                             function: [],
                             main: [
-                                'gl_FragColor =  (texture2D(uSampler, vec2(vUV.s, vUV.t))*vLight);\n' +
-                                'gl_FragColor.a = 1.0;'
+                                'vec4 diffuse = texture2D(uSampler, vec2(vUV.s, vUV.t));\n'+
+                                'gl_FragColor = diffuse * vLight;\n'+
+                                'gl_FragColor.a = diffuse[3];'
                             ]
                         }))
                 }
@@ -434,6 +435,7 @@ var Shader = (function () {
                                 'vec3 reflectDir = reflect(-lightDir, normal);\n' +
                                 'float light = max( 0.05, dot(normal,lightDir) * uLambert);\n' + // 라이트강도 구하고
                                 'vec4 diffuse = texture2D( uSampler, vec2(vUV.s, vUV.t) );\n' + // 디퓨즈를 계산함
+                                'float alpha = diffuse[3];\n' + // 디퓨즈를 계산함
 
                                 'float specular\n;'+
                                 'if( useNormalMap ){\n' +
@@ -447,7 +449,7 @@ var Shader = (function () {
                                 '   specular = pow(specular,uSpecularValue)*specColor[3];\n' +
                                 '   gl_FragColor = diffuse *light * ambientColor * ambientColor[3] + specular * specColor ;\n' +
                                 '}\n' +
-                                'gl_FragColor.a = 1.0;'
+                                'gl_FragColor.a = alpha;'
                             ]
                         }))
                 }

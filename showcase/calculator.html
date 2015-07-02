@@ -50,6 +50,7 @@
 </head>
 <body>
 <img src="calulator/iphone.png" id="iphone" style="position: absolute;top:0px; display:none">
+<img src="calulator/iphoneS.png" id="iphoneS" style="position: absolute;top:0px; display:none">
 <img src="calulator/text.png" id="text" style="position: absolute;top:0px; display:none">
 <img src="calulator/cal0.png" id="cal0" style="position: absolute;top:0px; display:none">
 <img src="calulator/cal1.png" id="cal1" style="position: absolute;top:0px; display:none">
@@ -184,7 +185,7 @@
     }
 
     function setBg() {
-        var mesh, geo, mat, texture;
+        var mesh, geo, mat, texture,textureS;
         mat = new Material(0, 0, 0, 0)
         geo = Primitive.plane()
         mesh = new Mesh(geo, mat)
@@ -195,13 +196,21 @@
 
         mat = new Material()
         texture = new Texture()
+        textureS = new Texture()
 
         texture.img = document.getElementById('iphone')
+        textureS.img = document.getElementById('iphoneS')
         mat.addTexture(Texture.diffuse, texture)
+        mat.addTexture(Texture.specular, textureS)
         mesh = new Mesh(geo, mat)
         mesh.z = -0.1
         mesh.scale = [4.29, 1, 8.85]
         mesh.rotateX = Math.PI / 2
+        mat.shading = Shading.phong
+        mat.specularValue = 20
+        mat.specularColor = [1,1,1,0.3]
+        mat.normalPower = -2
+        scene.baseLightRotate = [0,-0.4,-1]
         scene.addChild(mesh)
     }
 
