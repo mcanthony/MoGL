@@ -50,7 +50,6 @@ var Texture = (function() {
                 context.drawImage(v, 0, 0, tw, th);
         }
         v.src = canvas.toDataURL();
-        //console.log('리사이저처리결과', v.src,dw,dh)
         return v;
     },
     loaded = function(e){
