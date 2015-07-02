@@ -116,6 +116,15 @@ var Scene = (function () {
             get: $getter(children)
         }
     )
+    .field('childrenArray', {
+            description: "씬에 등록된 자식 리스트를 배열 형식으로 반환",
+            sample: [
+                "console.log(scene.childrenArray);"
+            ],
+            defaultValue: "[]",
+            get: $getter(childrenArray)
+        }
+    )
     .method('addMesh', {
             description: [
                 'Mesh객체를 추가함.'

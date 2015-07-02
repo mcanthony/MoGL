@@ -578,22 +578,22 @@ var World = (function (makeUtil) {
                             var key = [currentMouse[0], currentMouse[1], currentMouse[2], 255].join('')
                             currentMouseItem = priPickingMeshs[key]
                             if (tMouse.down && currentMouseItem ) {
-                                currentMouseItem.mesh.dispatch(Mesh.down)
+                                currentMouseItem.mesh.dispatch(Mesh.down, {x: tMouse.x, y: tMouse.y})
                             }else if (tMouse.up && currentMouseItem) {
-                                currentMouseItem.mesh.dispatch(Mesh.up)
+                                currentMouseItem.mesh.dispatch(Mesh.up, {x: tMouse.x, y: tMouse.y})
                                 tMouse.x = null
                             } else {
                                 if (currentMouseItem != oldMouseItem) {
                                     if (oldMouseItem) {
-                                        oldMouseItem.mesh.dispatch(Mesh.out)
+                                        oldMouseItem.mesh.dispatch(Mesh.out, {x: tMouse.x, y: tMouse.y})
                                     }
                                     if (currentMouseItem) {
-                                        currentMouseItem.mesh.dispatch(Mesh.over)
+                                        currentMouseItem.mesh.dispatch(Mesh.over, {x: tMouse.x, y: tMouse.y})
                                     }
                                     oldMouseItem = currentMouseItem
                                 } else {
                                     if (oldMouseItem && tMouse.move) {
-                                        oldMouseItem.mesh.dispatch(Mesh.move)
+                                        oldMouseItem.mesh.dispatch(Mesh.move, {x: tMouse.x, y: tMouse.y})
                                     }
                                 }
                             }
