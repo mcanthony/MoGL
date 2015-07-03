@@ -98,12 +98,10 @@ var Geometry = (function () {
                         if (isUV) tUV.push(vertex[k+info.u], vertex[k+info.v]);
                         if (isColor) tCo.push(vertex[k+info.r], vertex[k+info.g], vertex[k+info.b], vertex[k+info.a]);
                     }
-                    //position[this] = new Float32Array(pos);
-                    position[this] = pos;
+                    position[this] = new Float32Array(pos);
                 } else {
                     len = 3;
-                    //position[this] = vertex instanceof Float32Array ? vertex : new Float32Array(vertex);
-                    position[this] = vertex;
+                    position[this] = vertex instanceof Float32Array ? vertex : new Float32Array(vertex);
                 }
                 if (!isNormal) calcNormal(nm, info ? pos : vertex, tIndex);
                 normal[this] = new Float32Array(nm);
@@ -111,8 +109,7 @@ var Geometry = (function () {
                 triangleCount[this] = tIndex.length / 3,
                 uv[this] = new Float32Array(tUV),
                 color[this] = new Float32Array(tCo),
-                //index[this] = tIndex instanceof Uint32Array ? tIndex : new Uint32Array(tIndex);
-                index[this] = tIndex;
+                index[this] = tIndex instanceof Uint32Array ? tIndex : new Uint32Array(tIndex);
             };
         })()
     })

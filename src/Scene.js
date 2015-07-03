@@ -42,7 +42,8 @@ var Scene = (function () {
                 mesh : [],
                 material : [],
                 camera : [],
-                merged : []
+                merged : [],
+                update : []
             },
             baseLightRotate[this] = [0, -1, -1];
 
@@ -181,12 +182,16 @@ var Scene = (function () {
                 v.addEventListener(Mesh.changed, function() {
                     p2.mesh.push(v);
                 });
-                mat.dispatch(Material.load,mat);
 
+                v.addEventListener(MoGL.updated, function () {
+                    p2.update.push(this)
+                });
+
+
+                mat.dispatch(Material.load,mat);
                 if(childrenArray[this].indexOf(v) == -1) {
                     childrenArray[this].push(v);
                 }
-
                 p2.merged.push(v)
                 return this;
             }

@@ -477,17 +477,17 @@ var World = (function (makeUtil) {
             var mergedList = [
             ]
             var mergeCheck = (function () {
-                var mergeTable = {};
+                var mergeInfo = {};
                 var checkVertice = 0
-                var max = 10
-                return function mergeCheck(v) {
+                var max = 30
+                return function mergeCheck(v,v2) {
                     // max 단위로 끊어서 관리해보자
                     if(v.length && checkVertice == 0) {
                         mergedList.push({
                             vertex : [],
                             index : [],
-                            position : [],
                             color:[],
+                            position : [],
                             rotate : [],
                             scale : [],
                             vertexBuffer : null,
@@ -495,43 +495,84 @@ var World = (function (makeUtil) {
                             positionBuffer : null
                         })
                     }
-                    var mergeData = mergedList[mergedList.length-1]
+                    var mergeData
                     var i = v.length;
-                    var temp;
+                    var temp,uuid;
                     while (i--) {
                         temp = v[0]
+                        if(!temp) return
+                        uuid = temp.uuid
+                        var vertexPosition =priGeo[uuid].position
+                        if(!mergeInfo[uuid]){
+                            checkVertice++
+                            mergeData = mergedList[mergedList.length-1]
+                            mergeInfo[uuid] = {
+                                idx : mergedList.length-1,
+                                mergeData : mergeData,
+                                start: mergeData.vertex.length
+                            }
 
-                        var position =priGeo[temp.uuid].position
-                        if(!mergeTable[temp]){
-                            for(var j=0; j<position.length; j++){
-                                mergeData.vertex.push(position[j])
+                            // 버텍스입력하고
+                            for(var j=0; j<vertexPosition.length; j++){
+                                mergeData.vertex.push(vertexPosition[j])
                             }
                             var lastLength = mergeData.vertexBuffer ? mergeData.vertexBuffer.numItem : 0
-                            mergeData.vertexBuffer = makeVBO(tGPU, 'mergeVBO'+mergedList.length, mergeData.vertex, 3)
-                            for (var j = 0; j < priGeo[temp.uuid].index.length; j++) {
-                                mergeData.index.push(lastLength + priGeo[temp.uuid].index[j])
+
+                            // 인덱스 입력하고
+                            for (var j = 0; j < priGeo[uuid].index.length; j++) {
+                                mergeData.index.push(lastLength + priGeo[uuid].index[j])
                             }
+
+                            // 프로퍼티 입력하고
+                            for (var j = 0; j < vertexPosition.length/3; j++) {
+                                mergeData.position.push(temp.x, temp.y, temp.z)
+                                mergeData.rotate.push(temp.rotateX, temp.rotateY, temp.rotateZ)
+                                mergeData.scale.push(temp.scaleX, temp.scaleY, temp.scaleZ)
+                            }
+                            // 버퍼맹금
+                            console.log('설마이걸다하니',mergedList.length)
                             mergeData.vertexBuffer = makeVBO(tGPU, 'mergeVBO'+mergedList.length, mergeData.vertex, 3),
                             mergeData.indexBuffer = makeIBO(tGPU, 'mergeIBO'+mergedList.length, mergeData.index, 1);
+                            mergeData.positionBuffer = makeVBO(tGPU, 'mergePosition'+mergedList.length, mergeData.position, 3)
+                            mergeData.scaleBuffer = makeVBO(tGPU, 'mergeScale'+mergedList.length, mergeData.scale, 3)
+                            mergeData.rotateBuffer = makeVBO(tGPU, 'mergeRotate'+mergedList.length, mergeData.rotate, 3)
                         }
-                        for (var j = 0; j < position.length/3; j++) {
-                            mergeData.position.push(temp.x, temp.y, temp.z)
-                            mergeData.rotate.push(temp.rotateX, temp.rotateY, temp.rotateZ)
-                            mergeData.scale.push(temp.scaleX, temp.scaleY, temp.scaleZ)
-                        }
-                        mergeData.positionBuffer = makeVBO(tGPU, 'mergePosition'+mergedList.length, mergeData.position, 3)
-                        mergeData.scaleBuffer = makeVBO(tGPU, 'mergeScale'+mergedList.length, mergeData.scale, 3)
-                        mergeData.rotateBuffer = makeVBO(tGPU, 'mergeRotate'+mergedList.length, mergeData.rotate, 3),
-                        v.shift()
+                        if(v.length) {
+                            v.shift()
+                            if(v.length==0){
+                                i2 = v2.length;
+                                while (i2--) {
+                                    temp = v2[0]
+                                    if(temp){
+                                        uuid = temp.uuid
+                                        var vertexPosition =priGeo[uuid].position
+                                        mergeData = mergeInfo[uuid].mergeData
+                                        var aaa = mergeInfo[uuid].start
+                                        for (var j = 0; j < vertexPosition.length/3; j++) {
+                                            mergeData.position[aaa+j*3+0] =temp.x
+                                            mergeData.position[aaa+j*3+1] =temp.y
+                                            mergeData.position[aaa+j*3+2] =temp.z
+                                            mergeData.rotate[aaa+j*3] =temp.rotateX
+                                            mergeData.rotate[aaa+j*3+1] =temp.rotateY
+                                            mergeData.rotate[aaa+j*3+2] =temp.rotateZ
+                                            mergeData.scale[aaa+j*3+0] =temp.scaleX
+                                            mergeData.scale[aaa+j*3+1] =temp.scaleY
+                                            mergeData.scale[aaa+j*3+2] =temp.scaleZ
+                                        }
+                                        v2.shift()
+                                    }
 
-                        mergeTable[temp] = {
-                            idx : mergedList.length-1,
-                            uuid: temp.uuid,
-                            vertexStart: 0,
-                            numFace: 0
+                                }
+                                for(i2=0; i2<mergedList.length; i2++){
+                                    mergeData = mergedList[i2]
+                                    mergeData.positionBuffer = makeVBO(tGPU, 'mergePosition' + i2, mergeData.position, 3)
+                                    mergeData.scaleBuffer = makeVBO(tGPU, 'mergeScale' + i2, mergeData.scale, 3)
+                                    mergeData.rotateBuffer = makeVBO(tGPU, 'mergeRotate' + i2, mergeData.rotate, 3)
+                                }
+                            }
                         }
 
-                        checkVertice++
+
                         if(checkVertice==max){
                             checkVertice=0
                            return
@@ -582,7 +623,7 @@ var World = (function (makeUtil) {
                     while (j--) {
                         makeTexture(tGPU, tScene.updateList.material[j]);
                     }
-                    mergeCheck(tScene.updateList.merged)
+                    mergeCheck(tScene.updateList.merged,tScene.updateList.update)
 
                     if (tScene.updateList.camera.length) cameraRenderAreaUpdate(this);
                     tScene.updateList.mesh.length = 0,
@@ -719,7 +760,7 @@ var World = (function (makeUtil) {
 
                 }
                 this.dispatch(World.renderAfter, currentTime);
-                tGL.flush();
+                //tGL.flush();
                 //tGL.finish()
             }
         })()
