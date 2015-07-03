@@ -119,15 +119,15 @@
         mesh.x = -3
         mesh2.x = 3
 
-        mesh2.mouseEvent(Mesh.over, function(){
+        mesh2.addEventListener(Mesh.over, function(){
             console.log(this, '가 오버')
             this.material.wireFrame = true
         })
-        mesh2.mouseEvent(Mesh.out, function(){
+        mesh2.addEventListener(Mesh.out, function(){
             console.log(this, '가 아웃')
             this.material.wireFrame = false
         })
-        mesh2.mouseEvent(Mesh.down, function(){
+        mesh2.addEventListener(Mesh.down, function(){
             console.log(this, '가 다운')
         })
 
