@@ -28,6 +28,53 @@ var Shader = (function () {
             ]
         }
     )
+
+        .constant('colorMergeVShader', {
+            description: "컬러 버텍스 쉐이더",
+            sample: [
+                "console.log(Shader.colorMergeVShader);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'colorMergeVShader',
+                            attributes: ['vec3 aVertexPosition', 'vec3 aPosition', 'vec3 aRotate', 'vec3 aScale'],
+                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec4 uColor'],
+                            varyings: ['vec4 vColor'],
+                            function: [VertexShader.baseFunction],
+                            main: [
+                                'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(aPosition)*rotationMTX(aRotate)*scaleMTX(aScale)*vec4(aVertexPosition, 1.0);\n' +
+                                'vColor = uColor;'
+                            ]
+                        }))
+                }
+            })()
+        })
+        .constant('colorMergeFShader', {
+            description: "컬러 프레그먼트 쉐이더",
+            sample: [
+                "console.log(Shader.colorMergeFShader);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'colorMergeFShader',
+                            precision: 'mediump float',
+                            uniforms: [],
+                            varyings: ['vec4 vColor'],
+                            function: [],
+                            main: [
+                                'gl_FragColor =  vColor;'
+                            ]
+                        }))
+                }
+            })()
+        })
+
+
+
         .constant('colorVertexShader', {
             description: "컬러 버텍스 쉐이더",
             sample: [

@@ -9,7 +9,8 @@
     <meta name="format-detection" content="telephone=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
     <style>
         body {
             background-color: #000;
@@ -44,7 +45,7 @@
     <script src="../src/Group.js"></script>
     <script src="../src/Camera.js"></script>
     <script src="../src/Scene.js"></script>
-    <script src="../src/World.js"></script>
+    <script src="../src/World2.js"></script>
 </head>
 <body>
 <img src="monkey/Suzanne.jpg" id="testIMG2" style="position: absolute;top:0px; display:none" width="256" height="256">
@@ -83,7 +84,7 @@
     xmlhttp.onreadystatechange = function () {
         if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
             var geo = getGeometry(JSON.parse(xmlhttp.responseText));
-            makeItems(geo)
+            makeItems(Primitive.cube())
             world.setAutoSize(1)
             world.start()
         }
@@ -94,13 +95,16 @@
         var meshs, item, PI2, i;
         meshs = []
         PI2 = Math.PI * 2;
-        for (i = 0; i < 500; i++) {
+        for (i = 0; i < 1000; i++) {
             var a = new Material(Math.random(),Math.random(),Math.random(),1)
             if (i % 5 == 0) a.addTexture(Texture.diffuse, texture)
             item = new Mesh(geo, a);
             a.shading = Shading.phong
-            item.position = [Math.random() * 50 - 25, Math.random() * 50 - 25, Math.random() * 50 - 25]
-            item.rotate = [Math.random() * PI2,Math.random() * PI2,Math.random() * PI2];
+            item.x = Math.random() * 50 - 25
+            item.y = Math.random() * 50 - 25
+            item.z = Math.random() * 50 - 25
+            item.rotate = [Math.random() * PI2, Math.random() * PI2, Math.random() * PI2];
+            item.scaleX = item.scaleY = item.scaleZ = Math.random()
             scene.addChild(item);
             meshs.push(item);
         }
@@ -113,16 +117,16 @@
             divCurrentFPS.textContent = currentFPS.toFixed(2);
             divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
 
-            var i = meshs.length,item;
-            while (i--) {
-                item = meshs[i],
-                item.rotateX += 0.05,
-                item.rotateY += 0.05,
-                item.rotateZ += 0.05
-            }
+            var i = meshs.length, item;
+//            while (i--) {
+//                item = meshs[i],
+//                        item.rotateX += 0.01,
+//                        item.rotateY += 0.01,
+//                        item.rotateZ += 0.01
+//            }
             camera.x = Math.sin(count / 50) * 50,
             camera.y = Math.cos(count / 100) * 50,
-            camera.z = Math.cos(count / 100) * 50 + Math.sin(count / 100) * 50,
+            camera.z = Math.cos(count / 100) * 50 + Math.sin(count / 100) * 50
             camera.lookAt(0, 0, 0);
         })
     }

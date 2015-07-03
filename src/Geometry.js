@@ -71,7 +71,7 @@ var Geometry = (function () {
                 var len, i, j, k, isNormal, isUV, isColor;
                 if (!Array.isArray(vertex) && !(vertex instanceof Float32Array)) {
                     this.error(0);
-                } else if (!Array.isArray(tIndex) && !(tIndex instanceof Uint16Array)) {
+                } else if (!Array.isArray(tIndex) && !(tIndex instanceof Uint32Array) ) {
                     this.error(1);
                 }
                 pos.length = nm.length = tUV.length = tCo.length = 0;
@@ -98,10 +98,12 @@ var Geometry = (function () {
                         if (isUV) tUV.push(vertex[k+info.u], vertex[k+info.v]);
                         if (isColor) tCo.push(vertex[k+info.r], vertex[k+info.g], vertex[k+info.b], vertex[k+info.a]);
                     }
-                    position[this] = new Float32Array(pos);
+                    //position[this] = new Float32Array(pos);
+                    position[this] = pos;
                 } else {
                     len = 3;
-                    position[this] = vertex instanceof Float32Array ? vertex : new Float32Array(vertex);
+                    //position[this] = vertex instanceof Float32Array ? vertex : new Float32Array(vertex);
+                    position[this] = vertex;
                 }
                 if (!isNormal) calcNormal(nm, info ? pos : vertex, tIndex);
                 normal[this] = new Float32Array(nm);
@@ -109,7 +111,8 @@ var Geometry = (function () {
                 triangleCount[this] = tIndex.length / 3,
                 uv[this] = new Float32Array(tUV),
                 color[this] = new Float32Array(tCo),
-                index[this] = tIndex instanceof Uint16Array ? tIndex : new Uint16Array(tIndex);
+                //index[this] = tIndex instanceof Uint32Array ? tIndex : new Uint32Array(tIndex);
+                index[this] = tIndex;
             };
         })()
     })

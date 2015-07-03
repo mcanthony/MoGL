@@ -41,10 +41,12 @@ var Scene = (function () {
             updateList[this] = {
                 mesh : [],
                 material : [],
-                camera : []
+                camera : [],
+                merged : []
             },
             baseLightRotate[this] = [0, -1, -1];
 
+            this.addVertexShader(Shader.colorMergeVShader), this.addFragmentShader(Shader.colorMergeFShader),
             this.addVertexShader(Shader.colorVertexShader), this.addFragmentShader(Shader.colorFragmentShader),
             this.addVertexShader(Shader.wireFrameVertexShader), this.addFragmentShader(Shader.wireFrameFragmentShader),
             this.addVertexShader(Shader.bitmapVertexShader), this.addFragmentShader(Shader.bitmapFragmentShader),
@@ -184,6 +186,8 @@ var Scene = (function () {
                 if(childrenArray[this].indexOf(v) == -1) {
                     childrenArray[this].push(v);
                 }
+
+                p2.merged.push(v)
                 return this;
             }
         }
