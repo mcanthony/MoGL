@@ -1,28 +1,31 @@
 var makeUtil = (function(){
     'use strict';
-    var makeBuffer = function makeBuffer(gl, target, data, stribe) {
-        var buffer = gl.createBuffer();
-        gl.bindBuffer(target, buffer),
-        gl.bufferData(target, data, gl.STATIC_DRAW),
-        buffer.data = data,
-        buffer.stride = stribe,
-        buffer.numItem = data.length / stribe,
+    var makeBuffer = function makeBuffer(gl, target, data, stride,buffer) {
+        var tBuffer = buffer ? buffer : gl.createBuffer();
+        gl.bindBuffer(target, tBuffer),
+        gl.bufferData(target, data, gl.DYNAMIC_DRAW),
+        tBuffer.data = data,
+        tBuffer.stride = stride,
+        tBuffer.numItem = data.length / stride,
         gl.bindBuffer(target, null);
-        return buffer;
+        return tBuffer;
     };
     return {
         makeVBO:function makeVBO(gpu, geo, data, stribe) {
             var gl, buffer;
             gl = gpu.gl,
             buffer = gpu.vbo[geo];
-            if (buffer) return;
+            //if (buffer) return;
+            var t
+            if (buffer) t = buffer
             if(Array.isArray(data)) {
                 data = new Float32Array(data);
             }
-            buffer = makeBuffer(gl, gl.ARRAY_BUFFER, data, stribe),
+            buffer = makeBuffer(gl, gl.ARRAY_BUFFER, data, stribe, t),
             buffer.name = geo,
             buffer.type = 'VBO',
             gpu.vbo[geo] = buffer;
+            return buffer;
         },
         makeVNBO:function makeVNVO(gpu, geo, data, stribe) {
             var gl, buffer;
@@ -36,19 +39,23 @@ var makeUtil = (function(){
             buffer.name = geo,
             buffer.type = 'VNBO';
             gpu.vnbo[geo] = buffer;
+            return buffer;
         },
         makeIBO:function makeIBO(gpu, geo, data, stribe) {
             var gl, buffer;
             gl = gpu.gl,
             buffer = gpu.ibo[geo];
-            if (buffer) return;
+            //if (buffer) return;
+            var t
+            if (buffer) t = buffer
             if (Array.isArray(data)) {
-                data = new Uint16Array(data);
+                data = new Uint32Array(data);
             }
-            buffer = makeBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, data, stribe),
+            buffer = makeBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, data, stribe,t),
             buffer.name = geo,
             buffer.type = 'IBO';
             gpu.ibo[geo] = buffer;
+            return buffer;
         },
         makeUVBO:function makeUVBO(gpu, geo, data, stribe) {
             var gl, buffer;
@@ -62,6 +69,7 @@ var makeUtil = (function(){
             buffer.name = geo,
             buffer.type = 'UVBO';
             gpu.uvbo[geo] = buffer;
+            return buffer;
         },
         makeProgram:function makeProgram(gpu, name, vSource, fSource) {
             var gl, vShader, fShader, program, i, len, tList;

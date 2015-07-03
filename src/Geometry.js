@@ -71,7 +71,7 @@ var Geometry = (function () {
                 var len, i, j, k, isNormal, isUV, isColor;
                 if (!Array.isArray(vertex) && !(vertex instanceof Float32Array)) {
                     this.error(0);
-                } else if (!Array.isArray(tIndex) && !(tIndex instanceof Uint16Array)) {
+                } else if (!Array.isArray(tIndex) && !(tIndex instanceof Uint32Array) ) {
                     this.error(1);
                 }
                 pos.length = nm.length = tUV.length = tCo.length = 0;
@@ -109,7 +109,7 @@ var Geometry = (function () {
                 triangleCount[this] = tIndex.length / 3,
                 uv[this] = new Float32Array(tUV),
                 color[this] = new Float32Array(tCo),
-                index[this] = tIndex instanceof Uint16Array ? tIndex : new Uint16Array(tIndex);
+                index[this] = tIndex instanceof Uint32Array ? tIndex : new Uint32Array(tIndex);
             };
         })()
     })
