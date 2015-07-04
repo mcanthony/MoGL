@@ -39,13 +39,13 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'colorMergeVShader',
-                            attributes: ['vec3 aVertexPosition', 'vec3 aPosition', 'vec3 aRotate', 'vec3 aScale'],
-                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec4 uColor'],
+                            attributes: ['vec3 aVertexPosition', 'vec3 aPosition', 'vec3 aRotate', 'vec3 aScale', 'vec4 aColor'],
+                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix'],
                             varyings: ['vec4 vColor'],
                             function: [VertexShader.baseFunction],
                             main: [
                                 'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(aPosition)*rotationMTX(aRotate)*scaleMTX(aScale)*vec4(aVertexPosition, 1.0);\n' +
-                                'vColor = uColor;'
+                                'vColor = aColor;'
                             ]
                         }))
                 }
