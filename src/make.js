@@ -1,6 +1,6 @@
 var makeUtil = (function(){
     'use strict';
-    var makeBuffer = function makeBuffer(gl, target, data, stride,buffer) {
+    var makeBuffer = function makeBuffer(gl, target, data, stride, buffer) {
         var tBuffer = buffer ? buffer : gl.createBuffer();
         gl.bindBuffer(target, tBuffer),
         gl.bufferData(target, data, gl.DYNAMIC_DRAW),

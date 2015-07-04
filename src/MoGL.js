@@ -656,7 +656,7 @@ var MoGL = (function() {
                 "city1.dispatch( 'updated', city.isUpdated );"
             ],
             value:function dispatch(ev) {
-                var target, arg, i, j, k, l;
+                var target, arg, i, j, k;
                 if (listener[this] && listener[this][ev]) {
                     if(arguments.length > 1) arg = Array.prototype.slice.call(arguments, 1);//만약 추가로 보낸 인자가 있다면 리스너에게 apply해줌.
                     for (target = listener[this][ev], i = 0, j = target.length ; i < j ; i++) {

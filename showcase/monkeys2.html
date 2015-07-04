@@ -97,8 +97,8 @@
         var meshs, item, PI2, i;
         meshs = []
         PI2 = Math.PI * 2;
-        for (i = 0; i < 1000; i++) {
-            var a = new Material(Math.random(), Math.random(), Math.random(), 1)
+        for (i = 0; i <1000; i++) {
+            var a = new Material(Math.random(), Math.random(), Math.random(), Math.random())
             if (i % 5 == 0) a.addTexture(Texture.diffuse, texture)
             item = new Mesh(geo, a);
             a.shading = Shading.phong
@@ -106,10 +106,11 @@
             item.y = Math.random() * 50 - 25
             item.z = Math.random() * 50 - 25
             item.rotate = [Math.random() * PI2, Math.random() * PI2, Math.random() * PI2];
-            item.scaleX = item.scaleY = item.scaleZ = Math.random()
+            item.scaleX = item.scaleY = item.scaleZ = Math.random()*3
             scene.addChild(item);
-            meshs.push(item);
+            meshs.push(item.setId('item'+i));
         }
+
 
         var currentFPS, prevTime = 0, count = 0, sum = 0
 
@@ -120,20 +121,19 @@
             divCurrentFPS.textContent = currentFPS.toFixed(2);
             divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
 
-            var i = 100, item;
+            var i = meshs.length, item;
+//            var i = 100, item;
             while (i--) {
                 item = meshs[i],
-                item.scaleX = 2
-                item.scaleY = 2
-                item.scaleZ = 2
+
                 item.rotateX += 0.05,
                 item.rotateY += 0.05,
                 item.rotateZ += 0.05
 //                item.isUpdated = 1
             }
-            camera.x = Math.sin(count / 50*0.5) * 50,
-            camera.y = Math.cos(count / 100*0.5) * 50,
-            camera.z = Math.cos(count / 100*0.5) * 50 + Math.sin(count / 100*0.5) * 50
+            camera.x = Math.sin(count / 50) * 50,
+            camera.y = Math.cos(count / 100) * 50,
+            camera.z = Math.cos(count / 100) * 50 + Math.sin(count / 100) * 50
             camera.lookAt(0, 0, 0);
 
         })

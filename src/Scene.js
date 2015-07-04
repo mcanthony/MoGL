@@ -43,6 +43,7 @@ var Scene = (function () {
                 material : [],
                 camera : [],
                 merged : [],
+                removeMerged : [],
                 update : []
             },
             baseLightRotate[this] = [0, -1, -1];
@@ -538,12 +539,15 @@ var Scene = (function () {
                 "scene.removeChild('targetID');"
             ],
             value: function removeChild(id) {
-                var p, k, result;
+                var p,p2, k, result;
+                p2 = updateList[this]
                 p = children[this],
                     result = false;
                 for (k in p) {
                     if (p[k].id == id) {
                         childrenArray[this].splice(childrenArray[this].indexOf(p[k]), 1);
+                        p[k].removeEventListener(MoGL.updated)
+                        p2.removeMerged.push(p[k])
                         delete p[k],
                         result = true;
                     }
