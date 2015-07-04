@@ -98,7 +98,7 @@
         var meshs, item, PI2, i;
         meshs = []
         PI2 = Math.PI * 2;
-        for (i = 0; i <2000; i++) {
+        for (i = 0; i <3000; i++) {
             var a = new Material(Math.random(), Math.random(), Math.random(), Math.random())
             if (i % 5 == 0) a.addTexture(Texture.diffuse, texture)
             item = new Mesh(geo, a);
@@ -107,7 +107,7 @@
             item.y = Math.random() * 50 - 25
             item.z = Math.random() * 50 - 25
             item.rotate = [Math.random() * PI2, Math.random() * PI2, Math.random() * PI2];
-            item.scaleX = item.scaleY = item.scaleZ = 0.5
+            item.scaleX = item.scaleY = item.scaleZ =Math.random() *2
             scene.addChild(item);
             meshs.push(item);
         }
@@ -122,16 +122,16 @@
             divCurrentFPS.textContent = currentFPS.toFixed(2);
             divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
 
-//            var i = meshs.length, item;
-            var i = 100, item;
-            while (i--) {
-                item = meshs[i],
-                item.scaleX = item.scaleY = item.scaleZ = 3
-                item.rotateX += 0.05,
-                item.rotateY += 0.05,
-                item.rotateZ += 0.05
-                item.isUpdated = 1
-            }
+            var i = meshs.length, item;
+//            var i = 100, item;
+//            while (i--) {
+//                item = meshs[i],
+//                item.scaleX = item.scaleY = item.scaleZ = 3
+//                item.rotateX += 0.05,
+//                item.rotateY += 0.05,
+//                item.rotateZ += 0.05
+////                item.isUpdated = 1
+//            }
             camera.x = Math.sin(count / 50) * 50,
             camera.y = Math.cos(count / 100) * 50,
             camera.z = Math.cos(count / 100) * 50 + Math.sin(count / 100) * 50
