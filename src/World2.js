@@ -480,6 +480,7 @@ var World = (function (makeUtil) {
                     }
                     // 머지추가 리스트를 돌면서 머지한다.
                     i = v.length;
+                    var changes = {}
                     while (i--) {
                         temp = v[0]
                         if(!temp) return
@@ -516,6 +517,7 @@ var World = (function (makeUtil) {
                                 mergeData.color.push(tColor[0],tColor[1],tColor[2],tColor[3])
                             }
                             // 버퍼맹금
+                            // TODO 이걸 가능한 적게 실행되게 해야되는군..
                             mergeData.vertexBuffer = makeVBO(tGPU, 'mergeVBO'+mergedList.length, mergeData.vertex, 3),
                             mergeData.indexBuffer = makeIBO(tGPU, 'mergeIBO'+mergedList.length, mergeData.index, 1);
                             mergeData.positionBuffer = makeVBO(tGPU, 'mergePosition'+mergedList.length, mergeData.position, 3)
@@ -524,6 +526,7 @@ var World = (function (makeUtil) {
                             mergeData.colorBuffer = makeVBO(tGPU, 'mergeColor'+mergedList.length, mergeData.color, 4)
                             checkVertice+=mergeData.vertex.length/3
                         }
+                        changes[mergeInfo[uuid].idx] = mergeData
                         if(v.length) {
                             v.shift()
                         }
