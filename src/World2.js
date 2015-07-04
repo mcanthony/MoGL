@@ -455,7 +455,7 @@ var World = (function (makeUtil) {
             var mergeInfo = {};
             var mergeCheck = (function () {
                 var checkVertice = 0
-                var max = 10000,lastLength
+                var max = 20000,lastLength
                 var mergeData, i, temp, uuid;
                 var vertex,len,tColor;
                 return function mergeCheck(v,v2,v3) {
@@ -558,8 +558,8 @@ var World = (function (makeUtil) {
                                     mergeData.scale[t2] = temp.scaleZ
                                     //TODO 컬러변화도 넣어야되네..
                                 }
+                                changes[mergeInfo[uuid].idx] = mergeData
                                 v2.shift()
-                                changes[mergeData.idx] = mergeData
                             }
                         }
                         for(k in changes){
