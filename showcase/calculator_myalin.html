@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,target-densitydpi=medium-dpi"/>
+<title></title>
+
+<script src="../src/$.js"></script>
+<script src="../src/make.js"></script>
+<script src="../src/MoGL.js"></script>
+<script src="../src/BlendMode.js"></script>
+<script src="../src/Filter.js"></script>
+<script src="../src/Primitive.js"></script>
+<script src="../src/Vertex.js"></script>
+<script src="../src/Shading.js"></script>
+<script src="../src/VertexShaderFunctions.js"></script>
+<script src="../src/Shader.js"></script>
+<script src="../src/Matrix.js"></script>
+<script src="../src/Texture.js"></script>
+<script src="../src/Geometry.js"></script>
+<script src="../src/Material.js"></script>
+<script src="../src/Mesh.js"></script>
+<script src="../src/Group.js"></script>
+<script src="../src/Camera.js"></script>
+<script src="../src/Scene.js"></script>
+<script src="../src/World.js"></script>
+
+<script src="./js/myalin/model.js"></script>
+<script src="./js/myalin/view.js"></script>
+<script src="./js/myalin/control.js"></script>
+
+</head>
+<body>
+
+<canvas id='canvas' width='300' height='300'></canvas>
+<canvas id='numPrinter' width='100' height='100' style='background-Color:whitesmoke;display:none;'></canvas>
+<script>
+
+var data = {
+    'output': { 'x': '-2', 'y': -4, 'rotate':  Math.PI / 2, 'scale': 2 },
+    'inputs':[
+    { 'input': 7, 'x': -4, 'y': 4, 'rotate': Math.PI / 2, 'scale': 2 },
+    { 'input': 8, 'x': -2, 'y': 4, 'rotate': Math.PI / 2, 'scale': 2 },
+    { 'input': 9, 'x': -0, 'y': 4, 'rotate': Math.PI / 2, 'scale': 2 },
+    { 'input': '/', 'x': 2, 'y': 4, 'rotate': Math.PI / 2, 'scale': 2 },
+
+    { 'input': 4, 'x': -4, 'y': 2, 'rotate': Math.PI / 2, 'scale': 2 },
+    { 'input': 5, 'x': -2, 'y': 2, 'rotate': Math.PI / 2, 'scale': 2 },
+    { 'input': 6, 'x': -0, 'y': 2, 'rotate': Math.PI / 2, 'scale': 2 },
+    { 'input': 'x', 'x': 2, 'y': 2, 'rotate': Math.PI / 2, 'scale': 2 },
+
+    { 'input': 1, 'x': -4, 'y': 0, 'rotate': Math.PI / 2, 'scale': 2 },
+    { 'input': 2, 'x': -2, 'y': 0, 'rotate': Math.PI / 2, 'scale': 2 },
+    { 'input': 3, 'x': -0, 'y': 0, 'rotate': Math.PI / 2, 'scale': 2 },
+    { 'input': '-', 'x': 2, 'y': 0, 'rotate': Math.PI / 2, 'scale': 2 },
+
+    { 'input': 0, 'x': -2, 'y': -2, 'rotate': Math.PI / 2, 'scale': 2 },
+    { 'input': '=', 'x': -0, 'y': -2, 'rotate': Math.PI / 2, 'scale': 2 },
+    { 'input': '+', 'x': 2, 'y': -2, 'rotate': Math.PI / 2, 'scale': 2 }
+    ]
+}
+
+model.init(data);
+ctrl.init( model, view );
+view.render();
+
+</script>
+
+<input id='output' type='text' />
+</body>
+</html>
