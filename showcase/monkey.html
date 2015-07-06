@@ -75,7 +75,7 @@
     scene.addChild(camera)
 
     var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open('GET', 'monkey/monkey.babylon', true);
+    xmlhttp.open('GET', 'monkey/monkey.json', true);
     xmlhttp.onreadystatechange = function () {
         if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
             var geo = getGeometry(JSON.parse(xmlhttp.responseText));
