@@ -39,13 +39,17 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'colorMergeVShader',
-                            attributes: ['vec3 aVertexPosition', 'vec3 aPosition', 'vec3 aRotate', 'vec3 aScale', 'vec4 aColor'],
+                            attributes: ['vec3 aVertexPosition', 'vec3 aPosition', 'vec3 aRotate', 'vec3 aScale', 'vec4 aColor','vec3 aUV'],
                             uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix'],
-                            varyings: ['vec4 vColor'],
+                            varyings: ['vec4 vColor','vec2 vUV','float vIDX'],
                             function: [VertexShader.baseFunction],
                             main: [
+                                'vec3 test = aUV;'+
                                 'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(aPosition)*rotationMTX(aRotate)*scaleMTX(aScale)*vec4(aVertexPosition, 1.0);\n' +
-                                'vColor = aColor;'
+                                'vColor = aColor;' +
+                                'vIDX = aUV.x;'+
+                                'vUV = aUV.yz;'
+
                             ]
                         }))
                 }
@@ -62,11 +66,19 @@ var Shader = (function () {
                     return cache || (cache = new Shader({
                             id: 'colorMergeFShader',
                             precision: 'mediump float',
-                            uniforms: [],
-                            varyings: ['vec4 vColor'],
+                            uniforms: ['sampler2D uSampler0','sampler2D uSampler1','sampler2D uSampler2'],
+                            varyings: ['vec4 vColor','vec2 vUV','float vIDX'],
                             function: [],
                             main: [
-                                'gl_FragColor =  vColor;'
+                                ' if(vIDX == 0.0){\n' +
+                                '   gl_FragColor =  vColor;\n'+
+                                ' } else if(vIDX <=1.0){\n' +
+                                '   gl_FragColor =  texture2D(uSampler0, vUV);\n' +
+                                ' } else if(vIDX <=2.0){\n' +
+                                '   gl_FragColor =  texture2D(uSampler1, vUV);\n' +
+                                ' } else {\n' +
+                                '   gl_FragColor =  texture2D(uSampler2, vUV);\n' +
+                                ' }'
                             ]
                         }))
                 }

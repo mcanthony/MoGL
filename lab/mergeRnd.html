@@ -48,7 +48,9 @@
     <script src="../src/World2.js"></script>
 </head>
 <body>
+<img src="../showcase/monkey/Suzanne.jpg" id="testIMG3" style="position: absolute;top:0px; display:none" width="256" height="256">
 <img src="../showcase/monkey/Suzanne.jpg" id="testIMG2" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="woman/woman.png" id="testIMG" style="position: absolute;top:0px; display:none" width="256" height="256">
 <canvas id="canvas"></canvas>
 <div class="FPS">
     Current FPS: <span id="currentFPS"></span>
@@ -73,10 +75,14 @@
     scene.addChild(camera)
 
 
-    var material, texture;
+    var material, texture,texture2,texture3;
     material = new Material('#fff')
     texture = new Texture()
-    texture.img = document.getElementById('testIMG2')
+    texture.img = document.getElementById('testIMG')
+    texture2 = new Texture()
+    texture2.img = document.getElementById('testIMG2')
+    texture3 = new Texture()
+    texture3.img = document.getElementById('testIMG3')
     scene.addMaterial(material.setId('material'));
 
 
@@ -98,9 +104,12 @@
         var meshs, item, PI2, i;
         meshs = []
         PI2 = Math.PI * 2;
-        for (i = 0; i <3000; i++) {
+        for (i = 0; i <1000; i++) {
             var a = new Material(Math.random(), Math.random(), Math.random(), Math.random())
-            if (i % 5 == 0) a.addTexture(Texture.diffuse, texture)
+//            var a = new Material()
+            if (i % 4 == 0) a.addTexture(Texture.diffuse, texture)
+            if (i % 4 == 1) a.addTexture(Texture.diffuse, texture2)
+            if (i % 4 == 2) a.addTexture(Texture.diffuse, texture3)
             item = new Mesh(geo, a);
             a.shading = Shading.phong
             item.x = Math.random() * 50 - 25
@@ -123,7 +132,7 @@
             divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
 
             var i = meshs.length, item;
-//            var i = 100, item;
+//            var i = 500, item;
 //            while (i--) {
 //                item = meshs[i],
 //                item.scaleX = item.scaleY = item.scaleZ = 3
