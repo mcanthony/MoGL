@@ -48,7 +48,17 @@
     <script src="../src/World2.js"></script>
 </head>
 <body>
-<img src="../showcase/monkey/Suzanne.jpg" id="testIMG2" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="../showcase/calulator/num0.png" id="testIMG0" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="../showcase/calulator/num1.png" id="testIMG1" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="../showcase/calulator/num2.png" id="testIMG2" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="../showcase/calulator/num3.png" id="testIMG3" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="../showcase/calulator/num4.png" id="testIMG4" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="../showcase/calulator/num5.png" id="testIMG5" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="../showcase/calulator/num6.png" id="testIMG6" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="../showcase/calulator/num7.png" id="testIMG7" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="../showcase/calulator/num8.png" id="testIMG8" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="../showcase/calulator/num9.png" id="testIMG9" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="woman/woman.png" id="testIMG" style="position: absolute;top:0px; display:none" width="256" height="256">
 <canvas id="canvas"></canvas>
 <div class="FPS">
     Current FPS: <span id="currentFPS"></span>
@@ -69,14 +79,33 @@
     scene = new Scene()
     camera = new Camera()
 
+
     world.addScene(scene)
     scene.addChild(camera)
 
 
-    var material, texture;
+    var material, texture0,texture1,texture2,texture3,texture4,texture5,texture6,texture7,texture8;
     material = new Material('#fff')
-    texture = new Texture()
-    texture.img = document.getElementById('testIMG2')
+    texture0 = new Texture()
+    texture1 = new Texture()
+    texture2 = new Texture()
+    texture3 = new Texture()
+    texture4 = new Texture()
+    texture5 = new Texture()
+    texture6 = new Texture()
+    texture7 = new Texture()
+    texture8 = new Texture()
+
+
+    texture0.img = document.getElementById('testIMG0')
+    texture1.img = document.getElementById('testIMG1')
+    texture2.img = document.getElementById('testIMG2')
+    texture3.img = document.getElementById('testIMG3')
+    texture4.img = document.getElementById('testIMG4')
+    texture5.img = document.getElementById('testIMG5')
+    texture6.img = document.getElementById('testIMG6')
+    texture7.img = document.getElementById('testIMG7')
+    texture8.img = document.getElementById('testIMG8')
     scene.addMaterial(material.setId('material'));
 
 
@@ -98,14 +127,23 @@
         var meshs, item, PI2, i;
         meshs = []
         PI2 = Math.PI * 2;
-        for (i = 0; i <3000; i++) {
-            var a = new Material(Math.random(), Math.random(), Math.random(), Math.random())
-            if (i % 5 == 0) a.addTexture(Texture.diffuse, texture)
+        for (i = 0; i <1000; i++) {
+            var a = new Material(Math.random(), Math.random(), Math.random(),1.0)
+//            var a = new Material()
+            if (i % 9 == 0) a.addTexture(Texture.diffuse, texture0)
+            if (i % 9 == 1) a.addTexture(Texture.diffuse, texture1)
+            if (i % 9 == 2) a.addTexture(Texture.diffuse, texture2)
+            if (i % 9 == 3) a.addTexture(Texture.diffuse, texture3)
+            if (i % 9 == 4) a.addTexture(Texture.diffuse, texture4)
+            if (i % 9 == 5) a.addTexture(Texture.diffuse, texture5)
+            if (i % 9 == 6) a.addTexture(Texture.diffuse, texture6)
+            if (i % 9 == 7) a.addTexture(Texture.diffuse, texture7)
+            if (i % 9 == 8) a.addTexture(Texture.diffuse, texture8)
             item = new Mesh(geo, a);
             a.shading = Shading.phong
-            item.x = Math.random() * 50 - 25
-            item.y = Math.random() * 50 - 25
-            item.z = Math.random() * 50 - 25
+            item.x = Math.random() * 150 - 75
+            item.y = Math.random() * 150 - 75
+            item.z = Math.random() * 150 - 75
             item.rotate = [Math.random() * PI2, Math.random() * PI2, Math.random() * PI2];
             item.scaleX = item.scaleY = item.scaleZ =Math.random() *2
             scene.addChild(item);
@@ -124,17 +162,17 @@
 
             var i = meshs.length, item;
 //            var i = 100, item;
-//            while (i--) {
-//                item = meshs[i],
-//                item.scaleX = item.scaleY = item.scaleZ = 3
-//                item.rotateX += 0.05,
-//                item.rotateY += 0.05,
-//                item.rotateZ += 0.05
-////                item.isUpdated = 1
-//            }
-            camera.x = Math.sin(count / 50) * 50,
-            camera.y = Math.cos(count / 100) * 50,
-            camera.z = Math.cos(count / 100) * 50 + Math.sin(count / 100) * 50
+            while (i--) {
+                item = meshs[i],
+                item.scaleX = item.scaleY = item.scaleZ = 2
+                item.rotateX += 0.05,
+                item.rotateY += 0.05,
+                item.rotateZ += 0.05
+//                item.isUpdated = 1
+            }
+            camera.x = Math.sin(count / 50 * 0.5) * 50 ,
+            camera.y = Math.cos(count / 100 * 0.5) * 50,
+            camera.z = Math.cos(count / 100 * 0.5) * 50 + Math.sin(count / 100 * 0.5) * 50
             camera.lookAt(0, 0, 0);
 
         })

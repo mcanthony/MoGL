@@ -6,8 +6,9 @@ var makeUtil = (function(){
         gl.bufferData(target, data, gl.DYNAMIC_DRAW),
         tBuffer.data = data,
         tBuffer.stride = stride,
-        tBuffer.numItem = data.length / stride,
+        tBuffer.numItem = data.length / stride
         gl.bindBuffer(target, null);
+
         return tBuffer;
     };
     return {
