@@ -455,7 +455,7 @@ var World = (function (makeUtil) {
             var mergeInfo = {};
             var mergeCheck = (function () {
                 var checkVertice = 0
-                var max = 10000,lastLength
+                var max = 3000,lastLength
                 var mergeData, i, temp, uuid;
                 var vertex,len,tColor;
                 var changes = {}
@@ -502,7 +502,10 @@ var World = (function (makeUtil) {
                             // 버텍스입력하고
                             len = vertex.length
                             for (j = 0; j < len; j++) {
-                                mergeData.vertex.push(vertex[j])
+                                mergeData.vertex.push(vertex[j],vertex[j+1],vertex[j+2])
+                                mergeData.vertex.push(priGeo[uuid].normal[j],priGeo[uuid].normal[j+1],priGeo[uuid].normal[j+2])
+                                j++
+                                j++
                             }
                             // 인덱스 입력하고
                             len = priGeo[uuid].index.length
@@ -514,10 +517,15 @@ var World = (function (makeUtil) {
                             len = vertex.length / 3
                             var ttt = Math.random()
                             var ttt2 = 0
-                            if (ttt > 0.7) ttt2 = 0.0
-                            else if (ttt > 0.4) ttt2 = 1.0
-                            else if (ttt > 0.2) ttt2 = 2.0
-                            else ttt2 = 3.0
+                            if (ttt > 0.9) ttt2 = 0.0
+                            else if (ttt > 0.8) ttt2 = 1.0
+                            else if (ttt > 0.7) ttt2 = 2.0
+                            else if (ttt > 0.6) ttt2 = 3.0
+                            else if (ttt > 0.5) ttt2 = 4.0
+                            else if (ttt > 0.4) ttt2 = 5.0
+                            else if (ttt > 0.3) ttt2 = 6.0
+                            else if (ttt > 0.2) ttt2 = 7.0
+                            else ttt2 = 8.0
 
                             for (j = 0; j < len; j++) {
                                 tColor = priMatColor[priMat[uuid].uuid]
@@ -530,12 +538,14 @@ var World = (function (makeUtil) {
                             }
                             // 버퍼맹금
                             //// TODO 이걸 가능한 적게 실행되게 해야되는군..
-                            mergeData.vertexBuffer = makeVBO(tGPU, 'mergeVBO' + (mergedList.length-1), mergeData.vertex, 3),
-                            mergeData.indexBuffer = makeIBO(tGPU, 'mergeIBO' +  (mergedList.length-1), mergeData.index, 1);
 
-                            checkVertice+=vertex.length/3
-                            changes[mergeInfo[uuid].idx] = mergeData
-                            mergeData.idx = mergedList.length-1
+                            mergeData.vertexBuffer = makeVBO(tGPU, 'mergeVBO' + mergedList.length-1, mergeData.vertex, 6),
+                            mergeData.indexBuffer = makeIBO(tGPU, 'mergeIBO' +  mergedList.length-1, mergeData.index, 1);
+
+
+                            checkVertice+=vertex.length
+                            changes[mergeInfo[uuid].idx] = mergeInfo[uuid]
+
                         }
 
                         if(v.length) {
@@ -548,12 +558,14 @@ var World = (function (makeUtil) {
                         }
                     }
                     for(k in changes){
-                        mergeData = changes[k]
-                        mergeData.positionBuffer = makeVBO(tGPU, 'mergePosition' + k, mergeData.position, 3),
-                        mergeData.scaleBuffer = makeVBO(tGPU, 'mergeScale' + k, mergeData.scale, 3),
-                        mergeData.rotateBuffer = makeVBO(tGPU, 'mergeRotate' + k, mergeData.rotate, 3),
-                        mergeData.colorBuffer = makeVBO(tGPU, 'mergeColor' + k, mergeData.color, 4)
-                        mergeData.bitmapBuffer = makeVBO(tGPU, 'mergeBitmap' + k, mergeData.bitmap, 3)
+                        mergeData = changes[k].mergeData
+                        var idx = changes[k].idx
+
+                        mergeData.positionBuffer = makeVBO(tGPU, 'mergePosition' + idx, mergeData.position, 3),
+                        mergeData.scaleBuffer = makeVBO(tGPU, 'mergeScale' + idx, mergeData.scale, 3),
+                        mergeData.rotateBuffer = makeVBO(tGPU, 'mergeRotate' + idx, mergeData.rotate, 3),
+                        mergeData.colorBuffer = makeVBO(tGPU, 'mergeColor' + idx, mergeData.color, 4)
+                        mergeData.bitmapBuffer = makeVBO(tGPU, 'mergeBitmap' + idx, mergeData.bitmap, 3)
                         delete changes[k]
                     }
 
@@ -719,7 +731,7 @@ var World = (function (makeUtil) {
 
                                 var kk=0
                                 for (var k in tGPU.textures) {
-                                    if (kk == 3) break
+                                    if (kk == 9) break
                                     tGL.activeTexture(tGL['TEXTURE' + kk]);
                                     tGL.bindTexture(tGL.TEXTURE_2D, tGPU.textures[k]);
                                     tGL.uniform1i(tProgram['uSampler' + kk], kk);
@@ -733,28 +745,28 @@ var World = (function (makeUtil) {
                                     if(temp['positionBuffer']){
                                         tVBO = temp.vertexBuffer,
                                         tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
-                                        tGL.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, tGL.FLOAT, false, 0, 0),
+                                        tGL.vertexAttribPointer(tProgram.aVertexPosition, 3, tGL.FLOAT, false, 6*Float32Array.BYTES_PER_ELEMENT, 0*Float32Array.BYTES_PER_ELEMENT),
+                                        tGL.vertexAttribPointer(tProgram.aVertexNormal, 3, tGL.FLOAT, false, 6*Float32Array.BYTES_PER_ELEMENT, 3*Float32Array.BYTES_PER_ELEMENT),
 
                                         tVBO = temp.positionBuffer,
                                         tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
-                                        tGL.vertexAttribPointer(tProgram.aPosition, tVBO.stride, tGL.FLOAT, false, 0, 0),
+                                        tGL.vertexAttribPointer(tProgram.aPosition, tVBO.stride, tGL.FLOAT, false, tVBO.stride * Float32Array.BYTES_PER_ELEMENT, 0),
 
                                         tVBO = temp.rotateBuffer,
                                         tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
-                                        tGL.vertexAttribPointer(tProgram.aRotate, tVBO.stride, tGL.FLOAT, false, 0, 0),
+                                        tGL.vertexAttribPointer(tProgram.aRotate, tVBO.stride, tGL.FLOAT, false, tVBO.stride * Float32Array.BYTES_PER_ELEMENT, 0),
 
                                         tVBO = temp.scaleBuffer
                                         tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
-                                        tGL.vertexAttribPointer(tProgram.aScale, tVBO.stride, tGL.FLOAT, false, 0, 0),
+                                        tGL.vertexAttribPointer(tProgram.aScale, tVBO.stride, tGL.FLOAT, false, tVBO.stride * Float32Array.BYTES_PER_ELEMENT, 0),
 
                                         tVBO = temp.colorBuffer
                                         tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
-                                        tGL.vertexAttribPointer(tProgram.aColor, tVBO.stride, tGL.FLOAT, false, 0, 0),
+                                        tGL.vertexAttribPointer(tProgram.aColor, tVBO.stride, tGL.FLOAT, false, tVBO.stride * Float32Array.BYTES_PER_ELEMENT, 0),
 
                                         tVBO = temp.bitmapBuffer
                                         tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
-                                        tGL.vertexAttribPointer(tProgram.aUV, tVBO.stride, tGL.FLOAT, false, 0, 0)
-
+                                        tGL.vertexAttribPointer(tProgram.aUV, tVBO.stride, tGL.FLOAT, false, tVBO.stride * Float32Array.BYTES_PER_ELEMENT, 0),
 
 
                                         tIBO = temp.indexBuffer,
