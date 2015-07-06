@@ -455,7 +455,7 @@ var World = (function (makeUtil) {
             var mergeInfo = {};
             var mergeCheck = (function () {
                 var checkVertice = 0
-                var max = 3000,lastLength
+                var max = 30000,lastLength
                 var mergeData, i, temp, uuid;
                 var vertex,len,tColor;
                 var changes = {}
