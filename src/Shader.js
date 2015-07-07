@@ -76,24 +76,24 @@ var Shader = (function () {
                             function: [],
                             main: [
                                 '   vec4 diffuse;\n'+
-                                ' if(vIDX == 0.0){\n' +
+                                ' if(vIDX <= 2.0){\n' +
                                 '   diffuse =  vColor;\n'+
                                 ' } else {\n' +
-                                '   if(vIDX <=1.0){\n' +
+                                '   if(vIDX <=3.0){\n' +
                                 '      diffuse = texture2D( uSampler0, vUV);\n' + // 디퓨즈를 계산함
-                                '   } else if(vIDX <=2.0){\n' +
-                                '     diffuse = texture2D( uSampler1, vUV);\n' + // 디퓨즈를 계산함
-                                '   } else if(vIDX <=3.0){\n' +
-                                '     diffuse = texture2D( uSampler2, vUV);\n' + // 디퓨즈를 계산함
                                 '   } else if(vIDX <=4.0){\n' +
-                                '     diffuse = texture2D( uSampler3, vUV);\n' + // 디퓨즈를 계산함
+                                '     diffuse = texture2D( uSampler1, vUV);\n' + // 디퓨즈를 계산함
                                 '   } else if(vIDX <=5.0){\n' +
-                                '     diffuse = texture2D( uSampler4, vUV);\n' + // 디퓨즈를 계산함
+                                '     diffuse = texture2D( uSampler2, vUV);\n' + // 디퓨즈를 계산함
                                 '   } else if(vIDX <=6.0){\n' +
-                                '     diffuse = texture2D( uSampler5, vUV);\n' + // 디퓨즈를 계산함
+                                '     diffuse = texture2D( uSampler3, vUV);\n' + // 디퓨즈를 계산함
                                 '   } else if(vIDX <=7.0){\n' +
-                                '     diffuse = texture2D( uSampler6, vUV);\n' + // 디퓨즈를 계산함
+                                '     diffuse = texture2D( uSampler4, vUV);\n' + // 디퓨즈를 계산함
                                 '   } else if(vIDX <=8.0){\n' +
+                                '     diffuse = texture2D( uSampler5, vUV);\n' + // 디퓨즈를 계산함
+                                '   } else if(vIDX <=9.0){\n' +
+                                '     diffuse = texture2D( uSampler6, vUV);\n' + // 디퓨즈를 계산함
+                                '   } else if(vIDX <=10.0){\n' +
                                 '     diffuse = texture2D( uSampler7, vUV);\n' + // 디퓨즈를 계산함
                                 '   } else {\n' +
                                 '     diffuse = texture2D( uSampler8, vUV);\n' + // 디퓨즈를 계산함
@@ -128,7 +128,7 @@ var Shader = (function () {
 
                                 '      specular = max( dot(reflectDir, position), 0.5 );\n' +
                                 '      specular = pow(specular,uSpecularValue)*specColor[3];\n' +
-                                '      gl_FragColor = diffuse *light * ambientColor * ambientColor[3] + specular * specColor ;\n' +
+                                '      gl_FragColor = diffuse * light * ambientColor * ambientColor[3] + specular * specColor ;\n' +
                                 '      gl_FragColor.a = alpha;\n'
 
                             ]
