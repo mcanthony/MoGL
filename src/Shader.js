@@ -39,20 +39,22 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'colorMergeVShader',
-                            attributes: ['vec3 aVertexPosition', 'vec3 aVertexNormal','vec3 aPosition', 'vec3 aRotate', 'vec3 aScale', 'vec4 aColor','vec3 aUV'],
-                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix'],
+                            attributes: ['vec3 aVertexPosition', 'vec3 aVertexNormal', 'vec3 aScale', 'vec4 aColor','vec3 aUV','float aIDX'],
+                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix','vec3 uRotate[100]','vec3 uPosition[100]'],
                             varyings: ['vec4 vColor','vec2 vUV','float vIDX','vec3 vNormal', 'vec3 vPosition'],
                             function: [VertexShader.baseFunction],
                             main: [
-                                ' mat4 mv = uCameraMatrix*positionMTX(aPosition)*rotationMTX(aRotate)*scaleMTX(aScale);\n' +
+                                'vIDX = aUV.x;\n' +
+                                'vUV = aUV.yz;\n'+
+                                'vColor = aColor;\n'+
+                                'int t = int(aIDX);\n'+
+                                ' mat4 mv = uCameraMatrix*positionMTX(uPosition[t])*rotationMTX(uRotate[t])*scaleMTX(aScale);\n' +
                                 ' vec4 position = mv * vec4(aVertexPosition, 1.0);\n' +
                                 ' gl_Position = uPixelMatrix*position;\n' +
                                 ' vPosition = position.xyz;\n' +
-                                ' vNormal = (mv * vec4(-aVertexNormal, 0.0)).xyz;\n' +
+                                ' vNormal = (mv * vec4(-aVertexNormal, 0.0)).xyz;\n'
 
-                                'vIDX = aUV.x;\n' +
-                                'vUV = aUV.yz;\n'+
-                                'vColor = aColor;\n'
+
                             ]
                         }))
                 }

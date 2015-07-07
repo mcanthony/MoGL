@@ -89,10 +89,8 @@ var makeUtil = (function(){
             vShader.name = vSource.id,
             fShader.name = fSource.id,
             program.name = name;
-            if(!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-                // MoGL error를 사용할 수 없을까.
-                throw new Error('프로그램 셰이더 초기화 실패');
-            }
+
+
             gl.useProgram(program),
             tList = vSource.attributes,
             len = tList.length;
@@ -105,12 +103,27 @@ var makeUtil = (function(){
             tList = vSource.uniforms,
             i = tList.length;
             while (i--) {
-                program[tList[i]] = gl.getUniformLocation(program, tList[i]);
+                if(tList[i].indexOf('[')>-1) {
+                    var t = tList[i].split('[')
+
+                    program[t[0]] = gl.getUniformLocation(program, t[0]);
+                }else{
+                    program[tList[i]] = gl.getUniformLocation(program, tList[i]);
+                }
+
+
+
             }
             tList = fSource.uniforms,
             i = tList.length;
             while (i--) {
                 program[tList[i]] = gl.getUniformLocation(program, tList[i]);
+            }
+
+            if(!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                // MoGL error를 사용할 수 없을까.
+                alert(gl.getShaderInfoLog(vShader));
+                throw new Error('프로그램 셰이더 초기화 실패');
             }
             gpu.programs[name] = program;
         },
@@ -175,7 +188,8 @@ var makeUtil = (function(){
                 uniforms: [],
                 attributes: [],
                 id: code.id,
-                shaderStr: null
+                shaderStr: null,
+                uniformArrays : []
             },
             str = "",
             temp = code.attributes,
@@ -185,11 +199,22 @@ var makeUtil = (function(){
                 resultObject.attributes.push(temp[i].split(' ')[1]);
             }
             temp = code.uniforms,
-                i = temp.length;
+            i = temp.length;
             while (i--) {
-                str += 'uniform ' + temp[i] + ';\n',
+                //if(temp[i].indexOf('[')>-1){
+                //    str += 'uniform ' + temp[i].split('[')[0] + ';\n'
+                //    var t = temp[i].split('[')[0]
+                //    console.log(t)
+                //    resultObject.uniforms.push(t.split(' ')[1]);
+                //}else{
+                //    str += 'uniform ' + temp[i] + ';\n'
+                //    resultObject.uniforms.push(temp[i].split(' ')[1]);
+                //}
+                str += 'uniform ' + temp[i] + ';\n'
                 resultObject.uniforms.push(temp[i].split(' ')[1]);
             }
+
+
             temp = code.varyings,
             i = temp.length;
             while (i--) {
