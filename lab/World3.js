@@ -430,7 +430,7 @@ var World = (function (makeUtil) {
             "world.render();"
         ],
         value:(function render(){
-            var i, i2, j, k, len = 0;
+            var i, i2, j, k, k2,len = 0;
             var f3 = new Float32Array(3);
             var tScene, tSceneList, tCameraList, tCamera, tGPU, tGL, tChildren, tChildrenArray;
             var tCvs, tCvsW, tCvsH;
@@ -445,176 +445,17 @@ var World = (function (makeUtil) {
             var tColor;
             var baseLightRotate;
 
+            var mergedInfo = {
+                uuids : {},
+                lists : []
+            }
+
             privateChildren = $getPrivate('Scene', 'children'),
             privateChildrenArray = $getPrivate('Scene', 'childrenArray'),
             priGeo = $getPrivate('Mesh', 'geometry'),
             priMat = $getPrivate('Mesh', 'material'),
             priMatColor = $getPrivate('Material', 'color')
 
-            var mergedList = []
-            var mergeInfo = {};
-            var mergeCheck = (function () {
-                var checkVertice = 0
-                var max = 300000,lastLength
-                var maxDiffuse = 9, currentDiffuse=1.1
-                var mergeData, i, temp, uuid;
-                var vertex,len,tColor;
-                var changes = {}
-                var ttt=0
-                return function mergeCheck(v,v2,v3) {
-                    // max 단위로 끊어서 관리해보자
-                    // 머지추가 리스트를 돌면서 머지한다.
-                    i = v.length;
-                    while (i--) {
-                        temp = v[0]
-                        if(!temp) return
-                        uuid = temp.uuid
-                        vertex = priGeo[uuid].position
-                        if(!mergeInfo[uuid]){
-                            if(checkVertice==0){
-                                mergedList.push({
-                                    idx : null,
-                                    vertex: [],
-                                    index: [],
-                                    //propertys
-                                    scale: [],
-                                    material: [],
-                                    //buffers
-                                    vertexBuffer: null,
-                                    indexBuffer: null,
-                                    scaleBuffer: null,
-                                    materialBuffer:null
-                                })
-                                //return
-                            }
-                            mergeData = mergedList[mergedList.length-1]
-                            mergeData.idx = mergedList.length-1,
-                            mergeInfo[uuid] = {
-                                mergeData : mergeData,
-                                vertexStart: mergeData.vertex.length,
-                                indexStart: mergeData.index.length,
-                                numVertex : priGeo[uuid].position.length,
-                                numIndex : priGeo[uuid].index.length
-                            }
-                            // 버텍스입력하고
-                            len = vertex.length
-                            for (j = 0; j < len; j++) {
-                                mergeData.vertex.push(vertex[j],vertex[j+1],vertex[j+2])
-                                mergeData.vertex.push(priGeo[uuid].normal[j],priGeo[uuid].normal[j+1],priGeo[uuid].normal[j+2])
-                                j++
-                                j++
-                            }
-                            // 인덱스 입력하고
-                            len = priGeo[uuid].index.length
-                            lastLength = mergeData.vertexBuffer ? mergeData.vertexBuffer.numItem : 0
-                            for (j = 0; j < len; j++) {
-                                mergeData.index.push(lastLength + priGeo[uuid].index[j])
-                            }
-                            // 프로퍼티 입력하고
-                            len = vertex.length / 3
-
-
-
-                            for (j = 0; j < len; j++) {
-                                tColor = priMatColor[priMat[uuid].uuid]
-                                mergeData.scale.push(temp.scaleX, temp.scaleY, temp.scaleZ)
-                                var tUV = priGeo[uuid].uv
-                                mergeData.material.push(ttt,currentDiffuse,tUV[j*2],tUV[j*2+1],tColor[0],tColor[1],tColor[2],tColor[3])
-                            }
-                            ttt++
-                            currentDiffuse++
-                            if(currentDiffuse>maxDiffuse) currentDiffuse=1.1
-                            if(ttt==100) ttt = 0
-                            // 버퍼맹금
-                            //// TODO 이걸 가능한 적게 실행되게 해야되는군..
-
-                            mergeData.vertexBuffer = makeVBO(tGPU, 'mergeVBO' + mergedList.length-1, mergeData.vertex, 6),
-                            mergeData.indexBuffer = makeIBO(tGPU, 'mergeIBO' +  mergedList.length-1, mergeData.index, 1);
-
-
-                            checkVertice+=vertex.length
-                            changes[mergeData.idx] = mergeData
-
-                        }
-
-                        if(v.length) {
-                            v.shift()
-                        }
-                        if(checkVertice>=max){
-                            checkVertice = 0
-                            return
-                        }
-                    }
-                    for(k in changes){
-                        mergeData = changes[k]
-                        var idx = mergeData.idx
-                        mergeData.scaleBuffer = makeVBO(tGPU, 'mergeScale' + idx, mergeData.scale, 3),
-                        mergeData.materialBuffer = makeVBO(tGPU, 'mergeBitmap' + idx, mergeData.material, 8)
-                        delete changes[k]
-                    }
-
-                    // 머지 프로퍼티변화
-                    i2 = v2.length;
-                    if(i2){
-                        var updates = {}
-                        while (i2--) {
-                            temp = v2[0]
-                            if(temp){
-                                uuid = temp.uuid
-                                len = priGeo[uuid].position.length / 3
-                                mergeData = mergeInfo[uuid].mergeData
-                                var start = mergeInfo[uuid].vertexStart
-                                var t0, t1, t2
-                                for (j = 0; j < len; j++) {
-                                    t0 = start + j * 3, t1 = t0 + 1, t2 = t1 + 1,
-                                    mergeData.scale[t0] = temp.scaleX,
-                                    mergeData.scale[t1] = temp.scaleY,
-                                    mergeData.scale[t2] = temp.scaleZ
-                                    //TODO 컬러변화도 넣어야되네..
-                                }
-                                updates[mergeInfo[uuid].idx] = mergeData
-                                v2.shift()
-                            }
-                        }
-                        for(k in updates){
-                            mergeData = updates[k]
-                            mergeData.scaleBuffer = makeVBO(tGPU, 'mergeScale' + k, mergeData.scale, 3)
-                            mergeData.materialBuffer = makeVBO(tGPU, 'mergeBitmap'+k, mergeData.material, 8)
-                        }
-                    }
-
-                    // TODO 머지에서 해제
-                    //i2 = v3.length;
-                    //if(i2){
-                    //    while (i2--) {
-                    //        temp = v3[0]
-                    //        if(temp){
-                    //            uuid = temp.uuid,
-                    //            mergeData = mergeInfo[uuid].mergeData,
-                    //            mergeData.vertex.splice(mergeInfo[uuid].vertexStart,mergeInfo[uuid].numVertex),
-                    //            mergeData.index.splice(mergeInfo[uuid].indexStart,mergeInfo[uuid].numIndex),
-                    //            mergeData.position.splice(mergeInfo[uuid].vertexStart,mergeInfo[uuid].numVertex),
-                    //            mergeData.rotate.splice(mergeInfo[uuid].vertexStart,mergeInfo[uuid].numVertex),
-                    //            mergeData.scale.splice(mergeInfo[uuid].vertexStart,mergeInfo[uuid].numVertex),
-                    //            mergeData.color.splice(mergeInfo[uuid].vertexStart,mergeInfo[uuid].numVertex),
-                    //            v3.shift()
-                    //            delete mergeInfo[uuid]
-                    //        }
-                    //
-                    //    }
-                    //    for(i2=0; i2<mergedList.length; i2++){
-                    //        mergeData = mergedList[i2]
-                    //        mergeData.vertexBuffer = makeVBO(tGPU, 'mergeVBO'+i2, mergeData.vertex, 3),
-                    //        mergeData.indexBuffer = makeIBO(tGPU, 'mergeIBO'+i2, mergeData.index, 1),
-                    //        mergeData.positionBuffer = makeVBO(tGPU, 'mergePosition' + i2, mergeData.position, 3),
-                    //        mergeData.scaleBuffer = makeVBO(tGPU, 'mergeScale' + i2, mergeData.scale, 3),
-                    //        mergeData.rotateBuffer = makeVBO(tGPU, 'mergeRotate' + i2, mergeData.rotate, 3)
-                    //        mergeData.colorBuffer = makeVBO(tGPU, 'mergeColor' + i2, mergeData.color, 3)
-                    //    }
-                    //}
-
-                }
-            })();
             return function(currentTime) {
                 len = 0,
                 pProgram = null,
@@ -657,20 +498,18 @@ var World = (function (makeUtil) {
                     while (j--) {
                         makeTexture(tGPU, tScene.updateList.material[j]);
                     }
-                    var needBufferBind = tScene.updateList.merged.length ? true : false
-                    //if(!needBufferBind && mergedList.length>1){
-                    //    needBufferBind=true
-                    //}
-                    mergeCheck(tScene.updateList.merged,tScene.updateList.update,tScene.updateList.removeMerged)
 
                     if (tScene.updateList.camera.length) cameraRenderAreaUpdate(this);
                     tScene.updateList.mesh.length = 0,
                     tScene.updateList.material.length = 0,
                     tScene.updateList.camera.length = 0
+
+                    tChildren = privateChildren[tScene.uuid];
+                    tChildrenArray = privateChildrenArray[tScene.uuid];
+                    // 메쉬 머징
                     //////////////////////////////////////////////////////////////////////////////////////////////////////
-                    //if(tScene.updateList.merged.length==0){
                         tCameraList = tScene.cameras,
-                            baseLightRotate = tScene.baseLightRotate
+                        baseLightRotate = tScene.baseLightRotate
                         for (k in tCameraList) len++
                         for (k in tCameraList) {
                             tCamera = tCameraList[k];
@@ -682,8 +521,6 @@ var World = (function (makeUtil) {
                                 } else {
 
                                 }
-                                tChildren = privateChildren[tScene.uuid];
-                                tChildrenArray = privateChildrenArray[tScene.uuid];
 
                                 tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS),
                                 tGL.enable(tGL.BLEND),
@@ -694,13 +531,13 @@ var World = (function (makeUtil) {
                                 tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
                                 var tProjectionMtx = tCamera.projectionMatrix.raw;
                                 var tCameraMtx = tCamera.matrix.raw;
-                                for (k in tGPU.programs) {
-                                    tProgram = tGPU.programs[k],
-                                        tGL.useProgram(tProgram),
-                                        tGL.uniformMatrix4fv(tProgram.uPixelMatrix, false, tProjectionMtx),
-                                        tGL.uniformMatrix4fv(tProgram.uCameraMatrix, false, tCameraMtx);
+                                for (k2 in tGPU.programs) {
+                                    tProgram = tGPU.programs[k2],
+                                    tGL.useProgram(tProgram),
+                                    tGL.uniformMatrix4fv(tProgram.uPixelMatrix, false, tProjectionMtx),
+                                    tGL.uniformMatrix4fv(tProgram.uCameraMatrix, false, tCameraMtx);
                                     if(tProgram['uDLite']) {
-                                        tGL.uniform3fv(tProgram.uDLite, baseLightRotate);
+                                    tGL.uniform3fv(tProgram.uDLite, baseLightRotate);
                                     }
                                 }
 
@@ -708,86 +545,60 @@ var World = (function (makeUtil) {
                                 tProgram = tGPU.programs['colorMerge'];
                                 tGL.useProgram(tProgram);
 
+                                mergedInfo = MergeManager.mergeData(tGPU,tChildrenArray,mergedInfo,tScene.updateList.merged)
+
                                 var kk=0
-                                for (var k in tGPU.textures) {
+                                for (k2 in tGPU.textures) {
                                     if (kk == 9) break
                                     tGL.activeTexture(tGL['TEXTURE' + kk]);
-                                    tGL.bindTexture(tGL.TEXTURE_2D, tGPU.textures[k]);
+                                    tGL.bindTexture(tGL.TEXTURE_2D, tGPU.textures[k2]);
                                     tGL.uniform1i(tProgram['uSampler' + kk], kk);
                                     kk++
                                 }
+                                var tempList
+                                for(i2=0; i2<mergedInfo.lists.length; i2++){
+                                    if(tempList != mergedInfo.lists[i2]){
+                                        tempList= mergedInfo.lists[i2]
+                                        tVBO = tempList.vertexBuffer,
 
-
-                                // 정보 밀어넣기
-                                for(i2=0; i2<mergedList.length; i2++){
-                                    var temp = mergedList[i2]
-                                    if(temp['materialBuffer']){
-
-                                        if(needBufferBind){
-                                            tVBO = temp.vertexBuffer,
                                             tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
-                                            tGL.vertexAttribPointer(tProgram.aVertexPosition, 3, tGL.FLOAT, false, 6*Float32Array.BYTES_PER_ELEMENT, 0*Float32Array.BYTES_PER_ELEMENT),
-                                            tGL.vertexAttribPointer(tProgram.aVertexNormal, 3, tGL.FLOAT, false, 6*Float32Array.BYTES_PER_ELEMENT, 3*Float32Array.BYTES_PER_ELEMENT),
+                                            tGL.vertexAttribPointer(tProgram.aVertexPosition, 3, tGL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0 * Float32Array.BYTES_PER_ELEMENT),
+                                            tGL.vertexAttribPointer(tProgram.aVertexNormal, 3, tGL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT),
+
+                                            tVBO = tempList.scaleBuffer
+                                        tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
+                                            tGL.vertexAttribPointer(tProgram.aScale, 3, tGL.FLOAT, false, 0, 0),
 
 
-                                            tVBO = temp.scaleBuffer
-                                            tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
-                                            tGL.vertexAttribPointer(tProgram.aScale, tVBO.stride, tGL.FLOAT, false, tVBO.stride * Float32Array.BYTES_PER_ELEMENT, 0),
+                                        //    tVBO = tempList.positionBuffer
+                                        //tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
+                                        //    tGL.vertexAttribPointer(tProgram.aPosition, 3, tGL.FLOAT, false, 0, 0),
+                                        //
+                                        //
+                                        //    tVBO = tempList.rotateBuffer
+                                        //tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
+                                        //    tGL.vertexAttribPointer(tProgram.aRotate, 3, tGL.FLOAT, false, 0, 0),
 
+                                            tVBO = tempList.materialBuffer
+                                        tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
+                                            tGL.vertexAttribPointer(tProgram.aIDX, 1, tGL.FLOAT, false, 8 * Float32Array.BYTES_PER_ELEMENT, 0 * Float32Array.BYTES_PER_ELEMENT),
+                                            tGL.vertexAttribPointer(tProgram.aUV, 3, tGL.FLOAT, false, 8 * Float32Array.BYTES_PER_ELEMENT, 1 * Float32Array.BYTES_PER_ELEMENT),
+                                            tGL.vertexAttribPointer(tProgram.aColor, 4, tGL.FLOAT, false, 8 * Float32Array.BYTES_PER_ELEMENT, 4 * Float32Array.BYTES_PER_ELEMENT)
 
-                                            tVBO = temp.materialBuffer
-                                            tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
-                                            tGL.vertexAttribPointer(tProgram.aIDX, 1, tGL.FLOAT, false,  8*Float32Array.BYTES_PER_ELEMENT, 0*Float32Array.BYTES_PER_ELEMENT),
-                                            tGL.vertexAttribPointer(tProgram.aUV, 3, tGL.FLOAT, false,  8*Float32Array.BYTES_PER_ELEMENT, 1*Float32Array.BYTES_PER_ELEMENT),
-                                            tGL.vertexAttribPointer(tProgram.aColor, 4, tGL.FLOAT, false,  8*Float32Array.BYTES_PER_ELEMENT, 4*Float32Array.BYTES_PER_ELEMENT)
-
-
-
-                                        }
-
-
-                                        tIBO = temp.indexBuffer,
-                                        tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO)
-
-                                        var offset = 0,checkNum= 0, checkNumItem = 0
-                                        var ti=[],tr=[]
-                                        for(var i4= 0;i4<tChildrenArray.length; i4++){
-                                            checkNumItem +=priGeo[tChildrenArray[i4].uuid].index.length
-                                            checkNum++
-
-                                            ti.push(tChildrenArray[i4].x, tChildrenArray[i4].y, tChildrenArray[i4].z)
-                                            tr.push(tChildrenArray[i4].rotateX, tChildrenArray[i4].rotateY, tChildrenArray[i4].rotateZ)
-                                            if(checkNum==99){
-                                                tGL.uniform3fv(tProgram['uPosition'], ti);
-                                                tGL.uniform3fv(tProgram['uRotate'], tr);
-                                                tGL.drawElements(tGL.TRIANGLES, checkNumItem, tGL.UNSIGNED_INT, offset);
-                                                offset+=checkNumItem*Uint32Array.BYTES_PER_ELEMENT
-                                                checkNumItem = 0
-                                                checkNum = 0
-                                                ti.length = 0
-                                                tr.length = 0
-
-                                            }
-                                        }
-                                        if(ti.length>0 && tChildrenArray.length>0){
-                                            tGL.uniform3fv(tProgram['uPosition'], ti);
-                                            tGL.uniform3fv(tProgram['uRotate'], tr);
-                                            tGL.drawElements(tGL.TRIANGLES, checkNumItem, tGL.UNSIGNED_INT, offset);
-                                        }
-
-
-
-
+                                        tIBO = tempList.indexBuffer,
+                                            tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO)
                                     }
+
+                                    MergeManager.mergePropertyChange(tGL,tempList,tProgram)
+                                    //tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_INT, 0);
                                 }
+
                                 if (len > 1) {
                                     tGL.bindFramebuffer(tGL.FRAMEBUFFER, null);
                                     pProgram = null , pVBO = null, pVNBO = null, pUVBO = null, pIBO = null;
                                 }
                             }
                         }
-                    //}
-
                 }
                 // TODO 아래는 아직 다 못옮겨씀
                 // 프레임버퍼를 모아서 찍어!!!
@@ -815,7 +626,6 @@ var World = (function (makeUtil) {
                     tGL.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, tGL.FLOAT, false, 0, 0),
                     tGL.bindBuffer(tGL.ARRAY_BUFFER, tUVBO),
                     tGL.vertexAttribPointer(tProgram.aUV, tUVBO.stride, tGL.FLOAT, false, 0, 0),
-                    tGL.uniform3fv(tProgram.uRotate, [0, 0, 0]),
                     tGL.uniformMatrix4fv(tProgram.uCameraMatrix, false, rectMatrix.raw);
 
                     for (k in tCameraList) {
