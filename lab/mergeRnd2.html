@@ -112,6 +112,7 @@
 
     ////////////////////////////////////////////////////////////////////////////
     makeItems(Primitive.cube())
+//    makeItems(Primitive.plane())
     world.setAutoSize(1)
     world.start()
     ////////////////////////////////////////////////////////////////////////////
@@ -156,11 +157,12 @@
 //            var i = 100, item;
             while (i--) {
                 item = meshs[i],
-                item.scaleX = item.scaleY = item.scaleZ = 2
+
                 item.rotateX += 0.05,
                 item.rotateY += 0.05,
                 item.rotateZ += 0.05
             }
+
             camera.x = Math.sin(count / 50) * 50 ,
             camera.y = Math.cos(count / 100) * 50,
             camera.z = Math.cos(count / 100) * 50 + Math.sin(count / 100 ) * 50

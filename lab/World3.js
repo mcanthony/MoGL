@@ -430,7 +430,7 @@ var World = (function (makeUtil) {
             "world.render();"
         ],
         value:(function render(){
-            var i, i2, j, k, k2,len = 0;
+            var i, i2, j, k, k2,k3,len = 0;
             var f3 = new Float32Array(3);
             var tScene, tSceneList, tCameraList, tCamera, tGPU, tGL, tChildren, tChildrenArray;
             var tCvs, tCvsW, tCvsH;
@@ -455,6 +455,10 @@ var World = (function (makeUtil) {
             priGeo = $getPrivate('Mesh', 'geometry'),
             priMat = $getPrivate('Mesh', 'material'),
             priMatColor = $getPrivate('Material', 'color')
+
+            var tProjectionMtx
+            var tCameraMtx
+            var tempList;
 
             return function(currentTime) {
                 len = 0,
@@ -510,9 +514,14 @@ var World = (function (makeUtil) {
                     //////////////////////////////////////////////////////////////////////////////////////////////////////
                         tCameraList = tScene.cameras,
                         baseLightRotate = tScene.baseLightRotate
-                        for (k in tCameraList) len++
-                        for (k in tCameraList) {
-                            tCamera = tCameraList[k];
+                        var tCameraArrayList = []
+                        for (k in tCameraList){
+                            tCameraArrayList.push(tCameraList[k])
+                            len++
+                        }
+                        k = tCameraArrayList.length
+                        while(k--){
+                            tCamera = tCameraArrayList[k];
                             if (tCamera.visible) {
                                 if (len > 1) {
                                     tFrameBuffer = tGPU.framebuffers[tCamera.uuid].frameBuffer;
@@ -528,9 +537,10 @@ var World = (function (makeUtil) {
 
                                 tColor = tCamera.backgroundColor,
                                 tGL.clearColor(tColor[0], tColor[1], tColor[2], tColor[3]),
-                                tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
-                                var tProjectionMtx = tCamera.projectionMatrix.raw;
-                                var tCameraMtx = tCamera.matrix.raw;
+                                tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT),
+                                tProjectionMtx = tCamera.projectionMatrix.raw,
+                                tCameraMtx = tCamera.matrix.raw;
+
                                 for (k2 in tGPU.programs) {
                                     tProgram = tGPU.programs[k2],
                                     tGL.useProgram(tProgram),
@@ -547,50 +557,69 @@ var World = (function (makeUtil) {
 
                                 mergedInfo = MergeManager.mergeData(tGPU,tChildrenArray,mergedInfo,tScene.updateList.merged)
 
-                                var kk=0
+                                k3=0
                                 for (k2 in tGPU.textures) {
-                                    if (kk == 9) break
-                                    tGL.activeTexture(tGL['TEXTURE' + kk]);
+                                    if (k3 == 9) break
+                                    tGL.activeTexture(tGL['TEXTURE' + k3]);
                                     tGL.bindTexture(tGL.TEXTURE_2D, tGPU.textures[k2]);
-                                    tGL.uniform1i(tProgram['uSampler' + kk], kk);
-                                    kk++
+                                    tGL.uniform1i(tProgram['uSampler' + k3], k3);
+                                    k3++
                                 }
-                                var tempList
-                                for(i2=0; i2<mergedInfo.lists.length; i2++){
-                                    if(tempList != mergedInfo.lists[i2]){
-                                        tempList= mergedInfo.lists[i2]
-                                        tVBO = tempList.vertexBuffer,
 
-                                            tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
-                                            tGL.vertexAttribPointer(tProgram.aVertexPosition, 3, tGL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0 * Float32Array.BYTES_PER_ELEMENT),
-                                            tGL.vertexAttribPointer(tProgram.aVertexNormal, 3, tGL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT),
+                                i2 = mergedInfo.lists.length
+                                while(i2--){
+                                    tempList= mergedInfo.lists[i2]
 
-                                            tVBO = tempList.scaleBuffer
+                                    tVBO = tempList.vertexBuffer
+                                    if(tVBO.updated) {
                                         tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
-                                            tGL.vertexAttribPointer(tProgram.aScale, 3, tGL.FLOAT, false, 0, 0),
-
-
-                                        //    tVBO = tempList.positionBuffer
-                                        //tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
-                                        //    tGL.vertexAttribPointer(tProgram.aPosition, 3, tGL.FLOAT, false, 0, 0),
-                                        //
-                                        //
-                                        //    tVBO = tempList.rotateBuffer
-                                        //tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
-                                        //    tGL.vertexAttribPointer(tProgram.aRotate, 3, tGL.FLOAT, false, 0, 0),
-
-                                            tVBO = tempList.materialBuffer
-                                        tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
-                                            tGL.vertexAttribPointer(tProgram.aIDX, 1, tGL.FLOAT, false, 8 * Float32Array.BYTES_PER_ELEMENT, 0 * Float32Array.BYTES_PER_ELEMENT),
-                                            tGL.vertexAttribPointer(tProgram.aUV, 3, tGL.FLOAT, false, 8 * Float32Array.BYTES_PER_ELEMENT, 1 * Float32Array.BYTES_PER_ELEMENT),
-                                            tGL.vertexAttribPointer(tProgram.aColor, 4, tGL.FLOAT, false, 8 * Float32Array.BYTES_PER_ELEMENT, 4 * Float32Array.BYTES_PER_ELEMENT)
-
-                                        tIBO = tempList.indexBuffer,
-                                            tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO)
+                                        tGL.vertexAttribPointer(tProgram.aVertexPosition, 3, tGL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0 * Float32Array.BYTES_PER_ELEMENT),
+                                        tGL.vertexAttribPointer(tProgram.aVertexNormal, 3, tGL.FLOAT, true, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT)
+                                        tVBO.updated = false
                                     }
 
-                                    MergeManager.mergePropertyChange(tGL,tempList,tProgram)
-                                    //tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_INT, 0);
+                                    tVBO = tempList.materialBuffer
+                                    if(tVBO.updated) {
+                                        tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
+                                        tGL.vertexAttribPointer(tProgram.aIDX, 1, tGL.FLOAT, false, 8 * Float32Array.BYTES_PER_ELEMENT, 0 * Float32Array.BYTES_PER_ELEMENT),
+                                        tGL.vertexAttribPointer(tProgram.aUV, 3, tGL.FLOAT, false, 8 * Float32Array.BYTES_PER_ELEMENT, 1 * Float32Array.BYTES_PER_ELEMENT),
+                                        tGL.vertexAttribPointer(tProgram.aColor, 4, tGL.FLOAT, false, 8 * Float32Array.BYTES_PER_ELEMENT, 4 * Float32Array.BYTES_PER_ELEMENT)
+                                        tVBO.updated = false
+                                    }
+
+                                    tVBO = tempList.scaleBuffer
+                                    if(tVBO.updated) {
+                                        tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
+                                        tGL.vertexAttribPointer(tProgram.aScale, 3, tGL.FLOAT, false, 0, 0)
+                                        tVBO.updated = false
+                                    }
+
+                                    tVBO = tempList.positionBuffer
+                                    if(tVBO.updated){
+                                        tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
+                                        tGL.bufferData(tGL.ARRAY_BUFFER, tempList.positionData,tGL.DYNAMIC_DRAW)
+                                        tGL.vertexAttribPointer(tProgram.aPosition, 3, tGL.FLOAT, false, 3 * Float32Array.BYTES_PER_ELEMENT, 0)
+                                        tVBO.updated = false
+                                    }
+
+                                    tVBO = tempList.rotateBuffer
+                                    if(tVBO.updated){
+                                        tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
+                                        tGL.bufferData(tGL.ARRAY_BUFFER, tempList.rotateData,tGL.DYNAMIC_DRAW)
+                                        tGL.vertexAttribPointer(tProgram.aRotate, 3, tGL.FLOAT, false, 3 * Float32Array.BYTES_PER_ELEMENT, 0)
+                                        tVBO.updated = false
+                                    }
+
+                                    tIBO = tempList.indexBuffer
+                                    if(tIBO.updated) {
+                                        tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO)
+                                        tIBO.updated = false
+                                    }
+                                    tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_INT, 0)
+                                    MergeManager.mergePropertyChange(tGPU, tChildrenArray, tempList, {
+                                        rotate: true,
+                                        position: false
+                                    })
                                 }
 
                                 if (len > 1) {
