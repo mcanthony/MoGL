@@ -555,7 +555,7 @@ var World = (function (makeUtil) {
                                 tProgram = tGPU.programs['colorMerge'];
                                 tGL.useProgram(tProgram);
 
-                                mergedInfo = MergeManager.mergeData(tGPU,tChildrenArray,mergedInfo,tScene.updateList.merged)
+                                mergedInfo = MergeManager.mergeData(tGPU,mergedInfo,tScene.updateList.merged)
 
                                 k3=0
                                 for (k2 in tGPU.textures) {
@@ -571,7 +571,7 @@ var World = (function (makeUtil) {
                                     tempList= mergedInfo.lists[i2]
 
                                     tVBO = tempList.vertexBuffer
-                                    if(tVBO.updated) {
+                                    if(tVBO.updated || mergedInfo.lists.length>1) {
                                         tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
                                         tGL.vertexAttribPointer(tProgram.aVertexPosition, 3, tGL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0 * Float32Array.BYTES_PER_ELEMENT),
                                         tGL.vertexAttribPointer(tProgram.aVertexNormal, 3, tGL.FLOAT, true, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT)
@@ -579,7 +579,7 @@ var World = (function (makeUtil) {
                                     }
 
                                     tVBO = tempList.materialBuffer
-                                    if(tVBO.updated) {
+                                    if(tVBO.updated || mergedInfo.lists.length>1) {
                                         tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
                                         tGL.vertexAttribPointer(tProgram.aIDX, 1, tGL.FLOAT, false, 8 * Float32Array.BYTES_PER_ELEMENT, 0 * Float32Array.BYTES_PER_ELEMENT),
                                         tGL.vertexAttribPointer(tProgram.aUV, 3, tGL.FLOAT, false, 8 * Float32Array.BYTES_PER_ELEMENT, 1 * Float32Array.BYTES_PER_ELEMENT),
@@ -588,35 +588,35 @@ var World = (function (makeUtil) {
                                     }
 
                                     tVBO = tempList.scaleBuffer
-                                    if(tVBO.updated) {
+                                    if(tVBO.updated || mergedInfo.lists.length>1) {
                                         tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
                                         tGL.vertexAttribPointer(tProgram.aScale, 3, tGL.FLOAT, false, 0, 0)
                                         tVBO.updated = false
                                     }
 
                                     tVBO = tempList.positionBuffer
-                                    if(tVBO.updated){
+                                    if(tVBO.updated || mergedInfo.lists.length>1){
                                         tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
                                         tGL.bufferData(tGL.ARRAY_BUFFER, tempList.positionData,tGL.DYNAMIC_DRAW)
-                                        tGL.vertexAttribPointer(tProgram.aPosition, 3, tGL.FLOAT, false, 3 * Float32Array.BYTES_PER_ELEMENT, 0)
+                                        tGL.vertexAttribPointer(tProgram.aPosition, 3, tGL.FLOAT, false, 0, 0)
                                         tVBO.updated = false
                                     }
 
                                     tVBO = tempList.rotateBuffer
-                                    if(tVBO.updated){
+                                    if(tVBO.updated || mergedInfo.lists.length>1){
                                         tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
                                         tGL.bufferData(tGL.ARRAY_BUFFER, tempList.rotateData,tGL.DYNAMIC_DRAW)
-                                        tGL.vertexAttribPointer(tProgram.aRotate, 3, tGL.FLOAT, false, 3 * Float32Array.BYTES_PER_ELEMENT, 0)
+                                        tGL.vertexAttribPointer(tProgram.aRotate, 3, tGL.FLOAT, false, 0, 0)
                                         tVBO.updated = false
                                     }
 
                                     tIBO = tempList.indexBuffer
-                                    if(tIBO.updated) {
+                                    if(tIBO.updated || mergedInfo.lists.length>1) {
                                         tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO)
                                         tIBO.updated = false
                                     }
                                     tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_INT, 0)
-                                    MergeManager.mergePropertyChange(tGPU, tChildrenArray, tempList, {
+                                    MergeManager.mergePropertyChange(tGPU, tempList, {
                                         rotate: true,
                                         position: false
                                     })
