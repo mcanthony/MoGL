@@ -1,7 +1,7 @@
 var MergeManager = (function () {
     'use strict';
     //private
-    var maxVertex = 300000
+    var maxVertex = 40000
     var maxUniform = 150
     //shared private
 
@@ -70,43 +70,46 @@ var MergeManager = (function () {
             var tItem,tVertexCount;
             var prevLen,changeRotate, changePosition;
             var maxNum = 8
-            return function (gpu, list, data,changePropertys) {
+            return function (gpu, data,changePropertys) {
+                var list = data.items
                 i = list.length, i2 = list.length-1,
                 prevLen = 0
                 changePosition = changePropertys['position']
                 changeRotate = changePropertys['rotate']
-                while(i--){
-                    tItem = list[i2-i],
-                    tVertexCount = priGeo[tItem.uuid].position.length/3,
-                    j = tVertexCount % maxNum,j2 = 0
-                    while(j--)
-                        k = prevLen + j2 * 3, j2++,
-                        tx = tItem.x, ty = tItem.y, tz = tItem.z,
-                        rx = tItem.rotateX, ry = tItem.rotateY, rz = tItem.rotateZ,
-                        tP = data.positionData,tR =data.rotateData,
-                        changePosition ? (tP[k++] = tx, tP[k++] = ty, tP[k++] = tz) : 0,
-                        changeRotate ? (tR[k++] = rx, tR[k++] = ry, tR[k++] = rz) : 0
+                if(changePosition || changeRotate) {
+                    while (i--) {
+                        tItem = list[i2 - i],
+                        tVertexCount = priGeo[tItem.uuid].position.length / 3,
+                        j = tVertexCount % maxNum, j2 = 0
+                        while (j--)
+                            k = prevLen + j2 * 3, j2++,
+                            tx = tItem.x, ty = tItem.y, tz = tItem.z,
+                            rx = tItem.rotateX, ry = tItem.rotateY, rz = tItem.rotateZ,
+                            tP = data.positionData, tR = data.rotateData,
+                            changePosition ? (tP[k++] = tx, tP[k++] = ty, tP[k++] = tz) : 0,
+                            changeRotate ? (tR[k++] = rx, tR[k++] = ry, tR[k++] = rz) : 0
 
-                    j = (tVertexCount / maxNum ) ^ 0, j2 = 0
-                    while(j--)
-                        k = prevLen + j2 * maxNum * 3,
-                        tx = tItem.x, ty = tItem.y, tz = tItem.z,
-                        rx = tItem.rotateX, ry = tItem.rotateY, rz = tItem.rotateZ,
-                        tP = data.positionData,tR =data.rotateData,
-                        changePosition ? (
-                        tP[k++] = tx, tP[k++] = ty, tP[k++] = tz,tP[k++] = tx, tP[k++] = ty, tP[k++] = tz,tP[k++] = tx, tP[k++] = ty, tP[k++] = tz,tP[k++] = tx, tP[k++] = ty, tP[k++] = tz,
-                        tP[k++] = tx, tP[k++] = ty, tP[k++] = tz,tP[k++] = tx, tP[k++] = ty, tP[k++] = tz,tP[k++] = tx, tP[k++] = ty, tP[k++] = tz,tP[k++] = tx, tP[k++] = ty, tP[k++] = tz
-                        ) : 0,
-                        k = prevLen + j2 * maxNum * 3,
-                        changeRotate ? (
-                        tR[k++] = rx, tR[k++] = ry, tR[k++] = rz,tR[k++] = rx, tR[k++] = ry, tR[k++] = rz,tR[k++] = rx, tR[k++] = ry, tR[k++] = rz,tR[k++] = rx, tR[k++] = ry, tR[k++] = rz,
-                        tR[k++] = rx, tR[k++] = ry, tR[k++] = rz,tR[k++] = rx, tR[k++] = ry, tR[k++] = rz,tR[k++] = rx, tR[k++] = ry, tR[k++] = rz,tR[k++] = rx, tR[k++] = ry, tR[k++] = rz
-                        ) : 0,
-                        j2++
+                        j = (tVertexCount / maxNum ) ^ 0, j2 = 0
+                        while (j--)
+                            k = prevLen + j2 * maxNum * 3,
+                            tx = tItem.x, ty = tItem.y, tz = tItem.z,
+                            rx = tItem.rotateX, ry = tItem.rotateY, rz = tItem.rotateZ,
+                            tP = data.positionData, tR = data.rotateData,
+                            changePosition ? (
+                                tP[k++] = tx, tP[k++] = ty, tP[k++] = tz, tP[k++] = tx, tP[k++] = ty, tP[k++] = tz, tP[k++] = tx, tP[k++] = ty, tP[k++] = tz, tP[k++] = tx, tP[k++] = ty, tP[k++] = tz,
+                                    tP[k++] = tx, tP[k++] = ty, tP[k++] = tz, tP[k++] = tx, tP[k++] = ty, tP[k++] = tz, tP[k++] = tx, tP[k++] = ty, tP[k++] = tz, tP[k++] = tx, tP[k++] = ty, tP[k++] = tz
+                            ) : 0,
+                            k = prevLen + j2 * maxNum * 3,
+                            changeRotate ? (
+                                tR[k++] = rx, tR[k++] = ry, tR[k++] = rz, tR[k++] = rx, tR[k++] = ry, tR[k++] = rz, tR[k++] = rx, tR[k++] = ry, tR[k++] = rz, tR[k++] = rx, tR[k++] = ry, tR[k++] = rz,
+                                    tR[k++] = rx, tR[k++] = ry, tR[k++] = rz, tR[k++] = rx, tR[k++] = ry, tR[k++] = rz, tR[k++] = rx, tR[k++] = ry, tR[k++] = rz, tR[k++] = rx, tR[k++] = ry, tR[k++] = rz
+                            ) : 0,
+                            j2++
 
-                    data.positionData.updated = changePosition
-                    data.rotateBuffer.updated = changeRotate
-                    prevLen += tVertexCount * 3
+                        data.positionData.updated = changePosition
+                        data.rotateBuffer.updated = changeRotate
+                        prevLen += tVertexCount * 3
+                    }
                 }
 
                 return data
@@ -143,7 +146,7 @@ var MergeManager = (function () {
                 console.log('머지페이지추가', v.length)
             }
             var targetVBOS= {}
-            return function mergeData(gpu,tChildrenArray,data, mergeTargets){
+            return function mergeData(gpu,data, mergeTargets){
                 var i, j, len,iMax;
                 var uuid, uuids, temp;
                 var tVertex, tVertexCount, tList,tGeo,tIDX;
