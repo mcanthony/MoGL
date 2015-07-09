@@ -1,28 +1,26 @@
 var makeUtil = (function(){
     'use strict';
-    var makeBuffer = function makeBuffer(gl, target, data, stride, buffer) {
-        var tBuffer = buffer ? buffer : gl.createBuffer();
-        gl.bindBuffer(target, tBuffer),
-        gl.bufferData(target, data, gl.DYNAMIC_DRAW),
-        tBuffer.data = data,
-        tBuffer.stride = stride,
-        tBuffer.numItem = data.length / stride
+    var makeBuffer = function makeBuffer(gl, target, data, stride) {
+        var buffer = gl.createBuffer();
+        gl.bindBuffer(target, buffer),
+        gl.bufferData(target, data, gl.STATIC_DRAW),
+        buffer.data = data,
+        buffer.stride = stride,
+        buffer.numItem = data.length / stride
+        buffer.updated = true
         gl.bindBuffer(target, null);
-
-        return tBuffer;
+        return buffer;
     };
     return {
         makeVBO:function makeVBO(gpu, geo, data, stribe) {
             var gl, buffer;
             gl = gpu.gl,
             buffer = gpu.vbo[geo];
-            //if (buffer) return;
-            var t
-            if (buffer) t = buffer
+            if (buffer) return;
             if(Array.isArray(data)) {
                 data = new Float32Array(data);
             }
-            buffer = makeBuffer(gl, gl.ARRAY_BUFFER, data, stribe, t),
+            buffer = makeBuffer(gl, gl.ARRAY_BUFFER, data, stribe),
             buffer.name = geo,
             buffer.type = 'VBO',
             gpu.vbo[geo] = buffer;
@@ -46,13 +44,11 @@ var makeUtil = (function(){
             var gl, buffer;
             gl = gpu.gl,
             buffer = gpu.ibo[geo];
-            //if (buffer) return;
-            var t
-            if (buffer) t = buffer
+            if (buffer) return;
             if (Array.isArray(data)) {
                 data = new Uint32Array(data);
             }
-            buffer = makeBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, data, stribe,t),
+            buffer = makeBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, data, stribe),
             buffer.name = geo,
             buffer.type = 'IBO';
             gpu.ibo[geo] = buffer;
