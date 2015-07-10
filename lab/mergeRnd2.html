@@ -85,6 +85,8 @@
     scene.addChild(camera)
 
 
+    camera.backgroundColor = [Math.random(),Math.random(),Math.random(),1.0]
+
     var material, texture0,texture1,texture2,texture3,texture4,texture5,texture6,texture7,texture8;
     material = new Material('#fff')
     texture0 = new Texture()
@@ -154,7 +156,7 @@
             divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
 
             var i = meshs.length, item;
-            var i = 500, item;
+            var i = 250, item;
             while (i--) {
                 item = meshs[i],
                 item.rotateX += 0.05,
