@@ -460,6 +460,7 @@ var World = (function (makeUtil) {
             var tCameraMtx
             var tempList;
 
+
             return function(currentTime) {
                 len = 0,
                 pProgram = null,
@@ -479,6 +480,7 @@ var World = (function (makeUtil) {
                 tDiffuseMaps = null,
                 tNormalMaps = null
                 this.dispatch(World.renderBefore, currentTime);
+
                 while (i--) {
                     tScene = tSceneList[i]
                     //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -512,122 +514,121 @@ var World = (function (makeUtil) {
                     tChildrenArray = privateChildrenArray[tScene.uuid];
                     // 메쉬 머징
                     //////////////////////////////////////////////////////////////////////////////////////////////////////
-                        tCameraList = tScene.cameras,
-                        baseLightRotate = tScene.baseLightRotate
-                        var tCameraArrayList = []
-                        for (k in tCameraList){
-                            tCameraArrayList.push(tCameraList[k])
-                            len++
-                        }
-                        k = tCameraArrayList.length
-                        while(k--){
-                            tCamera = tCameraArrayList[k];
-                            if (tCamera.visible) {
-                                if (len > 1) {
-                                    tFrameBuffer = tGPU.framebuffers[tCamera.uuid].frameBuffer;
-                                    tGL.bindFramebuffer(tGL.FRAMEBUFFER, tFrameBuffer);
-                                    tGL.viewport(0, 0, tFrameBuffer.width, tFrameBuffer.height);
-                                } else {
+                    tCameraList = tScene.cameras,
+                    baseLightRotate = tScene.baseLightRotate
+                    var tCameraArrayList = []
+                    for (j in tCameraList){
+                        tCameraArrayList.push(tCameraList[j])
+                        len++
+                    }
+                    j = tCameraArrayList.length
+                    while(j--){
+                        tCamera = tCameraArrayList[j];
+                        if (tCamera.visible) {
+                            if (len > 1) {
+                                tFrameBuffer = tGPU.framebuffers[tCamera.uuid].frameBuffer;
+                                tGL.bindFramebuffer(tGL.FRAMEBUFFER, tFrameBuffer);
+                                tGL.viewport(0, 0, tFrameBuffer.width, tFrameBuffer.height);
+                            } else {
 
-                                }
+                            }
 
-                                tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS),
-                                tGL.enable(tGL.BLEND),
-                                tGL.blendFunc(tGL.SRC_ALPHA, tGL.ONE_MINUS_SRC_ALPHA),
+                            tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS),
+                            tGL.enable(tGL.BLEND),
+                            tGL.blendFunc(tGL.SRC_ALPHA, tGL.ONE_MINUS_SRC_ALPHA),
 
-                                tColor = tCamera.backgroundColor,
-                                tGL.clearColor(tColor[0], tColor[1], tColor[2], tColor[3]),
-                                tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT),
-                                tProjectionMtx = tCamera.projectionMatrix.raw,
-                                tCameraMtx = tCamera.matrix.raw;
+                            tColor = tCamera.backgroundColor,
+                            tGL.clearColor(tColor[0], tColor[1], tColor[2], tColor[3]),
+                            tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT),
+                            tProjectionMtx = tCamera.projectionMatrix.raw,
+                            tCameraMtx = tCamera.matrix.raw;
 
-                                for (k2 in tGPU.programs) {
-                                    tProgram = tGPU.programs[k2],
-                                    tGL.useProgram(tProgram),
-                                    tGL.uniformMatrix4fv(tProgram.uPixelMatrix, false, tProjectionMtx),
-                                    tGL.uniformMatrix4fv(tProgram.uCameraMatrix, false, tCameraMtx);
-                                    if(tProgram['uDLite']) {
-                                    tGL.uniform3fv(tProgram.uDLite, baseLightRotate);
-                                    }
-                                }
-
-                                // 대상 씬의 차일드 루프
-                                tProgram = tGPU.programs['colorMerge'];
-                                tGL.useProgram(tProgram);
-
-                                mergedInfo = MergeManager.mergeData(tGPU,mergedInfo,tScene.updateList.merged)
-
-                                k3=0
-                                for (k2 in tGPU.textures) {
-                                    if (k3 == 9) break
-                                    tGL.activeTexture(tGL['TEXTURE' + k3]);
-                                    tGL.bindTexture(tGL.TEXTURE_2D, tGPU.textures[k2]);
-                                    tGL.uniform1i(tProgram['uSampler' + k3], k3);
-                                    k3++
-                                }
-
-                                i2 = mergedInfo.lists.length
-                                while(i2--){
-                                    tempList= mergedInfo.lists[i2]
-
-                                    tVBO = tempList.vertexBuffer
-                                    if(tVBO.updated || mergedInfo.lists.length>1) {
-                                        tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
-                                        tGL.vertexAttribPointer(tProgram.aVertexPosition, 3, tGL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0 * Float32Array.BYTES_PER_ELEMENT),
-                                        tGL.vertexAttribPointer(tProgram.aVertexNormal, 3, tGL.FLOAT, true, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT)
-                                        tVBO.updated = false
-                                    }
-
-                                    tVBO = tempList.materialBuffer
-                                    if(tVBO.updated || mergedInfo.lists.length>1) {
-                                        tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
-                                        tGL.vertexAttribPointer(tProgram.aIDX, 1, tGL.FLOAT, false, 8 * Float32Array.BYTES_PER_ELEMENT, 0 * Float32Array.BYTES_PER_ELEMENT),
-                                        tGL.vertexAttribPointer(tProgram.aUV, 3, tGL.FLOAT, false, 8 * Float32Array.BYTES_PER_ELEMENT, 1 * Float32Array.BYTES_PER_ELEMENT),
-                                        tGL.vertexAttribPointer(tProgram.aColor, 4, tGL.FLOAT, false, 8 * Float32Array.BYTES_PER_ELEMENT, 4 * Float32Array.BYTES_PER_ELEMENT)
-                                        tVBO.updated = false
-                                    }
-
-                                    tVBO = tempList.scaleBuffer
-                                    if(tVBO.updated || mergedInfo.lists.length>1) {
-                                        tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
-                                        tGL.vertexAttribPointer(tProgram.aScale, 3, tGL.FLOAT, false, 0, 0)
-                                        tVBO.updated = false
-                                    }
-
-                                    tVBO = tempList.positionBuffer
-                                    if(tVBO.updated || mergedInfo.lists.length>1){
-                                        tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
-                                        tGL.bufferData(tGL.ARRAY_BUFFER, tempList.positionData,tGL.DYNAMIC_DRAW)
-                                        tGL.vertexAttribPointer(tProgram.aPosition, 3, tGL.FLOAT, false, 0, 0)
-                                        tVBO.updated = false
-                                    }
-
-                                    tVBO = tempList.rotateBuffer
-                                    if(tVBO.updated || mergedInfo.lists.length>1){
-                                        tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
-                                        tGL.bufferData(tGL.ARRAY_BUFFER, tempList.rotateData,tGL.DYNAMIC_DRAW)
-                                        tGL.vertexAttribPointer(tProgram.aRotate, 3, tGL.FLOAT, false, 0, 0)
-                                        tVBO.updated = false
-                                    }
-
-                                    tIBO = tempList.indexBuffer
-                                    if(tIBO.updated || mergedInfo.lists.length>1) {
-                                        tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO)
-                                        tIBO.updated = false
-                                    }
-                                    tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_INT, 0)
-                                    MergeManager.mergePropertyChange(tGPU, tempList, {
-                                        rotate: true,
-                                        position: false
-                                    })
-                                }
-
-                                if (len > 1) {
-                                    tGL.bindFramebuffer(tGL.FRAMEBUFFER, null);
-                                    pProgram = null , pVBO = null, pVNBO = null, pUVBO = null, pIBO = null;
+                            for (k2 in tGPU.programs) {
+                                tProgram = tGPU.programs[k2],
+                                tGL.useProgram(tProgram),
+                                tGL.uniformMatrix4fv(tProgram.uPixelMatrix, false, tProjectionMtx),
+                                tGL.uniformMatrix4fv(tProgram.uCameraMatrix, false, tCameraMtx);
+                                if(tProgram['uDLite']) {
+                                tGL.uniform3fv(tProgram.uDLite, baseLightRotate);
                                 }
                             }
+
+                            // 대상 씬의 차일드 루프
+                            tProgram = tGPU.programs['colorMerge'];
+                            tGL.useProgram(tProgram);
+
+                            mergedInfo = MergeManager.mergeData(tGPU,mergedInfo,tScene.updateList.merged)
+
+                            k3=0
+                            for (k2 in tGPU.textures) {
+                                if (k3 == 9) break
+                                tGL.activeTexture(tGL['TEXTURE' + k3]);
+                                tGL.bindTexture(tGL.TEXTURE_2D, tGPU.textures[k2]);
+                                tGL.uniform1i(tProgram['uSampler' + k3], k3);
+                                k3++
+                            }
+
+                            i2 = mergedInfo.lists.length
+                            while(i2--){
+                                tempList= mergedInfo.lists[i2]
+
+                                tVBO = tempList.vertexBuffer
+                                if(tVBO.updated || mergedInfo.lists.length>0) {
+                                    tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
+                                    tGL.vertexAttribPointer(tProgram.aVertexPosition, 3, tGL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0 * Float32Array.BYTES_PER_ELEMENT),
+                                    tGL.vertexAttribPointer(tProgram.aVertexNormal, 3, tGL.FLOAT, true, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT)
+                                    tVBO.updated = false
+                                }
+
+                                tVBO = tempList.materialBuffer
+                                if(tVBO.updated || mergedInfo.lists.length>0) {
+                                    tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
+                                    tGL.vertexAttribPointer(tProgram.aUV, 3, tGL.FLOAT, false, 7 * Float32Array.BYTES_PER_ELEMENT, 0 * Float32Array.BYTES_PER_ELEMENT),
+                                    tGL.vertexAttribPointer(tProgram.aColor, 4, tGL.FLOAT, false, 7 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT)
+                                    tVBO.updated = false
+                                }
+
+                                tVBO = tempList.scaleBuffer
+                                if(tVBO.updated || mergedInfo.lists.length>0) {
+                                    tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
+                                    tGL.vertexAttribPointer(tProgram.aScale, 3, tGL.FLOAT, false, 0, 0)
+                                    tVBO.updated = false
+                                }
+
+                                tVBO = tempList.positionBuffer
+                                if(tVBO.updated || mergedInfo.lists.length>0){
+                                    tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
+                                    tGL.bufferData(tGL.ARRAY_BUFFER, tempList.positionData,tGL.DYNAMIC_DRAW)
+                                    tGL.vertexAttribPointer(tProgram.aPosition, 3, tGL.FLOAT, false, 0, 0)
+                                    tVBO.updated = false
+                                }
+
+                                tVBO = tempList.rotateBuffer
+                                if(tVBO.updated || mergedInfo.lists.length>0){
+                                    tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
+                                    tGL.bufferData(tGL.ARRAY_BUFFER, tempList.rotateData,tGL.DYNAMIC_DRAW)
+                                    tGL.vertexAttribPointer(tProgram.aRotate, 3, tGL.FLOAT, false, 0, 0)
+                                    tVBO.updated = false
+                                }
+
+                                tIBO = tempList.indexBuffer
+                                if(tIBO.updated || mergedInfo.lists.length>0) {
+                                    tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO)
+                                    tIBO.updated = false
+                                }
+                                tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_INT, 0)
+                                MergeManager.mergePropertyChange(tGPU, tempList,tScene.updateList.changePropertys, {
+                                    rotate: true,
+                                    position: true,
+                                    scale : true
+                                })
+                            }
+                            if (len > 1) {
+                                tGL.bindFramebuffer(tGL.FRAMEBUFFER, null);
+                                pProgram = null , pVBO = null, pVNBO = null, pUVBO = null, pIBO = null;
+                            }
                         }
+                    }
                 }
                 // TODO 아래는 아직 다 못옮겨씀
                 // 프레임버퍼를 모아서 찍어!!!
@@ -674,7 +675,7 @@ var World = (function (makeUtil) {
                             tGL.bindTexture(tGL.TEXTURE_2D, tGPU.framebuffers[tCamera.uuid].texture),
                             tGL.uniform1i(tProgram.uSampler, 0),
                             tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO),
-                            tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0);
+                            tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_INT, 0);
                         }
                     }
 

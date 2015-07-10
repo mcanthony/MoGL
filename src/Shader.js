@@ -41,7 +41,7 @@ var Shader = (function () {
                             id: 'colorMergeVShader',
                             //attributes: ['vec3 aVertexPosition', 'vec3 aVertexNormal', 'vec3 aScale', 'vec4 aColor','vec3 aUV','float aIDX'],
                             //uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix','vec3 uRotate[150]','vec3 uPosition[150]'],
-                            attributes: ['vec3 aVertexPosition', 'vec3 aVertexNormal', 'vec3 aScale', 'vec4 aColor','vec3 aUV','float aIDX','vec3 aRotate','vec3 aPosition'],
+                            attributes: ['vec3 aVertexPosition', 'vec3 aVertexNormal', 'vec3 aScale', 'vec4 aColor','vec3 aUV','vec3 aRotate','vec3 aPosition'],
                             uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix'],
                             varyings: ['vec4 vColor','vec2 vUV','float vIDX','vec3 vNormal', 'vec3 vPosition'],
                             function: [VertexShader.baseFunction],
@@ -49,7 +49,6 @@ var Shader = (function () {
                                 'vIDX = aUV.x;\n' +
                                 'vUV = aUV.yz;\n'+
                                 'vColor = aColor;\n'+
-                                'int t = int(aIDX);\n'+
                                 ' mat4 mv = uCameraMatrix*positionMTX(aPosition)*rotationMTX(aRotate)*scaleMTX(aScale);\n' +
                                 ' vec4 position = mv * vec4(aVertexPosition, 1.0);\n' +
                                 ' gl_Position = uPixelMatrix*position;\n' +
