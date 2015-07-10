@@ -1,7 +1,7 @@
 var MergeManager = (function () {
     'use strict';
     //private
-    var maxVertex = 40000
+    var maxVertex = 30000
     var maxUniform = 150
     //shared private
 
@@ -65,51 +65,39 @@ var MergeManager = (function () {
     //})
     .static('mergePropertyChange',{
         value : (function(){
-            var i, i2, j, j2, k;
-            var tx,ty,tz,rx,ry,rz,tP,tR;
-            var tItem,tVertexCount;
-            var prevLen,changeRotate, changePosition;
+            var i, i2, j, k, k2,len;
+            var tx, ty, tz, rx, ry, rz, sx, sy, sz, tP, tR, tS;
+            var t, tVertexCount;
+            var changeRotate, changePosition,changeScale;
             var maxNum = 8
-            return function (gpu, data,changePropertys) {
-                var list = data.items
-                i = list.length, i2 = list.length-1,
-                prevLen = 0
-                changePosition = changePropertys['position']
-                changeRotate = changePropertys['rotate']
-                if(changePosition || changeRotate) {
+            return function (gpu, data, updateData, changePropertys) {
+                i = updateData.length,
+                changePosition = changePropertys['position'],
+                changeRotate = changePropertys['rotate'],
+                changeScale = changePropertys['scale']
+                if (changePosition || changeRotate || changeScale) {
+                    tP = data.positionData, tR = data.rotateData, tS = data.scaleData
                     while (i--) {
-                        tItem = list[i2 - i],
-                        tVertexCount = priGeo[tItem.uuid].position.length / 3,
-                        j = tVertexCount % maxNum, j2 = 0
-                        while (j--)
-                            k = prevLen + j2 * 3, j2++,
-                            tx = tItem.x, ty = tItem.y, tz = tItem.z,
-                            rx = tItem.rotateX, ry = tItem.rotateY, rz = tItem.rotateZ,
-                            tP = data.positionData, tR = data.rotateData,
-                            changePosition ? (tP[k++] = tx, tP[k++] = ty, tP[k++] = tz) : 0,
-                            changeRotate ? (tR[k++] = rx, tR[k++] = ry, tR[k++] = rz) : 0
-
-                        j = (tVertexCount / maxNum ) ^ 0, j2 = 0
-                        while (j--)
-                            k = prevLen + j2 * maxNum * 3,
-                            tx = tItem.x, ty = tItem.y, tz = tItem.z,
-                            rx = tItem.rotateX, ry = tItem.rotateY, rz = tItem.rotateZ,
-                            tP = data.positionData, tR = data.rotateData,
-                            changePosition ? (
-                                tP[k++] = tx, tP[k++] = ty, tP[k++] = tz, tP[k++] = tx, tP[k++] = ty, tP[k++] = tz, tP[k++] = tx, tP[k++] = ty, tP[k++] = tz, tP[k++] = tx, tP[k++] = ty, tP[k++] = tz,
-                                    tP[k++] = tx, tP[k++] = ty, tP[k++] = tz, tP[k++] = tx, tP[k++] = ty, tP[k++] = tz, tP[k++] = tx, tP[k++] = ty, tP[k++] = tz, tP[k++] = tx, tP[k++] = ty, tP[k++] = tz
-                            ) : 0,
-                            k = prevLen + j2 * maxNum * 3,
-                            changeRotate ? (
-                                tR[k++] = rx, tR[k++] = ry, tR[k++] = rz, tR[k++] = rx, tR[k++] = ry, tR[k++] = rz, tR[k++] = rx, tR[k++] = ry, tR[k++] = rz, tR[k++] = rx, tR[k++] = ry, tR[k++] = rz,
-                                    tR[k++] = rx, tR[k++] = ry, tR[k++] = rz, tR[k++] = rx, tR[k++] = ry, tR[k++] = rz, tR[k++] = rx, tR[k++] = ry, tR[k++] = rz, tR[k++] = rx, tR[k++] = ry, tR[k++] = rz
-                            ) : 0,
-                            j2++
-
-                        data.positionData.updated = changePosition
-                        data.rotateBuffer.updated = changeRotate
-                        prevLen += tVertexCount * 3
+                        t = updateData[i],len = priGeo[t.uuid].position.length
+                        tVertexCount = len / 3,
+                        k = data.items.indexOf(t)*len
+                        tx = t.x, ty = t.y, tz = t.z,
+                        rx = t.rotateX, ry = t.rotateY, rz = t.rotateZ,
+                        sx = t.scaleX, sy = t.scaleY, sz = t.scaleZ,
+                        j = tVertexCount
+                        while (j--) {
+                            tP[k+0] = tx, tP[k+1] = ty, tP[k+2] = tz
+                            tR[k+0] = rx, tR[k+1] = ry, tR[k+2] = rz
+                            tS[k+0] = sx, tS[k+1] = sy, tS[k+2] = sz
+                            k+=3
+                        }
+                        //
+                        j = (tVertexCount / maxNum ) ^ 0
                     }
+                    data.positionBuffer.updated = changePosition
+                    data.rotateBuffer.updated = changeRotate
+                    data.scaleBuffer.updated = changeScale
+                    updateData.length=0
                 }
 
                 return data
@@ -147,7 +135,7 @@ var MergeManager = (function () {
             }
             var targetVBOS= {}
             return function mergeData(gpu,data, mergeTargets){
-                var i, j, len,iMax;
+                var j, len,iMax;
                 var uuid, uuids, temp;
                 var tVertex, tVertexCount, tList,tGeo,tIDX;
                 var lastLength;
@@ -158,7 +146,7 @@ var MergeManager = (function () {
                     addList(data.lists)
                 }
 
-                var ttt = 1.1
+                var textureIDX = 1.1
 
                 while(len--){
                     temp = mergeTargets[0]
@@ -167,7 +155,7 @@ var MergeManager = (function () {
                     uuids[uuid] = temp
 
                     tVertex = tGeo.position
-                    tVertexCount = tVertex.length/3
+                    tVertexCount = (tVertex.length/3)^0
 
                     if(checkVertex+tVertexCount > maxVertex){
                         addList(data.lists)
@@ -185,6 +173,8 @@ var MergeManager = (function () {
                         tList.positionData.push(temp.x,temp.y,temp.z)
                         tList.rotateData.push(temp.rotateX,temp.rotateY,temp.rotateZ)
                     }
+
+
                     // 인덱스 입력하고
                     iMax = tGeo.index.length
                     lastLength = tList.maxIndex
@@ -197,15 +187,14 @@ var MergeManager = (function () {
 
                     // 프로퍼티 입력하고
                     var tUV = tGeo.uv
-                    var uIDX = tList.itemNum%maxUniform
                     var tColor = priMatColor[priMat[uuid].uuid]
                     tList.itemNum++
                     for (j = 0; j < tVertexCount; j++) {
                         tList.scaleData.push(temp.scaleX, temp.scaleY, temp.scaleZ)
-                        tList.materialData.push(uIDX,ttt,tUV[j*2],tUV[j*2+1],tColor[0],tColor[1],tColor[2],tColor[3])
+                        tList.materialData.push(textureIDX,tUV[j*2],tUV[j*2+1],tColor[0],tColor[1],tColor[2],tColor[3])
                     }
-                    ttt++
-                    if(ttt>10) ttt = 1.1
+                    textureIDX++
+                    if(textureIDX>10) textureIDX = 1.1
 
                     targetVBOS[tIDX] = tList
                     mergeTargets.shift()
@@ -225,7 +214,7 @@ var MergeManager = (function () {
                     tList.rotateData = new Float32Array(tList.rotateData)
                     tList.positionBuffer = makeUtil.makeVBO(gpu, 'mergePosition' + k, tList.positionData, 3),
                     tList.rotateBuffer = makeUtil.makeVBO(gpu, 'mergeRotate' + k, tList.rotateData, 3),
-                    tList.materialBuffer = makeUtil.makeVBO(gpu, 'mergeMaterial' + k, tList.materialData, 8)
+                    tList.materialBuffer = makeUtil.makeVBO(gpu, 'mergeMaterial' + k, tList.materialData, 7)
                 }
 
 
