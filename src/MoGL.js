@@ -392,7 +392,7 @@ var MoGL = (function() {
     MoGL = (function(){
         var init, updated, listener, listenerCounter;
         listener = {},
-		listenerCounter = {},
+        listenerCounter = {},
         updated = {},
         init = new Definer('MoGL', {
             description:[
@@ -593,9 +593,9 @@ var MoGL = (function() {
             value:function addEventListener(ev, f) {
                 var target, cnt;
                 if (!listener[this]) {
-					listener[this] = {};//private저장소에 this용 공간 초기화
-					listenerCounter[this] = {};
-				}
+                    listener[this] = {};//private저장소에 this용 공간 초기화
+                    listenerCounter[this] = {};
+                }
                 target = listener[this];
                 if (!target[ev]) target[ev] = [];//해당 이벤트용 공간 초기화
                 target = target[ev],
@@ -604,8 +604,8 @@ var MoGL = (function() {
                     cx:arguments[2] || this, 
                     arg:arguments.length > 3 ? Array.prototype.slice.call(arguments, 3) : null
                 },
-				cnt = listenerCounter[this],
-				this.dispatch('eventChanged', ev, cnt[ev] = target.length, cnt);
+                cnt = listenerCounter[this],
+                this.dispatch('eventChanged', ev, cnt[ev] = target.length, cnt);
                 return this;
             }
         })
@@ -622,7 +622,7 @@ var MoGL = (function() {
             ],
             value:function removeEventListener(ev, f) {
                 var target, cnt, i;
-				cnt = listenerCounter[this];
+                cnt = listenerCounter[this];
                 if( f ){
                     if (listener[this] && listener[this][ev]) {
                         target = listener[this][ev],
@@ -632,15 +632,15 @@ var MoGL = (function() {
                                 target.splice(i, 1)
                             }
                         }
-						cnt[ev] = target.length;
+                        cnt[ev] = target.length;
                     }
                 }else{
                     if (listener[this] && listener[this][ev]) {
-						delete listener[this][ev]; //전체를 삭제
-						cnt[ev] = 0;
-					}
+                        delete listener[this][ev]; //전체를 삭제
+                        cnt[ev] = 0;
+                    }
                 }
-				this.dispatch('eventChanged', ev, cnt[ev], cnt);
+                this.dispatch('eventChanged', ev, cnt[ev], cnt);
                 return this;
             }
         })
@@ -703,7 +703,7 @@ var MoGL = (function() {
             sample:"console.log( MoGL.count() );",
             value:totalCount
         })
-		.event('eventChanged', {
+        .event('eventChanged', {
             description:[
                 '이벤트리스너가 추가, 삭제되면 발생함',
                 '* 리스너 형식 - function(changedEvent, changedEventListenerCount, allEventListenerCount)'
@@ -714,7 +714,7 @@ var MoGL = (function() {
                 "scene.addEventListener( MoGL.eventChanged, function(ev, cnt, allCnt){",
                 "  console.log(ev, cnt, allCnt);// - 'updated, 1, {updated:1, eventChanged:1}",
                 "} );",
-				"scene.addEventListener( MoGL.updated, function(){} ); //1"
+                "scene.addEventListener( MoGL.updated, function(){} ); //1"
             ],
             value:'eventChanged'
         })
