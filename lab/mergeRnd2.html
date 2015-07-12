@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL Showcase - Monkeys</title>
+    <meta charset="utf-8"/>
+    <meta property="og:title" content="Monkey"/>
+    <meta property="og:description" content="MoGL.js version"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .FPS {
+            color: #FFF;
+            left: 0px;
+            top: 0px;
+            position: absolute
+        }
+    </style>
+    <script src="../src/$.js"></script>
+    <script src="../src/make.js"></script>
+    <script src="../src/MoGL.js"></script>
+    <script src="../src/BlendMode.js"></script>
+    <script src="../src/Filter.js"></script>
+    <script src="../src/Primitive.js"></script>
+    <script src="../src/Vertex.js"></script>
+    <script src="../src/Shading.js"></script>
+    <script src="../src/VertexShaderFunctions.js"></script>
+    <script src="../src/Shader.js"></script>
+    <script src="../src/Matrix.js"></script>
+    <script src="../src/Texture.js"></script>
+    <script src="../src/Geometry.js"></script>
+    <script src="../src/Material.js"></script>
+    <script src="../src/Mesh.js"></script>
+    <script src="../src/Group.js"></script>
+    <script src="../src/Camera.js"></script>
+    <script src="../src/Scene.js"></script>
+    <script src="MergeManager.js"></script>
+    <script src="World3.js"></script>
+</head>
+<body>
+<img src="../showcase/calulator/num0.png" id="testIMG0" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="../showcase/calulator/num1.png" id="testIMG1" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="../showcase/calulator/num2.png" id="testIMG2" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="../showcase/calulator/num3.png" id="testIMG3" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="../showcase/calulator/num4.png" id="testIMG4" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="../showcase/calulator/num5.png" id="testIMG5" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="../showcase/calulator/num6.png" id="testIMG6" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="../showcase/calulator/num7.png" id="testIMG7" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="../showcase/calulator/num8.png" id="testIMG8" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="../showcase/calulator/num9.png" id="testIMG9" style="position: absolute;top:0px; display:none" width="256" height="256">
+<img src="woman/woman.png" id="testIMG" style="position: absolute;top:0px; display:none" width="256" height="256">
+<canvas id="canvas"></canvas>
+<div class="FPS">
+    Current FPS: <span id="currentFPS"></span>
+    Average FPS: <span id="averageFPS"></span>
+</div>
+
+<script>
+    'use strict';
+    // basic settings
+    var divCurrentFPS, divAverageFPS, prevTime;
+    var world, scene, camera;
+
+    divCurrentFPS = document.getElementById('currentFPS')
+    divAverageFPS = document.getElementById('averageFPS')
+    prevTime = 0
+
+    world = new World('canvas')
+    scene = new Scene()
+    camera = new Camera()
+
+
+    world.addScene(scene)
+    scene.addChild(camera)
+
+
+    camera.backgroundColor = [Math.random(),Math.random(),Math.random(),1.0]
+
+    var material, texture0,texture1,texture2,texture3,texture4,texture5,texture6,texture7,texture8;
+    material = new Material('#fff')
+    texture0 = new Texture()
+    texture1 = new Texture()
+    texture2 = new Texture()
+    texture3 = new Texture()
+    texture4 = new Texture()
+    texture5 = new Texture()
+    texture6 = new Texture()
+    texture7 = new Texture()
+    texture8 = new Texture()
+
+
+    texture0.img = document.getElementById('testIMG0')
+    texture1.img = document.getElementById('testIMG1')
+    texture2.img = document.getElementById('testIMG2')
+    texture3.img = document.getElementById('testIMG3')
+    texture4.img = document.getElementById('testIMG4')
+    texture5.img = document.getElementById('testIMG5')
+    texture6.img = document.getElementById('testIMG6')
+    texture7.img = document.getElementById('testIMG7')
+    texture8.img = document.getElementById('testIMG8')
+    scene.addMaterial(material.setId('material'));
+
+
+    ////////////////////////////////////////////////////////////////////////////
+//    makeItems(Primitive.cube())
+    makeItems(Primitive.plane())
+    world.setAutoSize(1)
+    world.start()
+    ////////////////////////////////////////////////////////////////////////////
+    function makeItems(geo) {
+        var meshs, item, PI2, i;
+        meshs = []
+        PI2 = Math.PI * 2;
+        for (i = 0; i <2000; i++) {
+            var a = new Material(Math.random(), Math.random(), Math.random(),1.0)
+//            var a = new Material()
+            if (i % 9 == 0) a.addTexture(Texture.diffuse, texture0)
+            if (i % 9 == 1) a.addTexture(Texture.diffuse, texture1)
+            if (i % 9 == 2) a.addTexture(Texture.diffuse, texture2)
+            if (i % 9 == 3) a.addTexture(Texture.diffuse, texture3)
+            if (i % 9 == 4) a.addTexture(Texture.diffuse, texture4)
+            if (i % 9 == 5) a.addTexture(Texture.diffuse, texture5)
+            if (i % 9 == 6) a.addTexture(Texture.diffuse, texture6)
+            if (i % 9 == 7) a.addTexture(Texture.diffuse, texture7)
+            if (i % 9 == 8) a.addTexture(Texture.diffuse, texture8)
+            item = new Mesh(geo, a);
+            a.shading = Shading.phong
+            item.x = Math.random() * 50 - 25
+            item.y = Math.random() * 50 - 25
+            item.z = Math.random() * 50 - 25
+            item.rotate = [Math.random() * PI2, Math.random() * PI2, Math.random() * PI2];
+            item.scaleX = item.scaleY = item.scaleZ =Math.random() *3
+            scene.addChild(item);
+            meshs.push(item);
+        }
+
+
+        var currentFPS, prevTime = 0, count = 0, sum = 0
+
+        world.addEventListener(World.renderAfter, function (currTime) {
+            var currentFPS = 1000 / ( currTime - prevTime );
+            prevTime = currTime;
+            count++
+            divCurrentFPS.textContent = currentFPS.toFixed(2);
+            divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
+
+            var i = meshs.length, item;
+            var i = 250, item;
+            while (i--) {
+                item = meshs[i],
+                item.rotateX += 0.05,
+                item.rotateY += 0.05,
+                item.rotateZ += 0.05
+                scene.updateList.changePropertys.push(item)
+            }
+
+            camera.x = Math.sin(count / 50) * 50 ,
+            camera.y = Math.cos(count / 100) * 50,
+            camera.z = Math.cos(count / 100) * 50 + Math.sin(count / 100 ) * 50
+            camera.lookAt(0, 0, 0);
+
+        })
+    }
+
+</script>
+</body>
+</html>

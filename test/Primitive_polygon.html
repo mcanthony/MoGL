@@ -42,32 +42,32 @@
             function () {
                 // 삼각형이면 polygon.getVertexCount() == 3
                 polygon = Primitive.polygon(3);
-                return polygon.getVertexCount();
+                return polygon.vertexCount;
             }, 3,
             function () {
                 // 삼각형이면 polygon.getTriangleCount() == 1
                 polygon = Primitive.polygon(3);
-                return polygon.getTriangleCount();
+                return polygon.triangleCount;
             }, 1,
             function () {
                 // 사각형이면 polygon.getVertexCount() == 4
                 polygon = Primitive.polygon(4);
-                return polygon.getVertexCount();
+                return polygon.vertexCount;
             }, 4,
             function () {
                 // 사각형이면 polygon.getTriangleCount() == 2
                 polygon = Primitive.polygon(4);
-                return polygon.getTriangleCount();
+                return polygon.triangleCount;
             }, 2,
             function () {
                 // 오각형이면 polygon.getVertexCount() == 5
                 polygon = Primitive.polygon(5);
-                return polygon.getVertexCount();
+                return polygon.vertexCount;
             }, 5,
             function () {
                 // 오각형이면 polygon.getTriangleCount() == 3
                 polygon = Primitive.polygon(5);
-                return polygon.getTriangleCount();
+                return polygon.triangleCount;
             }, 3,
             function () {
                 // 홀수각형이면
@@ -77,7 +77,7 @@
                         n = 17, i;
                 checkPosNeg = true;
                 polygon = Primitive.polygon(n);
-                vArr = polygon._position;
+                vArr = polygon.position;
 
                 for (i = 1 ; i < n ; i++) {
                     if (i < (n / 2))
@@ -97,7 +97,7 @@
                         n = 8, i;
                 checkPosNeg = true;
                 polygon = Primitive.polygon(n, 1);
-                vArr = polygon._position;
+                vArr = polygon.position;
 
                 for (i = 1 ; i < n ; i++) {
                     if (i < (n / 2))
@@ -114,7 +114,7 @@
                 // 파라미터 전달 안하면 반경 1인 삼각형 반환
                 polygon = Primitive.polygon();
 
-                return polygon.getVertexCount() == 3 && polygon._position[1] == 1;
+                return polygon.vertexCount == 3 && polygon.position[1] == 1;
             }, true
     );
 </script>
@@ -124,19 +124,23 @@
         var world = new World('polygon'),
                 scene = new Scene(),
                 camera = new Camera(),
-                solidWhite = new Material('#ffffff');
+                solidWhite = new Material('#ffffff'),
+                texture = new Texture(),
+                uuids = [];
 
         world.addScene(scene);
-        scene.addChild('camera', camera);
-        scene.addTexture('texture1', '../asset/honey1.png');
+        scene.addChild(camera);
+        //scene.addTexture('primitive/honey1.png');
+        uuids.push(texture.uuid);
+        scene.addTexture(texture);
 
         var setMesh = function(n) {
             var polygon = Primitive.polygon(n),
-                // newMesh = new Mesh(polygon, solidWhite);
-                newMesh = new Mesh(polygon, new Material().addTexture(Texture.diffuse, 'texture1'));
+                newMesh = new Mesh(polygon, new Material().addTexture(Texture.diffuse, new Texture()));
 
-            scene.removeChild('polygon' + Math.max(3, n - 1));
-            scene.addChild('polygon' + n, newMesh);
+            scene.removeChild(uuids.pop());
+            uuids.push(newMesh.uuid);
+            scene.addChild(newMesh);
         };
 
         var start = 3, end = 15,

@@ -79,7 +79,7 @@
 
     ////////////////////////////////////////////////////////////////////////////
     var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open('GET', 'monkey/monkey.babylon', true);
+    xmlhttp.open('GET', 'monkey/monkey.json', true);
     xmlhttp.onreadystatechange = function () {
         if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
             var geo = getGeometry(JSON.parse(xmlhttp.responseText));
@@ -122,7 +122,7 @@
             }
             camera.x = Math.sin(count / 50) * 50,
             camera.y = Math.cos(count / 100) * 50,
-            camera.z = Math.cos(count / 100) * 50 + Math.sin(count / 100) * 50,
+            camera.z = Math.cos(count / 50) * 50
             camera.lookAt(0, 0, 0);
         })
     }

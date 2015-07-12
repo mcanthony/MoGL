@@ -43,11 +43,10 @@ var Scene = (function () {
                 material : [],
                 camera : [],
                 merged : [],
-                removeMerged : [],
-                update : []
+                changePropertys : []
             },
             baseLightRotate[this] = [0, -1, -1];
-
+            this.updateList = updateList[this]
             this.addVertexShader(Shader.colorMergeVShader), this.addFragmentShader(Shader.colorMergeFShader),
             this.addVertexShader(Shader.colorVertexShader), this.addFragmentShader(Shader.colorFragmentShader),
             this.addVertexShader(Shader.wireFrameVertexShader), this.addFragmentShader(Shader.wireFrameFragmentShader),
@@ -61,15 +60,16 @@ var Scene = (function () {
             this.addVertexShader(Shader.postBaseVertexShader), this.addFragmentShader(Shader.postBaseFragmentShader);
         }
     })
-    .field('updateList', {
-            description: "world가 render 함수를 실행하기전 GPU업데이트가 되어야할 목록.",
-            sample: [
-                "console.log(scene.updateList);"
-            ],
-            defaultValue: '{ mesh : [], material : [], camera : [] }\n- 업데이트 완료후 각 리스트는 초기화 됨.',
-            get: $getter(updateList)
-        }
-    )
+
+    //.field('updateList', {
+    //        description: "world가 render 함수를 실행하기전 GPU업데이트가 되어야할 목록.",
+    //        sample: [
+    //            "console.log(scene.updateList);"
+    //        ],
+    //        defaultValue: '{ mesh : [], material : [], camera : [] }\n- 업데이트 완료후 각 리스트는 초기화 됨.',
+    //        get: $getter(updateList)
+    //    }
+    //)
     .field('vertexShaders', {
             description: "현재 씬이 가지고있는 버텍스 쉐이더 자바스크립트 정보",
             sample: [
@@ -182,10 +182,6 @@ var Scene = (function () {
                 });
                 v.addEventListener(Mesh.changed, function() {
                     p2.mesh.push(v);
-                });
-
-                v.addEventListener(MoGL.updated, function () {
-                    p2.update.push(this)
                 });
 
 

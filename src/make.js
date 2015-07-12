@@ -1,27 +1,26 @@
 var makeUtil = (function(){
     'use strict';
-    var makeBuffer = function makeBuffer(gl, target, data, stride, buffer) {
-        var tBuffer = buffer ? buffer : gl.createBuffer();
-        gl.bindBuffer(target, tBuffer),
-        gl.bufferData(target, data, gl.DYNAMIC_DRAW),
-        tBuffer.data = data,
-        tBuffer.stride = stride,
-        tBuffer.numItem = data.length / stride,
+    var makeBuffer = function makeBuffer(gl, target, data, stride) {
+        var buffer = gl.createBuffer();
+        gl.bindBuffer(target, buffer),
+        gl.bufferData(target, data, gl.STATIC_DRAW),
+        buffer.data = data,
+        buffer.stride = stride,
+        buffer.numItem = data.length / stride
+        buffer.updated = true
         gl.bindBuffer(target, null);
-        return tBuffer;
+        return buffer;
     };
     return {
         makeVBO:function makeVBO(gpu, geo, data, stribe) {
             var gl, buffer;
             gl = gpu.gl,
             buffer = gpu.vbo[geo];
-            //if (buffer) return;
-            var t
-            if (buffer) t = buffer
+            if (buffer) return;
             if(Array.isArray(data)) {
                 data = new Float32Array(data);
             }
-            buffer = makeBuffer(gl, gl.ARRAY_BUFFER, data, stribe, t),
+            buffer = makeBuffer(gl, gl.ARRAY_BUFFER, data, stribe),
             buffer.name = geo,
             buffer.type = 'VBO',
             gpu.vbo[geo] = buffer;
@@ -45,13 +44,11 @@ var makeUtil = (function(){
             var gl, buffer;
             gl = gpu.gl,
             buffer = gpu.ibo[geo];
-            //if (buffer) return;
-            var t
-            if (buffer) t = buffer
+            if (buffer) return;
             if (Array.isArray(data)) {
                 data = new Uint32Array(data);
             }
-            buffer = makeBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, data, stribe,t),
+            buffer = makeBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, data, stribe),
             buffer.name = geo,
             buffer.type = 'IBO';
             gpu.ibo[geo] = buffer;
@@ -88,10 +85,8 @@ var makeUtil = (function(){
             vShader.name = vSource.id,
             fShader.name = fSource.id,
             program.name = name;
-            if(!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-                // MoGL error를 사용할 수 없을까.
-                throw new Error('프로그램 셰이더 초기화 실패');
-            }
+
+
             gl.useProgram(program),
             tList = vSource.attributes,
             len = tList.length;
@@ -104,12 +99,27 @@ var makeUtil = (function(){
             tList = vSource.uniforms,
             i = tList.length;
             while (i--) {
-                program[tList[i]] = gl.getUniformLocation(program, tList[i]);
+                if(tList[i].indexOf('[')>-1) {
+                    var t = tList[i].split('[')
+
+                    program[t[0]] = gl.getUniformLocation(program, t[0]);
+                }else{
+                    program[tList[i]] = gl.getUniformLocation(program, tList[i]);
+                }
+
+
+
             }
             tList = fSource.uniforms,
             i = tList.length;
             while (i--) {
                 program[tList[i]] = gl.getUniformLocation(program, tList[i]);
+            }
+
+            if(!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                // MoGL error를 사용할 수 없을까.
+                alert(gl.getShaderInfoLog(vShader));
+                throw new Error('프로그램 셰이더 초기화 실패');
             }
             gpu.programs[name] = program;
         },
@@ -174,7 +184,8 @@ var makeUtil = (function(){
                 uniforms: [],
                 attributes: [],
                 id: code.id,
-                shaderStr: null
+                shaderStr: null,
+                uniformArrays : []
             },
             str = "",
             temp = code.attributes,
@@ -184,11 +195,22 @@ var makeUtil = (function(){
                 resultObject.attributes.push(temp[i].split(' ')[1]);
             }
             temp = code.uniforms,
-                i = temp.length;
+            i = temp.length;
             while (i--) {
-                str += 'uniform ' + temp[i] + ';\n',
+                //if(temp[i].indexOf('[')>-1){
+                //    str += 'uniform ' + temp[i].split('[')[0] + ';\n'
+                //    var t = temp[i].split('[')[0]
+                //    console.log(t)
+                //    resultObject.uniforms.push(t.split(' ')[1]);
+                //}else{
+                //    str += 'uniform ' + temp[i] + ';\n'
+                //    resultObject.uniforms.push(temp[i].split(' ')[1]);
+                //}
+                str += 'uniform ' + temp[i] + ';\n'
                 resultObject.uniforms.push(temp[i].split(' ')[1]);
             }
+
+
             temp = code.varyings,
             i = temp.length;
             while (i--) {
