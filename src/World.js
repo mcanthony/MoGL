@@ -155,39 +155,38 @@ var World = (function (makeUtil) {
             } else {
                 this.error(2);
             }
-
-            mouse[this] = {x:0,y:0}
+            mouse[this] = {x:0,y:0};
             window.addEventListener('mousemove', function(e){
-                mouse[self].x = e.x
-                mouse[self].y = cvsList[self].height-e.offsetY
-                mouse[self].move = true
-            })
+                mouse[self].x = e.x,
+                mouse[self].y = cvsList[self].height - e.offsetY,
+                mouse[self].move = true;
+            }),
             window.addEventListener('mousedown', function(e){
-                mouse[self].x = e.x
-                mouse[self].y = cvsList[self].height-e.offsetY
-                mouse[self].down = true
-            })
+                mouse[self].x = e.x,
+                mouse[self].y = cvsList[self].height - e.offsetY,
+                mouse[self].down = true;
+            }),
             window.addEventListener('mouseup', function(e){
-                mouse[self].x = e.x
-                mouse[self].y = cvsList[self].height-e.offsetY
-                mouse[self].up = true
-            })
+                mouse[self].x = e.x,
+                mouse[self].y = cvsList[self].height - e.offsetY,
+                mouse[self].up = true;
+            }),
             window.addEventListener('touchmove', function(e){
                 e.preventDefault();
-                mouse[self].x = e.touches[0].clientX*window.devicePixelRatio
-                mouse[self].y = cvsList[self].height-e.touches[0].pageY*window.devicePixelRatio
-                mouse[self].move = true
-            },false)
+                mouse[self].x = e.touches[0].clientX * window.devicePixelRatio,
+                mouse[self].y = cvsList[self].height - e.touches[0].pageY * window.devicePixelRatio,
+                mouse[self].move = true;
+            },false),
             window.addEventListener('touchstart', function(e){
-                mouse[self].x = e.touches[0].clientX*window.devicePixelRatio
-                mouse[self].y = cvsList[self].height-e.touches[0].pageY*window.devicePixelRatio
-                mouse[self].down = true
-            },false)
+                mouse[self].x = e.touches[0].clientX * window.devicePixelRatio,
+                mouse[self].y = cvsList[self].height - e.touches[0].pageY * window.devicePixelRatio,
+                mouse[self].down = true;
+            },false),
             window.addEventListener('touchend', function(e){
-                mouse[self].x = e.changedTouches[0].clientX*window.devicePixelRatio
-                mouse[self].y = cvsList[self].height-e.changedTouches[0].pageY*window.devicePixelRatio
-                mouse[self].up = true
-            },false)
+                mouse[self].x = e.changedTouches[0].clientX * window.devicePixelRatio,
+                mouse[self].y = cvsList[self].height - e.changedTouches[0].pageY * window.devicePixelRatio,
+                mouse[self].up = true;
+            },false);
         }
     })
     .method('setAutoSize', {
