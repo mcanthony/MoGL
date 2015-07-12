@@ -39,88 +39,87 @@
 <script src="../src/World.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
 <script>
-    var testMaterial1 = new Material('#000');
-    var testMaterial2 = new Material('#000000');
-    var testMaterial3 = new Material('#ffffff0.8');
-    var testMaterial4 = new Material(0xff / 0xff, 0xaf / 0xff, 0x45 / 0xff, 0.5);
-    var testMaterial5 = new Material('#ffffff127.8');
-    var testMaterial6 = Material('#ffffff127.8');
 
-
-    bsTest('new',
-            // 잘생성이되었나
-            function () {
-                return testMaterial1.isAlive;
-            }, true,
-            // 잘생성이되었나
-            function () {
-                return testMaterial2.isAlive;
-            }, true,
-            function () {
-                return testMaterial3.isAlive;
-            }, true,
-            function () {
-                return testMaterial4.isAlive;
-            }, true,
-            function () {
-                return testMaterial5.isAlive;
-            }, true,
-            function () {
-                return testMaterial6.isAlive;
-            }, true
+    bsTest('Constructor',
+        function () {
+            var material = new Material('#000');
+            return material.isAlive;
+        }, true,
+        function () {
+            var material = new Material('#000000');
+            return material.isAlive;
+        }, true,
+        function () {
+            var material = new Material('#ffffff0.8');
+            return material.isAlive;
+        }, true,
+        function () {
+            var material = new Material(0xff / 0xff, 0xaf / 0xff, 0x45 / 0xff, 0.5);
+            return material.isAlive;
+        }, true,
+        function () {
+            var material = new Material('#ffffff127.8');
+            return material.isAlive;
+        }, true,
+        function () {
+            var material = Material('#ffffff127.8');
+            return material.isAlive;
+        }, true
     );
     bsTest('colorCheck',
-            // 잘생성이되었나
             function () {
-                console.log(testMaterial1.color)
-                return testMaterial1.color.toString();
-            }, [0, 0, 0, 1].toString(),
-//             잘생성이되었나
-            function () {
-                return testMaterial2.color.toString();
+                var material = new Material('#000');
+                return material.color.toString();
             }, [0, 0, 0, 1].toString(),
             function () {
-                return testMaterial3.color.toString();
+                var material = new Material('#000000');
+                return material.color.toString();
+            }, [0, 0, 0, 1].toString(),
+            function () {
+                var material = new Material('#ffffff0.8');
+                return material.color.toString();
             }, [1, 1, 1, 0.8].toString(),
             function () {
-                return testMaterial4.color.toString()
+                var material = new Material(0xff / 0xff, 0xaf / 0xff, 0x45 / 0xff, 0.5);
+                return material.color.toString()
             }, [0xff / 0xff, 0xaf / 0xff, 0x45 / 0xff, 0.5].toString(),
             function () {
-                return testMaterial5.color.toString()
+                var material = new Material('#ffffff127.8');
+                return material.color.toString()
             }, [1, 1, 1, 1].toString(),
             function () {
-                return testMaterial6.color.toString();
+                var material = Material('#ffffff127.8');
+                return material.color.toString();
             }, [1, 1, 1, 1].toString()
     );
 
-    var world = new World('canvas')
+    var world = new World('canvas');
     var lobby = new Scene().setId('lobby');
-    world.addScene(lobby)
+    world.addScene(lobby);
 
-    var texture1 = new Texture().setId('floorTexture')
-    texture1.img = document.getElementById('img0')
-    var texture2 = new Texture().setId('scratchTexture')
-    texture2.img = document.getElementById('img1')
+    var texture1 = new Texture().setId('floorTexture');
+    texture1.img = document.getElementById('img0');
+    var texture2 = new Texture().setId('scratchTexture');
+    texture2.img = document.getElementById('img1');
 
     // 텍스쳐용 이미지 등록
     lobby.addTexture(texture1);
     lobby.addTexture(texture2);
     // Material 생성 및 Scene에 등록
-    var sceneAddedMaterial = new Material('#fff')
-    var testResult
+    var sceneAddedMaterial = new Material('#fff');
+    var testResult;
 
 
     bsTest('texture',
             function () {
-                testResult = 1
+                var result = '';
                 try {
                     sceneAddedMaterial.addTexture(Texture.diffuse, texture1);
                 } catch (e) {
-                    testResult = 0
-                    console.log(e); // 'Material.addTexture:0'
+                    result = e.toString();
                 }
-                return testResult
-            }, 1,
+                return result;
+            }, '',
             function () {
                 testResult = 1
                 try {
@@ -192,7 +191,7 @@
     //    //
     //
 
-    var indexTexture1 = new Texture()
+    /*var indexTexture1 = new Texture()
     var indexTexture2 = new Texture()
     var indexTexture3 = new Texture()
     var indexTexture4 = new Texture()
@@ -233,194 +232,22 @@
                 }
                 return indexTestMaterial.diffuse.length
             }, 3
-    )
+    );*/
 
-    bsTest('Constructor',
+
+    /*bsTest('getRefCount',
             function () {
-                var material = new Material();
-                return material.color[0];
-            }, 1,
-            function () {
-                var material = new Material('#fff');
-                return material.color.toString();
-            }, [1, 1, 1, 1].toString(),
-            function () {
-                var material = new Material('#ff0000');
-                return material.color.toString();
-            }, [1, 0, 0, 1].toString(),
-            function () {
-                var material = new Material('#ff00000.8');
-                return material.color.toString();
-            }, [1, 0, 0, 0.8].toString(),
-            function () {
-                var material = new Material(0xff / 0xff, 0xaf / 0xff, 0x45 / 0xff, 0.5);
-                return material.color[0];
-            }, 1
-    );
-    //
-    //    bsTest('addTexture',
-    //            function () {
-    //                var world = new World('canvas');
-    //                var lobby = world.addScene(new Scene().setId('lobby')).getScene('lobby'), test;
-    //
-    //                lobby.addTexture('floor', document.getElementById('img0'));
-    //
-    //                var mat = lobby.addMaterial('floor', new Material()).getMaterial('floor');
-    //
-    //                try {
-    //                    mat.addTexture(Texture.diffuse, 'floor1');
-    //                } catch (e) {
-    //                    test = e.toString();
-    //                }
-    //                return test;
-    //            }, 'Error: Material.addTexture:0',
-    //            function () {
-    //                var world = new World('canvas');
-    //                var lobby = world.addScene(new Scene().setId('lobby')).getScene('lobby'), test;
-    //
-    //                lobby.addTexture('floor', document.getElementById('img0'));
-    //
-    //                var mat = lobby.addMaterial('floor', new Material()).getMaterial('floor');
-    //                mat.addTexture(Texture.diffuse, 'floor');
-    //
-    //                try {
-    //                    mat.addTexture(Texture.diffuseWrap, 'floor');
-    //                } catch (e) {
-    //                    test = e.toString();
-    //                }
-    //                return test;
-    //            }, 'Error: Material.addTexture:1',
-    //            function () {
-    //                var world = new World('canvas');
-    //                var lobby = world.addScene(new Scene().setId('lobby')).getScene('lobby');
-    //
-    //                lobby.addTexture('floor1', document.getElementById('img0'));
-    //
-    //                var mat1 = lobby.addMaterial('floor1', new Material()).getMaterial('floor1');
-    //                mat1.addTexture(Texture.diffuse, 'floor1');
-    //
-    //                return mat1._textures['floor1'].type;
-    //            }, Texture.diffuse,
-    //            function () {
-    //                var world = new World('canvas');
-    //                var lobby = world.addScene(new Scene().setId('lobby')).getScene('lobby');
-    //
-    //                lobby.addTexture('floor1', document.getElementById('img0'));
-    //
-    //                var mat1 = lobby.addMaterial('floor1', new Material()).getMaterial('floor1');
-    //                mat1.addTexture(Texture.diffuseWrap, 'floor1');
-    //
-    //                return mat1._textures['floor1'].type;
-    //            }, Texture.diffuseWrap,
-    //            function () {
-    //                var world = new World('canvas');
-    //                var lobby = world.addScene(new Scene().setId('lobby')).getScene('lobby');
-    //
-    //                lobby.addTexture('floor1', document.getElementById('img0'));
-    //
-    //                var mat1 = lobby.addMaterial('floor1', new Material()).getMaterial('floor1');
-    //                mat1.addTexture(Texture.normal, 'floor1');
-    //
-    //                return mat1._textures['floor1'].type;
-    //            }, Texture.normal,
-    //            function () {
-    //                var world = new World('canvas');
-    //                var lobby = world.addScene(new Scene().setId('lobby')).getScene('lobby');
-    //
-    //                lobby.addTexture('floor1', document.getElementById('img0'));
-    //
-    //                var mat1 = lobby.addMaterial('floor1', new Material()).getMaterial('floor1');
-    //                mat1.addTexture(Texture.specular, 'floor1');
-    //
-    //                return mat1._textures['floor1'].type;
-    //            }, Texture.specular,
-    //            function () {
-    //                var world = new World('canvas');
-    //                var lobby = world.addScene(new Scene().setId('lobby')).getScene('lobby');
-    //
-    //                lobby.addTexture('floor1', document.getElementById('img0'));
-    //
-    //                var mat1 = lobby.addMaterial('floor1', new Material()).getMaterial('floor1');
-    //                mat1.addTexture(Texture.specularNormal, 'floor1');
-    //
-    //                return mat1._textures['floor1'].type;
-    //            }, Texture.specularNormal,
-    //            function () {
-    //                var world = new World('canvas');
-    //                var lobby = world.addScene(new Scene().setId('lobby')).getScene('lobby');
-    //
-    //                lobby.addTexture('floor1', document.getElementById('img0'));
-    //                lobby.addTexture('floor2', document.getElementById('img0'));
-    //                lobby.addTexture('floor3', document.getElementById('img0'));
-    //
-    //                var mat1 = lobby.addMaterial('floor1', new Material()).getMaterial('floor1');
-    //                mat1.addTexture(Texture.diffuse, 'floor1', 3);
-    //                mat1.addTexture(Texture.diffuse, 'floor2', 0);
-    //                mat1.addTexture(Texture.diffuse, 'floor3', 0);
-    //                console.log('!!!!!!!!!!!!!!!!!!')
-    //                console.log('!!!!!!!!!!!!!!!!!!')
-    //                console.log(mat1['_' + Texture.diffuse].__indexList);
-    //
-    //                return mat1['_' + Texture.diffuse].__indexList.map(function (v) { return v.id }).join(',');
-    //            }, 'floor3,floor2,floor1',
-    //            function () {
-    //                var world = new World('canvas');
-    //                var lobby = world.addScene(new Scene().setId('lobby')).getScene('lobby');
-    //
-    //                lobby.addTexture('floor1', document.getElementById('img0'));
-    //                lobby.addTexture('floor2', document.getElementById('img0'));
-    //                lobby.addTexture('floor3', document.getElementById('img0'));
-    //                lobby.addTexture('floor4', document.getElementById('img0'));
-    //                lobby.addTexture('floor5', document.getElementById('img0'));
-    //                lobby.addTexture('floor6', document.getElementById('img0'));
-    //                lobby.addTexture('floor7', document.getElementById('img0'));
-    //                lobby.addTexture('floor8', document.getElementById('img0'));
-    //                lobby.addTexture('floor9', document.getElementById('img0'));
-    //                lobby.addTexture('floor10', document.getElementById('img0'));
-    //                lobby.addTexture('floor11', document.getElementById('img0'));
-    //
-    //
-    //                var mat1 = lobby.addMaterial('floor1', new Material()).getMaterial('floor1');
-    //                mat1.addTexture(Texture.diffuse, 'floor1', 1, BlendMode.add);
-    //                mat1.addTexture(Texture.diffuse, 'floor2', 2, BlendMode.alpha);
-    //                mat1.addTexture(Texture.diffuse, 'floor3', 3, BlendMode.darken);
-    //                mat1.addTexture(Texture.diffuse, 'floor4', 4, BlendMode.difference);
-    //                mat1.addTexture(Texture.diffuse, 'floor5', 5, BlendMode.erase);
-    //                mat1.addTexture(Texture.diffuse, 'floor6', 6, BlendMode.hardlight);
-    //                mat1.addTexture(Texture.diffuse, 'floor7', 7, BlendMode.invert);
-    //                mat1.addTexture(Texture.diffuse, 'floor8', 8, BlendMode.lighten);
-    //                mat1.addTexture(Texture.diffuse, 'floor9', 9, BlendMode.multiply);
-    //                mat1.addTexture(Texture.diffuse, 'floor10', 10, BlendMode.screen);
-    //                mat1.addTexture(Texture.diffuse, 'floor11', 11, BlendMode.subtract);
-    //
-    //
-    //                console.log(mat1['_' + Texture.diffuse].__indexList);
-    //
-    //                return mat1['_' + Texture.diffuse].__indexList.map(function (v) { return v.blendMode }).join(',');
-    //            }, 'add,alpha,darken,difference,erase,hardlight,invert,lighten,multiply,screen,subtract'
-    //    );
-    //
-    //    bsTest('getRefCount',
-    //            function () {
-    //                var world = new World('canvas');
-    //                var lobby = world.addScene(new Scene().setId('lobby')).getScene('lobby');
-    //                lobby.addGeometry('cube', new Geometry([], []));
-    //                var mat = new Material('#f00').addTexture(Texture.diffuse, 'temp');
-    //                var mesh1 = new Mesh('cube', mat);
-    //                lobby.addChild('box1', mesh1);
-    //                lobby.addChild('box2', new Mesh('cube', mat));
-    //                return mat.getRefCount();
-    //            }, 2
-    //    );
-    //
-    //    bsTest('removeTexture',
-    //            function () {
-    //                var mat = new Material('#f00').addTexture(Texture.diffuse, 'temp');
-    //                mat.removeTexture('temp');
-    //                return mat._textures['temp'];
-    //            }, undefined
-    //    );
-    //
+                var world = new World('canvas');
+                var lobby = world.addScene(new Scene().setId('lobby')).getScene('lobby');
+                lobby.addGeometry('cube', new Geometry([], []));
+                var mat = new Material('#f00').addTexture(Texture.diffuse, 'temp');
+                var mesh1 = new Mesh('cube', mat);
+                lobby.addChild('box1', mesh1);
+                lobby.addChild('box2', new Mesh('cube', mat));
+                return mat.getRefCount();
+            }, 2
+    );*/
+
     bsTest('color',
             function () {
                 var mat = new Material();
@@ -497,6 +324,147 @@
                 mat.wireFrameColor = '#fff';
                 return mat.wireFrameColor[0]
             }, 1
+    );
+
+
+
+    bsTest('addTexture',
+            function () {
+                var world = new World('canvas'),
+                    scene = new Scene(),
+                    texture = new Texture(),
+                    test = '';
+
+
+                world.addScene(scene);
+                texture.img = document.getElementById('img0');
+
+                var mat = new Material();
+                try {
+                    mat.addTexture(Texture.diffuse, texture);
+                } catch (e) {
+                    test = e.toString();
+                }
+                return test;
+            }, '',
+            function () {
+                var world = new World('canvas'),
+                    scene = new Scene(),
+                    texture = new Texture(),
+                    test = '';
+
+
+                world.addScene(scene);
+                texture.img = document.getElementById('img0');
+
+                var mat = new Material();
+                try {
+                    mat.addTexture('', texture);
+                } catch (e) {
+                    test = e.toString();
+                    console.log(test);
+                }
+                return test;
+            }, 'Error: Material.addTexture:0',
+            function () {
+                var world = new World('canvas'),
+                        scene = new Scene(),
+                        texture = new Texture(),
+                        test = '';
+
+
+                world.addScene(scene);
+                texture.img = document.getElementById('img0');
+
+                var mat = new Material();
+                try {
+                    mat.addTexture(Texture.diffuse, new Object());
+                } catch (e) {
+                    test = e.toString();
+                }
+                return test;
+            }, 'Error: Material.addTexture:1',
+            function () {
+                var world = new World('canvas'),
+                        scene = new Scene(),
+                        texture = new Texture(),
+                        test = '';
+
+
+                world.addScene(scene);
+                texture.img = document.getElementById('img0');
+
+                var mat = new Material();
+                try {
+                    mat.addTexture(Texture.diffuse, texture);
+                    mat.addTexture(Texture.diffuse, texture);
+                } catch (e) {
+                    test = e.toString();
+                }
+                return test;
+            }, 'Error: Material.addTexture:2',
+            function () {
+                var world = new World('canvas'),
+                        scene = new Scene(),
+                        texture = new Texture(),
+                        test = '';
+
+
+                world.addScene(scene);
+                texture.img = document.getElementById('img0');
+
+                var mat = new Material();
+                try {
+                    mat.addTexture(Texture.diffuse, texture, 'String');
+                } catch (e) {
+                    test = e.toString();
+                }
+                return test;
+            }, 'Error: Material.addTexture:3',
+            function () {
+                var world = new World('canvas'),
+                        scene = new Scene(),
+                        texture = new Texture(),
+                        test = '';
+
+
+                world.addScene(scene);
+                texture.img = document.getElementById('img0');
+
+                var mat = new Material();
+                try {
+                    mat.addTexture(Texture.diffuse, texture, -1);
+                } catch (e) {
+                    test = e.toString();
+                }
+                return test;
+            }, 'Error: Material.addTexture:4',
+            function () {
+                var world = new World('canvas'),
+                        scene = new Scene(),
+                        texture = new Texture(),
+                        test = '';
+
+
+                world.addScene(scene);
+                texture.img = document.getElementById('img0');
+
+                var mat = new Material();
+                try {
+                    mat.addTexture(Texture.diffuse, texture, new Texture());
+                } catch (e) {
+                    test = e.toString();
+                }
+                return test;
+            }, 'Error: Material.addTexture:5'
+    );
+
+    bsTest('removeTexture',
+            function () {
+                var mat = new Material('#f00').addTexture(Texture.diffuse, 'temp');
+                mat.removeTexture('temp');
+                return mat._textures['temp'];
+            }, undefined
     );
 </script>
 </body>
