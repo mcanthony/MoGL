@@ -107,55 +107,40 @@
                     // 이상한 타입 입력
                     cube3 = Geometry({}, iData)
                 } catch (e) {
-                    testResult = 0
-                    console.log(e);
+                    testResult = e.toString();
                 }
                 return testResult;
-            }, 0,
+            }, 'Error: Geometry.constructor:0',
             function () {
                 testResult = 1
                 try {
                     // 이상한 타입 입력
                     cube3 = Geometry(vData, {})
                 } catch (e) {
-                    testResult = 0
-                    console.log(e);
+                    testResult = e.toString();
                 }
                 return testResult;
-            }, 0,
+            }, 'Error: Geometry.constructor:1',
             function () {
                 testResult = 1
                 try {
                     // Uint16 입력테스트
                     cube3 = Geometry(new Float32Array([]), new Uint16Array([]))
                 } catch (e) {
-                    testResult = 0
-                    console.log(e);
+                    testResult = e.toString();
                 }
                 return testResult;
-            }, 1,
-//            function () {
-//                testResult = 1
-//                try {
-//                    // Uint32 입력테스트
-//                    cube3 = Geometry(new Float32Array([]), new Uint32Array([]))
-//                } catch (e) {
-//                    testResult = 0
-//                    console.log(e);
-//                }
-//                return testResult;
-//            }, 1,
+            }, 'Error: Geometry.constructor:1',
             function () {
                 testResult = 1
                 try {
                     // 잘못된 인덱스 입력테스트
                     cube3 = Geometry(new Float32Array([]), new Float32Array([]))
                 } catch (e) {
-                    testResult = 0
-                    console.log(e);
+                    testResult = e.toString();
                 }
                 return testResult;
-            }, 0,
+            }, 'Error: Geometry.constructor:1',
             function () {
                 cube4 = new Geometry([
                     0, 0, 0, 0, 0, 0,
@@ -192,9 +177,6 @@
                 return t[0] == 2 && t[1] == 2 && t[2] == 2;
             }, true
     );
-    //
-    //    var lobby = new Scene();
-    //    var testCube = new Geometry(vData, iData)
     var testSeperator = new Geometry([
         1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, // x,y,z, u,v, normalX,normalY,normalZ, r,g,b,a,
         1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
@@ -222,28 +204,8 @@
             function () {
                 return testSeperator2.color.length
             }, 0
-    )
-    //    // waffle shader등록
-    //    bsTest('test',
-    //            function () {
-    //                var sample = new Geometry(vData, iData);
-    //                sample.addVertexShader('aaa')
-    //                return sample._vertexShaders['aaa']
-    //            }, 'aaa',
-    //            function () {
-    //                //Shader키 삭제
-    //                var sample = new Geometry(vData, iData);
-    //                sample.removeVertexShader('aaa')
-    //                return sample._vertexShaders['aaa']
-    //            }, undefined,
-    //            function () {
-    //                //미등록된 Geometry
-    //                var sample = new Geometry(vData, iData);
-    //                sample.addVertexShader('bb')
-    //                return sample._vertexShaders['bb']
-    //            }, 'bb'
-    //    );
-    //
+    );
+
     bsTest('NEW TEST');
 
     bsTest('constructor',
@@ -320,35 +282,8 @@
                 return error;
             }, 'Error: Geometry.constructor:4'
     );
-    //
-    //    bsTest( 'addVertexShader',
-    //            function(){
-    //                var world = new World( 'canvas' );
-    //                var lobby = world.addScene( 'lobby', new Scene()).getScene( 'lobby');
-    //                lobby.addVertexShader( 'waffle', '' );
-    //                var cube = lobby.addGeometry( 'cube', new Geometry( vData, iData ) );
-    //                cube.addVertexShader( 'waffle' );
-    //                return cube._vertexShaders.hasOwnProperty( 'waffle' );
-    //            }, true,
-    //            function(){
-    //                var sample = new Geometry( vData, iData );
-    //                sample.addVertexShader('aaa');
-    //                return sample._vertexShaders.hasOwnProperty( 'aaa' );
-    //            }, true
-    //    );
-    //
-    //    bsTest( 'removeVertexShader',
-    //            function(){
-    //                var sample = new Geometry( vData, iData );
-    //                sample.addVertexShader( 'aaa' ).removeVertexShader( 'aaa' );
-    //                return sample._vertexShaders.hasOwnProperty( 'aaa' );
-    //            }, false,
-    //            function(){
-    //                var sample = new Geometry( vData, iData );
-    //                sample.removeVertexShader( 'aaa' );
-    //                return sample._vertexShaders.hasOwnProperty( 'aaa' );
-    //            }, false
-    //    );
+
+
 </script>
 <div></div>
 </body>
