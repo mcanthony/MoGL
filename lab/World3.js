@@ -7,7 +7,7 @@ var World = (function (makeUtil) {
         alpha: true,
         depth: true,
         stencil: false,
-        antialias: true,
+        antialias: false,
         premultipliedAlpha: true,
         preserveDrawingBuffer: false
     },
@@ -460,6 +460,9 @@ var World = (function (makeUtil) {
             var tCameraMtx
             var tempList;
 
+            var update = function update(gpu, list , updateList, updateFlag){
+                MergeManager.mergePropertyChange(gpu, list , updateList, updateFlag)
+            }
 
             return function(currentTime) {
                 len = 0,
@@ -480,7 +483,6 @@ var World = (function (makeUtil) {
                 tDiffuseMaps = null,
                 tNormalMaps = null
                 this.dispatch(World.renderBefore, currentTime);
-
                 while (i--) {
                     tScene = tSceneList[i]
                     //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -571,9 +573,13 @@ var World = (function (makeUtil) {
                             i2 = mergedInfo.lists.length
                             while(i2--){
                                 tempList= mergedInfo.lists[i2]
-
+                                update(tGPU, tempList,tScene.updateList.updatePropertys, {
+                                    rotate: true,
+                                    position: true,
+                                    scale : true
+                                })
                                 tVBO = tempList.vertexBuffer
-                                if(tVBO.updated || mergedInfo.lists.length>0) {
+                                if(tVBO.updated || mergedInfo.lists.length>1) {
                                     tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
                                     tGL.vertexAttribPointer(tProgram.aVertexPosition, 3, tGL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0 * Float32Array.BYTES_PER_ELEMENT),
                                     tGL.vertexAttribPointer(tProgram.aVertexNormal, 3, tGL.FLOAT, true, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT)
@@ -581,7 +587,7 @@ var World = (function (makeUtil) {
                                 }
 
                                 tVBO = tempList.materialBuffer
-                                if(tVBO.updated || mergedInfo.lists.length>0) {
+                                if(tVBO.updated || mergedInfo.lists.length>1) {
                                     tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
                                     tGL.vertexAttribPointer(tProgram.aUV, 3, tGL.FLOAT, false, 7 * Float32Array.BYTES_PER_ELEMENT, 0 * Float32Array.BYTES_PER_ELEMENT),
                                     tGL.vertexAttribPointer(tProgram.aColor, 4, tGL.FLOAT, false, 7 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT)
@@ -589,14 +595,15 @@ var World = (function (makeUtil) {
                                 }
 
                                 tVBO = tempList.scaleBuffer
-                                if(tVBO.updated || mergedInfo.lists.length>0) {
+                                if(tVBO.updated || mergedInfo.lists.length>1) {
                                     tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
+                                    tGL.bufferData(tGL.ARRAY_BUFFER, tempList.scaleData,tGL.DYNAMIC_DRAW)
                                     tGL.vertexAttribPointer(tProgram.aScale, 3, tGL.FLOAT, false, 0, 0)
                                     tVBO.updated = false
                                 }
 
                                 tVBO = tempList.positionBuffer
-                                if(tVBO.updated || mergedInfo.lists.length>0){
+                                if(tVBO.updated || mergedInfo.lists.length>1){
                                     tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
                                     tGL.bufferData(tGL.ARRAY_BUFFER, tempList.positionData,tGL.DYNAMIC_DRAW)
                                     tGL.vertexAttribPointer(tProgram.aPosition, 3, tGL.FLOAT, false, 0, 0)
@@ -604,7 +611,7 @@ var World = (function (makeUtil) {
                                 }
 
                                 tVBO = tempList.rotateBuffer
-                                if(tVBO.updated || mergedInfo.lists.length>0){
+                                if(tVBO.updated || mergedInfo.lists.length>1){
                                     tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
                                     tGL.bufferData(tGL.ARRAY_BUFFER, tempList.rotateData,tGL.DYNAMIC_DRAW)
                                     tGL.vertexAttribPointer(tProgram.aRotate, 3, tGL.FLOAT, false, 0, 0)
@@ -612,16 +619,11 @@ var World = (function (makeUtil) {
                                 }
 
                                 tIBO = tempList.indexBuffer
-                                if(tIBO.updated || mergedInfo.lists.length>0) {
+                                if(tIBO.updated || mergedInfo.lists.length>1) {
                                     tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO)
                                     tIBO.updated = false
                                 }
                                 tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_INT, 0)
-                                MergeManager.mergePropertyChange(tGPU, tempList,tScene.updateList.changePropertys, {
-                                    rotate: true,
-                                    position: true,
-                                    scale : true
-                                })
                             }
                             if (len > 1) {
                                 tGL.bindFramebuffer(tGL.FRAMEBUFFER, null);

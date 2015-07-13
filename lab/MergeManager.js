@@ -66,7 +66,7 @@ var MergeManager = (function () {
     .static('mergePropertyChange',{
         value : (function(){
             var i, j, k, len;
-            var tx, ty, tz, rx, ry, rz, sx, sy, sz, tP, tR, tS;
+            var tx, ty, tz, rx, ry, rz, sx, sy, sz, tP, tR, tS,uuid;
             var t, t1, t2, t3, tCount;
             var changeRotate, changePosition, changeScale;
             return function (gpu, data, updateData, changePropertys) {
@@ -78,19 +78,20 @@ var MergeManager = (function () {
                     tP = data.positionData, tR = data.rotateData, tS = data.scaleData
                     while (i--) {
                         t = updateData[i],
-                        len = priGeo[t.uuid].position.length,
+                        uuid = t.uuid,
+                        len = priGeo[uuid].position.length,
                         tCount = len / 3,
-                        k = data.items[t.uuid]*len,
+                        k = data.items[uuid].idx*len,
                         tx = t.x, ty = t.y, tz = t.z,
                         rx = t.rotateX, ry = t.rotateY, rz = t.rotateZ,
                         sx = t.scaleX, sy = t.scaleY, sz = t.scaleZ,
                         j = tCount
                         while (j--) {
-                            t1 = k, t2 = k + 1, t3 = k + 2,
-                            tP[t1] = tx, tP[t2] = ty, tP[t3] = tz,
+                            t1 = k, t2 = k + 1, t3 = k + 2
+                            //tP[t1] = tx, tP[t2] = ty, tP[t3] = tz,
                             tR[t1] = rx, tR[t2] = ry, tR[t3] = rz,
-                            tS[t1] = sx, tS[t2] = sy, tS[t3] = sz
-                            k+=3
+                            //tS[t1] = sx, tS[t2] = sy, tS[t3] = sz,
+                            k=k+3
                         }
                     }
                     data.positionBuffer.updated = changePosition
@@ -133,10 +134,10 @@ var MergeManager = (function () {
             }
             var targetVBOS= {}
             return function mergeData(gpu,data, mergeTargets){
-                var j, len,iMax;
+                var j, len, iMax;
                 var uuid, uuids, temp;
-                var tVertex, tVertexCount, tList,tGeo,tIDX;
-                var lastLength;
+                var tVertex, tVertexCount, tList, tGeo, tIDX;
+                var lastLen;
                 uuids = data.uuids
                 len = mergeTargets.length
                 if(len==0) return data
@@ -162,8 +163,8 @@ var MergeManager = (function () {
                     }
                     tIDX = data.lists.length-1
                     tList = data.lists[tIDX]
-                    if(!tList.items[temp.uuid]) {
-                        tList.items[temp.uuid] = tList.items.length
+                    if(!tList.items[uuid]) {
+                        tList.items[uuid] = {idx : tList.items.length, listIDX : data.lists.length-1}
                         tList.items.push(temp)
                     }
                     // 버텍스입력하고
@@ -178,13 +179,13 @@ var MergeManager = (function () {
 
                     // 인덱스 입력하고
                     iMax = tGeo.index.length
-                    lastLength = tList.maxIndex
+                    lastLen = tList.maxIndex
                     var tMax =0
                     for (j = 0; j < iMax; j++) {
-                        tList.indexData.push(lastLength + tGeo.index[j])
+                        tList.indexData.push(lastLen + tGeo.index[j])
                         if(tMax<=tGeo.index[j]) tMax = tGeo.index[j]
                     }
-                    tList.maxIndex = tMax + lastLength+1
+                    tList.maxIndex = tMax + lastLen+1
 
                     // 프로퍼티 입력하고
                     var tUV = tGeo.uv
@@ -205,13 +206,12 @@ var MergeManager = (function () {
                 // 버퍼를 맹그러
                 for(var k in targetVBOS){
                     tList = data.lists[k]
-
-
                     tList.vertexBuffer = makeUtil.makeVBO(gpu, 'mergeVBO' + k, tList.vertexData, 6),
                     tList.indexBuffer = makeUtil.makeIBO(gpu, 'mergeIBO' + k, tList.indexData, 1),
                     tList.scaleBuffer = makeUtil.makeVBO(gpu, 'mergeScale' + k, tList.scaleData, 3),
                     tList.positionData = new Float32Array(tList.positionData)
                     tList.rotateData = new Float32Array(tList.rotateData)
+                    tList.scaleData = new Float32Array(tList.scaleData)
                     tList.positionBuffer = makeUtil.makeVBO(gpu, 'mergePosition' + k, tList.positionData, 3),
                     tList.rotateBuffer = makeUtil.makeVBO(gpu, 'mergeRotate' + k, tList.rotateData, 3),
                     tList.materialBuffer = makeUtil.makeVBO(gpu, 'mergeMaterial' + k, tList.materialData, 7)
