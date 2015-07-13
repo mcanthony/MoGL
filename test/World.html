@@ -55,75 +55,78 @@
             function () {
                 return world2.isAlive;
             }, true,
-            function () {
-                var test = '';
-                try {
+            function(){
+                try{
                     new World();
-                } catch (e) {
-                    test = e.toString();
+                }catch(e){
+                    return e.toString().indexOf('World.constructor:0') > -1;
                 }
-                return test == '';
-            }, false,
-            function () {
-                var test = '';
-                try {
+            }, true,
+            function(){
+                try{
                     new World('empty');
-                } catch (e) {
-                    test = e.toString();
+                }catch(e){
+                    return e.toString().indexOf('World.constructor:1') > -1;
                 }
-                return test == '';
-            }, false
+            }, true
     );
 
-    bsTest('add/get/remove ',
+    bsTest('addScene/getScene/removeScene',
             function () {
-                world.addScene(sceneTest1.setId('lobby'))
+                world.addScene(sceneTest1.setId('lobby'));
                 return world.getScene('lobby');
             }, sceneTest1,
             function () {
-                // 씬추가
                 world.addScene(sceneTest2.setId('room'));
                 return world.getScene('room');
             }, sceneTest2,
-            function () {
-                var test = '';
-                try {
-                    // 이상한 타입 입력
-                    world.addScene('wantNull', {});
-                } catch (e) {
-                    test = e.toString();
+            function(){
+                try{
+                    world.addScene(sceneTest1);
+                }catch(e){
+                    return e.toString().indexOf('World.addScene:0') > -1;
                 }
-                return test;
-            }, 'Error: World.addScene:1',
+            }, true,
             function () {
-                // 씬삭제
+                try {
+                    world.addScene({});
+                } catch (e) {
+                    return e.toString().indexOf('World.addScene:1') > -1;
+                }
+            }, true,
+            function(){
+                return world.getScene('empty');
+            }, null,
+            function () {
                 world.removeScene('room');
                 return world.getScene('room');
-            }, null
+            }, null,
+            function(){
+                try{
+                    world.removeScene('empty');
+                }catch(e){
+                    return e.toString().indexOf('World.removeScene:0') > -1;
+                }
+            }, true
     );
-    //
-    world.destroy();
-    world2.destroy();
-    //
+
     bsTest('destroy',
             function () {
+                world.destroy();
                 return world.isAlive;
             }, false,
             function () {
-                var test = 1;
+                world2.destroy();
+                return world2.isAlive;
+            }, false,
+            function () {
                 try {
-                    // 파괴된 객체 매서드 실행
                     world.addScene(sceneTest3);
                 } catch (e) {
-                    test = 0
+                    return e.toString().indexOf('Error: Destroyed Object') > -1;
                 }
-                return test;
-            }, 0,
-            function () {
-                return world2.isAlive;
-            }, false
+            }, true
     );
-    //
 
     bsTest('scene',
             function () {

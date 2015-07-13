@@ -1,7 +1,7 @@
 var MergeManager = (function () {
     'use strict';
     //private
-    var maxVertex = 30000
+    var maxVertex = 3*16000
     var maxUniform = 150
     //shared private
 
@@ -10,6 +10,8 @@ var MergeManager = (function () {
     var priGeo = $getPrivate('Mesh', 'geometry')
     var priMat = $getPrivate('Mesh', 'material')
     var priMatColor = $getPrivate('Material', 'color')
+
+    var items = {}
     return MoGL.extend('MergeManager', {
         description: "",
         param: [],
@@ -65,42 +67,45 @@ var MergeManager = (function () {
     //})
     .static('mergePropertyChange',{
         value : (function(){
-            var i, i2, j, k, k2,len;
-            var tx, ty, tz, rx, ry, rz, sx, sy, sz, tP, tR, tS;
-            var t, tVertexCount;
-            var changeRotate, changePosition,changeScale;
-            var maxNum = 8
+            var i, j, k, len;
+            var tx, ty, tz, rx, ry, rz, sx, sy, sz, tP, tR, tS,uuid;
+            var t, t1, t2, t3, tCount;
+            var changeRotate, changePosition, changeScale;
             return function (gpu, data, updateData, changePropertys) {
                 i = updateData.length,
                 changePosition = changePropertys['position'],
                 changeRotate = changePropertys['rotate'],
                 changeScale = changePropertys['scale']
+                var tData
                 if (changePosition || changeRotate || changeScale) {
-                    tP = data.positionData, tR = data.rotateData, tS = data.scaleData
                     while (i--) {
-                        t = updateData[i],len = priGeo[t.uuid].position.length
-                        tVertexCount = len / 3,
-                        k = data.items.indexOf(t)*len
+                        t = updateData[i],
+                        uuid = t.uuid,
+                        tData = data[items[uuid].listIDX],
+                        tP = tData.positionData, tR = tData.rotateData, tS = tData.scaleData
+                        len = priGeo[uuid].position.length,
+                        tCount = len / 3,
+                        k = items[uuid].idx*len,
                         tx = t.x, ty = t.y, tz = t.z,
                         rx = t.rotateX, ry = t.rotateY, rz = t.rotateZ,
                         sx = t.scaleX, sy = t.scaleY, sz = t.scaleZ,
-                        j = tVertexCount
+                        j = tCount
                         while (j--) {
-                            tP[k+0] = tx, tP[k+1] = ty, tP[k+2] = tz
-                            tR[k+0] = rx, tR[k+1] = ry, tR[k+2] = rz
-                            tS[k+0] = sx, tS[k+1] = sy, tS[k+2] = sz
-                            k+=3
+                            t1 = k, t2 = k + 1, t3 = k + 2
+                            tP[t1] = tx, tP[t2] = ty, tP[t3] = tz,
+                            tR[t1] = rx, tR[t2] = ry, tR[t3] = rz,
+                            tS[t1] = sx, tS[t2] = sy, tS[t3] = sz,
+                            k=k+3
                         }
-                        //
-                        j = (tVertexCount / maxNum ) ^ 0
                     }
-                    data.positionBuffer.updated = changePosition
-                    data.rotateBuffer.updated = changeRotate
-                    data.scaleBuffer.updated = changeScale
-                    updateData.length=0
+                    if(tData){
+                        tData.positionBuffer.updated = changePosition
+                        tData.rotateBuffer.updated = changeRotate
+                        tData.scaleBuffer.updated = changeScale
+                        updateData.length=0
+                    }
                 }
 
-                return data
             }
         })()
     })
@@ -113,7 +118,6 @@ var MergeManager = (function () {
                 v.push( {
                     maxIndex : 0,
                     items:[],
-                    itemNum:0,
 
                     vertexData: [],
                     indexData: [],
@@ -135,10 +139,10 @@ var MergeManager = (function () {
             }
             var targetVBOS= {}
             return function mergeData(gpu,data, mergeTargets){
-                var j, len,iMax;
+                var j, len, iMax;
                 var uuid, uuids, temp;
-                var tVertex, tVertexCount, tList,tGeo,tIDX;
-                var lastLength;
+                var tVertex, tVertexCount, tList, tGeo, tIDX;
+                var lastLen;
                 uuids = data.uuids
                 len = mergeTargets.length
                 if(len==0) return data
@@ -164,7 +168,10 @@ var MergeManager = (function () {
                     }
                     tIDX = data.lists.length-1
                     tList = data.lists[tIDX]
-                    if(tList.items.indexOf(temp)==-1) tList.items.push(temp)
+                    if(!items[uuid]) {
+                        tList.items.push(temp)
+                        items[uuid] = {idx : tList.items.length-1, listIDX : data.lists.length-1}
+                    }
                     // 버텍스입력하고
                     for (j = 0; j < tVertexCount; j++) {
                         tList.vertexData.push(tVertex[j*3],tVertex[j*3+1],tVertex[j*3+2])
@@ -177,18 +184,17 @@ var MergeManager = (function () {
 
                     // 인덱스 입력하고
                     iMax = tGeo.index.length
-                    lastLength = tList.maxIndex
+                    lastLen = tList.maxIndex
                     var tMax =0
                     for (j = 0; j < iMax; j++) {
-                        tList.indexData.push(lastLength + tGeo.index[j])
+                        tList.indexData.push(lastLen + tGeo.index[j])
                         if(tMax<=tGeo.index[j]) tMax = tGeo.index[j]
                     }
-                    tList.maxIndex = tMax + lastLength+1
+                    tList.maxIndex = tMax + lastLen+1
 
                     // 프로퍼티 입력하고
                     var tUV = tGeo.uv
                     var tColor = priMatColor[priMat[uuid].uuid]
-                    tList.itemNum++
                     for (j = 0; j < tVertexCount; j++) {
                         tList.scaleData.push(temp.scaleX, temp.scaleY, temp.scaleZ)
                         tList.materialData.push(textureIDX,tUV[j*2],tUV[j*2+1],tColor[0],tColor[1],tColor[2],tColor[3])
@@ -205,13 +211,12 @@ var MergeManager = (function () {
                 // 버퍼를 맹그러
                 for(var k in targetVBOS){
                     tList = data.lists[k]
-
-
                     tList.vertexBuffer = makeUtil.makeVBO(gpu, 'mergeVBO' + k, tList.vertexData, 6),
                     tList.indexBuffer = makeUtil.makeIBO(gpu, 'mergeIBO' + k, tList.indexData, 1),
                     tList.scaleBuffer = makeUtil.makeVBO(gpu, 'mergeScale' + k, tList.scaleData, 3),
                     tList.positionData = new Float32Array(tList.positionData)
                     tList.rotateData = new Float32Array(tList.rotateData)
+                    tList.scaleData = new Float32Array(tList.scaleData)
                     tList.positionBuffer = makeUtil.makeVBO(gpu, 'mergePosition' + k, tList.positionData, 3),
                     tList.rotateBuffer = makeUtil.makeVBO(gpu, 'mergeRotate' + k, tList.rotateData, 3),
                     tList.materialBuffer = makeUtil.makeVBO(gpu, 'mergeMaterial' + k, tList.materialData, 7)

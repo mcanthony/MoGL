@@ -28,6 +28,17 @@ var Camera = (function () {
             this.lookAt(0, 0, 0);
         }
     })
+    .field('matrix', {
+        description: '현재 객체내의 position,rotate,scale을 반영한 후 자신을 반환',
+        sample:[
+            'var mtx = new Matrix();',
+            'console.log(mtx.matrix);'
+        ],
+        get:function matrixGet() {
+            this.matIdentity().matScale(this.scaleX,this.scaleY,this.scaleZ).matRotateX(this.rotateX).matRotateY(this.rotateY).matRotateZ(this.rotateZ).matTranslate(this.x, this.y, -this.z);
+            return this;
+        }
+    })
     .field('clipPlaneNear', {
         description: "현재 절두체의 최소z값",
         sample: [

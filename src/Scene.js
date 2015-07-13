@@ -1,4 +1,3 @@
-'use strict'
 var Scene = (function () {
     'use strict';
     var vertexShaderParser, fragmentShaderParser,
@@ -43,7 +42,7 @@ var Scene = (function () {
                 material : [],
                 camera : [],
                 merged : [],
-                changePropertys : []
+                updatePropertys : []
             },
             baseLightRotate[this] = [0, -1, -1];
             this.updateList = updateList[this]

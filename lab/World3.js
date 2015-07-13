@@ -7,7 +7,7 @@ var World = (function (makeUtil) {
         alpha: true,
         depth: true,
         stencil: false,
-        antialias: true,
+        antialias: false,
         premultipliedAlpha: true,
         preserveDrawingBuffer: false
     },
@@ -460,7 +460,9 @@ var World = (function (makeUtil) {
             var tCameraMtx
             var tempList;
 
-
+            var update = function update(gpu, list , updateList, updateFlag){
+                MergeManager.mergePropertyChange(gpu, list , updateList, updateFlag)
+            }
             return function(currentTime) {
                 len = 0,
                 pProgram = null,
@@ -480,7 +482,6 @@ var World = (function (makeUtil) {
                 tDiffuseMaps = null,
                 tNormalMaps = null
                 this.dispatch(World.renderBefore, currentTime);
-
                 while (i--) {
                     tScene = tSceneList[i]
                     //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -568,11 +569,18 @@ var World = (function (makeUtil) {
                                 k3++
                             }
 
+                            update(tGPU, mergedInfo.lists,tScene.updateList.updatePropertys, {
+                                rotate: true,
+                                position: true,
+                                scale : true
+                            })
+
                             i2 = mergedInfo.lists.length
+                            var prevLen = 0
                             while(i2--){
                                 tempList= mergedInfo.lists[i2]
-
                                 tVBO = tempList.vertexBuffer
+
                                 if(tVBO.updated || mergedInfo.lists.length>1) {
                                     tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
                                     tGL.vertexAttribPointer(tProgram.aVertexPosition, 3, tGL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0 * Float32Array.BYTES_PER_ELEMENT),
@@ -591,6 +599,7 @@ var World = (function (makeUtil) {
                                 tVBO = tempList.scaleBuffer
                                 if(tVBO.updated || mergedInfo.lists.length>1) {
                                     tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
+                                    tGL.bufferData(tGL.ARRAY_BUFFER, tempList.scaleData,tGL.DYNAMIC_DRAW)
                                     tGL.vertexAttribPointer(tProgram.aScale, 3, tGL.FLOAT, false, 0, 0)
                                     tVBO.updated = false
                                 }
@@ -617,11 +626,6 @@ var World = (function (makeUtil) {
                                     tIBO.updated = false
                                 }
                                 tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_INT, 0)
-                                MergeManager.mergePropertyChange(tGPU, tempList,tScene.updateList.changePropertys, {
-                                    rotate: true,
-                                    position: true,
-                                    scale : true
-                                })
                             }
                             if (len > 1) {
                                 tGL.bindFramebuffer(tGL.FRAMEBUFFER, null);
