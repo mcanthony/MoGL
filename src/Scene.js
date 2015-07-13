@@ -1,4 +1,3 @@
-'use strict'
 var Scene = (function () {
     'use strict';
     var vertexShaderParser, fragmentShaderParser,
