@@ -113,8 +113,8 @@
 
 
     ////////////////////////////////////////////////////////////////////////////
-//    makeItems(Primitive.cube())
-    makeItems(Primitive.plane())
+    makeItems(Primitive.cube())
+//    makeItems(Primitive.plane())
     world.setAutoSize(1)
     world.start()
     ////////////////////////////////////////////////////////////////////////////
@@ -122,7 +122,7 @@
         var meshs, item, PI2, i;
         meshs = []
         PI2 = Math.PI * 2;
-        for (i = 0; i <2000; i++) {
+        for (i = 0; i <1000; i++) {
             var a = new Material(Math.random(), Math.random(), Math.random(),1.0)
 //            var a = new Material()
             if (i % 9 == 0) a.addTexture(Texture.diffuse, texture0)
@@ -156,7 +156,7 @@
             divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
 
             var i = meshs.length, item;
-            var i = 250, item;
+            var i = 500, item;
             while (i--) {
                 item = meshs[i],
                 item.rotateX += 0.05,

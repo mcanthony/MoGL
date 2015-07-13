@@ -573,7 +573,7 @@ var World = (function (makeUtil) {
                                 tempList= mergedInfo.lists[i2]
 
                                 tVBO = tempList.vertexBuffer
-                                if(tVBO.updated || mergedInfo.lists.length>1) {
+                                if(tVBO.updated || mergedInfo.lists.length>0) {
                                     tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
                                     tGL.vertexAttribPointer(tProgram.aVertexPosition, 3, tGL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0 * Float32Array.BYTES_PER_ELEMENT),
                                     tGL.vertexAttribPointer(tProgram.aVertexNormal, 3, tGL.FLOAT, true, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT)
@@ -581,7 +581,7 @@ var World = (function (makeUtil) {
                                 }
 
                                 tVBO = tempList.materialBuffer
-                                if(tVBO.updated || mergedInfo.lists.length>1) {
+                                if(tVBO.updated || mergedInfo.lists.length>0) {
                                     tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
                                     tGL.vertexAttribPointer(tProgram.aUV, 3, tGL.FLOAT, false, 7 * Float32Array.BYTES_PER_ELEMENT, 0 * Float32Array.BYTES_PER_ELEMENT),
                                     tGL.vertexAttribPointer(tProgram.aColor, 4, tGL.FLOAT, false, 7 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT)
@@ -589,14 +589,14 @@ var World = (function (makeUtil) {
                                 }
 
                                 tVBO = tempList.scaleBuffer
-                                if(tVBO.updated || mergedInfo.lists.length>1) {
+                                if(tVBO.updated || mergedInfo.lists.length>0) {
                                     tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
                                     tGL.vertexAttribPointer(tProgram.aScale, 3, tGL.FLOAT, false, 0, 0)
                                     tVBO.updated = false
                                 }
 
                                 tVBO = tempList.positionBuffer
-                                if(tVBO.updated || mergedInfo.lists.length>1){
+                                if(tVBO.updated || mergedInfo.lists.length>0){
                                     tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
                                     tGL.bufferData(tGL.ARRAY_BUFFER, tempList.positionData,tGL.DYNAMIC_DRAW)
                                     tGL.vertexAttribPointer(tProgram.aPosition, 3, tGL.FLOAT, false, 0, 0)
@@ -604,7 +604,7 @@ var World = (function (makeUtil) {
                                 }
 
                                 tVBO = tempList.rotateBuffer
-                                if(tVBO.updated || mergedInfo.lists.length>1){
+                                if(tVBO.updated || mergedInfo.lists.length>0){
                                     tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
                                     tGL.bufferData(tGL.ARRAY_BUFFER, tempList.rotateData,tGL.DYNAMIC_DRAW)
                                     tGL.vertexAttribPointer(tProgram.aRotate, 3, tGL.FLOAT, false, 0, 0)
@@ -612,7 +612,7 @@ var World = (function (makeUtil) {
                                 }
 
                                 tIBO = tempList.indexBuffer
-                                if(tIBO.updated || mergedInfo.lists.length>1) {
+                                if(tIBO.updated || mergedInfo.lists.length>0) {
                                     tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO)
                                     tIBO.updated = false
                                 }
