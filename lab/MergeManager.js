@@ -1,7 +1,7 @@
 var MergeManager = (function () {
     'use strict';
     //private
-    var maxVertex = 4*2000
+    var maxVertex = 3*16000
     var maxUniform = 150
     //shared private
 

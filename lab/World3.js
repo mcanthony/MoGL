@@ -463,7 +463,6 @@ var World = (function (makeUtil) {
             var update = function update(gpu, list , updateList, updateFlag){
                 MergeManager.mergePropertyChange(gpu, list , updateList, updateFlag)
             }
-
             return function(currentTime) {
                 len = 0,
                 pProgram = null,
