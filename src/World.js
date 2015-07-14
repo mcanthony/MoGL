@@ -443,7 +443,7 @@ var World = (function (makeUtil) {
             // 재질관련 private property
             var priMatColor;
             var priMatWireFrame, priMatWireFrameColor;
-            var priMatShading, priMatLambert, priMatNormalPower, priMatSpecularPower, priMatSpecularMapPower, priMatSpecularColor;
+            var priMatShading, priMatLambert, priMatNormalPower, priMatSpecularPower, priTexSpecularMapPower, priMatSpecularColor;
             var priMatDiffuseMaps;
             var priMatNormalMaps;
             var priMatSpecularMaps;
@@ -470,11 +470,12 @@ var World = (function (makeUtil) {
             priMatLambert = $getPrivate('Material', 'lambert'),
             priMatNormalPower = $getPrivate('Material', 'normalPower'),
             priMatSpecularPower = $getPrivate('Material', 'specularPower'),
-            priMatSpecularMapPower = $getPrivate('Material', 'specularMapPower'),
             priMatSpecularColor = $getPrivate('Material', 'specularColor'),
             priMatDiffuseMaps = $getPrivate('Material', 'diffuse');
             priMatNormalMaps = $getPrivate('Material', 'normal');
             priMatSpecularMaps = $getPrivate('Material', 'specular');
+
+            priTexSpecularMapPower = $getPrivate('Texture', 'specularMapPower')
 
             var currentMouse = new Uint8Array(4)
             currentMouse[3] = 1
@@ -770,7 +771,7 @@ var World = (function (makeUtil) {
                                         tGL.bindTexture(tGL.TEXTURE_2D, tGPU.textures[tSpecularMaps[tSpecularMaps.length - 1].tex.uuid]);
                                         tGL.uniform1i(tProgram.uSpecularSampler, 2);
                                         tGL.uniform1i(tProgram.useSpecularMap, true);
-                                        tGL.uniform1f(tProgram.uSpecularMapPower, priMatSpecularMapPower[tMatUUID]);
+                                        tGL.uniform1f(tProgram.uSpecularMapPower, priTexSpecularMapPower[tSpecularMaps[tSpecularMaps.length - 1].tex.uuid]);
 
                                     }else{
                                         tGL.uniform1i(tProgram.useSpecularMap, false);

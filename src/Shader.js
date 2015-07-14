@@ -565,7 +565,7 @@ var Shader = (function () {
                                 '   gl_FragColor = diffuse *light * ambientColor * ambientColor[3] + specular * specColor ;\n' +
                                 '}\n' +
                                 'if( useSpecularMap ){\n' +
-                                '   gl_FragColor *= texture2D( uSpecularSampler, vUV ) * uSpecularMapPower;\n'+
+                                '   gl_FragColor *= sqrt(gl_FragColor * texture2D( uSpecularSampler, vUV ) +uSpecularMapPower);\n'+
                                 '}\n' +
                                 'gl_FragColor.a = alpha;'
                             ]
