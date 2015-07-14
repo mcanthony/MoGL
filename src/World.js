@@ -775,6 +775,7 @@ var World = (function (makeUtil) {
                                     //if (tDiffuses.length) {
                                         //tGL.activeTexture(tGL.TEXTURE0);
                                     //}
+                                    tGL.activeTexture(tGL.TEXTURE0)
                                     tDiffuse = tGPU.textures[tDiffuseMaps[tDiffuseMaps.length - 1].tex.uuid];
                                     if (tDiffuse != pDiffuse) {
                                         tGL.bindTexture(tGL.TEXTURE_2D, tDiffuse);
