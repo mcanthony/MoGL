@@ -2,15 +2,16 @@ var Material = (function () {
     'use strict';
     var textureLoaded, texType,
         diffuse, normal, specular, diffuseWrap, specularNormal,
-        shading, lambert, normalPower,specularValue, specularColor, wireFrame, wireFrameColor, count, color;
+        shading, lambert, normalPower,specularPower,specularMapPower, specularColor, wireFrame, wireFrameColor, count, color;
     
     //private
     shading = {},
 
     lambert = {},
     normalPower = {},
-    specularValue = {},
+    specularPower = {},
     specularColor = {},
+    specularMapPower = {}
     wireFrame = {},
     wireFrameColor = {},
 
@@ -30,8 +31,10 @@ var Material = (function () {
         shading: shading,
         lambert: lambert,
         normalPower: normalPower,
-        specularValue: specularValue,
+        specularPower: specularPower,
+        specularMapPower : specularMapPower,
         specularColor: specularColor,
+        specular:specular,
         diffuse: diffuse,
         normal: normal
     }),
@@ -75,7 +78,8 @@ var Material = (function () {
             wireFrame[this] = false;
             lambert[this] = 1.0
             normalPower[this] = 1.0
-            specularValue[this] = 20.0
+            specularPower[this] = 20.0
+            specularMapPower[this] = 1.5
             specularColor[this] = [1,1,1,1]
             shading[this] = Shading.none
         }
@@ -159,16 +163,27 @@ var Material = (function () {
         get:$getter(normalPower),
         set:$setter(normalPower)
     })
-    .field('specularValue', {
-        description: "재질 specularValue 적용 강도 설정",
+    .field('specularPower', {
+        description: "재질 specularPower 적용 강도 설정",
         sample: [
-            'material.specularValue = 20.0;',
-            'console.log(material.specularValue);'
+            'material.specularPower = 20.0;',
+            'console.log(material.specularPower);'
         ],
         defaultValue:'20.0',
-        get:$getter(specularValue),
-        set:$setter(specularValue)
+        get:$getter(specularPower),
+        set:$setter(specularPower)
     })
+    .field('specularMapPower', {
+        description: "스페큘러맵의 적용 강도 설정",
+        sample: [
+            'material.specularMapPower = 2.0;',
+            'console.log(material.specularMapPower);'
+        ],
+        defaultValue:'1.5',
+        get:$getter(specularMapPower),
+        set:$setter(specularMapPower)
+    })
+
     .field('specularColor', {
         description: "specular 컬러색",
         sample: [
@@ -177,7 +192,7 @@ var Material = (function () {
             'console.log(material.specularColor);'
         ],
         defaultValue:'[1,1,1,1]',
-        get:$getter(color),
+        get:$getter(specularColor),
         set:function specularColorrSet(v) {
             var p = specularColor[this];
             v = $color(v);
@@ -200,6 +215,15 @@ var Material = (function () {
         ],
         defaultValue:'[]',
         get:$getter(normal)
+        //set:$setter(normal)
+    })
+    .field('specular', {
+        description: "재질에 적용된 specular 리스트 반환",
+        sample: [
+            'console.log(material.specular);'
+        ],
+        defaultValue:'[]',
+        get:$getter(specular)
         //set:$setter(normal)
     })
     .field('isLoaded', {
