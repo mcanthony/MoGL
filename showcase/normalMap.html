@@ -93,9 +93,10 @@
     xmlhttp.send(null);
     ////////////////////////////////////////////////////////////////////////////
     var testMat, testMat2, testMat3;
+    var testItem, testItem2, testItem3;
+    var texture, normalTexture, specularTexture;
     function makeItems(geo) {
-        var testItem, testItem2, testItem3;
-        var texture, normalTexture, specularTexture;
+
         texture = new Texture()
         texture.img = document.getElementById('testIMG2')
 
@@ -230,7 +231,7 @@
             testMat2.specularPower = value
         })
         panel.add(controllerParams, 'specularMapPower', 0.5, 3).onChange(function (value) {
-            testMat2.specularMapPower = value
+            specularTexture.specularMapPower = value
         })
         panel.add(controllerParams, 'normalPower', -3, 3).onChange(function (value) {
             testMat2.normalPower = value

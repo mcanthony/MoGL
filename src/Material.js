@@ -11,7 +11,6 @@ var Material = (function () {
     normalPower = {},
     specularPower = {},
     specularColor = {},
-    specularMapPower = {}
     wireFrame = {},
     wireFrameColor = {},
 
@@ -32,7 +31,6 @@ var Material = (function () {
         lambert: lambert,
         normalPower: normalPower,
         specularPower: specularPower,
-        specularMapPower : specularMapPower,
         specularColor: specularColor,
         specular:specular,
         diffuse: diffuse,
@@ -79,7 +77,6 @@ var Material = (function () {
             lambert[this] = 1.0
             normalPower[this] = 1.0
             specularPower[this] = 20.0
-            specularMapPower[this] = 1.5
             specularColor[this] = [1,1,1,1]
             shading[this] = Shading.none
         }
@@ -172,16 +169,6 @@ var Material = (function () {
         defaultValue:'20.0',
         get:$getter(specularPower),
         set:$setter(specularPower)
-    })
-    .field('specularMapPower', {
-        description: "스페큘러맵의 적용 강도 설정",
-        sample: [
-            'material.specularMapPower = 2.0;',
-            'console.log(material.specularMapPower);'
-        ],
-        defaultValue:'1.5',
-        get:$getter(specularMapPower),
-        set:$setter(specularMapPower)
     })
 
     .field('specularColor', {

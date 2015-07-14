@@ -1,14 +1,16 @@
 var Texture = (function() {
     'use strict';
     var imgType, canvas, context, empty, resizer,
-        resize, imgs, loaded, isLoaded;
+        resize, imgs, loaded, isLoaded,specularMapPower;
     //private
     resize = {},
     imgs = {},
     isLoaded = {},
+    specularMapPower = {}
     //shared private
     $setPrivate('Texture', {
-        imgs : imgs
+        imgs : imgs,
+        specularMapPower : specularMapPower
     }),
     //lib
     imgType = {'.jpg':1, '.png':1, '.gif':1},
@@ -64,7 +66,19 @@ var Texture = (function() {
         sample: [
             "var texture = new Texture();"
         ],
-        value:function Texture(){}
+        value:function Texture(){
+            specularMapPower[this] = 1.5
+        }
+    })
+    .field('specularMapPower', {
+        description: "스페큘러맵의 적용 강도 설정",
+        sample: [
+            'material.specularMapPower = 2.0;',
+            'console.log(material.specularMapPower);'
+        ],
+        defaultValue:'1.5',
+        get:$getter(specularMapPower),
+        set:$setter(specularMapPower)
     })
     .field('resizeType', {
         description:'resize type get/set field.',
