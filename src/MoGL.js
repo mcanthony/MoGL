@@ -508,8 +508,9 @@ var MoGL = (function() {
             ],
             value:(function(){
                 var loopstart, loop, target;
-                loop = function loop(t){
-                    var k0, k1, ani, inst, prop, init, rate;
+                loop = function loop(){
+                    var t, k0, k1, ani, inst, prop, init, rate;
+					t = performance.now();
                     for (k0 in target) {
                         ani = target[k0];
                         if (t > ani.start) {//딜레이대기체크
@@ -541,7 +542,6 @@ var MoGL = (function() {
                             }
                         }
                     }
-                    requestAnimationFrame(loop);
                 },
                 target = {};
                 return function setProperties(v, opt) {
@@ -561,7 +561,7 @@ var MoGL = (function() {
                         for (k in v) ani.init[k] = this[k];
                         if (!loopstart) {
                             loopstart = true;
-                            requestAnimationFrame(loop);
+                            setInterval(loop, 16);
                         }
 					} else {
 						delete target[this];
