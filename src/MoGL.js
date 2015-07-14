@@ -507,7 +507,7 @@ var MoGL = (function() {
                 "mat.setProperties( vo, ani );"
             ],
             value:(function(){
-                var loopstart, loop, target, aid = 0;
+                var loopstart, loop, target;
                 loop = function loop(t){
                     var k0, k1, ani, inst, prop, init, rate;
                     for (k0 in target) {
@@ -547,7 +547,7 @@ var MoGL = (function() {
                 return function setProperties(v, opt) {
                     var k, ani, start, end, term;
                     if (opt) {
-                        target[aid++] = ani = {
+                        target[this] = ani = {
                             ease:opt.ease || ($ease ? $ease.linear : function(){}),
                             repeat:opt.repeat || 0,
                             yoyo:opt.yoyo || false,
@@ -563,7 +563,9 @@ var MoGL = (function() {
                             loopstart = true;
                             requestAnimationFrame(loop);
                         }
-                    } else {
+                    } else if (v === null) {
+						delete target[this];
+					} else {
                         for (k in v) this[k] = v[k];
                         this.dispatch(MoGL.propertyChanged);
                     }
