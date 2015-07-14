@@ -563,9 +563,8 @@ var MoGL = (function() {
                             loopstart = true;
                             requestAnimationFrame(loop);
                         }
-                    } else if (v === null) {
-						delete target[this];
 					} else {
+						delete target[this];
                         for (k in v) this[k] = v[k];
                         this.dispatch(MoGL.propertyChanged);
                     }
