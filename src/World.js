@@ -7,7 +7,7 @@ var World = (function (makeUtil) {
         alpha: true,
         depth: true,
         stencil: false,
-        antialias: true,
+        antialias: window.devicePixelRatio == 1 ? true : false,
         premultipliedAlpha: true,
         preserveDrawingBuffer: false
     },
