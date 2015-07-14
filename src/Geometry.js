@@ -8,6 +8,7 @@ var Geometry = (function () {
     volume = {};
     //shared private
     $setPrivate('Geometry', {
+        vertexCount : vertexCount
     });
     return MoGL.extend('Geometry',{
         description: "Geometry 클래스",

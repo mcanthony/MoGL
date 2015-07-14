@@ -186,12 +186,12 @@
         testItem.scale = testItem2.scale = testItem3.scale = [15, 15, 15]
 
         var currentFPS, prevTime = 0, count = 0, sum = 0
-        world.addEventListener(World.renderAfter, function (currTime) {
+        world.addEventListener(World.renderAfter, function (currTime, totalVertex) {
             var currentFPS = 1000 / ( currTime - prevTime );
             prevTime = currTime;
             count++
             divCurrentFPS.textContent = currentFPS.toFixed(2);
-            divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
+            divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2) + '/ totalVertex : ' + totalVertex;
             testItem.rotateY += 0.01
             testItem2.rotateY += 0.01
             testItem3.rotateY += 0.01
@@ -221,7 +221,7 @@
     }
     function setUI() {
         var controllerParams = {
-            normalPower: 1.0,
+            normalMapPower: 1.0,
             specularPower: 20.0,
             specularMapPower : 1.5,
             r: 1, g: 1, b: 1, a: 1
@@ -235,8 +235,8 @@
         panel.add(controllerParams, 'specularMapPower', 0.5, 3).onChange(function (value) {
             specularTexture.specularMapPower = value
         })
-        panel.add(controllerParams, 'normalPower', -3, 3).onChange(function (value) {
-            testMat2.normalPower = value
+        panel.add(controllerParams, 'normalMapPower', -3, 3).onChange(function (value) {
+            normalTexture.normalMapPower = value
         })
         panel.add(controllerParams, 'r', 0, 1).onChange(function (value) {
             testMat2.specularColor = [value, testMat2.specularColor[1], testMat2.specularColor[2], testMat2.specularColor[3]]
