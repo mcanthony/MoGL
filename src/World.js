@@ -478,7 +478,7 @@ var World = (function (makeUtil) {
 
             var currentMouse = new Uint8Array(4)
             currentMouse[3] = 1
-            var currentMouseItem,oldMouseItem
+            var currentMouseItem,oldMouseItem,checkMouse = false
             return function(currentTime) {
                 len = 0,
                 pProgram = null,
@@ -575,38 +575,41 @@ var World = (function (makeUtil) {
                                 pVBO = tVBO, pIBO = tIBO;
                             }
                         }
-                        var tMouse = mouse[this.uuid]
-                        if(pickLength && tMouse.x){
-                            tGL.readPixels(tMouse.x, tMouse.y, 1, 1, tGL.RGBA, tGL.UNSIGNED_BYTE, currentMouse)
-                            var key = [currentMouse[0], currentMouse[1], currentMouse[2], 255].join('')
-                            currentMouseItem = priPickingMeshs[key]
-                            if (tMouse.down && currentMouseItem ) {
-                                currentMouseItem.mesh.dispatch(Mesh.down, {x: tMouse.x, y: tMouse.y})
-                            }else if (tMouse.up && currentMouseItem) {
-                                currentMouseItem.mesh.dispatch(Mesh.up, {x: tMouse.x, y: tMouse.y})
-                                tMouse.x = null
-                            } else {
-                                if (currentMouseItem != oldMouseItem) {
-                                    if (oldMouseItem) {
-                                        oldMouseItem.mesh.dispatch(Mesh.out, {x: tMouse.x, y: tMouse.y})
-                                    }
-                                    if (currentMouseItem) {
-                                        currentMouseItem.mesh.dispatch(Mesh.over, {x: tMouse.x, y: tMouse.y})
-                                    }
-                                    oldMouseItem = currentMouseItem
+                        checkMouse=!checkMouse
+                        if(checkMouse){
+                            var tMouse = mouse[this.uuid]
+                            if(pickLength && tMouse.x){
+                                tGL.readPixels(tMouse.x, tMouse.y, 1, 1, tGL.RGBA, tGL.UNSIGNED_BYTE, currentMouse)
+                                var key = [currentMouse[0], currentMouse[1], currentMouse[2], 255].join('')
+                                currentMouseItem = priPickingMeshs[key]
+                                if (tMouse.down && currentMouseItem ) {
+                                    currentMouseItem.mesh.dispatch(Mesh.down, {x: tMouse.x, y: tMouse.y})
+                                }else if (tMouse.up && currentMouseItem) {
+                                    currentMouseItem.mesh.dispatch(Mesh.up, {x: tMouse.x, y: tMouse.y})
+                                    tMouse.x = null
                                 } else {
-                                    if (oldMouseItem && tMouse.move) {
-                                        oldMouseItem.mesh.dispatch(Mesh.move, {x: tMouse.x, y: tMouse.y})
+                                    if (currentMouseItem != oldMouseItem) {
+                                        if (oldMouseItem) {
+                                            oldMouseItem.mesh.dispatch(Mesh.out, {x: tMouse.x, y: tMouse.y})
+                                        }
+                                        if (currentMouseItem) {
+                                            currentMouseItem.mesh.dispatch(Mesh.over, {x: tMouse.x, y: tMouse.y})
+                                        }
+                                        oldMouseItem = currentMouseItem
+                                    } else {
+                                        if (oldMouseItem && tMouse.move) {
+                                            oldMouseItem.mesh.dispatch(Mesh.move, {x: tMouse.x, y: tMouse.y})
+                                        }
                                     }
                                 }
+                                if(tMouse.move) tMouse.move =false
+                                if(tMouse.up) tMouse.up =false
+                                if(tMouse.down) tMouse.down =false
+                                tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS),
+                                tGL.disable(tGL.BLEND),
+                                tGL.clearColor(0,0,0,0),
+                                tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
                             }
-                            if(tMouse.move) tMouse.move =false
-                            if(tMouse.up) tMouse.up =false
-                            if(tMouse.down) tMouse.down =false
-                            tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS),
-                            tGL.disable(tGL.BLEND),
-                            tGL.clearColor(0,0,0,0),
-                            tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
                         }
                     }
                     tGL.bindFramebuffer(tGL.FRAMEBUFFER, null);
