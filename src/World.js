@@ -156,37 +156,48 @@ var World = (function (makeUtil) {
                 this.error(2);
             }
             mouse[this] = {x:0,y:0};
-            window.addEventListener('mousemove', function(e){
+            cvsList[this].addEventListener('mousemove', function(e){
+                e.stopPropagation()
+                e.preventDefault()
                 mouse[self].x = e.x,
                 mouse[self].y = cvsList[self].height - e.offsetY,
                 mouse[self].move = true;
-            }),
-            window.addEventListener('mousedown', function(e){
+            },true),
+            cvsList[this].addEventListener('mousedown', function(e){
+                e.stopPropagation()
+                e.preventDefault()
                 mouse[self].x = e.x,
                 mouse[self].y = cvsList[self].height - e.offsetY,
                 mouse[self].down = true;
-            }),
-            window.addEventListener('mouseup', function(e){
+            },true),
+            cvsList[this].addEventListener('mouseup', function(e){
+                e.stopPropagation()
+                e.preventDefault()
                 mouse[self].x = e.x,
                 mouse[self].y = cvsList[self].height - e.offsetY,
                 mouse[self].up = true;
-            }),
-            window.addEventListener('touchmove', function(e){
-                e.preventDefault();
+            },true),
+            cvsList[this].addEventListener('touchmove', function(e){
+                e.stopPropagation()
+                e.preventDefault()
                 mouse[self].x = e.touches[0].clientX * window.devicePixelRatio,
                 mouse[self].y = cvsList[self].height - e.touches[0].pageY * window.devicePixelRatio,
                 mouse[self].move = true;
-            },false),
-            window.addEventListener('touchstart', function(e){
+            },true),
+            cvsList[this].addEventListener('touchstart', function(e){
+                e.stopPropagation()
+                e.preventDefault()
                 mouse[self].x = e.touches[0].clientX * window.devicePixelRatio,
                 mouse[self].y = cvsList[self].height - e.touches[0].pageY * window.devicePixelRatio,
                 mouse[self].down = true;
-            },false),
-            window.addEventListener('touchend', function(e){
+            },true),
+            cvsList[this].addEventListener('touchend', function(e){
+                e.stopPropagation()
+                e.preventDefault()
                 mouse[self].x = e.changedTouches[0].clientX * window.devicePixelRatio,
                 mouse[self].y = cvsList[self].height - e.changedTouches[0].pageY * window.devicePixelRatio,
                 mouse[self].up = true;
-            },false);
+            },true);
         }
     })
     .method('setAutoSize', {
@@ -479,7 +490,7 @@ var World = (function (makeUtil) {
 
             var currentMouse = new Uint8Array(4)
             currentMouse[3] = 1
-            var currentMouseItem,oldMouseItem,checkMouse = false
+            var currentMouseItem,oldMouseItem,checkMouse = true
             return function(currentTime) {
                 len = 0,
                 pProgram = null,
@@ -765,19 +776,16 @@ var World = (function (makeUtil) {
                                     tGL.uniform1i(tProgram.uNormalSampler, 1);
                                     tGL.uniform1i(tProgram.useNormalMap, true);
                                     tGL.uniform1f(tProgram.uNormalPower,priMatNormalPower[tMatUUID])
-
-                                    if(tSpecularMaps){
-                                        tGL.activeTexture(tGL.TEXTURE2);
-                                        tGL.bindTexture(tGL.TEXTURE_2D, tGPU.textures[tSpecularMaps[tSpecularMaps.length - 1].tex.uuid]);
-                                        tGL.uniform1i(tProgram.uSpecularSampler, 2);
-                                        tGL.uniform1i(tProgram.useSpecularMap, true);
-                                        tGL.uniform1f(tProgram.uSpecularMapPower, priTexSpecularMapPower[tSpecularMaps[tSpecularMaps.length - 1].tex.uuid]);
-
-                                    }else{
-                                        tGL.uniform1i(tProgram.useSpecularMap, false);
-                                    }
                                 }else{
                                     tGL.uniform1i(tProgram.useNormalMap, false);
+                                }
+                                if(tSpecularMaps){
+                                    tGL.activeTexture(tGL.TEXTURE2);
+                                    tGL.bindTexture(tGL.TEXTURE_2D, tGPU.textures[tSpecularMaps[tSpecularMaps.length - 1].tex.uuid]);
+                                    tGL.uniform1i(tProgram.uSpecularSampler, 2);
+                                    tGL.uniform1i(tProgram.useSpecularMap, true);
+                                    tGL.uniform1f(tProgram.uSpecularMapPower, priTexSpecularMapPower[tSpecularMaps[tSpecularMaps.length - 1].tex.uuid]);
+                                }else{
                                     tGL.uniform1i(tProgram.useSpecularMap, false);
                                 }
 

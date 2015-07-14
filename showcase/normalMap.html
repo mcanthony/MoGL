@@ -53,7 +53,7 @@
      height="256">
 <img src="smithHead/normal.jpg" id="testNormal" style="position: absolute;top:0px; display:none" width="256"
      height="256">
-<img src="smithHead/SpecularMap.jpg" id="testSpecular" style="position: absolute;top:0px; display:none" width="256"
+<img src="smithHead/SpecularMap.png" id="testSpecular" style="position: absolute;top:0px; display:none" width="256"
      height="256">
 <canvas id="canvas"></canvas>
 <div class="FPS">
@@ -116,7 +116,7 @@
         testItem.y = -2
         scene.addChild(testItem);
 
-        testMat2 = new Material()
+        testMat2 = new Material(0.3,0.3,Math.random(),1.0)
         testMat2.shading = Shading.phong
 
         testMat2.addTexture(Texture.diffuse, texture)
@@ -139,7 +139,6 @@
 
         testItem.addEventListener(Mesh.over, function(){
             console.log(this, '가 오버')
-            this.material.wireFrame = true
         })
         testItem.addEventListener(Mesh.out, function(){
             console.log(this, '가 아웃')
@@ -148,6 +147,7 @@
         testItem.addEventListener(Mesh.down, function(){
             console.log(this, '가 다운')
             this.material.specularPower = 100
+            this.material.wireFrame = true
         })
         testItem.addEventListener(Mesh.move, function(){
             console.log(this, '가 무브')
@@ -155,11 +155,11 @@
         testItem.addEventListener(Mesh.up, function(){
             console.log(this, '가 업')
             this.material.specularPower = 20
+            this.material.wireFrame = false
         })
 
         testItem2.addEventListener(Mesh.over, function(){
             console.log(this, '가 오버')
-            this.material.wireFrame = true
         })
         testItem2.addEventListener(Mesh.out, function(){
             console.log(this, '가 아웃')
@@ -167,6 +167,7 @@
         })
         testItem2.addEventListener(Mesh.down, function(){
             console.log(this, '가 다운')
+            this.material.wireFrame = true
             this.material.specularPower = 100
         })
         testItem2.addEventListener(Mesh.move, function(){
@@ -175,6 +176,7 @@
         testItem2.addEventListener(Mesh.up, function(){
             console.log(this, '가 업')
             this.material.specularPower = 20
+            this.material.wireFrame = false
         })
 
 

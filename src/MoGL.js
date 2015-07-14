@@ -507,9 +507,10 @@ var MoGL = (function() {
                 "mat.setProperties( vo, ani );"
             ],
             value:(function(){
-                var loopstart, loop, target, aid = 0;
-                loop = function loop(t){
-                    var k0, k1, ani, inst, prop, init, rate;
+                var loopstart, loop, target;
+                loop = function loop(){
+                    var t, k0, k1, ani, inst, prop, init, rate;
+					t = performance.now();
                     for (k0 in target) {
                         ani = target[k0];
                         if (t > ani.start) {//딜레이대기체크
@@ -541,13 +542,12 @@ var MoGL = (function() {
                             }
                         }
                     }
-                    requestAnimationFrame(loop);
                 },
                 target = {};
                 return function setProperties(v, opt) {
                     var k, ani, start, end, term;
                     if (opt) {
-                        target[aid++] = ani = {
+                        target[this] = ani = {
                             ease:opt.ease || ($ease ? $ease.linear : function(){}),
                             repeat:opt.repeat || 0,
                             yoyo:opt.yoyo || false,
@@ -561,9 +561,10 @@ var MoGL = (function() {
                         for (k in v) ani.init[k] = this[k];
                         if (!loopstart) {
                             loopstart = true;
-                            requestAnimationFrame(loop);
+                            setInterval(loop, 16);
                         }
-                    } else {
+					} else {
+						delete target[this];
                         for (k in v) this[k] = v[k];
                         this.dispatch(MoGL.propertyChanged);
                     }
