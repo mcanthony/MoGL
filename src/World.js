@@ -454,7 +454,7 @@ var World = (function (makeUtil) {
             // 재질관련 private property
             var priMatColor;
             var priMatWireFrame, priMatWireFrameColor;
-            var priMatShading, priMatLambert, priMatNormalPower, priMatSpecularPower, priTexSpecularMapPower, priMatSpecularColor;
+            var priMatShading, priMatLambert, priMatSpecularPower, priTexSpecularMapPower, priMatSpecularColor,priTexNormalMapPower;
             var priMatDiffuseMaps;
             var priMatNormalMaps;
             var priMatSpecularMaps;
@@ -479,7 +479,6 @@ var World = (function (makeUtil) {
             priMatWireFrameColor = $getPrivate('Material', 'wireFrameColor'),
             priMatShading = $getPrivate('Material', 'shading'),
             priMatLambert = $getPrivate('Material', 'lambert'),
-            priMatNormalPower = $getPrivate('Material', 'normalPower'),
             priMatSpecularPower = $getPrivate('Material', 'specularPower'),
             priMatSpecularColor = $getPrivate('Material', 'specularColor'),
             priMatDiffuseMaps = $getPrivate('Material', 'diffuse');
@@ -487,6 +486,7 @@ var World = (function (makeUtil) {
             priMatSpecularMaps = $getPrivate('Material', 'specular');
 
             priTexSpecularMapPower = $getPrivate('Texture', 'specularMapPower')
+            priTexNormalMapPower = $getPrivate('Texture', 'normalMapPower')
 
             var currentMouse = new Uint8Array(4)
             currentMouse[3] = 1
@@ -775,7 +775,7 @@ var World = (function (makeUtil) {
                                     tGL.bindTexture(tGL.TEXTURE_2D, tGPU.textures[tNormalMaps[tNormalMaps.length - 1].tex.uuid]);
                                     tGL.uniform1i(tProgram.uNormalSampler, 1);
                                     tGL.uniform1i(tProgram.useNormalMap, true);
-                                    tGL.uniform1f(tProgram.uNormalPower,priMatNormalPower[tMatUUID])
+                                    tGL.uniform1f(tProgram.uNormalPower,priTexNormalMapPower[tNormalMaps[tNormalMaps.length - 1].tex.uuid])
                                 }else{
                                     tGL.uniform1i(tProgram.useNormalMap, false);
                                 }
