@@ -84,7 +84,7 @@ var World = (function (makeUtil) {
                 camera = p2[k2],
                 cvs = cvsList[self]
                 tRenderArea = camera.renderArea;
-                pixelRatio = window.devicePixelRatio
+                pixelRatio = pRatio
                 if (tRenderArea && !camera.renderArea.byAutoArea) {
                     var tw,th
                     tw = cvs.width,
@@ -111,7 +111,7 @@ var World = (function (makeUtil) {
 
         }
     };
-
+    var pRatio =  window.devicePixelRatio
     return MoGL.extend('World', {
         description:"World는 MoGL의 기본 시작객체로 내부에 다수의 Scene을 소유할 수 있으며, 실제 렌더링되는 대상임.",
         param:[
@@ -132,9 +132,8 @@ var World = (function (makeUtil) {
             "* 'World.constructor:2' - WebGLRenderingContext 생성 실패"
         ],
         value:function World(id) {
-            var self, m, c, ratio;
+            var self, m, c;
             self = this;
-            ratio =  window.devicePixelRatio
             if (!id) this.error(0);
             cvsList[this] = document.getElementById(id);
             // for GPU
@@ -184,22 +183,22 @@ var World = (function (makeUtil) {
             c.addEventListener('touchmove', function(e){
                 e.stopPropagation()
                 e.preventDefault()
-                m.x = e.touches[0].clientX * ratio,
-                m.y = c.height - e.touches[0].pageY * ratio,
+                m.x = e.touches[0].clientX * pRatio,
+                m.y = c.height - e.touches[0].pageY * pRatio,
                 m.move = true;
             },true),
             c.addEventListener('touchstart', function(e){
                 e.stopPropagation()
                 e.preventDefault()
-                m.x = e.touches[0].clientX * ratio,
-                m.y = c.height - e.touches[0].pageY * ratio,
+                m.x = e.touches[0].clientX * pRatio,
+                m.y = c.height - e.touches[0].pageY * pRatio,
                 m.down = true;
             },true),
             c.addEventListener('touchend', function(e){
                 e.stopPropagation()
                 e.preventDefault()
-                m.x = e.changedTouches[0].clientX * ratio,
-                m.y = c.height - e.changedTouches[0].pageY * ratio,
+                m.x = e.changedTouches[0].clientX * pRatio,
+                m.y = c.height - e.changedTouches[0].pageY * pRatio,
                 m.up = true;
             },true);
         }
@@ -225,11 +224,11 @@ var World = (function (makeUtil) {
                     canvas = cvsList[this],
                     scenes = sceneList[this],
                     autoSizer[this] = function() {
-                        //this._pixelRatio = parseFloat(width)/parseFloat(height) > 1 ? window.devicePixelRatio : 1
+                        //this._pixelRatio = parseFloat(width)/parseFloat(height) > 1 ? pRatio : 1
                         var width, height, pixelRatio, k;
                         width = window.innerWidth,
                         height = window.innerHeight,
-                        pixelRatio = window.devicePixelRatio,
+                        pixelRatio = pRatio,
                         canvas.width = width * pixelRatio,
                         canvas.height = height * pixelRatio,
                         canvas.style.width = width + 'px',
@@ -501,6 +500,7 @@ var World = (function (makeUtil) {
             currentMouse[3] = 1
             var currentMouseItem,oldMouseItem,checkMouse = true
             var totalVertex = 0
+            var mouseObj = {x:0,y:0}
             return function(currentTime) {
                 len = 0,
                 pProgram = null,
@@ -605,23 +605,25 @@ var World = (function (makeUtil) {
                                 tGL.readPixels(tMouse.x, tMouse.y, 1, 1, tGL.RGBA, tGL.UNSIGNED_BYTE, currentMouse)
                                 var key = [currentMouse[0], currentMouse[1], currentMouse[2], 255].join('')
                                 currentMouseItem = priPickingMeshs[key]
+                                mouseObj.x = tMouse.x,
+                                mouseObj.y = tMouse.y
                                 if (tMouse.down && currentMouseItem ) {
-                                    currentMouseItem.mesh.dispatch(Mesh.down, {x: tMouse.x, y: tMouse.y})
+                                    currentMouseItem.mesh.dispatch(Mesh.down, mouseObj)
                                 }else if (tMouse.up && currentMouseItem) {
-                                    currentMouseItem.mesh.dispatch(Mesh.up, {x: tMouse.x, y: tMouse.y})
+                                    currentMouseItem.mesh.dispatch(Mesh.up, mouseObj)
                                     tMouse.x = null
                                 } else {
                                     if (currentMouseItem != oldMouseItem) {
                                         if (oldMouseItem) {
-                                            oldMouseItem.mesh.dispatch(Mesh.out, {x: tMouse.x, y: tMouse.y})
+                                            oldMouseItem.mesh.dispatch(Mesh.out, mouseObj)
                                         }
                                         if (currentMouseItem) {
-                                            currentMouseItem.mesh.dispatch(Mesh.over, {x: tMouse.x, y: tMouse.y})
+                                            currentMouseItem.mesh.dispatch(Mesh.over, mouseObj)
                                         }
                                         oldMouseItem = currentMouseItem
                                     } else {
                                         if (oldMouseItem && tMouse.move) {
-                                            oldMouseItem.mesh.dispatch(Mesh.move, {x: tMouse.x, y: tMouse.y})
+                                            oldMouseItem.mesh.dispatch(Mesh.move, mouseObj)
                                         }
                                     }
                                 }
@@ -773,6 +775,7 @@ var World = (function (makeUtil) {
                                     //if (tDiffuses.length) {
                                         //tGL.activeTexture(tGL.TEXTURE0);
                                     //}
+                                    tGL.activeTexture(tGL.TEXTURE0)
                                     tDiffuse = tGPU.textures[tDiffuseMaps[tDiffuseMaps.length - 1].tex.uuid];
                                     if (tDiffuse != pDiffuse) {
                                         tGL.bindTexture(tGL.TEXTURE_2D, tDiffuse);
@@ -885,9 +888,9 @@ var World = (function (makeUtil) {
                                 if (tCamera.renderArea) tGL.uniform2fv(tProgram.uTexelSize, [1 / tFrameBuffer.width, 1 / tFrameBuffer.height]);
                                 else tGL.uniform2fv(tProgram.uTexelSize, [1 / tCvs.width, 1 / tCvs.height]);
                             }
-                            f3[0] = tFrameBuffer.x + tFrameBuffer.width / 2 / window.devicePixelRatio, f3[1] = tFrameBuffer.y + tFrameBuffer.height / 2 / window.devicePixelRatio , f3[2] = 0;
+                            f3[0] = tFrameBuffer.x + tFrameBuffer.width / 2 / pRatio, f3[1] = tFrameBuffer.y + tFrameBuffer.height / 2 / pRatio , f3[2] = 0;
                             tGL.uniform3fv(tProgram.uPosition, f3),
-                            f3[0] = tFrameBuffer.width / 2 / window.devicePixelRatio, f3[1] = tFrameBuffer.height / 2 / window.devicePixelRatio, f3[2] = 1,
+                            f3[0] = tFrameBuffer.width / 2 / pRatio, f3[1] = tFrameBuffer.height / 2 / pRatio, f3[2] = 1,
                             tGL.uniform3fv(tProgram.uScale, f3),
                             //tGL.activeTexture(tGL.TEXTURE0),
                             tGL.bindTexture(tGL.TEXTURE_2D, tGPU.framebuffers[tCamera.uuid].texture),

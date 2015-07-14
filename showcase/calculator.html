@@ -201,15 +201,16 @@
         texture.img = document.getElementById('iphone')
         textureS.img = document.getElementById('iphoneS')
         mat.addTexture(Texture.diffuse, texture)
-        mat.addTexture(Texture.specular, textureS)
+        mat.addTexture(Texture.normal, textureS)
+
         mesh = new Mesh(geo, mat)
         mesh.z = -0.1
         mesh.scale = [4.29, 1, 8.85]
         mesh.rotateX = Math.PI / 2
         mat.shading = Shading.phong
-        mat.specularValue = 20
+        mat.specularPower = 20
         mat.specularColor = [1,1,1,0.3]
-        mat.normalPower = -2
+        textureS.normalMapPower = 0.01
         scene.baseLightRotate = [0,-0.4,-1]
         scene.addChild(mesh)
     }
