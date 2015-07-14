@@ -132,8 +132,9 @@ var World = (function (makeUtil) {
             "* 'World.constructor:2' - WebGLRenderingContext 생성 실패"
         ],
         value:function World(id) {
-            var self;
+            var self, m, c, ratio;
             self = this;
+            ratio =  window.devicePixelRatio
             if (!id) this.error(0);
             cvsList[this] = document.getElementById(id);
             // for GPU
@@ -155,48 +156,51 @@ var World = (function (makeUtil) {
             } else {
                 this.error(2);
             }
-            mouse[this] = {x:0,y:0};
-            cvsList[this].addEventListener('mousemove', function(e){
+
+            mouse[self] = m = {x:0,y:0},
+            c = cvsList[self]
+            c.addEventListener('mousemove', function(e){
                 e.stopPropagation()
                 e.preventDefault()
-                mouse[self].x = e.x,
-                mouse[self].y = cvsList[self].height - e.offsetY,
-                mouse[self].move = true;
+                m.x = e.clientX,
+                m.y = c.height - e.clientY,
+                m.move = true;
             },true),
-            cvsList[this].addEventListener('mousedown', function(e){
+            c.addEventListener('mousedown', function(e){
                 e.stopPropagation()
                 e.preventDefault()
-                mouse[self].x = e.x,
-                mouse[self].y = cvsList[self].height - e.offsetY,
-                mouse[self].down = true;
+                m.x = e.clientX,
+                m.y = c.height - e.clientY,
+                m.down = true;
             },true),
-            cvsList[this].addEventListener('mouseup', function(e){
+            c.addEventListener('mouseup', function(e){
                 e.stopPropagation()
                 e.preventDefault()
-                mouse[self].x = e.x,
-                mouse[self].y = cvsList[self].height - e.offsetY,
-                mouse[self].up = true;
+                m.x = e.clientX,
+                m.y = c.height - e.clientY,
+                m.up = true;
             },true),
-            cvsList[this].addEventListener('touchmove', function(e){
+            // TODO 디텍팅해서 둘중하나만 걸게 변경
+            c.addEventListener('touchmove', function(e){
                 e.stopPropagation()
                 e.preventDefault()
-                mouse[self].x = e.touches[0].clientX * window.devicePixelRatio,
-                mouse[self].y = cvsList[self].height - e.touches[0].pageY * window.devicePixelRatio,
-                mouse[self].move = true;
+                m.x = e.touches[0].clientX * ratio,
+                m.y = c.height - e.touches[0].pageY * ratio,
+                m.move = true;
             },true),
-            cvsList[this].addEventListener('touchstart', function(e){
+            c.addEventListener('touchstart', function(e){
                 e.stopPropagation()
                 e.preventDefault()
-                mouse[self].x = e.touches[0].clientX * window.devicePixelRatio,
-                mouse[self].y = cvsList[self].height - e.touches[0].pageY * window.devicePixelRatio,
-                mouse[self].down = true;
+                m.x = e.touches[0].clientX * ratio,
+                m.y = c.height - e.touches[0].pageY * ratio,
+                m.down = true;
             },true),
-            cvsList[this].addEventListener('touchend', function(e){
+            c.addEventListener('touchend', function(e){
                 e.stopPropagation()
                 e.preventDefault()
-                mouse[self].x = e.changedTouches[0].clientX * window.devicePixelRatio,
-                mouse[self].y = cvsList[self].height - e.changedTouches[0].pageY * window.devicePixelRatio,
-                mouse[self].up = true;
+                m.x = e.changedTouches[0].clientX * ratio,
+                m.y = c.height - e.changedTouches[0].pageY * ratio,
+                m.up = true;
             },true);
         }
     })
@@ -458,6 +462,7 @@ var World = (function (makeUtil) {
             var priMatDiffuseMaps;
             var priMatNormalMaps;
             var priMatSpecularMaps;
+            var priGeoVertexCount
             var priPickingColors;
             var priPickingMeshs
 
@@ -488,9 +493,14 @@ var World = (function (makeUtil) {
             priTexSpecularMapPower = $getPrivate('Texture', 'specularMapPower')
             priTexNormalMapPower = $getPrivate('Texture', 'normalMapPower')
 
+            priGeoVertexCount = $getPrivate('Geometry', 'vertexCount')
+
+
+
             var currentMouse = new Uint8Array(4)
             currentMouse[3] = 1
             var currentMouseItem,oldMouseItem,checkMouse = true
+            var totalVertex = 0
             return function(currentTime) {
                 len = 0,
                 pProgram = null,
@@ -508,8 +518,9 @@ var World = (function (makeUtil) {
                 tCvsH = tCvs.height,
                 i = tSceneList.length,
                 tDiffuseMaps = null,
-                tNormalMaps = null
-                this.dispatch(World.renderBefore, currentTime);
+                tNormalMaps = null,
+                this.dispatch(World.renderBefore, currentTime,totalVertex),
+                totalVertex=0
                 while (i--) {
                     tScene = tSceneList[i]
                     //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -677,6 +688,7 @@ var World = (function (makeUtil) {
                                 tIBO = tGPU.ibo[tGeo],
                                 tMaterial = priMat[tItemUUID],
                                 tCulling = priCull[tItemUUID];
+                                totalVertex += priGeoVertexCount[tGeo]
 
                                 if (tCulling != pCulling) {
                                     if (tCulling == Mesh.cullingNone) tGL.disable(tGL.CULL_FACE);
@@ -886,7 +898,7 @@ var World = (function (makeUtil) {
                     }
 
                 }
-                this.dispatch(World.renderAfter, currentTime);
+                this.dispatch(World.renderAfter, currentTime, totalVertex);
                 //tGL.flush();
                 //tGL.finish()
             }

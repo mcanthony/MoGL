@@ -186,12 +186,12 @@
         testItem.scale = testItem2.scale = testItem3.scale = [15, 15, 15]
 
         var currentFPS, prevTime = 0, count = 0, sum = 0
-        world.addEventListener(World.renderAfter, function (currTime) {
+        world.addEventListener(World.renderAfter, function (currTime, totalVertex) {
             var currentFPS = 1000 / ( currTime - prevTime );
             prevTime = currTime;
             count++
             divCurrentFPS.textContent = currentFPS.toFixed(2);
-            divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
+            divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2) + '/ totalVertex : ' + totalVertex;
             testItem.rotateY += 0.01
             testItem2.rotateY += 0.01
             testItem3.rotateY += 0.01
