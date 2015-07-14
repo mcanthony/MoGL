@@ -443,14 +443,15 @@ var World = (function (makeUtil) {
             // 재질관련 private property
             var priMatColor;
             var priMatWireFrame, priMatWireFrameColor;
-            var priMatShading, priMatLambert, priMatNormalPower, priMatSpecularValue, priMatSpecularColor;
+            var priMatShading, priMatLambert, priMatNormalPower, priMatSpecularPower, priMatSpecularMapPower, priMatSpecularColor;
             var priMatDiffuseMaps;
             var priMatNormalMaps;
+            var priMatSpecularMaps;
             var priPickingColors;
             var priPickingMeshs
 
             var tGeo;
-            var tDiffuseMaps, tNormalMaps;
+            var tDiffuseMaps, tNormalMaps, tSpecularMaps;
             var tColor;
             var baseLightRotate;
             var useNormalBuffer, useTexture;
@@ -468,10 +469,12 @@ var World = (function (makeUtil) {
             priMatShading = $getPrivate('Material', 'shading'),
             priMatLambert = $getPrivate('Material', 'lambert'),
             priMatNormalPower = $getPrivate('Material', 'normalPower'),
-            priMatSpecularValue = $getPrivate('Material', 'specularValue'),
+            priMatSpecularPower = $getPrivate('Material', 'specularPower'),
+            priMatSpecularMapPower = $getPrivate('Material', 'specularMapPower'),
             priMatSpecularColor = $getPrivate('Material', 'specularColor'),
             priMatDiffuseMaps = $getPrivate('Material', 'diffuse');
             priMatNormalMaps = $getPrivate('Material', 'normal');
+            priMatSpecularMaps = $getPrivate('Material', 'specular');
 
             var currentMouse = new Uint8Array(4)
             currentMouse[3] = 1
@@ -674,6 +677,8 @@ var World = (function (makeUtil) {
                                 tShading = priMatShading[tMatUUID],
                                 tDiffuseMaps = priMatDiffuseMaps[tMatUUID],
                                 tNormalMaps = priMatNormalMaps[tMatUUID];
+                                tSpecularMaps = priMatSpecularMaps[tMatUUID];
+
                                 if(tDiffuseMaps){
                                     useTexture = 1;
                                 }
@@ -746,7 +751,7 @@ var World = (function (makeUtil) {
                                         tGL.bindTexture(tGL.TEXTURE_2D, tDiffuse);
                                     }
                                     tGL.uniform1i(tProgram.uSampler, 0);
-                                    tGL.uniform1f(tProgram.uSpecularValue,priMatSpecularValue[tMatUUID])
+                                    tGL.uniform1f(tProgram.uSpecularPower,priMatSpecularPower[tMatUUID])
                                     tGL.uniform4fv(tProgram.uSpecularColor,priMatSpecularColor[tMatUUID])
                                 }
                                 // 노말 텍스쳐 세팅
@@ -756,8 +761,20 @@ var World = (function (makeUtil) {
                                     tGL.uniform1i(tProgram.uNormalSampler, 1);
                                     tGL.uniform1i(tProgram.useNormalMap, true);
                                     tGL.uniform1f(tProgram.uNormalPower,priMatNormalPower[tMatUUID])
+
+                                    if(tSpecularMaps){
+                                        tGL.activeTexture(tGL.TEXTURE2);
+                                        tGL.bindTexture(tGL.TEXTURE_2D, tGPU.textures[tSpecularMaps[tSpecularMaps.length - 1].tex.uuid]);
+                                        tGL.uniform1i(tProgram.uSpecularSampler, 2);
+                                        tGL.uniform1i(tProgram.useSpecularMap, true);
+                                        tGL.uniform1f(tProgram.uSpecularMapPower, priMatSpecularMapPower[tMatUUID]);
+
+                                    }else{
+                                        tGL.uniform1i(tProgram.useSpecularMap, false);
+                                    }
                                 }else{
                                     tGL.uniform1i(tProgram.useNormalMap, false);
+                                    tGL.uniform1i(tProgram.useSpecularMap, false);
                                 }
 
                                 f3[0] = tItem.rotateX, f3[1] = tItem.rotateY, f3[2] = tItem.rotateZ,

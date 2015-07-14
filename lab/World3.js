@@ -463,7 +463,6 @@ var World = (function (makeUtil) {
             var update = function update(gpu, list , updateList, updateFlag){
                 MergeManager.mergePropertyChange(gpu, list , updateList, updateFlag)
             }
-
             return function(currentTime) {
                 len = 0,
                 pProgram = null,
@@ -570,15 +569,18 @@ var World = (function (makeUtil) {
                                 k3++
                             }
 
+                            update(tGPU, mergedInfo.lists,tScene.updateList.updatePropertys, {
+                                rotate: true,
+                                position: true,
+                                scale : true
+                            })
+
                             i2 = mergedInfo.lists.length
+                            var prevLen = 0
                             while(i2--){
                                 tempList= mergedInfo.lists[i2]
-                                update(tGPU, tempList,tScene.updateList.updatePropertys, {
-                                    rotate: true,
-                                    position: true,
-                                    scale : true
-                                })
                                 tVBO = tempList.vertexBuffer
+
                                 if(tVBO.updated || mergedInfo.lists.length>1) {
                                     tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
                                     tGL.vertexAttribPointer(tProgram.aVertexPosition, 3, tGL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0 * Float32Array.BYTES_PER_ELEMENT),

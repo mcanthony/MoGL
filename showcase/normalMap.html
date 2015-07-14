@@ -53,6 +53,8 @@
      height="256">
 <img src="smithHead/normal.jpg" id="testNormal" style="position: absolute;top:0px; display:none" width="256"
      height="256">
+<img src="smithHead/SpecularMap.jpg" id="testSpecular" style="position: absolute;top:0px; display:none" width="256"
+     height="256">
 <canvas id="canvas"></canvas>
 <div class="FPS">
     Current FPS: <span id="currentFPS"></span>
@@ -90,22 +92,26 @@
     };
     xmlhttp.send(null);
     ////////////////////////////////////////////////////////////////////////////
-    var testMat, testMat2;
+    var testMat, testMat2, testMat3;
     function makeItems(geo) {
-        var testItem, testItem2;
-        var texture, normalTexture;
+        var testItem, testItem2, testItem3;
+        var texture, normalTexture, specularTexture;
         texture = new Texture()
         texture.img = document.getElementById('testIMG2')
 
         normalTexture = new Texture()
         normalTexture.img = document.getElementById('testNormal')
 
+        specularTexture = new Texture()
+        specularTexture.img = document.getElementById('testSpecular')
+
+
         testMat = new Material()
         testMat.shading = Shading.phong
 
         testMat.addTexture(Texture.diffuse, texture)
         testItem = new Mesh(geo, testMat);
-        testItem.x = -3
+        testItem.x = -5
         testItem.y = -2
         scene.addChild(testItem);
 
@@ -114,10 +120,21 @@
 
         testMat2.addTexture(Texture.diffuse, texture)
         testMat2.addTexture(Texture.normal, normalTexture)
+        testMat2.addTexture(Texture.specular, specularTexture)
         testItem2 = new Mesh(geo, testMat2);
-        testItem2.x = 3
+        testItem2.x = 5
         testItem2.y = -2
         scene.addChild(testItem2);
+
+        testMat3 = new Material()
+        testMat3.shading = Shading.phong
+
+        testMat3.addTexture(Texture.diffuse, texture)
+        testMat3.addTexture(Texture.normal, normalTexture)
+        testItem3 = new Mesh(geo, testMat3);
+        testItem3.x = 0
+        testItem3.y = -2
+        scene.addChild(testItem3);
 
         testItem.addEventListener(Mesh.over, function(){
             console.log(this, '가 오버')
@@ -129,14 +146,14 @@
         })
         testItem.addEventListener(Mesh.down, function(){
             console.log(this, '가 다운')
-            this.material.specularValue = 100
+            this.material.specularPower = 100
         })
         testItem.addEventListener(Mesh.move, function(){
             console.log(this, '가 무브')
         })
         testItem.addEventListener(Mesh.up, function(){
             console.log(this, '가 업')
-            this.material.specularValue = 20
+            this.material.specularPower = 20
         })
 
         testItem2.addEventListener(Mesh.over, function(){
@@ -149,21 +166,21 @@
         })
         testItem2.addEventListener(Mesh.down, function(){
             console.log(this, '가 다운')
-            this.material.specularValue = 100
+            this.material.specularPower = 100
         })
         testItem2.addEventListener(Mesh.move, function(){
             console.log(this, '가 무브')
         })
         testItem2.addEventListener(Mesh.up, function(){
             console.log(this, '가 업')
-            this.material.specularValue = 20
+            this.material.specularPower = 20
         })
 
 
         testItem2.removeEventListener(Mesh.move)
 
 
-        testItem.scale = testItem2.scale = [15, 15, 15]
+        testItem.scale = testItem2.scale = testItem3.scale = [15, 15, 15]
 
         var currentFPS, prevTime = 0, count = 0, sum = 0
         world.addEventListener(World.renderAfter, function (currTime) {
@@ -174,6 +191,7 @@
             divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
             testItem.rotateY += 0.01
             testItem2.rotateY += 0.01
+            testItem3.rotateY += 0.01
         })
     }
     function getGeometryFromJSON(json) {
@@ -201,14 +219,18 @@
     function setUI() {
         var controllerParams = {
             normalPower: 1.0,
-            specularValue: 20.0,
+            specularPower: 20.0,
+            specularMapPower : 1.5,
             r: 1, g: 1, b: 1, a: 1
         };
 
         var gui = new dat.GUI();
         var panel = gui.addFolder('Material');
-        panel.add(controllerParams, 'specularValue', 5, 100).onChange(function (value) {
-            testMat2.specularValue = value
+        panel.add(controllerParams, 'specularPower', 5, 100).onChange(function (value) {
+            testMat2.specularPower = value
+        })
+        panel.add(controllerParams, 'specularMapPower', 0.5, 3).onChange(function (value) {
+            testMat2.specularMapPower = value
         })
         panel.add(controllerParams, 'normalPower', -3, 3).onChange(function (value) {
             testMat2.normalPower = value
@@ -220,6 +242,7 @@
             testMat2.specularColor = [testMat2.specularColor[0], value, testMat2.specularColor[2], testMat2.specularColor[3]]
         })
         panel.add(controllerParams, 'b', 0, 1).onChange(function (value) {
+            console.log(testMat2.specularColor)
             testMat2.specularColor = [testMat2.specularColor[0], testMat2.specularColor[1], value, testMat2.specularColor[3]]
         })
         panel.add(controllerParams, 'a', 0, 1).onChange(function (value) {

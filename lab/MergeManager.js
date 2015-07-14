@@ -1,7 +1,7 @@
 var MergeManager = (function () {
     'use strict';
     //private
-    var maxVertex = 100000
+    var maxVertex = 3*16000
     var maxUniform = 150
     //shared private
 
@@ -10,6 +10,8 @@ var MergeManager = (function () {
     var priGeo = $getPrivate('Mesh', 'geometry')
     var priMat = $getPrivate('Mesh', 'material')
     var priMatColor = $getPrivate('Material', 'color')
+
+    var items = {}
     return MoGL.extend('MergeManager', {
         description: "",
         param: [],
@@ -74,33 +76,36 @@ var MergeManager = (function () {
                 changePosition = changePropertys['position'],
                 changeRotate = changePropertys['rotate'],
                 changeScale = changePropertys['scale']
+                var tData
                 if (changePosition || changeRotate || changeScale) {
-                    tP = data.positionData, tR = data.rotateData, tS = data.scaleData
                     while (i--) {
                         t = updateData[i],
                         uuid = t.uuid,
+                        tData = data[items[uuid].listIDX],
+                        tP = tData.positionData, tR = tData.rotateData, tS = tData.scaleData
                         len = priGeo[uuid].position.length,
                         tCount = len / 3,
-                        k = data.items[uuid].idx*len,
+                        k = items[uuid].idx*len,
                         tx = t.x, ty = t.y, tz = t.z,
                         rx = t.rotateX, ry = t.rotateY, rz = t.rotateZ,
                         sx = t.scaleX, sy = t.scaleY, sz = t.scaleZ,
                         j = tCount
                         while (j--) {
                             t1 = k, t2 = k + 1, t3 = k + 2
-                            //tP[t1] = tx, tP[t2] = ty, tP[t3] = tz,
+                            tP[t1] = tx, tP[t2] = ty, tP[t3] = tz,
                             tR[t1] = rx, tR[t2] = ry, tR[t3] = rz,
-                            //tS[t1] = sx, tS[t2] = sy, tS[t3] = sz,
+                            tS[t1] = sx, tS[t2] = sy, tS[t3] = sz,
                             k=k+3
                         }
                     }
-                    data.positionBuffer.updated = changePosition
-                    data.rotateBuffer.updated = changeRotate
-                    data.scaleBuffer.updated = changeScale
-                    updateData.length=0
+                    if(tData){
+                        tData.positionBuffer.updated = changePosition
+                        tData.rotateBuffer.updated = changeRotate
+                        tData.scaleBuffer.updated = changeScale
+                        updateData.length=0
+                    }
                 }
 
-                return data
             }
         })()
     })
@@ -163,9 +168,9 @@ var MergeManager = (function () {
                     }
                     tIDX = data.lists.length-1
                     tList = data.lists[tIDX]
-                    if(!tList.items[uuid]) {
-                        tList.items[uuid] = {idx : tList.items.length, listIDX : data.lists.length-1}
+                    if(!items[uuid]) {
                         tList.items.push(temp)
+                        items[uuid] = {idx : tList.items.length-1, listIDX : data.lists.length-1}
                     }
                     // 버텍스입력하고
                     for (j = 0; j < tVertexCount; j++) {

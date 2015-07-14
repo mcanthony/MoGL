@@ -1,4 +1,3 @@
-'use strict'
 var Scene = (function () {
     'use strict';
     var vertexShaderParser, fragmentShaderParser,
@@ -170,6 +169,16 @@ var Scene = (function () {
                         }
                     }
                     t = this.normal;
+                    if(t){
+                        var i = t.length;
+                        while(i--){
+                            if(p2.material.indexOf(t[i].tex) == -1) {
+                                p2.material.push(t[i].tex);
+                                //console.log('새로운 텍스쳐 업데이트 추가',t[i].tex.isLoaded)
+                            }
+                        }
+                    }
+                    t = this.specular;
                     if(t){
                         var i = t.length;
                         while(i--){
