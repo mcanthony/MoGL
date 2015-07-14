@@ -776,19 +776,16 @@ var World = (function (makeUtil) {
                                     tGL.uniform1i(tProgram.uNormalSampler, 1);
                                     tGL.uniform1i(tProgram.useNormalMap, true);
                                     tGL.uniform1f(tProgram.uNormalPower,priMatNormalPower[tMatUUID])
-
-                                    if(tSpecularMaps){
-                                        tGL.activeTexture(tGL.TEXTURE2);
-                                        tGL.bindTexture(tGL.TEXTURE_2D, tGPU.textures[tSpecularMaps[tSpecularMaps.length - 1].tex.uuid]);
-                                        tGL.uniform1i(tProgram.uSpecularSampler, 2);
-                                        tGL.uniform1i(tProgram.useSpecularMap, true);
-                                        tGL.uniform1f(tProgram.uSpecularMapPower, priTexSpecularMapPower[tSpecularMaps[tSpecularMaps.length - 1].tex.uuid]);
-
-                                    }else{
-                                        tGL.uniform1i(tProgram.useSpecularMap, false);
-                                    }
                                 }else{
                                     tGL.uniform1i(tProgram.useNormalMap, false);
+                                }
+                                if(tSpecularMaps){
+                                    tGL.activeTexture(tGL.TEXTURE2);
+                                    tGL.bindTexture(tGL.TEXTURE_2D, tGPU.textures[tSpecularMaps[tSpecularMaps.length - 1].tex.uuid]);
+                                    tGL.uniform1i(tProgram.uSpecularSampler, 2);
+                                    tGL.uniform1i(tProgram.useSpecularMap, true);
+                                    tGL.uniform1f(tProgram.uSpecularMapPower, priTexSpecularMapPower[tSpecularMaps[tSpecularMaps.length - 1].tex.uuid]);
+                                }else{
                                     tGL.uniform1i(tProgram.useSpecularMap, false);
                                 }
 
