@@ -368,6 +368,49 @@
             }, "Matrix(10, 0, 0, 0, 0, 20, 0, 0, 0, 0, 30, 0, 0, 0, 0, 1)"
     )
     */
+    var mesh2 = new Mesh(tGeo, tMat2);
+    bsTest('event',
+            function () {
+                var ret = false;
+                function geo_change(){
+                    ret = true;
+                }
+                // changed event - geometry changed
+                mesh1.addEventListener("changed", geo_change);
+                mesh1.geometry = new Geometry([], []);
+                return ret;
+            }, true,
+            function () {
+                var ret = false;
+                function geo_change(){
+                    ret = true;
+                }
+                // changed event -  geometry changed
+                mesh2.addEventListener(Mesh.changed, geo_change);
+                mesh2.geometry = new Geometry([], []);
+                return ret;
+            }, true,
+            function () {
+                var ret = false;
+                function mat_change(){
+                    ret = true;
+                }
+                // changed event -  material changed
+                mesh1.addEventListener("changed", mat_change);
+                mesh1.material = new Material("#000");
+                return ret;
+            }, true,
+            function () {
+                var ret = false;
+                function mat_change(){
+                    ret = true;
+                }
+                // changed event -  material changed
+                mesh2.addEventListener(Mesh.changed, mat_change);
+                mesh2.material = new Material("#000");
+                return ret;
+            }, true
+    );
     mesh1.destroy();    
    bsTest('destroy',
             function () {
