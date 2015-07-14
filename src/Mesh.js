@@ -170,8 +170,14 @@ var Mesh = (function () {
         type:'string',
         sample: [
             "var mesh = new Mesh();",
-            "mesh.addEventListener( Mesh.over, function(){",
+            "mesh.addEventListener( Mesh.changed, function(){",
+            "  // 필드값 변경되었을때 처리 코드",
             "  console.log(this)",
+            "});",
+            "",
+            "// 이벤트명 직접 입력",
+            'mesh.addEventListener( "change", function(){',
+            "  // 필드값 변경되었을때 처리 코드",
             "});"
         ],
         value : 'changed'
@@ -185,7 +191,13 @@ var Mesh = (function () {
         sample: [
             "var mesh = new Mesh();",
             "mesh.addEventListener( Mesh.over, function(){",
+            "  // over 발생시 처리 코드",
             "  console.log(this)",
+            "});",
+            "",
+            "// 이벤트명 직접 입력",
+            'mesh.addEventListener( "over", function(){',
+            "  // over 발생시 처리 코드",
             "});"
         ],
         value : 'over'
@@ -199,7 +211,13 @@ var Mesh = (function () {
         sample: [
             "var mesh = new Mesh();",
             "mesh.addEventListener( Mesh.out, function(){",
+            "  // out 발생시 처리 코드",
             "  console.log(this)",
+            "});",
+            "",
+            "// 이벤트명 직접 입력",
+            'mesh.addEventListener( "out", function(){',
+            "  // out 발생시 처리 코드",
             "});"
         ],
         value : 'out'
@@ -213,7 +231,13 @@ var Mesh = (function () {
         sample: [
             "var mesh = new Mesh();",
             "mesh.addEventListener( Mesh.down, function(){",
+            "  // down 발생시 처리 코드",
             "  console.log(this)",
+            "});",
+            "",
+            "// 이벤트명 직접 입력",
+            'mesh.addEventListener( "down", function(){',
+            "  // down 발생시 처리 코드",
             "});"
         ],
         value : 'down'
@@ -227,7 +251,13 @@ var Mesh = (function () {
         sample: [
             "var mesh = new Mesh();",
             "mesh.addEventListener( Mesh.up, function(){",
+            "  // up 발생시 처리 코드",
             "  console.log(this)",
+            "});",
+            "",
+            "// 이벤트명 직접 입력",
+            'mesh.addEventListener( "up", function(){',
+            "  // up 발생시 처리 코드",
             "});"
         ],
         value : 'up'
@@ -241,7 +271,13 @@ var Mesh = (function () {
         sample: [
             "var mesh = new Mesh();",
             "mesh.addEventListener( Mesh.move, function(){",
+            "  // move 발생시 처리 코드",
             "  console.log(this)",
+            "});",
+            "",
+            "// 이벤트명 직접 입력",
+            'mesh.addEventListener( "move", function(){',
+            "  // move 발생시 처리 코드",
             "});"
         ],
         value : 'move'
