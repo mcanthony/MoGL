@@ -604,7 +604,8 @@ var World = (function (makeUtil) {
                             var tMouse = mouse[this.uuid]
                             if(pickLength && tMouse.x){
                                 tGL.readPixels(tMouse.x, tMouse.y, 1, 1, tGL.RGBA , tGL.UNSIGNED_BYTE, currentMouse)
-                                var key = [currentMouse[0], currentMouse[1], currentMouse[2], 255].join('')
+                                //var key = [currentMouse[0], currentMouse[1], currentMouse[2], 255].join('')
+								var key = ''+currentMouse[0]+currentMouse[1]+currentMouse[2]+'255'
                                 currentMouseItem = priPickingMeshs[key]
                                 mouseObj.x = tMouse.x,
                                 mouseObj.y = tMouse.y
