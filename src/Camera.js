@@ -24,19 +24,8 @@ var Camera = (function () {
                 renderArea: null,
                 projectionMatrix: Matrix()
             }),
-            this.z = 10,
-            this.lookAt(0, 0, 0);
-        }
-    })
-    .field('matrix', {
-        description: '현재 객체내의 position,rotate,scale을 반영한 후 자신을 반환',
-        sample:[
-            'var mtx = new Matrix();',
-            'console.log(mtx.matrix);'
-        ],
-        get:function matrixGet() {
-            this.matIdentity().matScale(this.scaleX,this.scaleY,this.scaleZ).matRotateX(this.rotateX).matRotateY(this.rotateY).matRotateZ(this.rotateZ).matTranslate(this.x, this.y, -this.z);
-            return this;
+            this.z = -10
+            //this.lookAt(0, 0, 0);
         }
     })
     .field('clipPlaneNear', {
@@ -225,6 +214,33 @@ var Camera = (function () {
             return prop[this].projectionMatrix
         }
     })
+    //.method('screenToLocal',{
+    //    description : '스크린좌표를 메쉬의 로컬 좌표계로 변환',
+    //    param : 'MouseEvent',
+    //    sample : [
+    //        "testItem.addEventListener(Mesh.down, function(e){",
+    //        "    console.log('결과값',camera.screenToLocal(e))",
+    //        "})"
+    //    ],
+    //    ret : '{x:값, y:값 ,z:값}',
+    //    value : function(v){
+    //        var renderArea = prop[this].renderArea
+    //
+    //        var viewSizeX = renderArea[2] * .5;
+    //        var viewSizeY = renderArea[3] * .5;
+    //        var focalLength = Math.sqrt(viewSizeX * viewSizeX + viewSizeY * viewSizeY) / Math.tan(prop[this].fov*Math.PI/180 * 0.5);
+    //
+    //        var z = prop[this].far
+    //        var x = z*(v.x - viewSizeX)/focalLength;
+    //        var y = z*(v.y - viewSizeY)/focalLength;
+    //        var transform = v.target.matrix.raw
+    //        var res = {}
+    //        res.x = transform[0]*x + transform[1]*y + transform[2]*z + transform[3]
+    //        res.y = transform[4]*x + transform[5]*y + transform[6]*z + transform[7]
+    //        res.z = transform[8]*x + transform[9]*y + transform[10]*z + transform[11]
+    //        return res
+    //    }
+    //})
     .method('resetProjectionMatrix', {
             description: "현재 프로퍼티들을 기준으로 프로젝션 매트릭스를 갱신",
             sample: [

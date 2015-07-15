@@ -8,7 +8,7 @@ var World = (function (makeUtil) {
         depth: true,
         stencil: false,
         antialias: window.devicePixelRatio == 1 ? true : false,
-        premultipliedAlpha: true,
+        premultipliedAlpha: false,
         preserveDrawingBuffer: false
     },
     getGL = function (canvas) {
@@ -64,6 +64,7 @@ var World = (function (makeUtil) {
         //console.log('~~~~~~~~~',vS)
         //console.log('~~~~~~~~~',fS)
         makeProgram(gpu, 'color', vS.colorVertexShader, fS.colorFragmentShader);
+        makeProgram(gpu, 'mouse', vS.mouseVertexShader, fS.colorFragmentShader);
         makeProgram(gpu, 'wireFrame', vS.wireFrameVertexShader, fS.wireFrameFragmentShader);
         makeProgram(gpu, 'bitmap', vS.bitmapVertexShader, fS.bitmapFragmentShader);
         makeProgram(gpu, 'bitmapGouraud', vS.bitmapVertexShaderGouraud, fS.bitmapFragmentShaderGouraud);
@@ -500,7 +501,7 @@ var World = (function (makeUtil) {
             currentMouse[3] = 1
             var currentMouseItem,oldMouseItem,checkMouse = true
             var totalVertex = 0
-            var mouseObj = {x:0,y:0}
+            var mouseObj = {}
             return function(currentTime) {
                 len = 0,
                 pProgram = null,
@@ -563,7 +564,7 @@ var World = (function (makeUtil) {
 
                             var tProjectionMtx = tCamera.projectionMatrix.raw;
                             var tCameraMtx = tCamera.matrix.raw;
-                            tProgram = tGPU.programs['color'],
+                            tProgram = tGPU.programs['mouse'],
                             tGL.useProgram(tProgram),
                             tGL.uniformMatrix4fv(tProgram.uPixelMatrix, false, tProjectionMtx),
                             tGL.uniformMatrix4fv(tProgram.uCameraMatrix, false, tCameraMtx);
@@ -602,11 +603,15 @@ var World = (function (makeUtil) {
                         if(checkMouse){
                             var tMouse = mouse[this.uuid]
                             if(pickLength && tMouse.x){
-                                tGL.readPixels(tMouse.x, tMouse.y, 1, 1, tGL.RGBA, tGL.UNSIGNED_BYTE, currentMouse)
+                                tGL.readPixels(tMouse.x, tMouse.y, 1, 1, tGL.RGBA , tGL.UNSIGNED_BYTE, currentMouse)
                                 var key = [currentMouse[0], currentMouse[1], currentMouse[2], 255].join('')
                                 currentMouseItem = priPickingMeshs[key]
                                 mouseObj.x = tMouse.x,
                                 mouseObj.y = tMouse.y
+                                mouseObj.z = 0
+                                if(currentMouseItem) {
+                                    mouseObj.target = currentMouseItem.mesh
+                                }
                                 if (tMouse.down && currentMouseItem ) {
                                     currentMouseItem.mesh.dispatch(Mesh.down, mouseObj)
                                 }else if (tMouse.up && currentMouseItem) {

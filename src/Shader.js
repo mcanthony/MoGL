@@ -141,7 +141,49 @@ var Shader = (function () {
         })
 
 
-
+        .constant('mouseVertexShader', {
+            description: "마우스 버텍스 쉐이더",
+            sample: [
+                "console.log(Shader.mouseVertexShader);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'mouseVertexShader',
+                            attributes: ['vec3 aVertexPosition'],
+                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition', 'vec4 uColor'],
+                            varyings: ['vec4 vColor'],
+                            function: [VertexShader.baseFunction],
+                            main: [
+                                'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*quaternionXYZ(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
+                                'vColor = uColor;'
+                            ]
+                        }))
+                }
+            })()
+        })
+        .constant('mouseFragmentShader', {
+            description: "마우스 프레그먼트 쉐이더",
+            sample: [
+                "console.log(Shader.mouseFragmentShader);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'mouseFragmentShader',
+                            precision: 'mediump float',
+                            uniforms: [],
+                            varyings: ['vec4 vColor'],
+                            function: [],
+                            main: [
+                                'gl_FragColor =  vColor;'
+                            ]
+                        }))
+                }
+            })()
+        })
         .constant('colorVertexShader', {
             description: "컬러 버텍스 쉐이더",
             sample: [
@@ -567,7 +609,7 @@ var Shader = (function () {
                                 'if( useSpecularMap ){\n' +
                                 '   specular = max( dot(reflectDir, position), 0.5 );\n' +
                                 '   specular = pow(specular,texture2D( uSpecularSampler, vUV ).a);\n' +
-                                '   gl_FragColor = gl_FragColor + gl_FragColor * specular * texture2D( uSpecularSampler, vUV ) *uSpecularMapPower;\n'+
+                                '   gl_FragColor = gl_FragColor + gl_FragColor * specColor * specular * texture2D( uSpecularSampler, vUV ) *uSpecularMapPower;\n'+
                                 '}\n' +
                                 'gl_FragColor.a = alpha;'
                             ]

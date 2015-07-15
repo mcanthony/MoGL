@@ -165,8 +165,9 @@
             console.log(this, '가 아웃')
             this.material.wireFrame = false
         })
-        testItem2.addEventListener(Mesh.down, function(){
+        testItem2.addEventListener(Mesh.down, function(e){
             console.log(this, '가 다운')
+            console.log(e)
             this.material.wireFrame = true
             this.material.specularPower = 100
         })
