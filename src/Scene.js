@@ -15,18 +15,18 @@ var Scene = (function () {
     updateList = {},
     //shared private
     $setPrivate('Scene', {
-        children : children,
-        childrenArray : childrenArray
+        children:children,
+        childrenArray:childrenArray
     }),
     //lib
     vertexShaderParser = makeUtil.vertexShaderParser,
     fragmentShaderParser = makeUtil.fragmentShaderParser;
     return MoGL.extend('Scene', {
-        description:'실제 렌더링될 구조체는 Scene별로 집결됨.\n- ' +
-        'Scene은 렌더링과 관련된 [Mesh](Mesh.md), [Camera](Camera.md), [Light](Light.md) 등을 포함하고 이들 객체가 공유하며 활용하는 기초 자원으로서 vertex shader, fragment shader, [Texture](Texture.md), [Material](Material.md), [Geometry](Geometry.md) 등을 등록하여 관리한다',
-        sample:[
-            'var scene = new Scene();'
+        description:[
+            '실제 렌더링될 구조체는 Scene별로 집결됨.',
+            'Scene은 렌더링과 관련된 [Mesh](Mesh.md), [Camera](Camera.md), [Light](Light.md) 등을 포함하고 이들 객체가 공유하며 활용하는 기초 자원으로서 vertex shader, fragment shader, [Texture](Texture.md), [Material](Material.md), [Geometry](Geometry.md) 등을 등록하여 관리한다'
         ],
+        sample:'var scene = new Scene();',
         value:function Scene() {
             // for JS
             children[this] = {},
@@ -38,14 +38,14 @@ var Scene = (function () {
             vertexShaders[this] = {},
             fragmentShaders[this] = {},
             updateList[this] = {
-                mesh : [],
-                material : [],
-                camera : [],
-                merged : [],
-                updatePropertys : []
+                mesh:[],
+                material:[],
+                camera:[],
+                merged:[],
+                updatePropertys:[]
             },
-            baseLightRotate[this] = [0, -1, -1];
-            this.updateList = updateList[this]
+            baseLightRotate[this] = [0, -1, -1],
+            this.updateList = updateList[this],
             this.addVertexShader(Shader.colorMergeVShader), this.addFragmentShader(Shader.colorMergeFShader),
             this.addVertexShader(Shader.mouseVertexShader), this.addFragmentShader(Shader.mouseFragmentShader),
             this.addVertexShader(Shader.colorVertexShader), this.addFragmentShader(Shader.colorFragmentShader),
@@ -60,150 +60,102 @@ var Scene = (function () {
             this.addVertexShader(Shader.postBaseVertexShader), this.addFragmentShader(Shader.postBaseFragmentShader);
         }
     })
-
-    //.field('updateList', {
-    //        description: "world가 render 함수를 실행하기전 GPU업데이트가 되어야할 목록.",
-    //        sample: [
-    //            "console.log(scene.updateList);"
-    //        ],
-    //        defaultValue: '{ mesh : [], material : [], camera : [] }\n- 업데이트 완료후 각 리스트는 초기화 됨.',
-    //        get: $getter(updateList)
-    //    }
-    //)
     .field('vertexShaders', {
-            description: "현재 씬이 가지고있는 버텍스 쉐이더 자바스크립트 정보",
-            sample: [
-                "console.log(scene.vertexShaders);"
-            ],
-            defaultValue: "{}",
-            get: $getter(vertexShaders)
-        }
-    )
+        description:"현재 씬이 가지고있는 버텍스 쉐이더 자바스크립트 정보",
+        sample:"console.log(scene.vertexShaders);",
+        defaultValue:"{}",
+        get:$getter(vertexShaders)
+    })
     .field('fragmentShaders', {
-            description: "현재 씬이 가지고 있는 프레그먼트 쉐이더 자바스크립트 정보",
-            sample: [
-                "console.log(scene.fragmentShaders);"
-            ],
-            defaultValue: "{}",
-            get: $getter(fragmentShaders)
-        }
-    )
+        description:"현재 씬이 가지고 있는 프레그먼트 쉐이더 자바스크립트 정보",
+        sample:"console.log(scene.fragmentShaders);",
+        defaultValue:"{}",
+        get:$getter(fragmentShaders)
+    })
     .field('baseLightRotate', {
-            description: "디렉셔널 라이트 방향 설정, -1~1 사이값으로 입력(0.4에서 노멀라이즈처리)",
-            sample: [
-                "var scene = new Scene();",
-                "scene.baseLightRotate = [0,1,0];",
-                "console.log(scene.baseLightRotate);"
-            ],
-            defaultValue: "[0, -1, -1]",
-            set: $setter(baseLightRotate),
-            get: $getter(baseLightRotate)
-        }
-    )
+        description:"디렉셔널 라이트 방향 설정, -1~1 사이값으로 입력(0.4에서 노멀라이즈처리)",
+        sample:[
+            "var scene = new Scene();",
+            "scene.baseLightRotate = [0,1,0];",
+            "console.log(scene.baseLightRotate);"
+        ],
+        defaultValue:"[0, -1, -1]",
+        set:$setter(baseLightRotate),
+        get:$getter(baseLightRotate)
+    })
     .field('cameras', {
-            description: "씬에 등록된 카메라 리스트",
-            sample: [
-                "var scene = new Scene();",
-                "scene.addChild(new Camera);",
-                "console.log(scene.cameras); // 오브젝트 형식의 카메라 리스트를 반환"
-            ],
-            defaultValue: "{}",
-            get: $getter(cameras)
-        }
-    )
+        description:"씬에 등록된 카메라 리스트",
+        sample:[
+            "var scene = new Scene();",
+            "scene.addChild(new Camera);",
+            "console.log(scene.cameras); // 오브젝트 형식의 카메라 리스트를 반환"
+        ],
+        defaultValue:"{}",
+        get:$getter(cameras)
+    })
     .field('children', {
-            description: "씬에 등록된 자식 리스트를 오브젝트 형식으로 반환",
-            sample: [
-                "console.log(scene.children);"
-            ],
-            defaultValue: "{}",
-            get: $getter(children)
-        }
-    )
-    .field('childrenArray', {
-            description: "씬에 등록된 자식 리스트를 배열 형식으로 반환",
-            sample: [
-                "console.log(scene.childrenArray);"
-            ],
-            defaultValue: "[]",
-            get: $getter(childrenArray)
-        }
-    )
+        description:"씬에 등록된 자식 리스트를 오브젝트 형식으로 반환",
+        sample:"console.log(scene.children);",
+        defaultValue:"{}",
+        get:$getter(children)
+    })
     .method('addMesh', {
-            description: [
-                'Mesh객체를 추가함.'
-            ],
-            param: [
-                'mesh:Mesh - 메쉬객체'
-            ],
-            ret: [
-                'this - 메서드체이닝을 위해 자신을 반환함.'
-            ],
-            sample: [
-                "var scene = new Scene();",
-                "var geo = new Geometry([],[]);",
-                "var mat = new Material();",
-                "var mesh = new Mesh(geo,mat);",
-                "scene.addMesh(mesh);"
-            ],
-            exception: [
-                "'Scene.addMesh:0' - 이미 등록된 메쉬객체를 등록하려고 할 때",
-                "'Scene.addMesh:1' - 메쉬가 아닌 객체를 등록하려고 할 때"
-            ],
-            value : function(v){
-                var p = children[this], p2 = updateList[this], mat;
-                if (p[v]) this.error(0);
-                if (!(v instanceof Mesh)) this.error(1);
-                p[v] = v;
-                p2.mesh.push(v);
-                mat = v.material;
-                mat.addEventListener(Material.load, function() {
-                    //console.log('메쉬의 재질이 변경되었다!')
-                    var t = this.diffuse;
-                    if(t){
-                        var i = t.length;
+        description:'Mesh객체를 추가함.',
+        param:'mesh:Mesh - 메쉬객체',
+        ret:'this - 메서드체이닝을 위해 자신을 반환함.',
+        sample:[
+            "var scene = new Scene();",
+            "var geo = new Geometry([],[]);",
+            "var mat = new Material();",
+            "var mesh = new Mesh(geo,mat);",
+            "scene.addMesh(mesh);"
+        ],
+        exception:[
+            "'Scene.addMesh:0' - 이미 등록된 메쉬객체를 등록하려고 할 때",
+            "'Scene.addMesh:1' - 메쉬가 아닌 객체를 등록하려고 할 때"
+        ],
+        value:(function(){
+            var maps = 'diffuse,normal,specular'.split(','), loaded = function(update) {
+                var k = maps.length, target, i;
+                while (k--) {
+                    if (target = this[maps[k]]) {
+                        i = target.length;
                         while(i--){
-                            if(p2.material.indexOf(t[i].tex) == -1) {
-                                p2.material.push(t[i].tex);
-                                //console.log('새로운 텍스쳐 업데이트 추가',t[i].tex.isLoaded)
-                            }
+                            texture = target[i].tex;
+                            if (update.indexOf(texture) == -1) update.push(texture);
                         }
                     }
-                    t = this.normal;
-                    if(t){
-                        var i = t.length;
-                        while(i--){
-                            if(p2.material.indexOf(t[i].tex) == -1) {
-                                p2.material.push(t[i].tex);
-                                //console.log('새로운 텍스쳐 업데이트 추가',t[i].tex.isLoaded)
-                            }
-                        }
-                    }
-                    t = this.specular;
-                    if(t){
-                        var i = t.length;
-                        while(i--){
-                            if(p2.material.indexOf(t[i].tex) == -1) {
-                                p2.material.push(t[i].tex);
-                                //console.log('새로운 텍스쳐 업데이트 추가',t[i].tex.isLoaded)
-                            }
-                        }
-                    }
-                });
-                v.addEventListener(Mesh.changed, function() {
-                    p2.mesh.push(v);
-                });
-
-
-                mat.dispatch(Material.load,mat);
-                if(childrenArray[this].indexOf(v) == -1) {
-                    childrenArray[this].push(v);
                 }
-                p2.merged.push(v)
+            };
+            return function addMesh(v){
+                var target, update;
+                
+                if (!(v instanceof Mesh)) this.error(1);
+                
+                target = children[this];
+                if (target[v]) {
+                    this.error(0);
+                } else {
+                    target[v] = v;
+                }
+                
+                target = childrenArray[this];
+                if (target.indexOf(v) == -1) target[target.length] = v;
+                
+                update = updateList[this],
+                update.mesh.push(v),                
+                update.merged.push(v),
+                
+                target = v.material;
+                if (target.isLoaded) {
+                    loaded.call(target, update.material);
+                } else {
+                    target.addEventListener(Material.load, loaded, null, update.material);
+                }
                 return this;
-            }
-        }
-    )
+            };
+        })()
+    })
     .method('addCamera', {
             description: [
                 '카메라 객체를 추가함.'
