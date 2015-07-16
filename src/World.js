@@ -794,7 +794,8 @@ var World = (function (makeUtil) {
                                     tGL.bindTexture(tGL.TEXTURE_2D, tGPU.textures[tNormalMaps[tNormalMaps.length - 1].tex.uuid]);
                                     tGL.uniform1i(tProgram.uNormalSampler, 1);
                                     tGL.uniform1i(tProgram.useNormalMap, true);
-                                    tGL.uniform1f(tProgram.uNormalPower,priTexNormalMapPower[tNormalMaps[tNormalMaps.length - 1].tex.uuid])
+                                    //tGL.uniform1f(tProgram.uNormalPower,priTexNormalMapPower[tNormalMaps[tNormalMaps.length - 1].tex.uuid])
+                                    tGL.uniform1f(tProgram.uNormalPower,1.0)
                                 }else{
                                     tGL.uniform1i(tProgram.useNormalMap, false);
                                 }
@@ -804,7 +805,8 @@ var World = (function (makeUtil) {
                                     tGL.bindTexture(tGL.TEXTURE_2D, tGPU.textures[tSpecularMaps[tSpecularMaps.length - 1].tex.uuid]);
                                     tGL.uniform1i(tProgram.uSpecularSampler, 2);
                                     tGL.uniform1i(tProgram.useSpecularMap, true);
-                                    tGL.uniform1f(tProgram.uSpecularMapPower, priTexSpecularMapPower[tSpecularMaps[tSpecularMaps.length - 1].tex.uuid]);
+                                    //tGL.uniform1f(tProgram.uSpecularMapPower, priTexSpecularMapPower[tSpecularMaps[tSpecularMaps.length - 1].tex.uuid]);
+                                    tGL.uniform1f(tProgram.uSpecularMapPower, 1.5);
                                 }else{
                                     tGL.uniform1i(tProgram.useSpecularMap, false);
                                 }
