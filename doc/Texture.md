@@ -11,27 +11,27 @@
 
 **static**
 
-* [getMD](#getMD) - 해당 클래스를 마크다운 형식으로 문서...
-* [getInstance](#getInstance) - uuid 또는 id를 기반으로 인스턴...
 * [extend](#extend) - 이 클래스를 상속하는 자식클래스를 만...
-* [error](#error) - 정적함수에서 표준화된 예외를 처리함(...
+* [getInstance](#getInstance) - uuid 또는 id를 기반으로 인스턴...
 * [count](#count) - 이 클래스로 부터 만들어져 활성화된...
+* [error](#error) - 정적함수에서 표준화된 예외를 처리함(...
+* [getMD](#getMD) - 해당 클래스를 마크다운 형식으로 문서...
 
 **constant**
 
-* [zoomOut](#zoomOut) - zoom out constant
-* [zoomIn](#zoomIn) - zoom in constant
-* [specularNormal](#specularNormal) - specularNormal const...
-* [specular](#specular) - specular constant
-* [normal](#normal) - normal constant
-* [diffuseWrap](#diffuseWrap) - diffuseWrap constant
-* [diffuse](#diffuse) - diffuse constant
-* [crop](#crop) - crop constant
-* [addSpace](#addSpace) - addSpace constant
+* [zoomOut](#zoomOut) - texture.img에 지정될 이미지...
+* [zoomIn](#zoomIn) - texture.img에 지정될 이미지...
+* [crop](#crop) - texture.img에 지정될 이미지...
+* [addSpace](#addSpace) - texture.img에 지정될 이미지...
+* [diffuse](#diffuse) - 일반적으로 표면에 입혀지는 텍스쳐를...
+* [specular](#specular) - 표면에서 빛에 직접적으로 반사되는 면...
+* [diffuseWrap](#diffuseWrap) - 빛에 의한 음영을 표현할 때 음영에...
+* [normal](#normal) - 표면의 울퉁불퉁한 부분을 표현하기 위...
+* [specularNormal](#specularNormal) - diffuse에 대해 normal이...
 
 **event**
 
-* [load](#load) - load event
+* [load](#load) - Texture에 img지정된 이미지가...
 
 [top](#)
 
@@ -44,7 +44,8 @@
 
 **param**
 
-none
+1. ?img:* - texture.img를 초기화할 수 있는 이미지
+2. ?resizeType:string - 이미지의 리사이즈타입
 
 **exception**
 
@@ -53,7 +54,8 @@ none
 **sample**
 
 ```javascript
-var texture = new Texture();
+var texture0 = new Texture();
+var texture1 = new Texture(document.getElementById('txt1'));
 ```
 
 [top](#)
@@ -126,7 +128,7 @@ _field_
 
 ```javascript
 var texture = new Texture();
-texture.img = document.getElementID("imgElement");
+texture.img = document.getElementById("imgElement");
 console.log(texture.isLoaded);
 ```
 
@@ -163,72 +165,7 @@ _field_
 
 ```javascript
 var texture = new Texture();
-texture.img = document.getElementID("imgElement");
-```
-
-[top](#)
-
-<a name="getMD"></a>
-###getMD()
-
-_static_
-
-
-**description**
-
-
-- 해당 클래스를 마크다운 형식으로 문서화하여 출력함
-
-**param**
-
-
-**exception**
-
-
-- none
-
-**return**
-
-
-- string - 클래스에 대한 문서 마크다운
-
-**sample**
-
-```javascript
-//none
-```
-
-[top](#)
-
-<a name="getInstance"></a>
-###getInstance(uuid:string)
-
-_static_
-
-
-**description**
-
-
-- uuid 또는 id를 기반으로 인스턴스를 얻어냄
-
-**param**
-
-1. uuid:string - 얻고 싶은 인스턴스의 uuid 또는 id
-
-**exception**
-
-
-- none
-
-**return**
-
-
-- Object - 해당되는 인스턴스
-
-**sample**
-
-```javascript
-var instance = Mesh.getInstance(uuid);
+texture.img = document.getElementById("imgElement");
 ```
 
 [top](#)
@@ -278,6 +215,71 @@ var classA = MoGL.extend('classA', function(){}).build();
 
 [top](#)
 
+<a name="getInstance"></a>
+###getInstance(uuid:string)
+
+_static_
+
+
+**description**
+
+
+- uuid 또는 id를 기반으로 인스턴스를 얻어냄
+
+**param**
+
+1. uuid:string - 얻고 싶은 인스턴스의 uuid 또는 id
+
+**exception**
+
+
+- none
+
+**return**
+
+
+- Object - 해당되는 인스턴스
+
+**sample**
+
+```javascript
+var instance = Mesh.getInstance(uuid);
+```
+
+[top](#)
+
+<a name="count"></a>
+###count()
+
+_static_
+
+
+**description**
+
+
+- 이 클래스로 부터 만들어져 활성화된 인스턴스의 수
+
+**param**
+
+
+**exception**
+
+
+- none
+
+**return**
+
+
+- int - 활성화된 인스턴스의 수
+
+**sample**
+
+```javascript
+var meshCount = Mesh.count();
+```
+
+[top](#)
+
 <a name="error"></a>
 ###error(method:string, id:int)
 
@@ -316,8 +318,8 @@ var classA = MoGL.extend('classA', function(){})
 
 [top](#)
 
-<a name="count"></a>
-###count()
+<a name="getMD"></a>
+###getMD()
 
 _static_
 
@@ -325,7 +327,7 @@ _static_
 **description**
 
 
-- 이 클래스로 부터 만들어져 활성화된 인스턴스의 수
+- 해당 클래스를 마크다운 형식으로 문서화하여 출력함
 
 **param**
 
@@ -338,12 +340,12 @@ _static_
 **return**
 
 
-- int - 활성화된 인스턴스의 수
+- string - 클래스에 대한 문서 마크다운
 
 **sample**
 
 ```javascript
-var meshCount = Mesh.count();
+//none
 ```
 
 [top](#)
@@ -357,7 +359,7 @@ _const_
 **description**
 
 
-- zoom out constant
+- texture.img에 지정될 이미지가 2의 승수의 크기가 아닌 경우 근접한 수에 축소하여 맞춤
 
 **setting**
 
@@ -379,8 +381,8 @@ _const_
 
 ```javascript
 var texture = new Texture();
-// 리사이즈 타입 설정
 texture.resizeType = Texture.zoomOut;
+texture.img = document.getElementById("img1"); //2000 → 1024
 ```
 
 [top](#)
@@ -394,7 +396,7 @@ _const_
 **description**
 
 
-- zoom in constant
+- texture.img에 지정될 이미지가 2의 승수의 크기가 아닌 경우 근접한 수에 확대하여 맞춤
 
 **setting**
 
@@ -416,193 +418,8 @@ _const_
 
 ```javascript
 var texture = new Texture();
-// 리사이즈 타입 설정
 texture.resizeType = Texture.zoomIn;
-```
-
-[top](#)
-
-<a name="specularNormal"></a>
-###specularNormal
-
-_const_
-
-
-**description**
-
-
-- specularNormal constant
-
-**setting**
-
-- *writable*:false
--  *enumerable*:false
--  *configurable*:false
-
-**value**
-
-
-- specularNormal
-
-**exception**
-
-
-- none
-
-**sample**
-
-```javascript
-var texture = new Texture();
-// 리사이즈 타입 설정
-texture.resizeType = Texture.specularNormal;
-```
-
-[top](#)
-
-<a name="specular"></a>
-###specular
-
-_const_
-
-
-**description**
-
-
-- specular constant
-
-**setting**
-
-- *writable*:false
--  *enumerable*:false
--  *configurable*:false
-
-**value**
-
-
-- specular
-
-**exception**
-
-
-- none
-
-**sample**
-
-```javascript
-var texture = new Texture();
-// 리사이즈 타입 설정
-texture.resizeType = Texture.specular;
-```
-
-[top](#)
-
-<a name="normal"></a>
-###normal
-
-_const_
-
-
-**description**
-
-
-- normal constant
-
-**setting**
-
-- *writable*:false
--  *enumerable*:false
--  *configurable*:false
-
-**value**
-
-
-- normal
-
-**exception**
-
-
-- none
-
-**sample**
-
-```javascript
-var texture = new Texture();
-// 리사이즈 타입 설정
-texture.resizeType = Texture.normal;
-```
-
-[top](#)
-
-<a name="diffuseWrap"></a>
-###diffuseWrap
-
-_const_
-
-
-**description**
-
-
-- diffuseWrap constant
-
-**setting**
-
-- *writable*:false
--  *enumerable*:false
--  *configurable*:false
-
-**value**
-
-
-- diffuseWrap
-
-**exception**
-
-
-- none
-
-**sample**
-
-```javascript
-var texture = new Texture();
-// 리사이즈 타입 설정
-texture.resizeType = Texture.diffuseWrap;
-```
-
-[top](#)
-
-<a name="diffuse"></a>
-###diffuse
-
-_const_
-
-
-**description**
-
-
-- diffuse constant
-
-**setting**
-
-- *writable*:false
--  *enumerable*:false
--  *configurable*:false
-
-**value**
-
-
-- diffuse
-
-**exception**
-
-
-- none
-
-**sample**
-
-```javascript
-var texture = new Texture();
-// 리사이즈 타입 설정
-texture.resizeType = Texture.diffuse;
+texture.img = document.getElementById("img1"); //2000 → 2048
 ```
 
 [top](#)
@@ -616,7 +433,7 @@ _const_
 **description**
 
 
-- crop constant
+- texture.img에 지정될 이미지가 2의 승수의 크기가 아닌 경우 근접한 작은 수에 맞춰 자름
 
 **setting**
 
@@ -638,8 +455,8 @@ _const_
 
 ```javascript
 var texture = new Texture();
-// 리사이즈 타입 설정
 texture.resizeType = Texture.crop;
+texture.img = document.getElementById("img1"); //2000 → 1024로 좌상단기준으로 잘림
 ```
 
 [top](#)
@@ -653,7 +470,7 @@ _const_
 **description**
 
 
-- addSpace constant
+- texture.img에 지정될 이미지가 2의 승수의 크기가 아닌 경우 근접한 큰 수에 맞춰 공백을 넣음
 
 **setting**
 
@@ -675,8 +492,198 @@ _const_
 
 ```javascript
 var texture = new Texture();
-// 리사이즈 타입 설정
 texture.resizeType = Texture.addSpace;
+texture.img = document.getElementById("img1"); //2000 → 2048로 우하단이 공백으로 늘어남
+```
+
+[top](#)
+
+<a name="diffuse"></a>
+###diffuse
+
+_const_
+
+
+**description**
+
+
+- 일반적으로 표면에 입혀지는 텍스쳐를 의미함
+Material의 addTexture에서 diffuse타입으로 Texture를 등록할 때 사용
+
+**setting**
+
+- *writable*:false
+-  *enumerable*:false
+-  *configurable*:false
+
+**value**
+
+
+- diffuse
+
+**exception**
+
+
+- none
+
+**sample**
+
+```javascript
+var texture = new Texture();
+var material = new Material("#fff");
+material.addTexture(Texture.diffuse, texture);
+```
+
+[top](#)
+
+<a name="specular"></a>
+###specular
+
+_const_
+
+
+**description**
+
+
+- 표면에서 빛에 직접적으로 반사되는 면을 표현하는 텍스쳐
+Material의 addTexture에서 specular타입으로 Texture를 등록할 때 사용
+
+**setting**
+
+- *writable*:false
+-  *enumerable*:false
+-  *configurable*:false
+
+**value**
+
+
+- specular
+
+**exception**
+
+
+- none
+
+**sample**
+
+```javascript
+var texture = new Texture();
+var material = new Material("#fff");
+material.addTexture(Texture.specular, texture);
+```
+
+[top](#)
+
+<a name="diffuseWrap"></a>
+###diffuseWrap
+
+_const_
+
+
+**description**
+
+
+- 빛에 의한 음영을 표현할 때 음영에 해당되는 색상을 직접 이미지에서 지정하는 텍스쳐
+Material의 addTexture에서 diffuseWrap타입으로 Texture를 등록할 때 사용
+
+**setting**
+
+- *writable*:false
+-  *enumerable*:false
+-  *configurable*:false
+
+**value**
+
+
+- diffuseWrap
+
+**exception**
+
+
+- none
+
+**sample**
+
+```javascript
+var texture = new Texture();
+var material = new Material("#fff");
+material.addTexture(Texture.diffuseWrap, texture);
+```
+
+[top](#)
+
+<a name="normal"></a>
+###normal
+
+_const_
+
+
+**description**
+
+
+- 표면의 울퉁불퉁한 부분을 표현하기 위해 사용하는 텍스쳐
+Material의 addTexture에서 normal타입으로 Texture를 등록할 때 사용
+
+**setting**
+
+- *writable*:false
+-  *enumerable*:false
+-  *configurable*:false
+
+**value**
+
+
+- normal
+
+**exception**
+
+
+- none
+
+**sample**
+
+```javascript
+var texture = new Texture();
+var material = new Material("#fff");
+material.addTexture(Texture.normal, texture);
+```
+
+[top](#)
+
+<a name="specularNormal"></a>
+###specularNormal
+
+_const_
+
+
+**description**
+
+
+- diffuse에 대해 normal이 있듯이 specular도 울퉁불퉁한 면을 표현하려는 경우 사용
+Material의 addTexture에서 specularNormal타입으로 Texture를 등록할 때 사용
+
+**setting**
+
+- *writable*:false
+-  *enumerable*:false
+-  *configurable*:false
+
+**value**
+
+
+- specularNormal
+
+**exception**
+
+
+- none
+
+**sample**
+
+```javascript
+var texture = new Texture();
+var material = new Material("#fff");
+material.addTexture(Texture.specularNormal, texture);
 ```
 
 [top](#)
@@ -690,7 +697,8 @@ _event_
 **description**
 
 
-- load event
+- Texture에 img지정된 이미지가 로딩완료시 발생함. 이미 로딩이 완료된 이미지인 경우는 img지정시 즉시 발생함.
+* 리스너에게는 아무런 인자도 전달되지 않음
 
 **setting**
 
@@ -711,7 +719,11 @@ _event_
 **sample**
 
 ```javascript
-//none
+var tex = new Texture();
+tex.addEventListener(Texture.load, function(){
+    //로딩완료!
+});
+tex.img = document.getElementById("img1");
 ```
 
 [top](#)
