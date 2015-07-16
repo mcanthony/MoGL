@@ -16,7 +16,7 @@ var makeUtil = (function(){
             var gl, buffer;
             gl = gpu.gl,
             buffer = gpu.vbo[geo];
-            if (buffer) return;
+            if (buffer) return buffer;
             if(Array.isArray(data)) {
                 data = new Float32Array(data);
             }
@@ -30,7 +30,7 @@ var makeUtil = (function(){
             var gl, buffer;
             gl = gpu.gl,
             buffer = gpu.vnbo[geo];
-            if (buffer) return;
+            if (buffer) return buffer;;
             if (Array.isArray(data)) {
                 data = new Float32Array(data);
             }
@@ -44,7 +44,7 @@ var makeUtil = (function(){
             var gl, buffer;
             gl = gpu.gl,
             buffer = gpu.ibo[geo];
-            if (buffer) return;
+            if (buffer) return buffer;;
             if (Array.isArray(data)) {
                 data = new Uint32Array(data);
             }
@@ -58,7 +58,7 @@ var makeUtil = (function(){
             var gl, buffer;
             gl = gpu.gl,
             buffer = gpu.uvbo[geo];
-            if (buffer) return;
+            if (buffer) return buffer;;
             if (Array.isArray(data)) {
                 data = new Float32Array(data);
             }
@@ -126,6 +126,7 @@ var makeUtil = (function(){
         makeTexture:function makeTexture(gpu, texture) {
             var gl, glTexture;
             gl = gpu.gl;
+            if(gpu.textures[texture]) return gpu.textures[texture]
             glTexture = gl.createTexture(),
             gl.bindTexture(gl.TEXTURE_2D, glTexture),
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.img),
