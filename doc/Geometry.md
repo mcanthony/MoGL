@@ -5,22 +5,22 @@
 
 **field**
 
-* [volume](#volume) - 지오메트리의 최대 부피값.
 * [vertexCount](#vertexCount) - 지오메트리를 구성하는 버텍스 갯수
-* [uv](#uv) - 지오메트리를 구성하는 버텍스의 UV...
 * [triangleCount](#triangleCount) - 지오메트리를 구성하는 삼각형 갯수
+* [volume](#volume) - 지오메트리의 최대 부피값.
 * [position](#position) - 지오메트리를 구성하는 버텍스의 포지션...
 * [normal](#normal) - 지오메트리를 구성하는 버텍스의 노멀...
-* [index](#index) - 지오메트리를 인덱스 배열을 반환
+* [uv](#uv) - 지오메트리를 구성하는 버텍스의 UV...
 * [color](#color) - 지오메트리를 구성하는 버텍스의 컬러...
+* [index](#index) - 지오메트리를 인덱스 배열을 반환
 
 **static**
 
-* [getMD](#getMD) - 해당 클래스를 마크다운 형식으로 문서...
-* [getInstance](#getInstance) - uuid 또는 id를 기반으로 인스턴...
 * [extend](#extend) - 이 클래스를 상속하는 자식클래스를 만...
-* [error](#error) - 정적함수에서 표준화된 예외를 처리함(...
+* [getInstance](#getInstance) - uuid 또는 id를 기반으로 인스턴...
 * [count](#count) - 이 클래스로 부터 만들어져 활성화된...
+* [error](#error) - 정적함수에서 표준화된 예외를 처리함(...
+* [getMD](#getMD) - 해당 클래스를 마크다운 형식으로 문서...
 
 [top](#)
 
@@ -44,41 +44,6 @@ index : 지오메트리를 구성할 인덱스 배열 정보 (Array or Uint16Arr
 
 ```javascript
 var geo = new Geometry([],[]);
-```
-
-[top](#)
-
-<a name="volume"></a>
-###volume
-
-_field_
-
-
-**description**
-
-
-- 지오메트리의 최대 부피값.
-
-**setting**
-
-- *writable*:false
--  *enumerable*:false
--  *configurable*:false
-
-**defaultValue**
-
-
-- null
-
-**exception**
-
-
-- none
-
-**sample**
-
-```javascript
-console.log(geometry.volume);
 ```
 
 [top](#)
@@ -118,41 +83,6 @@ console.log(geometry.vertexCount);
 
 [top](#)
 
-<a name="uv"></a>
-###uv
-
-_field_
-
-
-**description**
-
-
-- 지오메트리를 구성하는 버텍스의 UV 배열을 반환
-
-**setting**
-
-- *writable*:false
--  *enumerable*:false
--  *configurable*:false
-
-**defaultValue**
-
-
-- none
-
-**exception**
-
-
-- none
-
-**sample**
-
-```javascript
-console.log(geometry.uv);
-```
-
-[top](#)
-
 <a name="triangleCount"></a>
 ###triangleCount
 
@@ -184,6 +114,41 @@ _field_
 
 ```javascript
 console.log(geometry.triangleCount);
+```
+
+[top](#)
+
+<a name="volume"></a>
+###volume
+
+_field_
+
+
+**description**
+
+
+- 지오메트리의 최대 부피값.
+
+**setting**
+
+- *writable*:false
+-  *enumerable*:false
+-  *configurable*:false
+
+**defaultValue**
+
+
+- null
+
+**exception**
+
+
+- none
+
+**sample**
+
+```javascript
+console.log(geometry.volume);
 ```
 
 [top](#)
@@ -258,8 +223,8 @@ console.log(geometry.normal);
 
 [top](#)
 
-<a name="index"></a>
-###index
+<a name="uv"></a>
+###uv
 
 _field_
 
@@ -267,7 +232,7 @@ _field_
 **description**
 
 
-- 지오메트리를 인덱스 배열을 반환
+- 지오메트리를 구성하는 버텍스의 UV 배열을 반환
 
 **setting**
 
@@ -288,7 +253,7 @@ _field_
 **sample**
 
 ```javascript
-console.log(geometry.index);
+console.log(geometry.uv);
 ```
 
 [top](#)
@@ -328,67 +293,37 @@ console.log(geometry.color);
 
 [top](#)
 
-<a name="getMD"></a>
-###getMD()
+<a name="index"></a>
+###index
 
-_static_
+_field_
 
 
 **description**
 
 
-- 해당 클래스를 마크다운 형식으로 문서화하여 출력함
+- 지오메트리를 인덱스 배열을 반환
 
-**param**
+**setting**
 
+- *writable*:false
+-  *enumerable*:false
+-  *configurable*:false
+
+**defaultValue**
+
+
+- none
 
 **exception**
 
 
 - none
 
-**return**
-
-
-- string - 클래스에 대한 문서 마크다운
-
 **sample**
 
 ```javascript
-//none
-```
-
-[top](#)
-
-<a name="getInstance"></a>
-###getInstance(uuid:string)
-
-_static_
-
-
-**description**
-
-
-- uuid 또는 id를 기반으로 인스턴스를 얻어냄
-
-**param**
-
-1. uuid:string - 얻고 싶은 인스턴스의 uuid 또는 id
-
-**exception**
-
-
-- none
-
-**return**
-
-
-- Object - 해당되는 인스턴스
-
-**sample**
-
-```javascript
-var instance = Mesh.getInstance(uuid);
+console.log(geometry.index);
 ```
 
 [top](#)
@@ -438,6 +373,71 @@ var classA = MoGL.extend('classA', function(){}).build();
 
 [top](#)
 
+<a name="getInstance"></a>
+###getInstance(uuid:string)
+
+_static_
+
+
+**description**
+
+
+- uuid 또는 id를 기반으로 인스턴스를 얻어냄
+
+**param**
+
+1. uuid:string - 얻고 싶은 인스턴스의 uuid 또는 id
+
+**exception**
+
+
+- none
+
+**return**
+
+
+- Object - 해당되는 인스턴스
+
+**sample**
+
+```javascript
+var instance = Mesh.getInstance(uuid);
+```
+
+[top](#)
+
+<a name="count"></a>
+###count()
+
+_static_
+
+
+**description**
+
+
+- 이 클래스로 부터 만들어져 활성화된 인스턴스의 수
+
+**param**
+
+
+**exception**
+
+
+- none
+
+**return**
+
+
+- int - 활성화된 인스턴스의 수
+
+**sample**
+
+```javascript
+var meshCount = Mesh.count();
+```
+
+[top](#)
+
 <a name="error"></a>
 ###error(method:string, id:int)
 
@@ -476,8 +476,8 @@ var classA = MoGL.extend('classA', function(){})
 
 [top](#)
 
-<a name="count"></a>
-###count()
+<a name="getMD"></a>
+###getMD()
 
 _static_
 
@@ -485,7 +485,7 @@ _static_
 **description**
 
 
-- 이 클래스로 부터 만들어져 활성화된 인스턴스의 수
+- 해당 클래스를 마크다운 형식으로 문서화하여 출력함
 
 **param**
 
@@ -498,12 +498,12 @@ _static_
 **return**
 
 
-- int - 활성화된 인스턴스의 수
+- string - 클래스에 대한 문서 마크다운
 
 **sample**
 
 ```javascript
-var meshCount = Mesh.count();
+//none
 ```
 
 [top](#)
