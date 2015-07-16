@@ -1,30 +1,30 @@
+'use strict';
 var Geometry = (function () {
-    'use strict';
-    var position, vertexCount, triangleCount, vertexShaders, normal,index, uv, color, volume, key;
-
+    var position, vertexCount, triangleCount, vertexShaders, normal, index, uv, color, volume;
     //private
-    position = {}, normal = {}, uv = {}, color = {},index = {},
+    position = {}, normal = {}, uv = {}, color = {}, index = {},
     vertexCount = {}, triangleCount = {}, vertexShaders = {},
-    volume = {};
+    volume = {},
     //shared private
     $setPrivate('Geometry', {
-        vertexCount : vertexCount
+        vertexCount:vertexCount
     });
-    return MoGL.extend('Geometry',{
+    return MoGL.extend('Geometry', {
         description: "Geometry 클래스",
-        param : [
-            "vertex : 지오메트리를 구성할 버텍스 배열 정보 (Array or Float32Array)",
-            "index : 지오메트리를 구성할 인덱스 배열 정보 (Array or Uint16Array)"
+        param:[
+            "1. vertex:Array or Float32Array - 지오메트리를 구성할 버텍스 배열 정보",
+            "2. index:Array or Uint16Array - 지오메트리를 구성할 인덱스 배열 정보",
+            "3. ?info:Array - 하나의 정점에 대한 구성요소를 별도로 제공함. 기본값은 ['x','y','z']임"
         ],
         sample: [
-            "var geo = new Geometry([],[]);"
+            "var geo = new Geometry(vertex, index, info);"
         ],
         exception:[
-            "'Geometry.vertexSet:0' - 첫번째 인자가 Array나 Float32Array가 아닌 경우",
-            "'Geometry.indexSet:1' - 두번째 인자가 Array나 Uint16Array가 아닌 경우",
-            "'Geometry.infoSet:2' - 첫번째 인자가 세번째 인자의 갯수로 나누어 떨어지지 않는 경우 ",
-            "'Geometry.infoSet:3' - 세번째 인자가 Array가 아닌 경우",
-            "'Geometry.infoSet:4' - 세번째 인자내 요소가 올바른 상수가 아닌 경우"
+            "'Geometry.vertexSet:0' - vertex가 Array나 Float32Array가 아닌 경우",
+            "'Geometry.indexSet:1' - index가 Array나 Uint16Array가 아닌 경우",
+            "'Geometry.infoSet:2' - vertex가 세번째 인자의 갯수로 나누어 떨어지지 않는 경우 ",
+            "'Geometry.infoSet:3' - info가 Array가 아닌 경우",
+            "'Geometry.infoSet:4' - info내 요소가 올바른 상수가 아닌 경우"
         ],
         value:(function(){
             var calcNormal, infoCheck, pos, nm, tUV, tCo;
@@ -115,28 +115,20 @@ var Geometry = (function () {
         })()
     })
     .field('vertexCount', {
-            description: "지오메트리를 구성하는 버텍스 갯수",
-            sample: [
-                'console.log(geometry.vertexCount);'
-            ],
-            defaultValue:'null',
-            get:$getter(vertexCount)
-        }
-    )
+        description:"지오메트리를 구성하는 버텍스 갯수",
+        sample:'console.log(geometry.vertexCount);',
+        defaultValue:'null',
+        get:$getter(vertexCount)
+    })
     .field('triangleCount', {
-            description: "지오메트리를 구성하는 삼각형 갯수",
-            sample: [
-                'console.log(geometry.triangleCount);'
-            ],
-            defaultValue:'null',
-            get:$getter(triangleCount)
-        }
-    )
+        description:"지오메트리를 구성하는 삼각형 갯수",
+        sample:'console.log(geometry.triangleCount);',
+        defaultValue:'null',
+        get:$getter(triangleCount)
+    })
     .field('volume', {
-        description: "지오메트리의 최대 부피값.",
-        sample: [
-            'console.log(geometry.volume);'
-        ],
+        description:"지오메트리의 최대 부피값.",
+        sample:'console.log(geometry.volume);',
         defaultValue:'null',
         get:function volumeGet() {
             var minX, minY, minZ, maxX, maxY, maxZ, t0, t1, t2, t, i;
@@ -158,45 +150,30 @@ var Geometry = (function () {
         }
     })
     .field('position', {
-            description: "지오메트리를 구성하는 버텍스의 포지션 배열을 반환",
-            sample: [
-                'console.log(geometry.position);'
-            ],
-            defaultValue:'null',
-            get: $getter(position)
-        }
-    )
+        description:"지오메트리를 구성하는 버텍스의 포지션 배열을 반환",
+        sample:'console.log(geometry.position);',
+        defaultValue:'null',
+        get:$getter(position)
+    })
     .field('normal', {
-            description: "지오메트리를 구성하는 버텍스의 노멀 배열을 반환",
-            sample: [
-                'console.log(geometry.normal);'
-            ],
-            get: $getter(normal)
-        }
-    )
+        description:"지오메트리를 구성하는 버텍스의 노멀 배열을 반환",
+        sample:'console.log(geometry.normal);',
+        get:$getter(normal)
+    })
     .field('uv', {
-            description: "지오메트리를 구성하는 버텍스의 UV 배열을 반환",
-            sample: [
-                'console.log(geometry.uv);'
-            ],
-            get: $getter(uv)
-        }
-    )
+        description:"지오메트리를 구성하는 버텍스의 UV 배열을 반환",
+        sample:'console.log(geometry.uv);',
+        get:$getter(uv)
+    })
     .field('color', {
-            description: "지오메트리를 구성하는 버텍스의 컬러 배열을 반환",
-            sample: [
-                'console.log(geometry.color);'
-            ],
-            get: $getter(color)
-        }
-    )
+        description:"지오메트리를 구성하는 버텍스의 컬러 배열을 반환",
+        sample:'console.log(geometry.color);',
+        get:$getter(color)
+    })
     .field('index', {
-            description: "지오메트리를 인덱스 배열을 반환",
-            sample: [
-                'console.log(geometry.index);'
-            ],
-            get: $getter(index)
-        }
-    )
+        description:"지오메트리를 인덱스 배열을 반환",
+        sample:'console.log(geometry.index);',
+        get:$getter(index)
+    })
     .build();
 })();

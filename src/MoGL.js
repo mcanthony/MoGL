@@ -568,6 +568,7 @@ var MoGL = (function() {
                         for (k in v) this[k] = v[k];
                         this.dispatch(MoGL.propertyChanged);
                     }
+                    return this;
                 };
             })()
         })
