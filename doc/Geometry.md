@@ -33,9 +33,9 @@
 
 **param**
 
-vertex:Array or Float32Array - 지오메트리를 구성할 버텍스 배열 정보
-index:Array or Uint16Array - 지오메트리를 구성할 인덱스 배열 정보
-?info:Array - 하나의 정점에 대한 구성요소를 별도로 제공함. 기본값은 ['x','y','z']임
+1. vertex:Array or Float32Array - 지오메트리를 구성할 버텍스 배열 정보
+2. index:Array or Uint16Array - 지오메트리를 구성할 인덱스 배열 정보
+3. ?info:Array - 하나의 정점에 대한 구성요소를 별도로 제공함. 기본값은 ['x','y','z']임
 
 **exception**
 
