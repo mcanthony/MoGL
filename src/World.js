@@ -532,13 +532,11 @@ var World = (function (makeUtil) {
                         var updateItem, geo;
                         updateItem = tScene.updateList.mesh[j],
                         geo = updateItem.geometry;
-                        if (geo) {
-                            if (!tGPU.vbo[geo]) {
-                                makeVBO(tGPU, geo, geo.position, 3),
-                                makeVNBO(tGPU, geo, geo.normal, 3),
-                                makeUVBO(tGPU, geo, geo.uv, 2),
-                                makeIBO(tGPU, geo, geo.index, 1);
-                            }
+                        if (!tGPU.vbo[geo]) {
+                            makeVBO(tGPU, geo, geo.position, 3),
+                            makeVNBO(tGPU, geo, geo.normal, 3),
+                            makeUVBO(tGPU, geo, geo.uv, 2),
+                            makeIBO(tGPU, geo, geo.index, 1);
                         }
                     }
                     j = tScene.updateList.material.length;
@@ -684,6 +682,7 @@ var World = (function (makeUtil) {
                                 }
                             }
 
+
                             // 대상 씬의 차일드 루프
                             i2 = tChildrenArray.length;
                             for (var i3 = 0; i3 < i2; i3++) {
@@ -772,15 +771,13 @@ var World = (function (makeUtil) {
                                     }
                                     tGL.uniform1f(tProgram.uLambert, priMatLambert[tMatUUID]);
                                 }
+
                                 // 텍스쳐 세팅
                                 if (useTexture) {
                                     if (tUVBO != pUVBO) {
                                         tGL.bindBuffer(tGL.ARRAY_BUFFER, tUVBO),
                                         tGL.vertexAttribPointer(tProgram.aUV, tUVBO.stride, tGL.FLOAT, false, 0, 0);
                                     }
-                                    //if (tDiffuses.length) {
-                                        //tGL.activeTexture(tGL.TEXTURE0);
-                                    //}
                                     tGL.activeTexture(tGL.TEXTURE0)
                                     tDiffuse = tGPU.textures[tDiffuseMaps[tDiffuseMaps.length - 1].tex.uuid];
                                     if (tDiffuse != pDiffuse) {
@@ -790,6 +787,7 @@ var World = (function (makeUtil) {
                                     tGL.uniform1f(tProgram.uSpecularPower,priMatSpecularPower[tMatUUID])
                                     tGL.uniform4fv(tProgram.uSpecularColor,priMatSpecularColor[tMatUUID])
                                 }
+
                                 // 노말 텍스쳐 세팅
                                 if (tNormalMaps) {
                                     tGL.activeTexture(tGL.TEXTURE1);
@@ -800,6 +798,7 @@ var World = (function (makeUtil) {
                                 }else{
                                     tGL.uniform1i(tProgram.useNormalMap, false);
                                 }
+
                                 if(tSpecularMaps){
                                     tGL.activeTexture(tGL.TEXTURE2);
                                     tGL.bindTexture(tGL.TEXTURE_2D, tGPU.textures[tSpecularMaps[tSpecularMaps.length - 1].tex.uuid]);

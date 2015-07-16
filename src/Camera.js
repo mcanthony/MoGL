@@ -19,7 +19,7 @@ var Camera = (function () {
                 fog: false, fogColor: null, fogNear: 0, fogFar: 0,
                 visible: true,
                 antialias: false,
-                mode: Camera.perspective,
+                mode: 'perspective',
                 //filters:{},
                 renderArea: null,
                 projectionMatrix: Matrix()
