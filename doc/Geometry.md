@@ -33,8 +33,9 @@
 
 **param**
 
-vertex : 지오메트리를 구성할 버텍스 배열 정보 (Array or Float32Array)
-index : 지오메트리를 구성할 인덱스 배열 정보 (Array or Uint16Array)
+vertex:Array or Float32Array - 지오메트리를 구성할 버텍스 배열 정보
+index:Array or Uint16Array - 지오메트리를 구성할 인덱스 배열 정보
+?info:Array - 하나의 정점에 대한 구성요소를 별도로 제공함. 기본값은 ['x','y','z']임
 
 **exception**
 
@@ -43,7 +44,7 @@ index : 지오메트리를 구성할 인덱스 배열 정보 (Array or Uint16Arr
 **sample**
 
 ```javascript
-var geo = new Geometry([],[]);
+var geo = new Geometry(vertex, index, info);
 ```
 
 [top](#)
