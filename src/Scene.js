@@ -22,7 +22,7 @@ var Scene = (function () {
     vertexShaderParser = makeUtil.vertexShaderParser,
     fragmentShaderParser = makeUtil.fragmentShaderParser;
     mkGet = function(target){
-        return function(id) {
+        return function(v) {
             var t = target[this], k;
             for(k in t){
                 if (v == k || t[k].id == v) return t[k];
@@ -232,7 +232,11 @@ var Scene = (function () {
                 update = updateList[this],
                 update.mesh.push(v),                
                 update.merged.push(v),
-                
+
+                v.addEventListener(Mesh.changed, function() {
+                    update.mesh.push(v);
+                });
+
                 target = v.material;
                 if (target.isLoaded) {
                     loaded.call(target, update.material);
@@ -358,7 +362,7 @@ var Scene = (function () {
             for (k in p) {
                 if (k == v || p[k].id == v) {
                     childrenArray[this].splice(childrenArray[this].indexOf(p[k]), 1),
-                    p[k].removeEventListener(MoGL.updated),
+                    p[k].removeEventListener(MoGL.changed),
                     updateList[this].removeMerged.push(p[k]),
                     delete p[k];
                     return true;
