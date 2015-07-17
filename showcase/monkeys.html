@@ -73,8 +73,7 @@
 
     var material, texture;
     material = new Material('#fff')
-    texture = new Texture()
-    texture.img = document.getElementById('testIMG2')
+    texture = new Texture(document.getElementById('testIMG2'))
     scene.addMaterial(material.setId('material'));
 
     ////////////////////////////////////////////////////////////////////////////

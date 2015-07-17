@@ -107,9 +107,8 @@
     function setintroText() {
         var mesh, geo;
         introTextMaterial = new Material()
-        introText = new Texture()
+        introText = new Texture(document.getElementById('text'))
         geo = Primitive.plane()
-        introText.img = document.getElementById('text')
         introTextMaterial.addTexture(Texture.diffuse, introText)
         mesh = new Mesh(geo, introTextMaterial)
         mesh.scale = [5.51 / 2, 1, 1.29 / 2]
@@ -125,8 +124,7 @@
         resultContext.fillStyle = '#fff'
         resultContext.fillText(v.toString().replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,'), 551, 48)
 
-        introText = new Texture()
-        introText.img = resultCanvas.toDataURL();
+        var introText = new Texture(resultCanvas.toDataURL())
         setTimeout(function () {
             introTextMaterial.addTexture(Texture.diffuse, introText)
         }, 16)
@@ -187,16 +185,15 @@
         var mesh, geo, mat, texture;
         mat = new Material(0, 0, 0, 0)
         geo = Primitive.plane()
-        mesh = new Mesh(geo, mat)
+        mesh = new Mesh(geo, mat).setId('bg')
         mesh.rotateX = Math.PI / 2
         mesh.scale = [50, 1, 10]
         mesh.z = -0.3
         scene.addChild(mesh)
 
         mat = new Material()
-        texture = new Texture()
+        texture = new Texture(document.getElementById('iphone'))
 
-        texture.img = document.getElementById('iphone')
         mat.addTexture(Texture.diffuse, texture)
 
         mesh = new Mesh(geo, mat)
@@ -255,9 +252,8 @@
 
         for (i = 0; i < max; i++) {
             mat = new Material()
-            texture = new Texture()
+            texture = new Texture(document.getElementById('cal' + i))
             geo = Primitive.plane()
-            texture.img = document.getElementById('cal' + i)
             mat.addTexture(Texture.diffuse, texture)
             mesh = new Mesh(geo, mat)
             mesh.scale = [0.0, 0.5, 0.0]
@@ -282,9 +278,8 @@
         var i, max = 10
         for (i = 0; i < max; i++) {
             mat = new Material()
-            texture = new Texture()
+            texture = new Texture(document.getElementById('num' + i))
             geo = Primitive.plane()
-            texture.img = document.getElementById('num' + i)
             mat.addTexture(Texture.diffuse, texture)
             mesh = new Mesh(geo, mat)
             mesh.scale = [0.0, 0.5, 0.0]
@@ -323,10 +318,10 @@
     setNumbers()
 
     function setMouseRotate() {
-        var t = scene.childrenArray
+        var t = scene.getChild('bg')
         var checkX = window.innerWidth / 2
 
-        t[0].addEventListener(Mesh.move, function (e) {
+        t.addEventListener(Mesh.move, function (e) {
             console.log(e.x)
             checkX = window.innerWidth / 2
             cameraX = (checkX- e.x)/75

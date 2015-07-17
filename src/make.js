@@ -16,7 +16,7 @@ var makeUtil = (function(){
             var gl, buffer;
             gl = gpu.gl,
             buffer = gpu.vbo[geo];
-            if (buffer) return console.log(buffer),buffer;
+            if (buffer) return cobuffer;
             if(Array.isArray(data)) {
                 data = new Float32Array(data);
             }
@@ -123,20 +123,20 @@ var makeUtil = (function(){
             }
             gpu.programs[name] = program;
         },
-        makeTexture:function makeTexture(gpu, texture) {
+        makeTexture:function makeTexture(gpu, uuid,img) {
             var gl, glTexture;
             gl = gpu.gl;
-            if(gpu.textures[texture]) return gpu.textures[texture]
+            if(gpu.textures[uuid]) return console.log(uuid),gpu.textures[uuid]
             glTexture = gl.createTexture(),
             gl.bindTexture(gl.TEXTURE_2D, glTexture),
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.img),
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img),
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE),
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE),
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR),
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR),
             gl.generateMipmap(gl.TEXTURE_2D),
-            glTexture.textrue = texture,
-            gpu.textures[texture] = glTexture,
+            //glTexture.texture = uuid,
+            gpu.textures[uuid] = glTexture,
             gl.bindTexture(gl.TEXTURE_2D, null);
         },
         makeFrameBuffer:function makeFrameBuffer(gpu, camera, cvs) {

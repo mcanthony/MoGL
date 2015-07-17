@@ -543,7 +543,7 @@ var World = (function (makeUtil) {
                     j = tScene.updateList.texture.length;
                     while (j--) {
                         updateTex = tScene.updateList.texture[j].tex
-                        if(!tGPU.textures[updateTex.uuid]) makeTexture(tGPU, updateTex);
+                        if(!tGPU.textures[updateTex.uuid]) makeTexture(tGPU, updateTex.uuid,updateTex.img);
                     }
                     if (tScene.updateList.camera.length) cameraRenderAreaUpdate(this);
                     tScene.updateList.geometry.length = 0,
