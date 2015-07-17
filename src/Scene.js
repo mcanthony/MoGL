@@ -209,7 +209,7 @@ var Scene = (function () {
                         i = target.length;
                         while(i--){
                             texture = target[i];
-                            if (update.indexOf(texture)) update.push(texture);
+                            if (update.indexOf(texture)==-1) update.push(texture);
                         }
                     }
                 }
