@@ -234,7 +234,7 @@ var Scene = (function () {
                 update.merged.push(v),
 
                 v.addEventListener(Mesh.changed, function() {
-                    update.geometry.push(v.geometry);
+                if (update.geometry.indexOf(v.geometry)==-1) update.geometry.push(v.geometry);
                     target = v.material;
                     if (target.isLoaded) {
                         loaded.call(target, update.texture);

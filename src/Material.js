@@ -2,7 +2,7 @@ var Material = (function () {
     'use strict';
     var textureLoaded, texType,
         diffuse, normal, specular, diffuseWrap, specularNormal,
-        shading, lambert, specularPower,specularColor, wireFrame, wireFrameColor, count, color;
+        shading, lambert, specularPower,specularColor, wireFrame, wireFrameColor, count, color, sheetMode;
     
     //private
     shading = {},
@@ -22,6 +22,8 @@ var Material = (function () {
     normal = {},
     specular = {},
     specularNormal = {},
+    sheetMode = {}
+
     //shared private
     $setPrivate('Material', {
         color: color,
@@ -33,7 +35,8 @@ var Material = (function () {
         specularColor: specularColor,
         specular:specular,
         diffuse: diffuse,
-        normal: normal
+        normal: normal,
+        sheetMode : sheetMode
     }),
     //lib
     textureLoaded = function(mat){
@@ -77,8 +80,25 @@ var Material = (function () {
             specularPower[this] = 20.0
             specularColor[this] = [1,1,1,1]
             shading[this] = Shading.none
+            sheetMode [this] = {
+                enable : false,
+                wNum : 8,
+                hNum : 1,
+                frame : 0,
+                cycle : 32,
+                currentGap : 0
+            }
         }
     })
+    .field('sheetMode', {
+            description: "시트모드",
+            sample: [
+                'console.log(material.sheetMode);'
+            ],
+            defaultValue:'{ enable : false, wNum : 8, hNum : 8 }',
+            get: $getter(sheetMode, false, 0)
+        }
+    )
     .field('count', {
             description: "재질이 사용된 횟수",
             sample: [

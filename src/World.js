@@ -462,6 +462,7 @@ var World = (function (makeUtil) {
             var priMatDiffuseMaps;
             var priMatNormalMaps;
             var priMatSpecularMaps;
+            var priMatSheetMode
             var priGeoVertexCount
             var priPickingColors;
             var priPickingMeshs
@@ -489,6 +490,7 @@ var World = (function (makeUtil) {
             priMatDiffuseMaps = $getPrivate('Material', 'diffuse');
             priMatNormalMaps = $getPrivate('Material', 'normal');
             priMatSpecularMaps = $getPrivate('Material', 'specular');
+            priMatSheetMode = $getPrivate('Material', 'sheetMode');
 
             priTexSpecularMapPower = $getPrivate('Texture', 'specularMapPower')
             priTexNormalMapPower = $getPrivate('Texture', 'normalMapPower')
@@ -685,7 +687,6 @@ var World = (function (makeUtil) {
                                 }
                             }
 
-
                             // 대상 씬의 차일드 루프
                             i2 = tChildrenArray.length;
                             for (var i3 = 0; i3 < i2; i3++) {
@@ -777,6 +778,16 @@ var World = (function (makeUtil) {
 
                                 // 텍스쳐 세팅
                                 if (useTexture) {
+                                    var sheetInfo = priMatSheetMode[tMatUUID]
+                                    if(sheetInfo.enable){
+                                        sheetInfo.currentGap+=16
+                                        if(sheetInfo.currentGap > sheetInfo.cycle) sheetInfo.frame++ , sheetInfo.currentGap = 0
+                                        if(sheetInfo.frame == sheetInfo.wNum * sheetInfo.hNum) sheetInfo.frame = 0
+                                        tGL.uniform4fv(tProgram.uSheetOffset, [1 / sheetInfo.wNum, 1 / sheetInfo.hNum, sheetInfo.frame % sheetInfo.wNum, Math.floor( sheetInfo.frame/sheetInfo.wNum)]);
+                                        tGL.uniform1i(tProgram.uSheetMode, 1);
+                                    }else{
+                                        tGL.uniform1i(tProgram.uSheetMode, 0);
+                                    }
                                     if (tUVBO != pUVBO) {
                                         tGL.bindBuffer(tGL.ARRAY_BUFFER, tUVBO),
                                         tGL.vertexAttribPointer(tProgram.aUV, tUVBO.stride, tGL.FLOAT, false, 0, 0);
