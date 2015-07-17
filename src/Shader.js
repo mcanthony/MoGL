@@ -547,7 +547,7 @@ var Shader = (function () {
                     return cache || (cache = new Shader({
                             id: 'bitmapVertexShaderPhong',
                             attributes: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
-                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
+                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition','bool uSheetMode','vec4 uSheetOffset'],
                             varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition'],
                             function: [VertexShader.baseFunction],
                             main: [
@@ -556,7 +556,11 @@ var Shader = (function () {
                                 'gl_Position = uPixelMatrix*position;\n' +
                                 'vPosition = position.xyz;\n' +
                                 'vNormal = (mv * vec4(-aVertexNormal, 0.0)).xyz;\n' +
-                                'vUV = aUV;'
+                                'if( uSheetMode ) {' +
+                                '   vUV = vec2(aUV.x*uSheetOffset[0]+uSheetOffset[0]*uSheetOffset[2], aUV.y*uSheetOffset[1]+uSheetOffset[1]*uSheetOffset[3]);'+
+                                '}else{' +
+                                '   vUV = aUV;' +
+                                '}'
                             ]
                         }))
                 }

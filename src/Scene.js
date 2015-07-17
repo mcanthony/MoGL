@@ -209,7 +209,7 @@ var Scene = (function () {
                         i = target.length;
                         while(i--){
                             texture = target[i];
-                            if (update.indexOf(texture)) update.push(texture);
+                            if (update.indexOf(texture)==-1) update.push(texture);
                         }
                     }
                 }
@@ -234,7 +234,7 @@ var Scene = (function () {
                 update.merged.push(v),
 
                 v.addEventListener(Mesh.changed, function() {
-                    update.geometry.push(v.geometry);
+                if (update.geometry.indexOf(v.geometry)==-1) update.geometry.push(v.geometry);
                     target = v.material;
                     if (target.isLoaded) {
                         loaded.call(target, update.texture);
@@ -244,9 +244,8 @@ var Scene = (function () {
                 target = v.material;
                 if (target.isLoaded) {
                     loaded.call(target, update.texture);
-                } else {
-                    target.addEventListener(Material.changed, loaded, null, update.texture);
                 }
+                target.addEventListener(Material.changed, loaded, null, update.texture);
                 return this;
             };
         })()

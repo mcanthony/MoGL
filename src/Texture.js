@@ -63,50 +63,53 @@ var Texture = (function() {
             "var texture0 = new Texture();",
 			"var texture1 = new Texture(document.getElementById('txt1'));"
         ],
+        exception:[
+            "'Texture:0' - 이미지가 인자로 오지 않은 경우",
+            "'Texture:1' - 적절한 이미지객체가 아닌 경우",
+            "'Texture:2' - 이미지데이터형식이 잘못된 경우"
+        ],
 		param:[
-		    "1. ?img:* - texture.img를 초기화할 수 있는 이미지",
-			"2. ?resizeType:string - 이미지의 리사이즈타입"
+		    "img:* - texture.img를 초기화할 수 있는 이미지",
+			"resizeType:string - 이미지의 리사이즈타입"
 		],
         value:function Texture(v, t) {
             var complete, img, w, h;
-			if (v) {
-				if (t) resize[this] = t;
-				//this.img = v;
-                complete= false,
-                    img = document.createElement('img');
-                if (v instanceof HTMLImageElement) {
-                    img.src = v.src
-                    if (img.complete) {
-                        complete = true;
-                    }
-                } else if (v instanceof ImageData) {
-                    complete = true,
-                        canvas.width = w = v.width,
-                        canvas.height = h = v.height,
-                        context.clearRect(0, 0, w, h),
-                        context.putImageData(v, 0, 0),
-                        img.src = context.toDataURL();
-                } else if (typeof v == 'string') {
-                    if (v.substring(0, 10) == 'data:image' && v.indexOf('base64') > -1){
-                        complete = true;
-                    } else if (!imgType[v.substring(-4)]) {
-                        this.error(1);
-                    }
-                    img.src = v;
-                } else {
-                    this.error(0);
-                }
-                if (complete){
-                    isLoaded[this] = true,
-                        img.dataset.texture = this.uuid,
-                        imgs[this] = resizer(this.resizeType, img),
-                        this.dispatch('load');
-                } else {
-                    img.dataset.texture = this.uuid,
-                    img.addEventListener('load', loaded);
-                }
+			if (!v) this.error(0);
+            if (t) resize[this] = t;
 
-			}
+            complete= false,
+            img = document.createElement('img');
+            if (v instanceof HTMLImageElement) {
+                img.src = v.src
+                if (img.complete) {
+                    complete = true;
+                }
+            } else if (v instanceof ImageData) {
+                complete = true,
+                canvas.width = w = v.width,
+                canvas.height = h = v.height,
+                context.clearRect(0, 0, w, h),
+                context.putImageData(v, 0, 0),
+                img.src = context.toDataURL();
+            } else if (typeof v == 'string') {
+                if (v.substring(0, 10) == 'data:image' && v.indexOf('base64') > -1){
+                    complete = true;
+                } else if (!imgType[v.substring(-4)]) {
+                    this.error(2);
+                }
+                img.src = v;
+            } else {
+                this.error(1);
+            }
+            if (complete) {
+                isLoaded[this] = true,
+                img.dataset.texture = this.uuid,
+                imgs[this] = resizer(this.resizeType, img),
+                this.dispatch('load');
+            } else {
+                img.dataset.texture = this.uuid,
+                img.addEventListener('load', loaded);
+            }
         }
     })
     .field('resizeType', {
@@ -114,26 +117,17 @@ var Texture = (function() {
         type:'string',
         defaultValue:'null',
         sample: [
-            "var texture = new Texture();",
-            "texture.resizeType = Texture.zoomIn;",
+            "var texture = new Texture(img, Texture.zoomIn);",
             "console.log(texture.resizeType);"
         ],
-        get:$getter(resize, false, 'zoomOut'),
-        //set:function resizeTypeSet(v) {
-        //    if (Texture[v]) {
-        //        resize[this] = v;
-        //    } else {
-        //        this.error(0);
-        //    }
-        //}
+        get:$getter(resize, false, 'zoomOut')
     })
     .field('isLoaded', {
         description:'Load check field.',
         type:'string',
         defaultValue:'null',
         sample: [
-            "var texture = new Texture();",
-            'texture.img = document.getElementById("imgElement");',
+            'var texture = new Texture(document.getElementById("imgElement"));',
             "console.log(texture.isLoaded);"
         ],
         get:$getter(isLoaded, false, false)
@@ -143,46 +137,10 @@ var Texture = (function() {
         type:'string',
         defaultValue:'null',
         sample: [
-            "var texture = new Texture();",
-            'texture.img = document.getElementById("imgElement");'
+            'var texture = new Texture(document.getElementById("imgElement"));',
+            'var img = texture.img;'
         ],
         get:$getter(imgs, false, empty)
-        //set:function imgSet(v){
-        //    var complete, img, w, h;
-        //    complete= false,
-        //    img = document.createElement('img');
-        //    if (v instanceof HTMLImageElement) {
-        //        img.src = v.src
-        //        if (img.complete) {
-        //            complete = true;
-        //        }
-        //    } else if (v instanceof ImageData) {
-        //        complete = true,
-        //        canvas.width = w = v.width,
-        //        canvas.height = h = v.height,
-        //        context.clearRect(0, 0, w, h),
-        //        context.putImageData(v, 0, 0),
-        //        img.src = context.toDataURL();
-        //    } else if (typeof v == 'string') {
-        //        if (v.substring(0, 10) == 'data:image' && v.indexOf('base64') > -1){
-        //            complete = true;
-        //        } else if (!imgType[v.substring(-4)]) {
-        //            this.error(1);
-        //        }
-        //        img.src = v;
-        //    } else {
-        //        this.error(0);
-        //    }
-        //    if (complete){
-        //        isLoaded[this] = true,
-        //        img.dataset.texture = this.uuid,
-        //        imgs[this] = resizer(this.resizeType, img),
-        //        this.dispatch('load');
-        //    } else {
-        //        img.dataset.texture = this.uuid,
-        //        img.addEventListener('load', loaded);
-        //    }
-        //}
     })
     .event('load', {
         description:[
@@ -201,36 +159,32 @@ var Texture = (function() {
     .constant('zoomOut', {
         description:'texture.img에 지정될 이미지가 2의 승수의 크기가 아닌 경우 근접한 수에 축소하여 맞춤',
         sample:[
-            'var texture = new Texture();',
-            'texture.resizeType = Texture.zoomOut;',
-            'texture.img = document.getElementById("img1"); //2000 → 1024'
+            'var texture = new Texture(img, Texture.zoomOut);',
+            '//2000 → 1024'
         ],
         value:'zoomOut'
     })
     .constant('zoomIn', {
         description:'texture.img에 지정될 이미지가 2의 승수의 크기가 아닌 경우 근접한 수에 확대하여 맞춤',
         sample:[
-            'var texture = new Texture();',
-            'texture.resizeType = Texture.zoomIn;',
-            'texture.img = document.getElementById("img1"); //2000 → 2048'
+            'var texture = new Texture(img, Texture.zoomIn);',
+            '//2000 → 2048'
         ],
         value:'zoomIn'
     })
     .constant('crop', {
         description:'texture.img에 지정될 이미지가 2의 승수의 크기가 아닌 경우 근접한 작은 수에 맞춰 자름',
         sample:[
-            'var texture = new Texture();',
-            'texture.resizeType = Texture.crop;',
-            'texture.img = document.getElementById("img1"); //2000 → 1024로 좌상단기준으로 잘림'
+            'var texture = new Texture(img, Texture.crop);',
+            '//2000 → 1024로 좌상단기준으로 잘림'
         ],
         value:'crop'
     })
     .constant('addSpace', {
         description:'texture.img에 지정될 이미지가 2의 승수의 크기가 아닌 경우 근접한 큰 수에 맞춰 공백을 넣음',
         sample:[
-            'var texture = new Texture();',
-            'texture.resizeType = Texture.addSpace;',
-            'texture.img = document.getElementById("img1"); //2000 → 2048로 우하단이 공백으로 늘어남'
+            'var texture = new Texture(img, Texture.addSpace);',
+            '//2000 → 2048로 우하단이 공백으로 늘어남'
         ],
         value:'addSpace'
     })
