@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -77,60 +78,85 @@
 
     world.addScene(scene)
     scene.addChild(camera)
-
-    var geo = Primitive.plane()
-    makeItems(geo)
-    world.setAutoSize(1)
-    world.start()
-
-    ////////////////////////////////////////////////////////////////////////////
     var testMat, testMat2
     var testItem, testItem2
     var texture, texture2
-    function makeItems(geo) {
+    var geo = Primitive.plane()
 
-        texture = new Texture(document.getElementById('testIMG1'))
-
-        texture2 = new Texture(document.getElementById('testIMG2'))
-
-
-        testMat = new Material()
-        testMat.shading = Shading.phong
-        testMat.sheetMode.enable= true
-
-        testMat.addTexture(Texture.diffuse, texture)
-        testItem = new Mesh(geo, testMat);
-        testItem.rotateX =  Math.PI/2
-        testItem.x = -1
-
-        scene.addChild(testItem);
-
-        testMat2 = new Material()
-        testMat2.shading = Shading.phong
-        testMat2.sheetMode.enable= true
-        testMat2.sheetMode.wNum = 6
-        testMat2.sheetMode.hNum = 4
-
-        testMat2.addTexture(Texture.diffuse, texture2)
-        testItem2 = new Mesh(geo, testMat2);
-        testItem2.rotateX =  Math.PI/2
-        testItem2.x = 1
-
-        scene.addChild(testItem2);
+    world.setAutoSize(1)
+    world.start()
 
 
-        var currentFPS, prevTime = 0, count = 0, sum = 0
-        world.addEventListener(World.renderAfter, function (currTime, totalVertex) {
-            var currentFPS = 1000 / ( currTime - prevTime );
-            prevTime = currTime;
-            count++
-            divCurrentFPS.textContent = currentFPS.toFixed(2);
-            divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2) + '/ totalVertex : ' + totalVertex;
-            testItem.rotateY += 0.01
+    texture = new Texture(document.getElementById('testIMG1'))
 
-        })
-    }
+    texture2 = new Texture(document.getElementById('testIMG2'))
+
+
+    testMat = new Material()
+    testMat.shading = Shading.phong
+    testMat.sheetMode.enable= true
+
+    testMat.addTexture(Texture.diffuse, texture)
+    testItem = new Mesh(geo, testMat);
+    testItem.rotateX =  Math.PI/2
+    testItem.x = -1
+
+    scene.addChild(testItem);
+
+    testMat2 = new Material()
+    testMat2.shading = Shading.phong
+    testMat2.sheetMode.enable= true
+    testMat2.sheetMode.wNum = 6
+    testMat2.sheetMode.hNum = 4
+
+    testMat2.addTexture(Texture.diffuse, texture2)
+    testItem2 = new Mesh(geo, testMat2);
+    testItem2.rotateX =  Math.PI/2
+    testItem2.x = 1
+
+    scene.addChild(testItem2);
+
+
+
+    var currentFPS, prevTime = 0, count = 0, sum = 0
+    world.addEventListener(World.renderAfter, function (currTime, totalVertex) {
+        var currentFPS = 1000 / ( currTime - prevTime );
+        prevTime = currTime;
+        count++
+        divCurrentFPS.textContent = currentFPS.toFixed(2);
+        divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2) + '/ totalVertex : ' + totalVertex;
+        testItem.rotateY += 0.01
+
+    })
+    var geoTest = Primitive.cube()
+
+    var tex = new Texture(document.getElementById('testIMG2'))
+    testItem.addEventListener(Mesh.down, function (e) {
+        var mat, item
+
+        mat = new Material()
+        mat.shading = Shading.phong
+        mat.sheetMode.enable = true
+        mat.sheetMode.wNum = 6
+        mat.sheetMode.hNum = 4
+
+        mat.addTexture(Texture.diffuse, tex)
+        item = new Mesh(geoTest, mat);
+        item.rotateX = Math.PI / 2
+
+        console.log(e)
+        item.x = e.target.x * Math.random()-0.5
+        item.y =Math.random()-0.5
+
+        scene.addChild(item);
+
+    })
+
+    ////////////////////////////////////////////////////////////////////////////
+
+
 
 </script>
 </body>
 </html>
+
