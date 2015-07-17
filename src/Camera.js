@@ -19,7 +19,7 @@ var Camera = (function () {
                 fog: false, fogColor: null, fogNear: 0, fogFar: 0,
                 visible: true,
                 antialias: false,
-                mode: Camera.perspective,
+                mode: 'perspective',
                 //filters:{},
                 renderArea: null,
                 projectionMatrix: Matrix()
@@ -214,33 +214,48 @@ var Camera = (function () {
             return prop[this].projectionMatrix
         }
     })
-    //.method('screenToLocal',{
-    //    description : '스크린좌표를 메쉬의 로컬 좌표계로 변환',
-    //    param : 'MouseEvent',
-    //    sample : [
-    //        "testItem.addEventListener(Mesh.down, function(e){",
-    //        "    console.log('결과값',camera.screenToLocal(e))",
-    //        "})"
-    //    ],
-    //    ret : '{x:값, y:값 ,z:값}',
-    //    value : function(v){
-    //        var renderArea = prop[this].renderArea
-    //
-    //        var viewSizeX = renderArea[2] * .5;
-    //        var viewSizeY = renderArea[3] * .5;
-    //        var focalLength = Math.sqrt(viewSizeX * viewSizeX + viewSizeY * viewSizeY) / Math.tan(prop[this].fov*Math.PI/180 * 0.5);
-    //
-    //        var z = prop[this].far
-    //        var x = z*(v.x - viewSizeX)/focalLength;
-    //        var y = z*(v.y - viewSizeY)/focalLength;
-    //        var transform = v.target.matrix.raw
-    //        var res = {}
-    //        res.x = transform[0]*x + transform[1]*y + transform[2]*z + transform[3]
-    //        res.y = transform[4]*x + transform[5]*y + transform[6]*z + transform[7]
-    //        res.z = transform[8]*x + transform[9]*y + transform[10]*z + transform[11]
-    //        return res
-    //    }
-    //})
+    .method('screenToWorld',{
+        description : '스크린좌표를 월드 좌표계로 변환',
+        param : 'MouseEvent',
+        sample : [
+
+        ],
+        ret : '{x:값, y:값 ,z:값}',
+        value : function(v){
+            var tArea, p;
+            p = prop[this]
+            tArea = p.renderArea
+
+            //var vCamera = new Vector(this.x,this.y,this.z)
+            //var vPos = new Vector(v.target.x,v.target.y,v.target.z)
+            //var distance = vCamera.distance(vPos);
+
+            var viewSizeX = tArea[2] * 0.5;
+            var viewSizeY = tArea[3] * 0.5;
+            var focalLength = Math.sqrt(viewSizeX * viewSizeX + viewSizeY * viewSizeY) / Math.tan(p.fov*Math.PI/180 * 0.5);
+
+            var x
+            var y;
+            var z = p.far/2
+            x = z * (v.x - viewSizeX) / focalLength
+            y = z * (v.y - viewSizeY) / focalLength
+            var res = {}
+
+            var projectionMtx = p.projectionMatrix.matClone()
+            var cameraMtx = this.matrix
+            projectionMtx=projectionMtx.matMultiply(cameraMtx).raw
+
+            res.x = (projectionMtx[0] * x + projectionMtx[1] * y + projectionMtx[2] * z + projectionMtx[3]);
+            res.y = (projectionMtx[4] * x + projectionMtx[5] * y + projectionMtx[6] * z + projectionMtx[7]);
+            res.z = (projectionMtx[8] * x + projectionMtx[9] * y + projectionMtx[10] * z + projectionMtx[11])
+            //res.x = (projectionMtx[0] * x + projectionMtx[4] * y + projectionMtx[8] * z + projectionMtx[12]);
+            //res.y = (projectionMtx[1] * x + projectionMtx[5] * y + projectionMtx[9] * z + projectionMtx[13]);
+            //res.z = (projectionMtx[2] * x + projectionMtx[6] * y + projectionMtx[10] * z + projectionMtx[14])
+
+            return res
+        }
+    })
+
     .method('resetProjectionMatrix', {
             description: "현재 프로퍼티들을 기준으로 프로젝션 매트릭스를 갱신",
             sample: [

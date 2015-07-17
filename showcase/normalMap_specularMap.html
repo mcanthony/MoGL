@@ -97,14 +97,11 @@
     var texture, normalTexture, specularTexture;
     function makeItems(geo) {
 
-        texture = new Texture()
-        texture.img = document.getElementById('testIMG2')
+        texture = new Texture(document.getElementById('testIMG2'))
 
-        normalTexture = new Texture()
-        normalTexture.img = document.getElementById('testNormal')
+        normalTexture = new Texture(document.getElementById('testNormal'))
 
-        specularTexture = new Texture()
-        specularTexture.img = document.getElementById('testSpecular')
+        specularTexture = new Texture(document.getElementById('testSpecular'))
 
 
         testMat = new Material()

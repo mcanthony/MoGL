@@ -7,7 +7,8 @@
     <meta name="format-detection" content="telephone=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
     <link rel="stylesheet" type="text/css" href="css.css"/>
 </head>
 <body>
@@ -41,14 +42,14 @@
 <script src="http://js.bsapi.co/test/"></script>
 <script>
 
-    var world = new World('world')
-    var scene = new Scene()
+    var world = new World('world');
+    var scene = new Scene();
     var camera = new Camera();
     var camera2 = new Camera();
 
-    world.addScene(scene)
-    scene.addChild(camera)
-    scene.addChild(camera2)
+    world.addScene(scene);
+    scene.addChild(camera);
+    scene.addChild(camera2);
 
     bsTest('new', function () {
                 // 일반 new - new Camera()
@@ -58,8 +59,8 @@
                 // factory type - Camera()
                 return camera2.isAlive;
             }, true
-    )
-    //
+    );
+
     bsTest('antialias', function () {
                 // 기본값은 false
                 return camera.antialias;
@@ -81,7 +82,8 @@
                 camera.antialias = false;
                 return camera.antialias;
             }, false
-    )
+    );
+
     bsTest('visible', function () {
                 // 기본값은 true
                 return camera.visible;
@@ -97,7 +99,8 @@
                 camera.visible = false;
                 return camera.visible
             }, false
-    )
+    );
+
     bsTest('backgroundColor', function () {
                 // 기본값은 [0,0,0,1]
                 return camera.backgroundColor.toString();
@@ -122,7 +125,8 @@
                 camera.backgroundColor = '#ffffff0.7';
                 return camera.backgroundColor.toString();
             }, [1, 1, 1, 0.7].toString()
-    )
+    );
+
     bsTest('clipPlane',
             function () {
                 //기본값 : near = 0.1, far = 1000000
@@ -137,7 +141,8 @@
                 camera.clipPlaneFar = 300
                 return [camera.clipPlaneNear, camera.clipPlaneFar].toString();
             }, [100, 300].toString()
-    )
+    );
+
     bsTest('fov', function () {
                 camera.fov = 45;
                 return camera.fov;
@@ -153,7 +158,8 @@
             function () {
                 return camera.fov
             }, 26
-    )
+    );
+
     bsTest('renderArea',
             function () {
                 camera.renderArea = ['10%', '10%', 300, 300];
@@ -163,7 +169,8 @@
                 camera.renderArea = [100, 200, 300, 300];
                 return camera.renderArea.toString();
             }, [100, 200, 300, 300].toString()
-    )
+    );
+
     //    bsTest('filter', function () {
     //                camera.setFilter(Filter.anaglyph);
     //                camera.setFilter(Filter.bloom);
@@ -214,7 +221,7 @@
             function () {
                 camera.fogColor = '#fff'
                 return camera.fogColor.toString()
-            }, [1,1,1,1].toString(),
+            }, [1, 1, 1, 1].toString(),
             function () {
                 camera.fogColor = '#000000'
                 return camera.fogColor.toString()
@@ -223,7 +230,42 @@
                 camera.fogColor = '#0000000.5'
                 return camera.fogColor.toString()
             }, [0, 0, 0, 0.5].toString()
-    )
+    );
+
+    bsTest('mode',
+            function () {
+                //default Value
+                var camera = new Camera();
+                return camera.mode;
+            }, Camera.perspective,
+            function () {
+                var camera = new Camera();
+                camera.mode = Camera.perspective;
+                return camera.mode;
+            }, Camera.perspective,
+            function () {
+                var camera = new Camera();
+                camera.mode = Camera.orthogonal;
+                return camera.mode;
+            }, Camera.orthogonal
+    );
+
+    bsTest('projectionMatrix',
+            function () {
+                var camera = new Camera();
+                return camera.projectionMatrix.matStr();
+            }, 'Matrix(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
+    );
+
+    bsTest('resetProjectionMatrix',
+            function () {
+                var camera = new Camera();
+                camera.fov = 10;
+                camera.renderArea = [10, 100, 200, 300];
+                camera.resetProjectionMatrix();
+                return camera.projectionMatrix.matStr();
+            }, 'Matrix(17.145078659057617, 0, 0, 0, 0, 11.430052757263184, 0, 0, 0, 0, -1.0000200271606445, -1, 0, 0, -0.20000199973583221, 0)'
+    );
 
 
 </script>

@@ -1,18 +1,14 @@
 var Texture = (function() {
     'use strict';
     var imgType, canvas, context, empty, resizer,
-        resize, imgs, loaded, isLoaded,specularMapPower,normalMapPower;
+        resize, imgs, loaded, isLoaded;
     //private
     resize = {},
     imgs = {},
     isLoaded = {},
-    specularMapPower = {},
-    normalMapPower = {},
     //shared private
     $setPrivate('Texture', {
-        imgs : imgs,
-        specularMapPower : specularMapPower,
-        normalMapPower: normalMapPower
+        imgs:imgs
     }),
     //lib
     imgType = {'.jpg':1, '.png':1, '.gif':1},
@@ -22,13 +18,11 @@ var Texture = (function() {
     context.clearRect(0, 0, 2, 2),
     empty = document.createElement('img'),
     empty.src = canvas.toDataURL(),
-    resizer = function(resizeType, v){
+    resizer = function(resizeType, v) {
         var tw, th;
-        //texture size
         tw = th = 1;
         while (v.width > tw) tw *= 2;
         while (v.height > th) th *= 2;
-
         if (resizeType == Texture.zoomOut) {
             if (v.width < tw) tw /= 2;
             if (v.height < th) th /= 2;
@@ -37,61 +31,82 @@ var Texture = (function() {
         canvas.height = th,
         context.clearRect(0, 0, tw, th);
         switch (resizeType) {
-            case Texture.crop:
-                var ratio = v.height / v.width
-                if (v.height < th) {
-                    v.height = th
-                    v.width = v.height / ratio
-                }
-                context.drawImage(v, 0, 0, v.width, v.height);
-                break;
-            case Texture.addSpace:
-                if (v.width < tw) tw = Math.round(v.width);
-                if (v.height < th) th = Math.round(v.height);
-                context.drawImage(v, 0, 0, tw, th);
-                break;
-            default:
-                context.drawImage(v, 0, 0, tw, th);
+		case Texture.crop:
+			var ratio = v.height / v.width
+			if (v.height < th) {
+				v.height = th
+				v.width = v.height / ratio
+			}
+			context.drawImage(v, 0, 0, v.width, v.height);
+			break;
+		case Texture.addSpace:
+			if (v.width < tw) tw = Math.round(v.width);
+			if (v.height < th) th = Math.round(v.height);
+			context.drawImage(v, 0, 0, tw, th);
+			break;
+		default:
+			context.drawImage(v, 0, 0, tw, th);
         }
         v.src = canvas.toDataURL();
         return v;
     },
-    loaded = function(e){
+    loaded = function(e) {
         var texture = Texture.getInstance(this.dataset.texture);
         isLoaded[texture] = true,
         imgs[texture] = resizer(texture.resizeType, this),
-        this.removeEventListener('load', loaded);
+        this.removeEventListener('load', loaded),
         texture.dispatch('load');
-     };
+    };
     return MoGL.extend('Texture',{
         description: "텍스쳐 객체 클래스",
         sample: [
-            "var texture = new Texture();"
+            "var texture0 = new Texture();",
+			"var texture1 = new Texture(document.getElementById('txt1'));"
         ],
-        value:function Texture(){
-            specularMapPower[this] = 1.5
-            normalMapPower[this] = 1.0
+		param:[
+		    "1. ?img:* - texture.img를 초기화할 수 있는 이미지",
+			"2. ?resizeType:string - 이미지의 리사이즈타입"
+		],
+        value:function Texture(v, t) {
+            var complete, img, w, h;
+			if (v) {
+				if (t) resize[this] = t;
+				//this.img = v;
+                complete= false,
+                    img = document.createElement('img');
+                if (v instanceof HTMLImageElement) {
+                    img.src = v.src
+                    if (img.complete) {
+                        complete = true;
+                    }
+                } else if (v instanceof ImageData) {
+                    complete = true,
+                        canvas.width = w = v.width,
+                        canvas.height = h = v.height,
+                        context.clearRect(0, 0, w, h),
+                        context.putImageData(v, 0, 0),
+                        img.src = context.toDataURL();
+                } else if (typeof v == 'string') {
+                    if (v.substring(0, 10) == 'data:image' && v.indexOf('base64') > -1){
+                        complete = true;
+                    } else if (!imgType[v.substring(-4)]) {
+                        this.error(1);
+                    }
+                    img.src = v;
+                } else {
+                    this.error(0);
+                }
+                if (complete){
+                    isLoaded[this] = true,
+                        img.dataset.texture = this.uuid,
+                        imgs[this] = resizer(this.resizeType, img),
+                        this.dispatch('load');
+                } else {
+                    img.dataset.texture = this.uuid,
+                    img.addEventListener('load', loaded);
+                }
+			}
         }
-    })
-    .field('specularMapPower', {
-        description: "스페큘러맵의 적용 강도 설정",
-        sample: [
-            'texture.specularMapPower = 2.0;',
-            'console.log(texture.specularMapPower);'
-        ],
-        defaultValue:'1.5',
-        get:$getter(specularMapPower),
-        set:$setter(specularMapPower)
-    })
-    .field('normalMapPower', {
-        description: "Normal texture 적용 강도 설정",
-        sample: [
-            'texture.normalMapPower = 1.5;',
-            'console.log(texture.normalMapPower);'
-        ],
-        defaultValue:'1.0',
-        get:$getter(normalMapPower),
-        set:$setter(normalMapPower)
     })
     .field('resizeType', {
         description:'resize type get/set field.',
@@ -103,13 +118,13 @@ var Texture = (function() {
             "console.log(texture.resizeType);"
         ],
         get:$getter(resize, false, 'zoomOut'),
-        set:function resizeTypeSet(v){
-            if (Texture[v]) {
-                resize[this] = v;
-            } else {
-                this.error(0);
-            }
-        }
+        //set:function resizeTypeSet(v) {
+        //    if (Texture[v]) {
+        //        resize[this] = v;
+        //    } else {
+        //        this.error(0);
+        //    }
+        //}
     })
     .field('isLoaded', {
         description:'Load check field.',
@@ -117,7 +132,7 @@ var Texture = (function() {
         defaultValue:'null',
         sample: [
             "var texture = new Texture();",
-            'texture.img = document.getElementID("imgElement");',
+            'texture.img = document.getElementById("imgElement");',
             "console.log(texture.isLoaded);"
         ],
         get:$getter(isLoaded, false, false)
@@ -128,134 +143,155 @@ var Texture = (function() {
         defaultValue:'null',
         sample: [
             "var texture = new Texture();",
-            'texture.img = document.getElementID("imgElement");'
+            'texture.img = document.getElementById("imgElement");'
         ],
-        get:$getter(imgs, false, empty),
-        set:function imgSet(v){
-            var complete, img, w, h;
-            complete= false,
-            img = document.createElement('img')
-            if (v instanceof HTMLImageElement){
-                img.src = v.src
-                if (img.complete) {
-                    complete = true;
-                }
-            } else if (v instanceof ImageData){
-                complete = true,
-                canvas.width = w = v.width,
-                canvas.height = h = v.height,
-                context.clearRect(0, 0, w, h),
-                context.putImageData(v, 0, 0),
-                img.src = context.toDataURL();
-            } else if (typeof v == 'string') {
-                if (v.substring(0, 10) == 'data:image' && v.indexOf('base64') > -1){
-                    complete = true;
-                } else if (!imgType[v.substring(-4)]) {
-                    this.error(1);
-                }
-                img.src = v;
-            } else {
-                this.error(0);
-            }
-            if (complete){
-                isLoaded[this] = true,
-                //console.log('이미지등록시 로딩완료',img)
-                img.dataset.cls = Texture
-                img.dataset.texture = this.uuid;
-                imgs[this] = resizer(this.resizeType, img),
-                this.dispatch('load');
-            } else {
-                //console.log('이미지등록시 로딩안됨',img)
-                img.dataset.cls = Texture
-                img.dataset.texture = this.uuid;
-                img.addEventListener('load', loaded);
-            }
-        }
+        get:$getter(imgs, false, empty)
+        //set:function imgSet(v){
+        //    var complete, img, w, h;
+        //    complete= false,
+        //    img = document.createElement('img');
+        //    if (v instanceof HTMLImageElement) {
+        //        img.src = v.src
+        //        if (img.complete) {
+        //            complete = true;
+        //        }
+        //    } else if (v instanceof ImageData) {
+        //        complete = true,
+        //        canvas.width = w = v.width,
+        //        canvas.height = h = v.height,
+        //        context.clearRect(0, 0, w, h),
+        //        context.putImageData(v, 0, 0),
+        //        img.src = context.toDataURL();
+        //    } else if (typeof v == 'string') {
+        //        if (v.substring(0, 10) == 'data:image' && v.indexOf('base64') > -1){
+        //            complete = true;
+        //        } else if (!imgType[v.substring(-4)]) {
+        //            this.error(1);
+        //        }
+        //        img.src = v;
+        //    } else {
+        //        this.error(0);
+        //    }
+        //    if (complete){
+        //        isLoaded[this] = true,
+        //        img.dataset.texture = this.uuid,
+        //        imgs[this] = resizer(this.resizeType, img),
+        //        this.dispatch('load');
+        //    } else {
+        //        img.dataset.texture = this.uuid,
+        //        img.addEventListener('load', loaded);
+        //    }
+        //}
     })
     .event('load', {
-        description: 'load event',
-        value: 'load'
+        description:[
+            'Texture에 img지정된 이미지가 로딩완료시 발생함. 이미 로딩이 완료된 이미지인 경우는 img지정시 즉시 발생함.',
+            '* 리스너에게는 아무런 인자도 전달되지 않음'
+        ],
+        sample:[
+            'var tex = new Texture();',
+            'tex.addEventListener(Texture.load, function(){',
+            '    //로딩완료!',
+            '});',
+            'tex.img = document.getElementById("img1");'
+        ],
+        value:'load'
     })
     .constant('zoomOut', {
-        description : 'zoom out constant',
+        description:'texture.img에 지정될 이미지가 2의 승수의 크기가 아닌 경우 근접한 수에 축소하여 맞춤',
         sample:[
             'var texture = new Texture();',
-            '// 리사이즈 타입 설정',
-            'texture.resizeType = Texture.zoomOut;'
+            'texture.resizeType = Texture.zoomOut;',
+            'texture.img = document.getElementById("img1"); //2000 → 1024'
         ],
-        value : 'zoomOut'
+        value:'zoomOut'
     })
     .constant('zoomIn', {
-        description : 'zoom in constant',
+        description:'texture.img에 지정될 이미지가 2의 승수의 크기가 아닌 경우 근접한 수에 확대하여 맞춤',
         sample:[
             'var texture = new Texture();',
-            '// 리사이즈 타입 설정',
-            'texture.resizeType = Texture.zoomIn;'
+            'texture.resizeType = Texture.zoomIn;',
+            'texture.img = document.getElementById("img1"); //2000 → 2048'
         ],
-        value : 'zoomIn'
+        value:'zoomIn'
     })
     .constant('crop', {
-        description : 'crop constant',
+        description:'texture.img에 지정될 이미지가 2의 승수의 크기가 아닌 경우 근접한 작은 수에 맞춰 자름',
         sample:[
             'var texture = new Texture();',
-            '// 리사이즈 타입 설정',
-            'texture.resizeType = Texture.crop;'
+            'texture.resizeType = Texture.crop;',
+            'texture.img = document.getElementById("img1"); //2000 → 1024로 좌상단기준으로 잘림'
         ],
-        value : 'crop'
+        value:'crop'
     })
-    .constant('addSpace',{
-        description : 'addSpace constant',
+    .constant('addSpace', {
+        description:'texture.img에 지정될 이미지가 2의 승수의 크기가 아닌 경우 근접한 큰 수에 맞춰 공백을 넣음',
         sample:[
             'var texture = new Texture();',
-            '// 리사이즈 타입 설정',
-            'texture.resizeType = Texture.addSpace;'
+            'texture.resizeType = Texture.addSpace;',
+            'texture.img = document.getElementById("img1"); //2000 → 2048로 우하단이 공백으로 늘어남'
         ],
-        value : 'addSpace'
+        value:'addSpace'
     })
     .constant('diffuse', {
-        description : 'diffuse constant',
+        description:[
+            '일반적으로 표면에 입혀지는 텍스쳐를 의미함',
+            'Material의 addTexture에서 diffuse타입으로 Texture를 등록할 때 사용'
+        ],
         sample:[
             'var texture = new Texture();',
-            '// 리사이즈 타입 설정',
-            'texture.resizeType = Texture.diffuse;'
+            'var material = new Material("#fff");',
+            'material.addTexture(Texture.diffuse, texture);'
         ],
-        value : 'diffuse'
+        value:'diffuse'
     })
     .constant('specular', {
-        description : 'specular constant',
+        description:[
+            '표면에서 빛에 직접적으로 반사되는 면을 표현하는 텍스쳐',
+            'Material의 addTexture에서 specular타입으로 Texture를 등록할 때 사용'
+        ],
         sample:[
             'var texture = new Texture();',
-            '// 리사이즈 타입 설정',
-            'texture.resizeType = Texture.specular;'
+            'var material = new Material("#fff");',
+            'material.addTexture(Texture.specular, texture);'
         ],
-        value : 'specular'
+        value:'specular'
     })
     .constant('diffuseWrap', {
-        description : 'diffuseWrap constant',
+        description:[
+            '빛에 의한 음영을 표현할 때 음영에 해당되는 색상을 직접 이미지에서 지정하는 텍스쳐',
+            'Material의 addTexture에서 diffuseWrap타입으로 Texture를 등록할 때 사용'
+        ],
         sample:[
             'var texture = new Texture();',
-            '// 리사이즈 타입 설정',
-            'texture.resizeType = Texture.diffuseWrap;'
+            'var material = new Material("#fff");',
+            'material.addTexture(Texture.diffuseWrap, texture);'
         ],
-        value : 'diffuseWrap'
+        value:'diffuseWrap'
     })
     .constant('normal', {
-        description : 'normal constant',
+        description:[
+            '표면의 울퉁불퉁한 부분을 표현하기 위해 사용하는 텍스쳐',
+            'Material의 addTexture에서 normal타입으로 Texture를 등록할 때 사용'
+        ],
         sample:[
             'var texture = new Texture();',
-            '// 리사이즈 타입 설정',
-            'texture.resizeType = Texture.normal;'
+            'var material = new Material("#fff");',
+            'material.addTexture(Texture.normal, texture);'
         ],
-        value : 'normal'
+        value:'normal'
     })
     .constant('specularNormal', {
-        description : 'specularNormal constant',
+        description:[
+            'diffuse에 대해 normal이 있듯이 specular도 울퉁불퉁한 면을 표현하려는 경우 사용',
+            'Material의 addTexture에서 specularNormal타입으로 Texture를 등록할 때 사용'
+        ],
         sample:[
             'var texture = new Texture();',
-            '// 리사이즈 타입 설정',
-            'texture.resizeType = Texture.specularNormal;'
+            'var material = new Material("#fff");',
+            'material.addTexture(Texture.specularNormal, texture);'
         ],
-        value : 'specularNormal'
+        value:'specularNormal'
     })
     .build();
 })();

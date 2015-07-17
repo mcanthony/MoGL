@@ -90,8 +90,7 @@
         var testItem, testItem2, testItem3, testItem4, testItem5, testItem6, testItem7, testItem8, testItem9;
         var testMat, testMat2, testMat3, testMat4, testMat5, testMat6, testMat7, testMat8, testMat9;
         var texture;
-        texture = new Texture()
-        texture.img = document.getElementById('testIMG2')
+        texture = new Texture(document.getElementById('testIMG2'))
 
         testMat = new Material()
         testMat.shading = Shading.gouraud

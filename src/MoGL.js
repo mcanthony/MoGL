@@ -518,7 +518,7 @@ var MoGL = (function() {
                             init = ani.init,
                             prop = ani.prop;
                             if (t > ani.end) {//완료상황
-                                if (ani.repeat > 1) {//반복체크
+                                if (ani.repeat > 1 || ani.repeat < 0) {//반복체크
                                     ani.repeat--,
                                     ani.start = t,
                                     ani.end = t + ani.term;
@@ -552,13 +552,13 @@ var MoGL = (function() {
                             repeat:opt.repeat || 0,
                             yoyo:opt.yoyo || false,
                             target:this,
-                            prop:v,
+                            prop:{},
                             init:{},
                             start:performance.now() + ('delay' in opt ? opt.delay * 1000 : 0),
                             term:opt.time * 1000
                         };
                         ani.end = ani.start + ani.term;
-                        for (k in v) ani.init[k] = this[k];
+                        for (k in v) ani.init[k] = this[k], ani.prop[k] = v[k];
                         if (!loopstart) {
                             loopstart = true;
                             setInterval(loop, 16);
@@ -568,6 +568,7 @@ var MoGL = (function() {
                         for (k in v) this[k] = v[k];
                         this.dispatch(MoGL.propertyChanged);
                     }
+                    return this;
                 };
             })()
         })

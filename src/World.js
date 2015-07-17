@@ -462,6 +462,7 @@ var World = (function (makeUtil) {
             var priMatDiffuseMaps;
             var priMatNormalMaps;
             var priMatSpecularMaps;
+            var priMatSheetMode
             var priGeoVertexCount
             var priPickingColors;
             var priPickingMeshs
@@ -489,6 +490,7 @@ var World = (function (makeUtil) {
             priMatDiffuseMaps = $getPrivate('Material', 'diffuse');
             priMatNormalMaps = $getPrivate('Material', 'normal');
             priMatSpecularMaps = $getPrivate('Material', 'specular');
+            priMatSheetMode = $getPrivate('Material', 'sheetMode');
 
             priTexSpecularMapPower = $getPrivate('Texture', 'specularMapPower')
             priTexNormalMapPower = $getPrivate('Texture', 'normalMapPower')
@@ -502,6 +504,7 @@ var World = (function (makeUtil) {
             var currentMouseItem,oldMouseItem,checkMouse = true
             var totalVertex = 0
             var mouseObj = {}
+            var updateTex
             return function(currentTime) {
                 len = 0,
                 pProgram = null,
@@ -526,28 +529,28 @@ var World = (function (makeUtil) {
                     tScene = tSceneList[i]
                     //////////////////////////////////////////////////////////////////////////////////////////////////////
                     //Scene 업데이트 사항 반영
-                    j = tScene.updateList.mesh.length;
+                    j = tScene.updateList.geometry.length;
                     while (j--) {
+
                         // 버퍼 업데이트
-                        var updateItem, geo;
-                        updateItem = tScene.updateList.mesh[j],
-                        geo = updateItem.geometry;
-                        if (geo) {
-                            if (!tGPU.vbo[geo]) {
-                                makeVBO(tGPU, geo, geo.position, 3),
-                                makeVNBO(tGPU, geo, geo.normal, 3),
-                                makeUVBO(tGPU, geo, geo.uv, 2),
-                                makeIBO(tGPU, geo, geo.index, 1);
-                            }
+                        var geo;
+                        geo = tScene.updateList.geometry[j];
+                        if (!tGPU.vbo[geo]) {
+                            makeVBO(tGPU, geo, geo.position, 3),
+                            makeVNBO(tGPU, geo, geo.normal, 3),
+                            makeUVBO(tGPU, geo, geo.uv, 2),
+                            makeIBO(tGPU, geo, geo.index, 1);
                         }
                     }
-                    j = tScene.updateList.material.length;
+                    j = tScene.updateList.texture.length;
                     while (j--) {
-                        makeTexture(tGPU, tScene.updateList.material[j]);
+                        updateTex = tScene.updateList.texture[j].tex
+                        //if(!updateTex && tGPU.textures[updateTex.uuid] != updateTex.img) makeTexture(tGPU, updateTex.uuid,updateTex.img);
+                        makeTexture(tGPU, updateTex.uuid, updateTex.img)
                     }
                     if (tScene.updateList.camera.length) cameraRenderAreaUpdate(this);
-                    tScene.updateList.mesh.length = 0,
-                    tScene.updateList.material.length = 0,
+                    tScene.updateList.geometry.length = 0,
+                    tScene.updateList.texture.length = 0,
                     tScene.updateList.camera.length = 0,
                     //////////////////////////////////////////////////////////////////////////////////////////////////////
                     tCameraList = tScene.cameras,
@@ -604,7 +607,8 @@ var World = (function (makeUtil) {
                             var tMouse = mouse[this.uuid]
                             if(pickLength && tMouse.x){
                                 tGL.readPixels(tMouse.x, tMouse.y, 1, 1, tGL.RGBA , tGL.UNSIGNED_BYTE, currentMouse)
-                                var key = [currentMouse[0], currentMouse[1], currentMouse[2], 255].join('')
+                                //var key = [currentMouse[0], currentMouse[1], currentMouse[2], 255].join('')
+								var key = ''+currentMouse[0]+currentMouse[1]+currentMouse[2]+'255'
                                 currentMouseItem = priPickingMeshs[key]
                                 mouseObj.x = tMouse.x,
                                 mouseObj.y = tMouse.y
@@ -771,15 +775,23 @@ var World = (function (makeUtil) {
                                     }
                                     tGL.uniform1f(tProgram.uLambert, priMatLambert[tMatUUID]);
                                 }
+
                                 // 텍스쳐 세팅
                                 if (useTexture) {
+                                    var sheetInfo = priMatSheetMode[tMatUUID]
+                                    if(sheetInfo.enable){
+                                        sheetInfo.currentGap+=16
+                                        if(sheetInfo.currentGap > sheetInfo.cycle) sheetInfo.frame++ , sheetInfo.currentGap = 0
+                                        if(sheetInfo.frame == sheetInfo.wNum * sheetInfo.hNum) sheetInfo.frame = 0
+                                        tGL.uniform4fv(tProgram.uSheetOffset, [1 / sheetInfo.wNum, 1 / sheetInfo.hNum, sheetInfo.frame % sheetInfo.wNum, Math.floor( sheetInfo.frame/sheetInfo.wNum)]);
+                                        tGL.uniform1i(tProgram.uSheetMode, 1);
+                                    }else{
+                                        tGL.uniform1i(tProgram.uSheetMode, 0);
+                                    }
                                     if (tUVBO != pUVBO) {
                                         tGL.bindBuffer(tGL.ARRAY_BUFFER, tUVBO),
                                         tGL.vertexAttribPointer(tProgram.aUV, tUVBO.stride, tGL.FLOAT, false, 0, 0);
                                     }
-                                    //if (tDiffuses.length) {
-                                        //tGL.activeTexture(tGL.TEXTURE0);
-                                    //}
                                     tGL.activeTexture(tGL.TEXTURE0)
                                     tDiffuse = tGPU.textures[tDiffuseMaps[tDiffuseMaps.length - 1].tex.uuid];
                                     if (tDiffuse != pDiffuse) {
@@ -789,22 +801,26 @@ var World = (function (makeUtil) {
                                     tGL.uniform1f(tProgram.uSpecularPower,priMatSpecularPower[tMatUUID])
                                     tGL.uniform4fv(tProgram.uSpecularColor,priMatSpecularColor[tMatUUID])
                                 }
+
                                 // 노말 텍스쳐 세팅
                                 if (tNormalMaps) {
                                     tGL.activeTexture(tGL.TEXTURE1);
                                     tGL.bindTexture(tGL.TEXTURE_2D, tGPU.textures[tNormalMaps[tNormalMaps.length - 1].tex.uuid]);
                                     tGL.uniform1i(tProgram.uNormalSampler, 1);
                                     tGL.uniform1i(tProgram.useNormalMap, true);
-                                    tGL.uniform1f(tProgram.uNormalPower,priTexNormalMapPower[tNormalMaps[tNormalMaps.length - 1].tex.uuid])
+                                    //tGL.uniform1f(tProgram.uNormalPower,priTexNormalMapPower[tNormalMaps[tNormalMaps.length - 1].tex.uuid])
+                                    tGL.uniform1f(tProgram.uNormalPower,1.0)
                                 }else{
                                     tGL.uniform1i(tProgram.useNormalMap, false);
                                 }
+
                                 if(tSpecularMaps){
                                     tGL.activeTexture(tGL.TEXTURE2);
                                     tGL.bindTexture(tGL.TEXTURE_2D, tGPU.textures[tSpecularMaps[tSpecularMaps.length - 1].tex.uuid]);
                                     tGL.uniform1i(tProgram.uSpecularSampler, 2);
                                     tGL.uniform1i(tProgram.useSpecularMap, true);
-                                    tGL.uniform1f(tProgram.uSpecularMapPower, priTexSpecularMapPower[tSpecularMaps[tSpecularMaps.length - 1].tex.uuid]);
+                                    //tGL.uniform1f(tProgram.uSpecularMapPower, priTexSpecularMapPower[tSpecularMaps[tSpecularMaps.length - 1].tex.uuid]);
+                                    tGL.uniform1f(tProgram.uSpecularMapPower, 1.5);
                                 }else{
                                     tGL.uniform1i(tProgram.useSpecularMap, false);
                                 }

@@ -55,8 +55,7 @@
     scene.addMaterial( new Material(Math.random(),Math.random(),Math.random(),1).setId('material'));
 
     var material = new Material()
-    var texture = new Texture()
-    texture.img = document.getElementById('testIMG')
+    var texture = new Texture(document.getElementById('testIMG'))
     material.addTexture(Texture.diffuse, texture)
 
     var xmlhttp = new XMLHttpRequest();
