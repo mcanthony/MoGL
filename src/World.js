@@ -540,7 +540,6 @@ var World = (function (makeUtil) {
                     }
                     j = tScene.updateList.texture.length;
                     while (j--) {
-                        console.log(tScene.updateList.texture[j])
                         makeTexture(tGPU, tScene.updateList.texture[j]);
                     }
                     if (tScene.updateList.camera.length) cameraRenderAreaUpdate(this);

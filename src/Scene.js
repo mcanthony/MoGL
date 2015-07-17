@@ -206,7 +206,6 @@ var Scene = (function () {
                 var k = maps.length, target, texture, i;
                 while (k--) {
                     if (target = this[maps[k]]) {
-                        console.log(target)
                         i = target.length;
                         while(i--){
                             texture = target[i].tex;
@@ -236,6 +235,7 @@ var Scene = (function () {
 
                 v.addEventListener(Mesh.changed, function() {
                     update.geometry.push(v.geometry);
+                    loaded.call(v.material, update.texture);
                 });
 
                 target = v.material;
