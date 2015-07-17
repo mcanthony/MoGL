@@ -16,7 +16,7 @@ var makeUtil = (function(){
             var gl, buffer;
             gl = gpu.gl,
             buffer = gpu.vbo[geo];
-            if (buffer) return cobuffer;
+            if (buffer) return buffer;
             if(Array.isArray(data)) {
                 data = new Float32Array(data);
             }
@@ -126,6 +126,7 @@ var makeUtil = (function(){
         makeTexture:function makeTexture(gpu, uuid,img) {
             var gl, glTexture;
             gl = gpu.gl;
+            //console.log(uuid,gpu.textures[uuid])
             //if(gpu.textures[uuid]) return gpu.textures[uuid]
             glTexture = gl.createTexture(),
             gl.bindTexture(gl.TEXTURE_2D, glTexture),
