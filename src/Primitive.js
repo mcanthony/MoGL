@@ -185,19 +185,19 @@ var Primitive = (function () {
             "'Primitive.sphere:0' - 인자값에 0이 포함되어 있을 때"
         ],
         value: function sphere(splitLatitude, splitLongitude) {
+            if (splitLatitude == 0 || splitLongitude == 0) this.error(0);
+            if (!splitLatitude || !splitLongitude) splitLatitude = 8 , splitLongitude = 8;
             var vs = [];
             var is = [];
-            var latitudeBands = splitLatitude;
-            var longitudeBands = splitLongitude;
+            var latitudeBands = splitLongitude;
+            var longitudeBands = splitLatitude;
             var radius = 1.0;
-            if (splitLatitude == 0 || splitLongitude == 0) this.error(0);
-
             for (var latNumber = 0; latNumber <= latitudeBands; ++latNumber) {
-                var theta = latNumber * PI / latitudeBands;
+                var theta = latNumber * Math.PI / latitudeBands;
                 var sinTheta = SIN(theta);
                 var cosTheta = COS(theta);
                 for (var longNumber = 0; longNumber <= longitudeBands; ++longNumber) {
-                    var phi = longNumber * 2 * PI / longitudeBands;
+                    var phi = longNumber * 2 * Math.PI / longitudeBands;
                     var sinPhi = SIN(phi);
                     var cosPhi = COS(phi);
 
@@ -217,7 +217,6 @@ var Primitive = (function () {
                 }
             }
             var result = new Geometry(vs, is, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]);
-
             return result;
         }
     })
