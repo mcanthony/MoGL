@@ -81,8 +81,8 @@ var Scene = (function () {
             vertexShaders[this] = {},
             fragmentShaders[this] = {},
             updateList[this] = {
-                mesh:[],
-                material:[],
+                geometry:[],
+                texture:[],
                 camera:[],
                 merged:[],
                 updatePropertys:[]
@@ -206,6 +206,7 @@ var Scene = (function () {
                 var k = maps.length, target, texture, i;
                 while (k--) {
                     if (target = this[maps[k]]) {
+                        console.log(target)
                         i = target.length;
                         while(i--){
                             texture = target[i].tex;
@@ -230,18 +231,18 @@ var Scene = (function () {
                 if (target.indexOf(v) == -1) target[target.length] = v;
                 
                 update = updateList[this],
-                update.mesh.push(v),                
+                update.geometry.push(v.geometry),
                 update.merged.push(v),
 
                 v.addEventListener(Mesh.changed, function() {
-                    update.mesh.push(v);
+                    update.geometry.push(v.geometry);
                 });
 
                 target = v.material;
                 if (target.isLoaded) {
-                    loaded.call(target, update.material);
+                    loaded.call(target, update.texture);
                 } else {
-                    target.addEventListener(Material.load, loaded, null, update.material);
+                    target.addEventListener(Material.load, loaded, null, update.texture);
                 }
                 return this;
             };

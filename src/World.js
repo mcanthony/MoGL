@@ -526,12 +526,11 @@ var World = (function (makeUtil) {
                     tScene = tSceneList[i]
                     //////////////////////////////////////////////////////////////////////////////////////////////////////
                     //Scene 업데이트 사항 반영
-                    j = tScene.updateList.mesh.length;
+                    j = tScene.updateList.geometry.length;
                     while (j--) {
                         // 버퍼 업데이트
-                        var updateItem, geo;
-                        updateItem = tScene.updateList.mesh[j],
-                        geo = updateItem.geometry;
+                        var geo;
+                        geo = tScene.updateList.geometry[j];
                         if (!tGPU.vbo[geo]) {
                             makeVBO(tGPU, geo, geo.position, 3),
                             makeVNBO(tGPU, geo, geo.normal, 3),
@@ -539,13 +538,14 @@ var World = (function (makeUtil) {
                             makeIBO(tGPU, geo, geo.index, 1);
                         }
                     }
-                    j = tScene.updateList.material.length;
+                    j = tScene.updateList.texture.length;
                     while (j--) {
-                        makeTexture(tGPU, tScene.updateList.material[j]);
+                        console.log(tScene.updateList.texture[j])
+                        makeTexture(tGPU, tScene.updateList.texture[j]);
                     }
                     if (tScene.updateList.camera.length) cameraRenderAreaUpdate(this);
-                    tScene.updateList.mesh.length = 0,
-                    tScene.updateList.material.length = 0,
+                    tScene.updateList.geometry.length = 0,
+                    tScene.updateList.texture.length = 0,
                     tScene.updateList.camera.length = 0,
                     //////////////////////////////////////////////////////////////////////////////////////////////////////
                     tCameraList = tScene.cameras,
