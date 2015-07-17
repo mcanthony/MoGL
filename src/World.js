@@ -528,6 +528,7 @@ var World = (function (makeUtil) {
                     //Scene 업데이트 사항 반영
                     j = tScene.updateList.geometry.length;
                     while (j--) {
+
                         // 버퍼 업데이트
                         var geo;
                         geo = tScene.updateList.geometry[j];
@@ -540,7 +541,7 @@ var World = (function (makeUtil) {
                     }
                     j = tScene.updateList.texture.length;
                     while (j--) {
-                        makeTexture(tGPU, tScene.updateList.texture[j]);
+                        if(!tGPU.textures[tScene.updateList.texture[j]]) makeTexture(tGPU, tScene.updateList.texture[j]);
                     }
                     if (tScene.updateList.camera.length) cameraRenderAreaUpdate(this);
                     tScene.updateList.geometry.length = 0,
