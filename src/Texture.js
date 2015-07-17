@@ -103,7 +103,7 @@ var Texture = (function() {
                         this.dispatch('load');
                 } else {
                     img.dataset.texture = this.uuid,
-                        img.addEventListener('load', loaded);
+                    img.addEventListener('load', loaded);
                 }
 
 			}
