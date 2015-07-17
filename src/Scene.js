@@ -244,9 +244,8 @@ var Scene = (function () {
                 target = v.material;
                 if (target.isLoaded) {
                     loaded.call(target, update.texture);
-                } else {
-                    target.addEventListener(Material.changed, loaded, null, update.texture);
                 }
+                target.addEventListener(Material.changed, loaded, null, update.texture);
                 return this;
             };
         })()

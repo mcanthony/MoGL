@@ -126,7 +126,7 @@ var makeUtil = (function(){
         makeTexture:function makeTexture(gpu, uuid,img) {
             var gl, glTexture;
             gl = gpu.gl;
-            if(gpu.textures[uuid]) return gpu.textures[uuid]
+            //if(gpu.textures[uuid]) return gpu.textures[uuid]
             glTexture = gl.createTexture(),
             gl.bindTexture(gl.TEXTURE_2D, glTexture),
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img),

@@ -105,7 +105,6 @@ var Texture = (function() {
                     img.dataset.texture = this.uuid,
                     img.addEventListener('load', loaded);
                 }
-
 			}
         }
     })
