@@ -502,6 +502,7 @@ var World = (function (makeUtil) {
             var currentMouseItem,oldMouseItem,checkMouse = true
             var totalVertex = 0
             var mouseObj = {}
+            var updateTex
             return function(currentTime) {
                 len = 0,
                 pProgram = null,
@@ -541,7 +542,8 @@ var World = (function (makeUtil) {
                     }
                     j = tScene.updateList.texture.length;
                     while (j--) {
-                        if(!tGPU.textures[tScene.updateList.texture[j]]) makeTexture(tGPU, tScene.updateList.texture[j]);
+                        updateTex = tScene.updateList.texture[j].tex
+                        if(!tGPU.textures[updateTex.uuid]) makeTexture(tGPU, updateTex);
                     }
                     if (tScene.updateList.camera.length) cameraRenderAreaUpdate(this);
                     tScene.updateList.geometry.length = 0,

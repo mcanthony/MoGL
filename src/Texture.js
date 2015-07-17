@@ -68,9 +68,44 @@ var Texture = (function() {
 			"2. ?resizeType:string - 이미지의 리사이즈타입"
 		],
         value:function Texture(v, t) {
+            var complete, img, w, h;
 			if (v) {
 				if (t) this.resizeType = t;
-				this.img = v;
+				//this.img = v;
+                complete= false,
+                    img = document.createElement('img');
+                if (v instanceof HTMLImageElement) {
+                    img.src = v.src
+                    if (img.complete) {
+                        complete = true;
+                    }
+                } else if (v instanceof ImageData) {
+                    complete = true,
+                        canvas.width = w = v.width,
+                        canvas.height = h = v.height,
+                        context.clearRect(0, 0, w, h),
+                        context.putImageData(v, 0, 0),
+                        img.src = context.toDataURL();
+                } else if (typeof v == 'string') {
+                    if (v.substring(0, 10) == 'data:image' && v.indexOf('base64') > -1){
+                        complete = true;
+                    } else if (!imgType[v.substring(-4)]) {
+                        this.error(1);
+                    }
+                    img.src = v;
+                } else {
+                    this.error(0);
+                }
+                if (complete){
+                    isLoaded[this] = true,
+                        img.dataset.texture = this.uuid,
+                        imgs[this] = resizer(this.resizeType, img),
+                        this.dispatch('load');
+                } else {
+                    img.dataset.texture = this.uuid,
+                        img.addEventListener('load', loaded);
+                }
+
 			}
         }
     })
@@ -84,13 +119,13 @@ var Texture = (function() {
             "console.log(texture.resizeType);"
         ],
         get:$getter(resize, false, 'zoomOut'),
-        set:function resizeTypeSet(v) {
-            if (Texture[v]) {
-                resize[this] = v;
-            } else {
-                this.error(0);
-            }
-        }
+        //set:function resizeTypeSet(v) {
+        //    if (Texture[v]) {
+        //        resize[this] = v;
+        //    } else {
+        //        this.error(0);
+        //    }
+        //}
     })
     .field('isLoaded', {
         description:'Load check field.',
@@ -111,43 +146,43 @@ var Texture = (function() {
             "var texture = new Texture();",
             'texture.img = document.getElementById("imgElement");'
         ],
-        get:$getter(imgs, false, empty),
-        set:function imgSet(v){
-            var complete, img, w, h;
-            complete= false,
-            img = document.createElement('img');
-            if (v instanceof HTMLImageElement) {
-                img.src = v.src
-                if (img.complete) {
-                    complete = true;
-                }
-            } else if (v instanceof ImageData) {
-                complete = true,
-                canvas.width = w = v.width,
-                canvas.height = h = v.height,
-                context.clearRect(0, 0, w, h),
-                context.putImageData(v, 0, 0),
-                img.src = context.toDataURL();
-            } else if (typeof v == 'string') {
-                if (v.substring(0, 10) == 'data:image' && v.indexOf('base64') > -1){
-                    complete = true;
-                } else if (!imgType[v.substring(-4)]) {
-                    this.error(1);
-                }
-                img.src = v;
-            } else {
-                this.error(0);
-            }
-            if (complete){
-                isLoaded[this] = true,
-                img.dataset.texture = this.uuid,
-                imgs[this] = resizer(this.resizeType, img),
-                this.dispatch('load');
-            } else {
-                img.dataset.texture = this.uuid,
-                img.addEventListener('load', loaded);
-            }
-        }
+        get:$getter(imgs, false, empty)
+        //set:function imgSet(v){
+        //    var complete, img, w, h;
+        //    complete= false,
+        //    img = document.createElement('img');
+        //    if (v instanceof HTMLImageElement) {
+        //        img.src = v.src
+        //        if (img.complete) {
+        //            complete = true;
+        //        }
+        //    } else if (v instanceof ImageData) {
+        //        complete = true,
+        //        canvas.width = w = v.width,
+        //        canvas.height = h = v.height,
+        //        context.clearRect(0, 0, w, h),
+        //        context.putImageData(v, 0, 0),
+        //        img.src = context.toDataURL();
+        //    } else if (typeof v == 'string') {
+        //        if (v.substring(0, 10) == 'data:image' && v.indexOf('base64') > -1){
+        //            complete = true;
+        //        } else if (!imgType[v.substring(-4)]) {
+        //            this.error(1);
+        //        }
+        //        img.src = v;
+        //    } else {
+        //        this.error(0);
+        //    }
+        //    if (complete){
+        //        isLoaded[this] = true,
+        //        img.dataset.texture = this.uuid,
+        //        imgs[this] = resizer(this.resizeType, img),
+        //        this.dispatch('load');
+        //    } else {
+        //        img.dataset.texture = this.uuid,
+        //        img.addEventListener('load', loaded);
+        //    }
+        //}
     })
     .event('load', {
         description:[

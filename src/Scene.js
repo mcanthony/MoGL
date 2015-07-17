@@ -208,8 +208,8 @@ var Scene = (function () {
                     if (target = this[maps[k]]) {
                         i = target.length;
                         while(i--){
-                            texture = target[i].tex;
-                            if (update.indexOf(texture) == -1) update.push(texture);
+                            texture = target[i];
+                            if (update.indexOf(texture)) update.push(texture);
                         }
                     }
                 }
@@ -235,7 +235,10 @@ var Scene = (function () {
 
                 v.addEventListener(Mesh.changed, function() {
                     update.geometry.push(v.geometry);
-                    loaded.call(v.material, update.texture);
+                    target = v.material;
+                    if (target.isLoaded) {
+                        loaded.call(target, update.texture);
+                    }
                 });
 
                 target = v.material;

@@ -16,7 +16,7 @@ var makeUtil = (function(){
             var gl, buffer;
             gl = gpu.gl,
             buffer = gpu.vbo[geo];
-            if (buffer) return buffer;
+            if (buffer) return console.log(buffer),buffer;
             if(Array.isArray(data)) {
                 data = new Float32Array(data);
             }

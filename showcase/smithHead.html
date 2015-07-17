@@ -81,9 +81,9 @@
     mat2 = new Material('#22f232')
     mat3 = new Material('#fef232')
     // 텍스쳐생성
-    texture1 = new Texture().setId('texture1')
+    texture1 = new Texture(document.getElementById('testIMG')).setId('texture1')
     texture2 = new Texture().setId('texture2')
-    texture1.img = document.getElementById('testIMG')
+
     // 재질에 텍스쳐 주입
     mat1.addTexture(Texture.diffuse, texture1)
     // 씬에 텍스쳐 등록
@@ -127,10 +127,10 @@
         mesh3.y = -1
 
         setTimeout(function () {
-            texture2 = new Texture()
-            texture2.img = document.getElementById('testIMG2')
-            texture3 = new Texture()
-            texture3.img = document.getElementById('testIMG')
+            texture2 = new Texture(document.getElementById('testIMG2'))
+
+            texture3 = new Texture(document.getElementById('testIMG'))
+
 
             mat1.addTexture(Texture.diffuse, texture2)
             mat2.addTexture(Texture.diffuse, texture3)

@@ -62,8 +62,8 @@
     world.addScene(scene)
     scene.addChild(camera)
 
-    texture = new Texture()
-    texture.img = document.getElementById('testIMG2')
+    texture = new Texture(document.getElementById('testIMG2'))
+//    texture.img = document.getElementById('testIMG2')
     mat = new Material('#FFF')
     mat.addTexture(Texture.diffuse, texture).wireFrame = 1
 
