@@ -70,7 +70,7 @@ var Texture = (function() {
         value:function Texture(v, t) {
             var complete, img, w, h;
 			if (v) {
-				if (t) this.resizeType = t;
+				if (t) resize[this] = t;
 				//this.img = v;
                 complete= false,
                     img = document.createElement('img');

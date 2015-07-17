@@ -65,22 +65,12 @@
     scene.addMaterial(new Material().setId('materialCrop'));
     scene.addMaterial(new Material().setId('materialAddSpace'));
     // 텍스쳐 생성
-    var t1 = new Texture()
-    var t2 = new Texture()
-    var t3 = new Texture()
-    var t4 = new Texture()
-    var t5 = new Texture()
-    // 리사이즈 타입 설정
-    t1.resizeType = Texture.zoomOut
-    t2.resizeType = Texture.zoomIn
-    t3.resizeType = Texture.crop
-    t4.resizeType = Texture.addSpace
-    // 이미지 설정, 같은 이미지를 다중 텍스쳐베이스 이미지로 사용가능!
-    t1.img = document.getElementById('testIMG')
-    t2.img = document.getElementById('testIMG')
-    t3.img = document.getElementById('testIMG')
-    t4.img = document.getElementById('testIMG')
-    t5.img = document.getElementById('testIMG')
+    var t1 = new Texture(document.getElementById('testIMG'),Texture.zoomOut)
+    var t2 = new Texture(document.getElementById('testIMG'),Texture.zoomIn)
+    var t3 = new Texture(document.getElementById('testIMG'),Texture.crop)
+    var t4 = new Texture(document.getElementById('testIMG'),Texture.addSpace)
+    var t5 = new Texture(document.getElementById('testIMG'))
+
     // 씬에 텍스쳐 등록
     scene.addTexture(t1);
     scene.addTexture(t2);
