@@ -206,7 +206,6 @@
             }, 0
     );
 
-    bsTest('NEW TEST');
 
     bsTest('constructor',
             function () {
@@ -281,6 +280,65 @@
 
                 return error;
             }, 'Error: Geometry.constructor:4'
+    );
+
+    bsTest('position',
+            function () {
+                return Array.prototype.slice.call(cube1.position).toString();
+            }, vData.toString()
+    );
+
+    bsTest('normal',
+            function () {
+                var geometry;
+
+                geometry = new Geometry([
+                    1, 2, 3, 4, 5, 6, 7, 8, // x,y,z, u,v, normalX,normalY,normalZ,
+                    1, 2, 3, 4, 5, 6, 7, 8,
+                    1, 2, 3, 4, 5, 6, 7, 8
+                ], [0, 1, 2], [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v, Vertex.normalX, Vertex.normalY, Vertex.normalZ])
+                return Array.prototype.slice.call(geometry.normal).toString();
+            }, '6,7,8,6,7,8,6,7,8'
+    );
+
+    bsTest('uv',
+            function () {
+                var geometry;
+
+                geometry = new Geometry([
+                    1, 2, 3, 4, 5, 6, 7, 8, // x,y,z, u,v, normalX,normalY,normalZ,
+                    1, 2, 3, 4, 5, 6, 7, 8,
+                    1, 2, 3, 4, 5, 6, 7, 8
+                ], [0, 1, 2], [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v, Vertex.normalX, Vertex.normalY, Vertex.normalZ])
+                return Array.prototype.slice.call(geometry.uv).toString();
+            }, '4,5,4,5,4,5'
+    );
+
+    bsTest('color',
+            function(){
+                var geometry;
+
+                geometry = new Geometry([
+                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, // x,y,z, u,v, normalX,normalY,normalZ, r,g,b,a,
+                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+                ], [0, 1, 2], [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v, Vertex.normalX, Vertex.normalY, Vertex.normalZ, Vertex.r, Vertex.g, Vertex.b, Vertex.a])
+
+                return Array.prototype.slice.call(geometry.color).toString();
+            }, '9,10,11,12,9,10,11,12,9,10,11,12'
+    );
+
+    bsTest('index',
+            function () {
+                var geometry;
+
+                geometry = new Geometry([
+                    1, 2, 3, 4, 5, 6, 7, 8, // x,y,z, u,v, normalX,normalY,normalZ,
+                    1, 2, 3, 4, 5, 6, 7, 8,
+                    1, 2, 3, 4, 5, 6, 7, 8
+                ], [0, 1, 2], [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v, Vertex.normalX, Vertex.normalY, Vertex.normalZ])
+                return Array.prototype.slice.call(geometry.index).toString();
+            }, '0,1,2'
     );
 
 

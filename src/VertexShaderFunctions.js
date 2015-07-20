@@ -27,10 +27,6 @@ var VertexShader = {
     '    float x = cos2 * cos1 * sin0 - sin2 * sin1 * cos0;\n' +
     '    float y = cos2 * sin1 * cos0 + sin2 * cos1 * sin0;\n' +
     '    float z = sin2 * cos1 * cos0 - cos2 * sin1 * sin0;\n' +
-    //'    float w = cos(t[2]*0.5) * cos1 * cos(t[0]*0.5) + sin(t[2]*0.5) * sin(t[1]*0.5) * sin(t[0]*0.5);\n' +
-    //'    float x = cos(t[2]*0.5) * cos(t[1]*0.5) * sin(t[0]*0.5) - sin(t[2]*0.5) * sin(t[1]*0.5) * cos(t[0]*0.5);\n' +
-    //'    float y = cos(t[2]*0.5) * sin(t[1]*0.5) * cos(t[0]*0.5) + sin(t[2]*0.5) * cos(t[1]*0.5) * sin(t[0]*0.5);\n' +
-    //'    float z = sin(t[2]*0.5) * cos(t[1]*0.5) * cos(t[0]*0.5) - cos(t[2]*0.5) * sin(t[1]*0.5) * sin(t[0]*0.5);\n' +
     '    mat4 quaternionMTX = mat4(\n' +
     '        pow(w, 2.0) + pow(x, 2.0) - pow(y, 2.0) - pow(z, 2.0), 2.0*(x*y + w*z), 2.0*(x*z - w*y), 0,\n' +
     '        2.0*(x*y - w*z), pow(w, 2.0) - pow(x, 2.0) + pow(y, 2.0) - pow(z, 2.0), 2.0*(y*z + w*x), 0,\n' +

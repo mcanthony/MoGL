@@ -173,11 +173,17 @@ var makeUtil = (function(){
             gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, rBuffer),
             gl.bindTexture(gl.TEXTURE_2D, null),
             gl.bindRenderbuffer(gl.RENDERBUFFER, null),
-            gl.bindFramebuffer(gl.FRAMEBUFFER, null),
-            gpu.framebuffers[camera] = {
-                frameBuffer:fBuffer,
-                texture:texture
-            };
+            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+            var fb = gpu.framebuffers[camera];
+            if (fb) {
+                fb.frameBuffer = fBuffer,
+                fb.texture = texture;
+            } else {
+                gpu.framebuffers[camera] = {
+                    frameBuffer:fBuffer,
+                    texture:texture
+                };
+            }
         },
         vertexShaderParser: function vertexShaderParser(source) {
             var i, temp, str, resultObject, code;

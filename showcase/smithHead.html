@@ -82,7 +82,7 @@
     mat3 = new Material('#fef232')
     // 텍스쳐생성
     texture1 = new Texture(document.getElementById('testIMG')).setId('texture1')
-    texture2 = new Texture().setId('texture2')
+    texture2 = new Texture(document.getElementById('testIMG2')).setId('texture2')
 
     // 재질에 텍스쳐 주입
     mat1.addTexture(Texture.diffuse, texture1)

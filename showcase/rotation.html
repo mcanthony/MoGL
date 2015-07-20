@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL Showcase - 회전 비교</title>
+    <meta charset="utf-8"/>
+    <meta property="og:title" content="Rotation"/>
+    <meta property="og:description" content="MoGL.js version"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .FPS {
+            color: #FFF;
+            left: 0px;
+            top: 0px;
+            position: absolute;
+        }
+    </style>
+    <script src="../src/$.js"></script>
+    <script src="../src/make.js"></script>
+    <script src="../src/MoGL.js"></script>
+    <script src="../src/BlendMode.js"></script>
+    <script src="../src/Filter.js"></script>
+    <script src="../src/Primitive.js"></script>
+    <script src="../src/Vertex.js"></script>
+    <script src="../src/Shading.js"></script>
+    <script src="../src/VertexShaderFunctions.js"></script>
+    <script src="../src/Shader.js"></script>
+    <script src="../src/Matrix.js"></script>
+    <script src="../src/Texture.js"></script>
+    <script src="../src/Geometry.js"></script>
+    <script src="../src/Material.js"></script>
+    <script src="../src/Mesh.js"></script>
+    <script src="../src/Group.js"></script>
+    <script src="../src/Camera.js"></script>
+    <script src="../src/Scene.js"></script>
+    <script src="../src/World.js"></script>
+    <script src="../showcase/dat.gui.min.js"></script>
+</head>
+<body>
+<div id='propertyContainer'>
+    <br/>
+    <label for='rotateX'>X축 회전각 : </label><input class='slider' id='rotateX' type='range' min='-360' max='360' value='0'><span id='pxRX'>0</span>
+    <label for='rotateY'>Y축 회전각 : </label><input class='slider' id='rotateY' type='range' min='-360' max='360' value='0'><span id='pxRY'>0</span>
+    <label for='rotateZ'>Z축 회전각 : </label><input class='slider' id='rotateZ' type='range' min='-360' max='360' value='0'><span id='pxRZ'>0</span>
+    <br/><br/>
+</div>
+<canvas id="webgl-canvas" style="border: none;" width="800" height="400"></canvas>
+<img src="primitive/honey1.png" id="testIMG2" style="display:none;" width="256">
+<script>
+'use strict';
+(function() {
+    var world, scene, camera, texture, material,
+        cube, mesh;
+
+    world = new World('webgl-canvas')
+    scene = new Scene();
+    camera = new Camera();
+
+    world.addScene(scene);
+    scene.addChild(camera);
+
+    world.setAutoSize(1);
+    world.start();
+
+    texture = new Texture(document.getElementById('testIMG2'));
+    material = new Material('#FFF');
+    material.addTexture(Texture.diffuse, texture).wireFrame = 1;
+
+    cube = new Primitive.cube();
+    mesh = new Mesh(cube, material);
+    mesh.scaleX = 5;
+    mesh.scaleY = 5;
+    mesh.scaleZ = 5;
+
+    scene.addChild(mesh);
+console.log(scene.vertexShaders);
+
+    (function () {
+        var canvas = document.getElementById("webgl-canvas");
+
+        Array.prototype.slice.call(document.querySelectorAll('.slider'))
+            .forEach( function( element ) {
+                var sliderHandler = function(element) {
+                    element.nextSibling.innerHTML = element.value;
+                    mesh[element.id] = element.value * D2R;
+                };
+                element.addEventListener('input', function() {
+                    sliderHandler(element);
+                });
+                if ( "ActiveXObject" in window ) {
+                    element.addEventListener('change', function() {
+                        sliderHandler(element);
+                    });
+                }
+            });
+    })();
+}());
+
+</script>
+</body>
+</html>
