@@ -902,10 +902,10 @@ var World = (function (makeUtil) {
             var self = this
             var renderFunc =function () {
                 self.render(Date.now());
-                requestAnimationFrame(renderFunc);
+                //requestAnimationFrame(renderFunc);
             }
-            started[this.uuid] = requestAnimationFrame(renderFunc);
-            //started[this.uuid] = setInterval(renderFunc,17);
+            //started[this.uuid] = requestAnimationFrame(renderFunc);
+            started[this.uuid] = setInterval(renderFunc,17);
             return this;
         }
     })
