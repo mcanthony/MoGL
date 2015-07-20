@@ -225,7 +225,7 @@ var World = (function (makeUtil) {
                 var f3 = new Float32Array(3);
                 var tScene, tSceneList, tCameraList, tCamera, tGPU, tGL, tChildren, tChildrenArray;
                 var tCvs, tCvsW, tCvsH;
-                var tItem, tMaterial, tItemUUID, tMatUUID;
+                var tUUID,tItem, tMaterial, tItemUUID, tMatUUID;
                 var tProgram, tCulling, tVBO, tVNBO, tUVBO, tIBO, tDiffuse, tFrameBuffer, tShading;
                 var pProgram, pCulling, pVBO, pVNBO, pUVBO, pIBO, pDiffuse;
 
@@ -288,6 +288,7 @@ var World = (function (makeUtil) {
                 var mouseColor
 
                 return function(currentTime) {
+                    tUUID = this.uuid
                     len = 0,
                     pProgram = null,
                     pCulling = null,
@@ -296,9 +297,9 @@ var World = (function (makeUtil) {
                     pUVBO = null,
                     pIBO = null,
                     pDiffuse = null,
-                    tCvs = cvsList[this.uuid],
-                    tSceneList = sceneList[this.uuid],
-                    tGPU = gpu[this.uuid],
+                    tCvs = cvsList[tUUID],
+                    tSceneList = sceneList[tUUID],
+                    tGPU = gpu[tUUID],
                     tGL = tGPU.gl,
                     tCvsW = tCvs.width,
                     tCvsH = tCvs.height,
@@ -307,7 +308,7 @@ var World = (function (makeUtil) {
                     totalVertex=0,
                     i = tSceneList.length
                     //this.dispatch(World.renderBefore, currentTime,totalVertex),
-                    if(priListener[this]['WORLD_RENDER_BEFORE']) priListener[this]['WORLD_RENDER_BEFORE'][0].f(currentTime)
+                    if(priListener[tUUID]['WORLD_RENDER_BEFORE']) priListener[tUUID]['WORLD_RENDER_BEFORE'][0].f(currentTime)
                     while (i--) {
                         tScene = tSceneList[i]
                         //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -329,7 +330,7 @@ var World = (function (makeUtil) {
                             //if(!updateTex && tGPU.textures[updateTex.uuid] != updateTex.img) makeTexture(tGPU, updateTex.uuid,updateTex.img);
                             makeTexture(tGPU, updateTex.uuid, updateTex.img)
                         }
-                        if (tScene.updateList.camera.length) cameraRenderAreaUpdate(this);
+                        if (tScene.updateList.camera.length) cameraRenderAreaUpdate(tUUID);
                         tScene.updateList.geometry.length = 0,
                         tScene.updateList.texture.length = 0,
                         tScene.updateList.camera.length = 0,
@@ -388,7 +389,7 @@ var World = (function (makeUtil) {
                             }
                             checkMouse=!checkMouse
                             if(checkMouse){
-                                tMouse = mouse[this.uuid]
+                                tMouse = mouse[tUUID]
                                 if(pickLength && tMouse.x){
                                     tGL.readPixels(tMouse.x, tMouse.y, 1, 1, tGL.RGBA , tGL.UNSIGNED_BYTE, currentMouse)
                                     //var key = [currentMouse[0], currentMouse[1], currentMouse[2], 255].join('')
@@ -456,8 +457,8 @@ var World = (function (makeUtil) {
                                 tGL.clearColor(tColor[0], tColor[1], tColor[2], tColor[3]),
                                 tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
 
-                                for (k in tGPU.programs) {
-                                    tProgram = tGPU.programs[k],
+                                for (k2 in tGPU.programs) {
+                                    tProgram = tGPU.programs[k2],
                                     tGL.useProgram(tProgram),
                                     tGL.uniformMatrix4fv(tProgram.uPixelMatrix, false, tProjectionMtx),
                                     tGL.uniformMatrix4fv(tProgram.uCameraMatrix, false, tCameraMtx);
@@ -728,7 +729,7 @@ var World = (function (makeUtil) {
 
                     }
                     //this.dispatch(World.renderAfter, currentTime, totalVertex);
-                    if(priListener[this]['WORLD_RENDER_AFTER']) priListener[this]['WORLD_RENDER_AFTER'][0].f(currentTime)
+                    if(priListener[tUUID]['WORLD_RENDER_AFTER']) priListener[tUUID]['WORLD_RENDER_AFTER'][0].f(currentTime)
                     //tGL.flush();
                     //tGL.finish()
                 }
