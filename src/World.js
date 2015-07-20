@@ -284,7 +284,8 @@ var World = (function (makeUtil) {
                 var updateTex
                 var sheetOffset = [], pM=[], rM = [0, 0, 0], uTS = []
                 var pickLength;
-
+                var tMouse
+                var mouseColor
 
                 return function(currentTime) {
                     len = 0,
@@ -387,12 +388,12 @@ var World = (function (makeUtil) {
                             }
                             checkMouse=!checkMouse
                             if(checkMouse){
-                                var tMouse = mouse[this.uuid]
+                                tMouse = mouse[this.uuid]
                                 if(pickLength && tMouse.x){
                                     tGL.readPixels(tMouse.x, tMouse.y, 1, 1, tGL.RGBA , tGL.UNSIGNED_BYTE, currentMouse)
                                     //var key = [currentMouse[0], currentMouse[1], currentMouse[2], 255].join('')
-                                    var key = ''+currentMouse[0]+currentMouse[1]+currentMouse[2]+'255'
-                                    currentMouseItem = priPickingMeshs[key]
+                                    mouseColor = ''+currentMouse[0]+currentMouse[1]+currentMouse[2]+'255'
+                                    currentMouseItem = priPickingMeshs[mouseColor]
                                     mouseObj.x = tMouse.x,
                                     mouseObj.y = tMouse.y,
                                     mouseObj.z = 0
@@ -467,8 +468,9 @@ var World = (function (makeUtil) {
 
                                 // 대상 씬의 차일드 루프
                                 i2 = tChildrenArray.length;
-                                for ( i3 = 0; i3 < i2; i3++) {
-                                    tItem = tChildrenArray[i3],
+                                i3 = 0
+                                while(i2--){
+                                    tItem = tChildrenArray[i3++],
                                     tItemUUID = tItem.uuid,
                                     tGeo = priGeo[tItemUUID].uuid,
                                     tVBO = tGPU.vbo[tGeo],
