@@ -609,8 +609,9 @@ var World = (function (makeUtil) {
                                             tGL.uniform1i(tProgram.useSpecularMap, false);
                                         }
 
-                                        if (priBillBoard[tItemUUID]) tGL.uniform3fv(tProgram.uRotate, [tCamera.rotateX - Math.PI, tCamera.rotateY, tCamera.rotateZ])
-                                        else f3[0] = tItem.rotateX, f3[1] = tItem.rotateY, f3[2] = tItem.rotateZ, tGL.uniform3fv(tProgram.uRotate, f3)
+                                        //if (priBillBoard[tItemUUID]) tGL.uniform3fv(tProgram.uRotate, [tCamera.rotateX , tCamera.rotateY-Math.PI, tCamera.rotateZ ])
+                                        //else f3[0] = tItem.rotateX, f3[1] = tItem.rotateY, f3[2] = tItem.rotateZ, tGL.uniform3fv(tProgram.uRotate, f3)
+                                        f3[0] = tItem.rotateX, f3[1] = tItem.rotateY, f3[2] = tItem.rotateZ, tGL.uniform3fv(tProgram.uRotate, f3)
 
                                         f3[0] = tItem.x, f3[1] = tItem.y, f3[2] = tItem.z,
                                         tGL.uniform3fv(tProgram.uPosition, f3),
