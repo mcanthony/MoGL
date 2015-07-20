@@ -308,7 +308,7 @@ var World = (function (makeUtil) {
                     totalVertex=0,
                     i = tSceneList.length
                     //this.dispatch(World.renderBefore, currentTime,totalVertex),
-                    if(priListener[tUUID]['WORLD_RENDER_BEFORE']) priListener[tUUID]['WORLD_RENDER_BEFORE'][0].f(currentTime)
+                    if(priListener[tUUID] && priListener[tUUID]['WORLD_RENDER_BEFORE']) priListener[tUUID]['WORLD_RENDER_BEFORE'][0].f(currentTime)
                     while (i--) {
                         tScene = tSceneList[i]
                         //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -729,7 +729,7 @@ var World = (function (makeUtil) {
 
                     }
                     //this.dispatch(World.renderAfter, currentTime, totalVertex);
-                    if(priListener[tUUID]['WORLD_RENDER_AFTER']) priListener[tUUID]['WORLD_RENDER_AFTER'][0].f(currentTime)
+                    if(priListener[tUUID] && priListener[tUUID]['WORLD_RENDER_AFTER']) priListener[tUUID]['WORLD_RENDER_AFTER'][0].f(currentTime)
                     //tGL.flush();
                     //tGL.finish()
                 }
@@ -902,9 +902,10 @@ var World = (function (makeUtil) {
             var self = this
             var renderFunc =function () {
                 self.render(Date.now());
+                requestAnimationFrame(renderFunc);
             }
-            //started[this.uuid] = requestAnimationFrame(renderFunc);
-            started[this.uuid] = setInterval(renderFunc,17);
+            started[this.uuid] = requestAnimationFrame(renderFunc);
+            //started[this.uuid] = setInterval(renderFunc,17);
             return this;
         }
     })
