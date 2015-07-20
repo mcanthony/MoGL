@@ -73,8 +73,7 @@
     world.setAutoSize(1);
     world.start();
 
-    texture = new Texture();
-    texture.img = document.getElementById('testIMG2');
+    texture = new Texture(document.getElementById('testIMG2'));
     material = new Material('#FFF');
     material.addTexture(Texture.diffuse, texture).wireFrame = 1;
 
