@@ -904,7 +904,7 @@ var World = (function (makeUtil) {
                 self.render(Date.now());
             }
             //started[this.uuid] = requestAnimationFrame(renderFunc);
-            started[this.uuid] = setInterval(renderFunc,16);
+            started[this.uuid] = setInterval(renderFunc,17);
             return this;
         }
     })
