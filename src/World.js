@@ -92,6 +92,7 @@ var World = (function (makeUtil) {
                     th = cvs.height
                     var wRatio = tRenderArea[2] / tw;
                     var hRatio = tRenderArea[3] / th;
+                    /*
                     tRenderArea = [
                         typeof tRenderArea[0] == 'string' ? tw * tRenderArea[0].replace('%', '') * 0.01 : tRenderArea[0],
                         typeof tRenderArea[1] == 'string' ? th * tRenderArea[1].replace('%', '') * 0.01 : tRenderArea[1],
@@ -99,9 +100,20 @@ var World = (function (makeUtil) {
                         typeof tRenderArea[3] == 'string' ? th * tRenderArea[3].replace('%', '') * 0.01 : tRenderArea[3]
                     ];
                     camera.renderArea = [tRenderArea[0], tRenderArea[1], tw * wRatio, th * hRatio]
+                    */
+                    tRenderArea[0] = typeof tRenderArea[0] == 'string' ? tw * tRenderArea[0].replace('%', '') * 0.01 : tRenderArea[0],
+                    tRenderArea[1] = typeof tRenderArea[1] == 'string' ? th * tRenderArea[1].replace('%', '') * 0.01 : tRenderArea[1],
+                    tRenderArea[2] = tw * wRatio,
+                    tRenderArea[3] = th * hRatio,
                     camera.renderArea.byAutoArea=false
                 }else{
-                    camera.renderArea = [0,0,cvs.width,cvs.height]
+                    //camera.renderArea = [0,0,cvs.width,cvs.height]
+                    if (tRenderArea) {
+                        tRenderArea[0] = tRenderArea[1] = 0,
+                        tRenderArea[2] = cvs.width, tRenderArea[3] = cvs.height;
+                    } else {
+                        camera.renderArea = [0,0,cvs.width,cvs.height];
+                    }
                     camera.renderArea.byAutoArea = true
                 }
                 camera.resetProjectionMatrix()
@@ -335,6 +347,7 @@ var World = (function (makeUtil) {
                 p = {}
             }
             self = this;
+            /*
             if (isRequestAnimationFrame) {
                 if (p[1]) return p[1];
                 else {
@@ -344,6 +357,7 @@ var World = (function (makeUtil) {
                     }
                 }
             } else {
+                */
                 if (p[0]) return p[0];
                 else {
                     p[0] = function intervalAni(currentTime) {
@@ -351,7 +365,7 @@ var World = (function (makeUtil) {
                     }
                     return p[0];
                 }
-            }
+            //}
         }
     })
     .method('start', {
@@ -365,7 +379,8 @@ var World = (function (makeUtil) {
         ],
         value:function start() {
             var renderFunc = this.getRenderer(1)
-            started[this.uuid] = requestAnimationFrame(renderFunc);
+            //started[this.uuid] = requestAnimationFrame(renderFunc);
+            started[this.uuid] = setInterval(renderFunc,16);
             return this;
         }
     })
@@ -380,7 +395,8 @@ var World = (function (makeUtil) {
             "world.stop();"
         ],
         value:function stop() {
-            cancelAnimationFrame(started[this.uuid]);
+            //cancelAnimationFrame(started[this.uuid]);
+            clearInterval(started[this.uuid])
             return this;
         }
     })
@@ -505,6 +521,7 @@ var World = (function (makeUtil) {
             var totalVertex = 0
             var mouseObj = {}
             var updateTex
+            var sheetOffset = [], pM=[], rM = [0, 0, 0], uTS = []
             return function(currentTime) {
                 len = 0,
                 pProgram = null,
@@ -783,7 +800,12 @@ var World = (function (makeUtil) {
                                             sheetInfo.currentGap+=16
                                             if(sheetInfo.currentGap > sheetInfo.cycle) sheetInfo.frame++ , sheetInfo.currentGap = 0
                                             if(sheetInfo.frame == sheetInfo.wNum * sheetInfo.hNum) sheetInfo.frame = 0
-                                            tGL.uniform4fv(tProgram.uSheetOffset, [1 / sheetInfo.wNum, 1 / sheetInfo.hNum, sheetInfo.frame % sheetInfo.wNum, Math.floor( sheetInfo.frame/sheetInfo.wNum)]);
+                                            //tGL.uniform4fv(tProgram.uSheetOffset, [1 / sheetInfo.wNum, 1 / sheetInfo.hNum, sheetInfo.frame % sheetInfo.wNum, Math.floor( sheetInfo.frame/sheetInfo.wNum)]);
+                                            sheetOffset[0] = 1 / sheetInfo.wNum,
+                                            sheetOffset[1] = 1 / sheetInfo.hNum,
+                                            sheetOffset[2] = sheetInfo.frame % sheetInfo.wNum,
+                                            sheetOffset[3] = Math.floor( sheetInfo.frame/sheetInfo.wNum),
+                                            tGL.uniform4fv(tProgram.uSheetOffset, sheetOffset);
                                             tGL.uniform1i(tProgram.uSheetMode, 1);
                                         }else{
                                             tGL.uniform1i(tProgram.uSheetMode, 0);
@@ -889,17 +911,25 @@ var World = (function (makeUtil) {
                     tProgram = tGPU.programs['postBase'];
                     if (!tVBO) return;
                     tGL.useProgram(tProgram);
-                    tGL.uniformMatrix4fv(tProgram.uPixelMatrix, false, [
+                    /*tGL.uniformMatrix4fv(tProgram.uPixelMatrix, false, [
                         2 / tCvs.clientWidth, 0, 0, 0,
                         0, -2 / tCvs.clientHeight, 0, 0,
                         0, 0, 0, 0,
                         -1, 1, 0, 1
                     ]);
+                    */
+                    pM[0] = 2 / tCvs.clientWidth, pM[1] = pM[2] = pM[3] = 0,
+                    pM[4] = 0, pM[5] = -2 / tCvs.clientHeight, pM[6] = pM[7] = 0,
+                    pM[8] = pM[9] = pM[10] = pM[11] = 0,
+                    pM[12] = -1, pM[13] = 1, pM[14] = 0, pM[15] = 1,
+                    tGL.uniformMatrix4fv(tProgram.uPixelMatrix, false, pM);
                     tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
                     tGL.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, tGL.FLOAT, false, 0, 0),
                     tGL.bindBuffer(tGL.ARRAY_BUFFER, tUVBO),
                     tGL.vertexAttribPointer(tProgram.aUV, tUVBO.stride, tGL.FLOAT, false, 0, 0),
-                    tGL.uniform3fv(tProgram.uRotate, [0, 0, 0]),
+                    
+                    //tGL.uniform3fv(tProgram.uRotate, [0, 0, 0]),
+                    tGL.uniform3fv(tProgram.uRotate, rM),
                     tGL.uniformMatrix4fv(tProgram.uCameraMatrix, false, rectMatrix.raw);
 
                     for (k in tCameraList) {
@@ -908,8 +938,13 @@ var World = (function (makeUtil) {
                             tFrameBuffer = tGPU.framebuffers[tCamera.uuid].frameBuffer;
                             tGL.uniform1i(tProgram.uFXAA, tCamera.antialias);
                             if (tCamera.antialias) {
+                                /*
                                 if (tCamera.renderArea) tGL.uniform2fv(tProgram.uTexelSize, [1 / tFrameBuffer.width, 1 / tFrameBuffer.height]);
                                 else tGL.uniform2fv(tProgram.uTexelSize, [1 / tCvs.width, 1 / tCvs.height]);
+                                */
+                                if (tCamera.renderArea) uTS[0] = 1 / tFrameBuffer.width, uTS[1] = 1 / tFrameBuffer.height;
+                                else uTS[0] = 1 / tCvs.width, uTS[1] = 1 / tCvs.height;
+                                tGL.uniform2fv(tProgram.uTexelSize, uTS);
                             }
                             f3[0] = tFrameBuffer.x + tFrameBuffer.width / 2 / pRatio, f3[1] = tFrameBuffer.y + tFrameBuffer.height / 2 / pRatio , f3[2] = 0;
                             tGL.uniform3fv(tProgram.uPosition, f3),

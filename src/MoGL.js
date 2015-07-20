@@ -508,6 +508,21 @@ var MoGL = (function() {
             ],
             value:(function(){
                 var loopstart, loop, target;
+                Object.freeze($ease = {
+                    linear:function(a,c,b){return b*a+c},
+                    backIn:function(a,c,b){return b*a*a*(2.70158*a-1.70158)+c},
+                    backOut:function(a,c,b){a-=1;return b*(a*a*(2.70158*a+1.70158)+1)+c},
+                    backInOut:function(a,c,b){a*=2;if(1>a)return 0.5*b*a*a*(3.5949095*a-2.5949095)+c;a-=2;return 0.5*b*(a*a*(3.70158*a+2.70158)+2)+c},
+                    bounceOut:function(a,c,b){if(0.363636>a)return 7.5625*b*a*a+c;if(0.727272>a)return a-=0.545454,b*(7.5625*a*a+0.75)+c;if(0.90909>a)return a-=0.818181,b*(7.5625*a*a+0.9375)+c;a-=0.95454;return b*(7.5625*a*a+0.984375)+c},
+                    sineIn:function(a,c,b){return -b*Math.cos(a*PIH)+b+c},
+                    sineOut:function(a,c,b){return b*Math.sin(a*PIH)+c},
+                    sineInOut:function(a,c,b){return 0.5*-b*(Math.cos(PI*a)-1)+c},
+                    circleIn:function(a,c,b){return -b*(Math.sqrt(1-a*a)-1)+c},
+                    circleOut:function(a,c,b){a-=1;return b*Math.sqrt(1-a*a)+c},
+                    circleInOut:function(a,c,b){a*=2;if(1>a)return 0.5*-b*(Math.sqrt(1-a*a)-1)+c;a-=2;return 0.5*b*(Math.sqrt(1-a*a)+1)+c},
+                    quadraticIn:function(a,c,b){return b*a*a+c},
+                    quadraticOut:function(a,c,b){return -b*a*(a-2)+c}
+                });
                 loop = function loop(){
                     var t, k0, k1, ani, inst, prop, init, rate;
 					t = performance.now();
@@ -531,13 +546,26 @@ var MoGL = (function() {
                                         inst[k1] = prop[k1];
                                     }
                                     delete target[k0];
-                                    inst.dispatch(MoGL.propertyChanged);
+                                    //inst.dispatch(MoGL.propertyChanged);
                                 }
                             } else {//진행중
-                                var ease = ani.ease,
-                                rate = (t - ani.start) / ani.term;
+                                var ease = ani.ease, a = (t - ani.start) / ani.term, c, b;
                                 for(k1 in prop){
-                                    inst[k1] = ease(rate, init[k1], prop[k1] - init[k1]);
+                                    c = init[k1], b = prop[k1] - init[k1];
+                                    inst[k1] = ease == 'linear' ? b*a+c :
+                                        ease == 'backIn' ? b*a*a*(2.70158*a-1.70158)+c :
+                                        ease == 'backOut' ? (a-=1, b*(a*a*(2.70158*a+1.70158)+1)+c) :
+                                        ease == 'backInOut' ? (a*=2, 1>a ? .5*b*a*a*(3.5949095*a-2.5949095)+c : (a-=2, .5*b*(a*a*(3.70158*a+2.70158)+2)+c)) :
+                                        ease == 'bounceOut' ? (.363636>a ? 7.5625*b*a*a+c : .727272>a ? (a-=0.545454,b*(7.5625*a*a+0.75)+c) : .90909>a ? (a-=0.818181,b*(7.5625*a*a+0.9375)+c) : (a-=0.95454, b*(7.5625*a*a+0.984375)+c)) :
+                                        ease == 'sineIn' ? -b*Math.cos(a*PIH)+b+c :
+                                        ease == 'sineOut' ? b*Math.sin(a*PIH)+c :
+                                        ease == 'sineInOut' ? .5*-b*(Math.cos(PI*a)-1)+c :
+                                        ease == 'circleIn' ? -b*(Math.sqrt(1-a*a)-1)+c :
+                                        ease == 'circleOut' ? (a-=1, b*Math.sqrt(1-a*a)+c) :
+                                        ease == 'circleInOut' ? (a*=2, 1>a ? .5*-b*(Math.sqrt(1-a*a)-1)+c : (a-=2, .5*b*(Math.sqrt(1-a*a)+1)+c)) :
+                                        ease == 'quadraticIn' ? b*a*a+c :
+                                        ease == 'quadraticOut' ? -b*a*(a-2)+c :
+                                        c
                                 }
                             }
                         }
@@ -548,7 +576,8 @@ var MoGL = (function() {
                     var k, ani, start, end, term;
                     if (opt) {
                         target[this] = ani = {
-                            ease:opt.ease || ($ease ? $ease.linear : function(){}),
+                            //ease:opt.ease || ($ease ? $ease.linear : function(){}),
+                            ease:opt.ease || 'linear',
                             repeat:opt.repeat || 0,
                             yoyo:opt.yoyo || false,
                             target:this,
