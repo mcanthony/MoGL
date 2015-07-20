@@ -389,11 +389,15 @@ var MoGL = (function() {
     });
     Object.freeze(Definer),
     Object.freeze(Definer.prototype);
+
     MoGL = (function(){
         var init, updated, listener, listenerCounter;
         listener = {},
         listenerCounter = {},
         updated = {},
+        $setPrivate('MoGL', {
+            listener : listener,
+        }),
         init = new Definer('MoGL', {
             description:[
                 'MoGL 라이브러리의 모든 클래스는 MoGL을 상속함',

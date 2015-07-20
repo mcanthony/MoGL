@@ -44,6 +44,7 @@
     <script src="../src/Group.js"></script>
     <script src="../src/Camera.js"></script>
     <script src="../src/Scene.js"></script>
+    <script src="../src/Vector.js"></script>
     <script src="../src/World.js"></script>
 </head>
 <body>
@@ -93,7 +94,7 @@
         var meshs, item, PI2, i;
         meshs = []
         PI2 = Math.PI * 2;
-        for (i = 0; i < 500; i++) {
+        for (i = 0; i < 1000; i++) {
             var a = new Material(Math.random(),Math.random(),Math.random(),1)
             if (i % 5 == 0) a.addTexture(Texture.diffuse, texture)
             item = new Mesh(geo, a);
@@ -102,10 +103,12 @@
             item.rotate = [Math.random() * PI2,Math.random() * PI2,Math.random() * PI2];
             scene.addChild(item);
             meshs.push(item);
+
         }
 
         var currentFPS, prevTime = 0, count = 0, sum = 0
         world.addEventListener(World.renderAfter, function (currTime) {
+
             var currentFPS = 1000 / ( currTime - prevTime );
             prevTime = currTime;
             count++

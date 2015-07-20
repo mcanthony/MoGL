@@ -269,8 +269,8 @@ var Camera = (function () {
                 var tMatrix, tArea, p;
                 p = prop[this]
                 tMatrix = p.projectionMatrix,
-                    tArea = p.renderArea,
-                    tMatrix.matIdentity()
+                tArea = p.renderArea,
+                tMatrix.matIdentity()
                 if (this._mode == '2d') {
                     tMatrix.raw[0] = 2 / tArea[2]
                     tMatrix.raw[5] = -2 / tArea[3]
