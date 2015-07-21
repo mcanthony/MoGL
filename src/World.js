@@ -234,12 +234,9 @@ var World = (function (makeUtil) {
                     list = tScene.updateList.texture;
                     if (j = list.length) {
                         while (j--) {
-                            curr = list[j].tex
-                            if(priTexIsLoaded[curr.uuid]) makeTexture(tGPU, curr);
-                            //makeTexture(tGPU, curr.uuid, curr.img)
-                            //makeTexture(tGPU, curr)
+                            curr = list[0].tex
+                            if(priTexIsLoaded[curr.uuid]) makeTexture(tGPU, curr),list.shift();
                         }
-                        list.length= 0
                     }
                     if (tScene.updateList.camera.length) cameraRenderAreaUpdate(tUUID);
                     tScene.updateList.camera.length = 0,
