@@ -8,6 +8,7 @@ var Texture = (function() {
     isLoaded = {},
     //shared private
     $setPrivate('Texture', {
+        isLoaded : isLoaded,
         imgs:imgs
     }),
     //lib
