@@ -411,7 +411,7 @@ var World = (function (makeUtil) {
                                 //디퓨즈
 
                                 tDiffuse = tGPU.textures[tDiffuseMaps[tDiffuseMaps.length - 1].tex.uuid];
-                                if (tDiffuse != pDiffuse) {
+                                if (tDiffuse != pDiffuse && tDiffuse !=null) {
                                     tGL.activeTexture(tGL.TEXTURE0),
                                     tGL.bindTexture(tGL.TEXTURE_2D, tDiffuse),
                                     tGL.uniform1i(tProgram.uSampler, 0);
