@@ -160,7 +160,7 @@ var World = (function (makeUtil) {
 
 
             var baseLightRotate;
-            var useNormalBuffer, useTexture;
+            var useNormalBuffer, useTexture,tUseTexture;
 
             var totalVertex = 0
 
@@ -201,6 +201,7 @@ var World = (function (makeUtil) {
             priTexIsLoaded =$getPrivate('Texture', 'isLoaded')
 
             var render = function render(currentTime) {
+
                 tUUID = this.uuid,
                 pCulling = null,
                 pVBO = pVNBO = pUVBO = pIBO = pDiffuse = null,
@@ -234,12 +235,9 @@ var World = (function (makeUtil) {
                     list = tScene.updateList.texture;
                     if (j = list.length) {
                         while (j--) {
-                            curr = list[j].tex
-                            if(priTexIsLoaded[curr.uuid]) makeTexture(tGPU, curr);
-                            //makeTexture(tGPU, curr.uuid, curr.img)
-                            //makeTexture(tGPU, curr)
+                            curr = list[0].tex
+                            if(priTexIsLoaded[curr.uuid]) makeTexture(tGPU, curr),list.shift();
                         }
-                        list.length= 0
                     }
                     if (tScene.updateList.camera.length) cameraRenderAreaUpdate(tUUID);
                     tScene.updateList.camera.length = 0,
@@ -266,7 +264,7 @@ var World = (function (makeUtil) {
                         // mouse Start
                         tProgram = tGPU.programs['mouse'],
                         tGL.useProgram(tProgram),
-                        useNormalBuffer = useTexture = pickLength = 0;
+                        useNormalBuffer = useTexture = tUseTexture = pickLength = 0;
 
                         if(checkMouse = !checkMouse){
                             for (k2 in priPickingMeshs) {
@@ -353,8 +351,9 @@ var World = (function (makeUtil) {
                             tMaterial = priMat[tItemUUID],
                             tShading = priMatShading[tMatUUID = tMaterial.uuid],
                             tDiffuseMaps = priMatDiffuseMaps[tMatUUID];
-                            if (pShading != tShading) {
-                                useTexture = tDiffuseMaps ? 1 : 0,
+                            tUseTexture = tDiffuseMaps ? 1 : 0
+                            if (pShading != tShading || useTexture != tUseTexture) {
+                                useTexture = tUseTexture,
                                 useNormalBuffer = 1,
                                 pShading = tShading,
                                 tProgram =
@@ -363,7 +362,7 @@ var World = (function (makeUtil) {
                                     pShading == Shading.toon ? tGPU.programs['toonPhong'] :
                                     pShading == Shading.blinn ? tGPU.programs['bitmapBlinn'] :
                                     (useNormalBuffer = 0, tGPU.programs[useTexture ? 'bitmap' : 'color']),
-                                pVBO = pVNBO = pUVBO = pIBO = pDiffuse = pNormal = pSpecular =  null,
+                                    pVBO = pVNBO = pUVBO = pIBO = pDiffuse = pNormal = pSpecular =  null,
                                 tGL.useProgram(tProgram);
                             }
                             //총정점수계산
@@ -467,13 +466,13 @@ var World = (function (makeUtil) {
                                 tColor = priMatWireFrameColor[tMatUUID],
                                 tGL.uniform4fv(tProgram.uColor, tColor),
                                 tGL.drawElements(tGL.LINES, tIBO.numItem, tGL.UNSIGNED_INT, 0)
-
+                                pShading = 'wireFrame'
                             }
                             pCulling = tCulling, pVBO = tVBO, pVNBO = tVNBO, pUVBO = tUVBO, pIBO = tIBO,
                             pDiffuse = tDiffuse,
                             pNormal = tNormal,
-                            pSpecular = tSpecular,
-                            pShading = 'wireFrame'
+                            pSpecular = tSpecular
+
                         }
                         if (len > 1) {
                             tGL.bindFramebuffer(tGL.FRAMEBUFFER, pVBO = pVNBO = pUVBO = pIBO = pDiffuse = pNormal = pSpecular = pShading = null);
@@ -765,7 +764,7 @@ var World = (function (makeUtil) {
                 //requestAnimationFrame(renderFunc);
             }
             //started[this.uuid] = requestAnimationFrame(renderFunc);
-            started[this.uuid] = setInterval(renderFunc,16.666);
+            started[this.uuid] = setInterval(renderFunc,16.6);
             return this;
         }
     })
