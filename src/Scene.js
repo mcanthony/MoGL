@@ -1,7 +1,7 @@
 var Scene = (function () {
     'use strict';
     var vertexShaderParser, fragmentShaderParser, mkGet, mkAdd, mkAddShader, mkRemove,
-        children,childrenArray, cameras, textures, materials, geometrys, vertexShaders, fragmentShaders, updateList,baseLightRotate;
+        children,childrenArray, cameras, textures, materials, geometrys, vertexShaders, fragmentShaders, updateList,baseLightRotate,cameraLength;
     //private
     children = {},
     childrenArray = {},
@@ -13,10 +13,12 @@ var Scene = (function () {
     vertexShaders = {},
     fragmentShaders = {},
     updateList = {},
+    cameraLength = {},
     //shared private
     $setPrivate('Scene', {
         children:children,
-        childrenArray:childrenArray
+        childrenArray:childrenArray,
+        cameraLength : cameraLength
     }),
     //lib
     vertexShaderParser = makeUtil.vertexShaderParser,
@@ -75,6 +77,7 @@ var Scene = (function () {
             children[this] = {},
             childrenArray[this] = [],
             cameras[this] = {},
+            cameraLength[this] = 0,
             textures[this] = {},
             materials[this] = {},
             geometrys[this] = {},
@@ -182,6 +185,7 @@ var Scene = (function () {
                 this.error(0);
             } else {
                 updateList[this].camera.push(target[v] = v);
+                cameraLength[this]++
             }
             return this;
         }
