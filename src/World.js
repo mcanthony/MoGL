@@ -314,9 +314,8 @@ var World = (function (makeUtil) {
                             mouseObj.x = tMouse.x,
                             mouseObj.y = tMouse.y,
                             mouseObj.z = 0;
-                            
+
                             if (currentMouseItem) mouseObj.target = currentMouseItem.mesh;
-                            
                             if (tMouse.down && currentMouseItem ) {
                                 currentMouseItem.mesh.dispatch(Mesh.down, mouseObj);
                             } else if (tMouse.up && currentMouseItem) {
@@ -334,8 +333,6 @@ var World = (function (makeUtil) {
                             if (tMouse.move) tMouse.move = false;
                             if (tMouse.up) tMouse.up = false;
                             
-                            //tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS),
-                            //tGL.disable(tGL.BLEND),
                             tGL.clearColor(0,0,0,0),
                             tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
                         }
@@ -365,12 +362,7 @@ var World = (function (makeUtil) {
                             tGL.uniformMatrix4fv(tProgram.uCameraMatrix, false, tCameraMtx);
                             if (tProgram['uDLite']) tGL.uniform3fv(tProgram.uDLite, baseLightRotate);
                         }
-                        //tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LEQUAL),
-                        //tGL.enable(tGL.BLEND),
-                        //tGL.blendFunc(tGL.SRC_ALPHA, tGL.ONE_MINUS_SRC_ALPHA),
-                        //tGL.enable(tGL.SCISSOR_TEST);
-                        //tGL.scissor(0, 0,  tCvsW, tCvsH);
-                        
+
                         // 대상 씬의 차일드 루프
                         tChildren = privateChildren[tScene.uuid],
                         tChildrenArray = privateChildrenArray[tScene.uuid],
@@ -455,7 +447,7 @@ var World = (function (makeUtil) {
                             }
                             
                             //노말
-                            if (tNormalMaps = priMatNormalMaps[tMatUUID]) {
+                            if (tNormalMaps = priMatNormalMaps[tMatUUID] ) {
                                 tGL.activeTexture(tGL.TEXTURE1),
                                 tGL.bindTexture(tGL.TEXTURE_2D, tGPU.textures[tNormalMaps[tNormalMaps.length - 1].tex.uuid]),
                                 tGL.uniform1i(tProgram.uNormalSampler, 1),
@@ -499,10 +491,11 @@ var World = (function (makeUtil) {
                                 tGL.uniform3fv(tProgram.uScale, f3),
                                 tColor = priMatWireFrameColor[tMatUUID],
                                 tGL.uniform4fv(tProgram.uColor, tColor),
-                                tGL.drawElements(tGL.LINES, tIBO.numItem, tGL.UNSIGNED_INT, 0),
-                                tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS);
+                                tGL.drawElements(tGL.LINES, tIBO.numItem, tGL.UNSIGNED_INT, 0)
+
                             }
-                            pCulling = tCulling, pVBO = tVBO, pVNBO = tVNBO, pUVBO = tUVBO, pIBO = tIBO, pDiffuse = tDiffuse;
+                            pCulling = tCulling, pVBO = tVBO, pVNBO = tVNBO, pUVBO = tUVBO, pIBO = tIBO, pDiffuse = tDiffuse,
+                            pShading = 'wireFrame'
 
                         }
                         //gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture);
@@ -590,6 +583,7 @@ var World = (function (makeUtil) {
                 ev.x = e.clientX,
                 ev.y = this.height - e.clientY,
                 ev.move = true;
+                e.type =='mousedown' ? (ev.down = true) : e.type =='mouseup' ? (ev.up = true) : 0
             };
             var touchEvent = ['touchmove', 'touchstart', 'touchend'];
             var touchListener = function(e){
@@ -599,6 +593,7 @@ var World = (function (makeUtil) {
                 ev.x = e[t][0].clientX * pRatio,
                 ev.y = this.height - e[t][0].pageY * pRatio,
                 ev.move = true;
+                e.type =='touchstart' ? (ev.down = true) : e.type =='touchend' ? (ev.up = true) : 0
             };
             return function World(id) {
                 var c, i;
