@@ -764,7 +764,7 @@ var World = (function (makeUtil) {
                 //requestAnimationFrame(renderFunc);
             }
             //started[this.uuid] = requestAnimationFrame(renderFunc);
-            started[this.uuid] = setInterval(renderFunc,16);
+            started[this.uuid] = setInterval(renderFunc,16.6);
             return this;
         }
     })
