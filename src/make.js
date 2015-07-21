@@ -76,7 +76,6 @@ var makeUtil = (function(){
         },
         makeProgram:function makeProgram(gpu, name, vSource, fSource) {
             if(!gpu.vbo['_FRAMERECT_']){
-                console.log('실행은되것지')
                 makeUtil.makeVBO(gpu, 'null', [0.0, 0.0, 0.0], 3);
                 makeUtil.makeVBO(gpu, '_FRAMERECT_', [
                     -1.0, 1.0, 0.0,
@@ -143,14 +142,15 @@ var makeUtil = (function(){
             }
             gpu.programs[name] = program;
         },
-        makeTexture:function makeTexture(gpu, uuid,img) {
-            var gl, glTexture;
-            gl = gpu.gl;
+        makeTexture:function makeTexture(gpu, texture) {
+            var gl, glTexture, priIMGS,uuid;
+            gl = gpu.gl,uuid = texture.uuid;
             //console.log(uuid,gpu.textures[uuid])
-            //if(gpu.textures[uuid]) return gpu.textures[uuid]
+            if(gpu.textures[uuid]) return gpu.textures[uuid]
+            priIMGS = $getPrivate('Texture', 'imgs')
             glTexture = gl.createTexture(),
             gl.bindTexture(gl.TEXTURE_2D, glTexture),
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img),
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, priIMGS[uuid]),
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE),
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE),
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR),

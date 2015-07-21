@@ -155,6 +155,7 @@ var World = (function (makeUtil) {
             var priPickingMeshs
             var priBillBoard
             var priCameraProperty
+            var priTexIsLoaded
 
 
 
@@ -195,8 +196,9 @@ var World = (function (makeUtil) {
             priGeoVertexCount = $getPrivate('Geometry', 'vertexCount'),
             priTexSpecularMapPower = $getPrivate('Texture', 'specularMapPower'),
             priTexNormalMapPower = $getPrivate('Texture', 'normalMapPower'),
-            priBillBoard = $getPrivate('Mesh', 'billBoard')
+            priBillBoard = $getPrivate('Mesh', 'billBoard'),
 
+            priTexIsLoaded =$getPrivate('Texture', 'isLoaded')
 
             var render = function render(currentTime) {
                 tUUID = this.uuid,
@@ -207,10 +209,10 @@ var World = (function (makeUtil) {
                 tCvsW = tCvs.width, tCvsH = tCvs.height,
                 tDiffuseMaps = tNormalMaps = null,
                 totalVertex = 0;
-                
+
                 var i = tSceneList.length, j, k, k2, i2, list, curr;
                 var pShading, sheetInfo;
-                
+
                 tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LEQUAL),
                 tGL.enable(tGL.BLEND), tGL.blendFunc(tGL.SRC_ALPHA, tGL.ONE_MINUS_SRC_ALPHA);
 
@@ -233,10 +235,11 @@ var World = (function (makeUtil) {
                     if (j = list.length) {
                         while (j--) {
                             curr = list[j].tex
-                            //if(!updateTex && tGPU.textures[updateTex.uuid] != updateTex.img) makeTexture(tGPU, updateTex.uuid,updateTex.img);
-                            makeTexture(tGPU, curr.uuid, curr.img)
+                            if(priTexIsLoaded[curr.uuid]) makeTexture(tGPU, curr);
+                            //makeTexture(tGPU, curr.uuid, curr.img)
+                            //makeTexture(tGPU, curr)
                         }
-                        list.length = 0;
+                        list.length= 0
                     }
                     if (tScene.updateList.camera.length) cameraRenderAreaUpdate(tUUID);
                     tScene.updateList.camera.length = 0,
@@ -354,7 +357,7 @@ var World = (function (makeUtil) {
                                 useTexture = tDiffuseMaps ? 1 : 0,
                                 useNormalBuffer = 1,
                                 pShading = tShading,
-                                tProgram = 
+                                tProgram =
                                     pShading == Shading.phong ? tGPU.programs[useTexture ? 'bitmapPhong' : 'colorPhong'] :
                                     pShading == Shading.gouraud ? tGPU.programs[useTexture ? 'bitmapGouraud' : 'colorGouraud'] :
                                     pShading == Shading.toon ? tGPU.programs['toonPhong'] :
@@ -416,7 +419,7 @@ var World = (function (makeUtil) {
                                 tGL.uniform1f(tProgram.uSpecularPower, priMatSpecularPower[tMatUUID]),
                                 tGL.uniform4fv(tProgram.uSpecularColor, priMatSpecularColor[tMatUUID]);
                             }
-                            
+
                             //노말
                             if (tNormalMaps = priMatNormalMaps[tMatUUID] ) {
                                 tNormal = tGPU.textures[tNormalMaps[tNormalMaps.length - 1].tex.uuid]
@@ -460,13 +463,7 @@ var World = (function (makeUtil) {
                                 tGL.useProgram(tProgram)
                                 tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
                                 tGL.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, tGL.FLOAT, false, 0, 0);
-                                tGL.uniform3fv(tProgram.uAffine,
-                                    (
-                                        f9[0] = tItem.x, f9[1] = tItem.y, f9[2] = tItem.z,
-                                        f9[3] = tItem.rotateX, f9[4] = tItem.rotateY, f9[5] = tItem.rotateZ,
-                                        f9[6] = tItem.scaleX, f9[7] = tItem.scaleY, f9[8] = tItem.scaleZ, f9
-                                    )
-                                ),
+                                tGL.uniform3fv(tProgram.uAffine,f9),
                                 tColor = priMatWireFrameColor[tMatUUID],
                                 tGL.uniform4fv(tProgram.uColor, tColor),
                                 tGL.drawElements(tGL.LINES, tIBO.numItem, tGL.UNSIGNED_INT, 0)
@@ -483,7 +480,7 @@ var World = (function (makeUtil) {
                         }
                     }
                 }
-                
+
                 // TODO 아래는 아직 다 못옮겨씀
                 // 프레임버퍼를 모아서 찍어!!!
                 if (len > 1) {
