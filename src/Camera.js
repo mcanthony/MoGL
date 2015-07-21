@@ -6,7 +6,9 @@ var Camera = (function () {
     //private
     prop = {},
     //shared private
-    $setPrivate('Camera', {});
+    $setPrivate('Camera', {
+        property : prop
+    });
     return Matrix.extend('Camera',{
         description: "씬을 실제로 렌더링할 카메라 객체를 생성함",
         sample: [

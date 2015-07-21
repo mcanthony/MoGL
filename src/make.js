@@ -12,11 +12,21 @@ var makeUtil = (function(){
         return buffer;
     };
     return {
+        makeBOs : function makeBOs(gpu, v){
+            makeUtil.makeVBO(gpu, v, v.position, 3),
+            makeUtil.makeVNBO(gpu, v, v.normal, 3),
+            makeUtil.makeUVBO(gpu, v, v.uv, 2),
+            makeUtil.makeIBO(gpu, v, v.index, 1);
+            //makeUtil.makeBO(gpu, v)
+        },
+        makeBO:function makeBO(gpu, geo) {
+            // TODO 함수 분리안하고 한방에 생성하자...
+        },
         makeVBO:function makeVBO(gpu, geo, data, stribe) {
             var gl, buffer;
             gl = gpu.gl,
             buffer = gpu.vbo[geo];
-            if (buffer) return buffer;
+            if (buffer) return ;
             if(Array.isArray(data)) {
                 data = new Float32Array(data);
             }
@@ -24,13 +34,12 @@ var makeUtil = (function(){
             buffer.name = geo,
             buffer.type = 'VBO',
             gpu.vbo[geo] = buffer;
-            return buffer;
         },
         makeVNBO:function makeVNVO(gpu, geo, data, stribe) {
             var gl, buffer;
             gl = gpu.gl,
             buffer = gpu.vnbo[geo];
-            if (buffer) return buffer;;
+            if (buffer) return ;
             if (Array.isArray(data)) {
                 data = new Float32Array(data);
             }
@@ -38,13 +47,12 @@ var makeUtil = (function(){
             buffer.name = geo,
             buffer.type = 'VNBO';
             gpu.vnbo[geo] = buffer;
-            return buffer;
         },
         makeIBO:function makeIBO(gpu, geo, data, stribe) {
             var gl, buffer;
             gl = gpu.gl,
             buffer = gpu.ibo[geo];
-            if (buffer) return buffer;;
+            if (buffer) return ;
             if (Array.isArray(data)) {
                 data = new Uint32Array(data);
             }
@@ -52,13 +60,12 @@ var makeUtil = (function(){
             buffer.name = geo,
             buffer.type = 'IBO';
             gpu.ibo[geo] = buffer;
-            return buffer;
         },
         makeUVBO:function makeUVBO(gpu, geo, data, stribe) {
             var gl, buffer;
             gl = gpu.gl,
             buffer = gpu.uvbo[geo];
-            if (buffer) return buffer;;
+            if (buffer) return ;
             if (Array.isArray(data)) {
                 data = new Float32Array(data);
             }
@@ -66,9 +73,25 @@ var makeUtil = (function(){
             buffer.name = geo,
             buffer.type = 'UVBO';
             gpu.uvbo[geo] = buffer;
-            return buffer;
         },
         makeProgram:function makeProgram(gpu, name, vSource, fSource) {
+            if(!gpu.vbo['_FRAMERECT_']){
+                console.log('실행은되것지')
+                makeUtil.makeVBO(gpu, 'null', [0.0, 0.0, 0.0], 3);
+                makeUtil.makeVBO(gpu, '_FRAMERECT_', [
+                    -1.0, 1.0, 0.0,
+                    1.0, 1.0, 0.0,
+                    -1.0, -1.0, 0.0,
+                    1.0, -1.0, 0.0
+                ], 3),
+                makeUtil.makeUVBO(gpu, '_FRAMERECT_', [
+                    0.0, 0.0,
+                    1.0, 0.0,
+                    0.0, 1.0,
+                    1.0, 1.0
+                ], 2),
+                makeUtil.makeIBO(gpu, '_FRAMERECT_', [0, 1, 2, 1, 2, 3], 1);
+            }
             var gl, vShader, fShader, program, i, len, tList;
             gl = gpu.gl,
             vShader = gl.createShader(gl.VERTEX_SHADER),
@@ -106,9 +129,6 @@ var makeUtil = (function(){
                 }else{
                     program[tList[i]] = gl.getUniformLocation(program, tList[i]);
                 }
-
-
-
             }
             tList = fSource.uniforms,
             i = tList.length;
