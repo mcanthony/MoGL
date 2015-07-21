@@ -362,7 +362,8 @@ var World = (function (makeUtil) {
                                     pShading == Shading.toon ? tGPU.programs['toonPhong'] :
                                     pShading == Shading.blinn ? tGPU.programs['bitmapBlinn'] :
                                     (useNormalBuffer = 0, tGPU.programs[useTexture ? 'bitmap' : 'color']),
-                                    pVBO = pVNBO = pUVBO = pIBO = pDiffuse = pNormal = pSpecular =  null,
+                                    //pVBO = pVNBO = pUVBO = pIBO = pDiffuse = pNormal = pSpecular =  null, // TODO 디퓨즈는 항상 0번이니 상관없는건지 확인하자
+                                    pVBO = pVNBO = pUVBO = pIBO = pNormal = pSpecular =  null,
                                 tGL.useProgram(tProgram);
                             }
                             //총정점수계산
@@ -764,7 +765,8 @@ var World = (function (makeUtil) {
                 //requestAnimationFrame(renderFunc);
             }
             //started[this.uuid] = requestAnimationFrame(renderFunc);
-            started[this.uuid] = setInterval(renderFunc,16.6);
+            var gap = 1000/60
+            started[self.uuid] = setInterval(renderFunc,gap);
             return this;
         }
     })
