@@ -4,7 +4,11 @@ var Matrix = (function () {
         raw;
     //private
     raw = {},
+    $setPrivate('Matrix', {
+        raw : raw
+    });
     //lib
+
     temp = new Float32Array(16),
     setter = function(x, y, z){
         return function(v) {

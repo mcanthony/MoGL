@@ -12,11 +12,21 @@ var makeUtil = (function(){
         return buffer;
     };
     return {
+        makeBOs : function makeBOs(gpu, v){
+            makeUtil.makeVBO(gpu, v, v.position, 3),
+            makeUtil.makeVNBO(gpu, v, v.normal, 3),
+            makeUtil.makeUVBO(gpu, v, v.uv, 2),
+            makeUtil.makeIBO(gpu, v, v.index, 1);
+            //makeUtil.makeBO(gpu, v)
+        },
+        makeBO:function makeBO(gpu, geo) {
+            // TODO 함수 분리안하고 한방에 생성하자...
+        },
         makeVBO:function makeVBO(gpu, geo, data, stribe) {
             var gl, buffer;
             gl = gpu.gl,
             buffer = gpu.vbo[geo];
-            if (buffer) return buffer;
+            if (buffer) return ;
             if(Array.isArray(data)) {
                 data = new Float32Array(data);
             }
@@ -24,13 +34,12 @@ var makeUtil = (function(){
             buffer.name = geo,
             buffer.type = 'VBO',
             gpu.vbo[geo] = buffer;
-            return buffer;
         },
         makeVNBO:function makeVNVO(gpu, geo, data, stribe) {
             var gl, buffer;
             gl = gpu.gl,
             buffer = gpu.vnbo[geo];
-            if (buffer) return buffer;;
+            if (buffer) return ;
             if (Array.isArray(data)) {
                 data = new Float32Array(data);
             }
@@ -38,13 +47,12 @@ var makeUtil = (function(){
             buffer.name = geo,
             buffer.type = 'VNBO';
             gpu.vnbo[geo] = buffer;
-            return buffer;
         },
         makeIBO:function makeIBO(gpu, geo, data, stribe) {
             var gl, buffer;
             gl = gpu.gl,
             buffer = gpu.ibo[geo];
-            if (buffer) return buffer;;
+            if (buffer) return ;
             if (Array.isArray(data)) {
                 data = new Uint32Array(data);
             }
@@ -52,13 +60,12 @@ var makeUtil = (function(){
             buffer.name = geo,
             buffer.type = 'IBO';
             gpu.ibo[geo] = buffer;
-            return buffer;
         },
         makeUVBO:function makeUVBO(gpu, geo, data, stribe) {
             var gl, buffer;
             gl = gpu.gl,
             buffer = gpu.uvbo[geo];
-            if (buffer) return buffer;;
+            if (buffer) return ;
             if (Array.isArray(data)) {
                 data = new Float32Array(data);
             }
@@ -66,9 +73,24 @@ var makeUtil = (function(){
             buffer.name = geo,
             buffer.type = 'UVBO';
             gpu.uvbo[geo] = buffer;
-            return buffer;
         },
         makeProgram:function makeProgram(gpu, name, vSource, fSource) {
+            if(!gpu.vbo['_FRAMERECT_']){
+                makeUtil.makeVBO(gpu, 'null', [0.0, 0.0, 0.0], 3);
+                makeUtil.makeVBO(gpu, '_FRAMERECT_', [
+                    -1.0, 1.0, 0.0,
+                    1.0, 1.0, 0.0,
+                    -1.0, -1.0, 0.0,
+                    1.0, -1.0, 0.0
+                ], 3),
+                makeUtil.makeUVBO(gpu, '_FRAMERECT_', [
+                    0.0, 0.0,
+                    1.0, 0.0,
+                    0.0, 1.0,
+                    1.0, 1.0
+                ], 2),
+                makeUtil.makeIBO(gpu, '_FRAMERECT_', [0, 1, 2, 1, 2, 3], 1);
+            }
             var gl, vShader, fShader, program, i, len, tList;
             gl = gpu.gl,
             vShader = gl.createShader(gl.VERTEX_SHADER),
@@ -106,9 +128,6 @@ var makeUtil = (function(){
                 }else{
                     program[tList[i]] = gl.getUniformLocation(program, tList[i]);
                 }
-
-
-
             }
             tList = fSource.uniforms,
             i = tList.length;
@@ -123,14 +142,15 @@ var makeUtil = (function(){
             }
             gpu.programs[name] = program;
         },
-        makeTexture:function makeTexture(gpu, uuid,img) {
-            var gl, glTexture;
-            gl = gpu.gl;
+        makeTexture:function makeTexture(gpu, texture) {
+            var gl, glTexture, priIMGS,uuid;
+            gl = gpu.gl,uuid = texture.uuid;
             //console.log(uuid,gpu.textures[uuid])
-            //if(gpu.textures[uuid]) return gpu.textures[uuid]
+            if(gpu.textures[uuid]) return gpu.textures[uuid]
+            priIMGS = $getPrivate('Texture', 'imgs')
             glTexture = gl.createTexture(),
             gl.bindTexture(gl.TEXTURE_2D, glTexture),
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img),
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, priIMGS[uuid]),
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE),
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE),
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR),
