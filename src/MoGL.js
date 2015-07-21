@@ -513,50 +513,46 @@ var MoGL = (function() {
             value:(function(){
                 var loopstart, loop, target;
                 loop = function loop(){
-                    var t, k0, k1, ani, inst, prop, init, rate;
+                    var t, k0, k1, ani, inst, prop, init, rate, ease, a, b, c;
 					t = performance.now();
+                    console.log(t);
                     for (k0 in target) {
                         ani = target[k0];
-                        if (t > ani.start) {//딜레이대기체크
-                            inst = ani.target,
-                            init = ani.init,
-                            prop = ani.prop;
-                            if (t > ani.end) {//완료상황
-                                if (ani.repeat > 1 || ani.repeat < 0) {//반복체크
-                                    ani.repeat--,
-                                    ani.start = t,
-                                    ani.end = t + ani.term;
-                                    if (ani.yoyo) {//요요체크
-                                        ani.init = prop,
-                                        ani.prop = init;
-                                    }
-                                } else {//완전히 종료
-                                    for(k1 in prop){
-                                        inst[k1] = prop[k1];
-                                    }
-                                    delete target[k0];
-                                    //inst.dispatch(MoGL.propertyChanged);
-                                }
-                            } else {//진행중
-                                var ease = ani.ease, a = (t - ani.start) / ani.term, c, b;
-                                for (k1 in prop) {
-                                    c = init[k1], b = prop[k1] - init[k1],
-                                    inst[k1] = ease == 'linear' ? b*a+c :
-                                        ease == 'backIn' ? b*a*a*(2.70158*a-1.70158)+c :
-                                        ease == 'backOut' ? (a-=1, b*(a*a*(2.70158*a+1.70158)+1)+c) :
-                                        ease == 'backInOut' ? (a*=2, 1>a ? .5*b*a*a*(3.5949095*a-2.5949095)+c : (a-=2, .5*b*(a*a*(3.70158*a+2.70158)+2)+c)) :
-                                        ease == 'bounceOut' ? (.363636>a ? 7.5625*b*a*a+c : .727272>a ? (a-=0.545454,b*(7.5625*a*a+0.75)+c) : .90909>a ? (a-=0.818181,b*(7.5625*a*a+0.9375)+c) : (a-=0.95454, b*(7.5625*a*a+0.984375)+c)) :
-                                        ease == 'sineIn' ? -b*Math.cos(a*PIH)+b+c :
-                                        ease == 'sineOut' ? b*Math.sin(a*PIH)+c :
-                                        ease == 'sineInOut' ? .5*-b*(Math.cos(PI*a)-1)+c :
-                                        ease == 'circleIn' ? -b*(Math.sqrt(1-a*a)-1)+c :
-                                        ease == 'circleOut' ? (a-=1, b*Math.sqrt(1-a*a)+c) :
-                                        ease == 'circleInOut' ? (a*=2, 1>a ? .5*-b*(Math.sqrt(1-a*a)-1)+c : (a-=2, .5*b*(Math.sqrt(1-a*a)+1)+c)) :
-                                        ease == 'quadraticIn' ? b*a*a+c :
-                                        ease == 'quadraticOut' ? -b*a*(a-2)+c :
-                                        c
-                                }
+                        if (t < ani.start) continue;//딜레이대기체크
+                        inst = ani.target,
+                        init = ani.init,
+                        prop = ani.prop;
+                        if (t < ani.end) {//진행중
+                            ease = ani.ease, a = (t - ani.start) / ani.term;
+                            for (k1 in prop) {
+                                c = init[k1], b = prop[k1] - init[k1],
+                                inst[k1] = ease == 'linear' ? b*a+c :
+                                    ease == 'backIn' ? b*a*a*(2.70158*a-1.70158)+c :
+                                    ease == 'backOut' ? (a-=1, b*(a*a*(2.70158*a+1.70158)+1)+c) :
+                                    ease == 'backInOut' ? (a*=2, 1>a ? .5*b*a*a*(3.5949095*a-2.5949095)+c : (a-=2, .5*b*(a*a*(3.70158*a+2.70158)+2)+c)) :
+                                    ease == 'bounceOut' ? (.363636>a ? 7.5625*b*a*a+c : .727272>a ? (a-=0.545454,b*(7.5625*a*a+0.75)+c) : .90909>a ? (a-=0.818181,b*(7.5625*a*a+0.9375)+c) : (a-=0.95454, b*(7.5625*a*a+0.984375)+c)) :
+                                    ease == 'sineIn' ? -b*Math.cos(a*PIH)+b+c :
+                                    ease == 'sineOut' ? b*Math.sin(a*PIH)+c :
+                                    ease == 'sineInOut' ? .5*-b*(Math.cos(PI*a)-1)+c :
+                                    ease == 'circleIn' ? -b*(Math.sqrt(1-a*a)-1)+c :
+                                    ease == 'circleOut' ? (a-=1, b*Math.sqrt(1-a*a)+c) :
+                                    ease == 'circleInOut' ? (a*=2, 1>a ? .5*-b*(Math.sqrt(1-a*a)-1)+c : (a-=2, .5*b*(Math.sqrt(1-a*a)+1)+c)) :
+                                    ease == 'quadraticIn' ? b*a*a+c :
+                                    ease == 'quadraticOut' ? -b*a*(a-2)+c :
+                                    c
                             }
+                        } else if (ani.repeat) {//반복체크
+                            ani.repeat--,
+                            ani.start = t,
+                            ani.end = t + ani.term;
+                            if (ani.yoyo) {//요요체크
+                                ani.init = prop,
+                                ani.prop = init;
+                            }
+                        } else {//완전히 종료
+                            for (k1 in prop) inst[k1] = prop[k1];
+                            delete target[k0];
+                            //inst.dispatch(MoGL.propertyChanged);
                         }
                     }
                 },
@@ -578,6 +574,7 @@ var MoGL = (function() {
                         ani.end = ani.start + ani.term;
                         for (k in v) ani.init[k] = this[k], ani.prop[k] = v[k];
                         if (!loopstart) {
+                            console.log('start');
                             loopstart = true;
                             setInterval(loop, 16);
                         }
