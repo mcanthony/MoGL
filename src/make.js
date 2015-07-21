@@ -20,7 +20,7 @@ var makeUtil = (function(){
             //makeUtil.makeBO(gpu, v)
         },
         makeBO:function makeBO(gpu, geo) {
-
+            // TODO 함수 분리안하고 한방에 생성하자...
         },
         makeVBO:function makeVBO(gpu, geo, data, stribe) {
             var gl, buffer;

@@ -1,6 +1,6 @@
 var World = (function (makeUtil) {
     'use strict';
-    var getGL, glSetting, glContext, rectMatrix = Matrix();
+    var getGL, glSetting, glContext, rectMTX = new Float32Array([1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]);
     var makeVBO, makeVNBO, makeIBO, makeUVBO, makeProgram, makeTexture, makeFrameBuffer,makeBOs;
     var baseShaderUpdate, cameraRenderAreaUpdate;
 
@@ -57,6 +57,8 @@ var World = (function (makeUtil) {
     },
     cameraRenderAreaUpdate = function (self) {
         var p, p2, k, k2;
+        var priRaw;
+        priRaw = $getPrivate('Matrix', 'raw'),
         p = sceneList[self]
         for (k in p) {
             p2 = p[k].cameras
@@ -97,8 +99,8 @@ var World = (function (makeUtil) {
                     camera.renderArea.byAutoArea = true
                 }
                 camera.resetProjectionMatrix()
-                tProjectionMtx = camera.projectionMatrix.raw;
-                tCameraMtx = camera.matrix.raw;
+                tProjectionMtx = priRaw[camera.projectionMatrix.uuid];
+                tCameraMtx = priRaw[camera.matrix.uuid];
                 //TODO 렌더러 반영하겠금 고쳐야겠고..
                 // 헉!! 프레임 버퍼가 카메라에 종속되있어!!!!!!
                 makeFrameBuffer(gpu[self], camera, cvs);
@@ -128,16 +130,17 @@ var World = (function (makeUtil) {
         ],
         value:(function(){
             var len = 0;
-            var prevWidth,prevHeight
+            var prevWidth, prevHeight
             var f9 = new Float32Array(9);
             var tScene, tSceneList, tCameraList, tCamera, tGPU, tGL, tChildren, tChildrenArray;
 
             var tCvs, tCvsW, tCvsH;
             var tItem, tMaterial;
-            var tUUID, tCameraUUID, tItemUUID, tMatUUID;
+            var tUUID, tCameraUUID, tItemUUID, tMatUUID, tSceneUUID;
             var tGeo,tColor,tDiffuseMaps, tNormalMaps, tSpecularMaps;
             var tProgram, tCulling, tVBO, tVNBO, tUVBO, tIBO, tDiffuse, tNormal, tSpecular, tFrameBuffer, tShading;
             var pCulling, pVBO, pVNBO, pUVBO, pIBO, pDiffuse, pNormal, pSpecular;
+            var tListener
 
             var privateChildren, privateChildrenArray, priCameraLength;
             var priGeo, priMat;
@@ -154,18 +157,20 @@ var World = (function (makeUtil) {
             var priCameraProperty
 
 
+
             var baseLightRotate;
             var useNormalBuffer, useTexture;
 
-            var priListener = $getPrivate('MoGL', 'listener')
+            var totalVertex = 0
+
             var currentMouse = new Uint8Array(4)
             currentMouse[3] = 1
             var currentMouseItem, oldMouseItem, checkMouse = true
-            var totalVertex = 0
             var mouseObj = {}
             var sheetOffset = [], pM=[], rM = [0, 0, 0], uTS = []
             var pickLength;
             var tMouse
+            var priListener = $getPrivate('MoGL', 'listener')
 
             priCameraProperty = $getPrivate('Camera', 'property'),
             privateChildren = $getPrivate('Scene', 'children'),
@@ -206,14 +211,15 @@ var World = (function (makeUtil) {
                 var i = tSceneList.length, j, k, k2, i2, list, curr;
                 var pShading, sheetInfo;
                 
-                tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LEQUAL), 
+                tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LEQUAL),
                 tGL.enable(tGL.BLEND), tGL.blendFunc(tGL.SRC_ALPHA, tGL.ONE_MINUS_SRC_ALPHA);
 
-                //this.dispatch(World.renderBefore, currentTime,totalVertex),
-                if(priListener[tUUID] && priListener[tUUID]['WORLD_RENDER_BEFORE']) priListener[tUUID]['WORLD_RENDER_BEFORE'][0].f(currentTime)
+                tListener = priListener[tUUID]
+                if(tListener && tListener['WORLD_RENDER_BEFORE']) tListener['WORLD_RENDER_BEFORE'][0].f(currentTime)
                 while (i--) {
                     tScene = tSceneList[i];
-                    len = priCameraLength[tScene.uuid]
+                    tSceneUUID = tScene.uuid
+                    len = priCameraLength[tSceneUUID]
                     //버퍼 업데이트
                     list = tScene.updateList.geometry;
                     if (j = list.length) {
@@ -222,7 +228,6 @@ var World = (function (makeUtil) {
                             if (!tGPU.vbo[curr]) makeBOs(tGPU,curr)
                         }
                         list.length = 0;
-
                     }
                     list = tScene.updateList.texture;
                     if (j = list.length) {
@@ -306,31 +311,31 @@ var World = (function (makeUtil) {
                                     oldMouseItem.mesh.dispatch(Mesh.move, mouseObj);
                                 }
 
-                                if (tMouse.down) tMouse.down = false;
-                                if (tMouse.move) tMouse.move = false;
-                                if (tMouse.up) tMouse.up = false;
+                                tMouse.down ?  tMouse.down = false : 0;
+                                tMouse.move ?  tMouse.move = false : 0;
+                                tMouse.up ?  tMouse.up = false : 0;
                                 tGL.clearColor(0,0,0,0)
                                 tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
                             }
                         }
                         tGL.bindFramebuffer(tGL.FRAMEBUFFER, null);
                         // draw Start
-                        //카메라설정
+                        // 뷰포트설정
                         if (len > 1) {
                             tFrameBuffer = tGPU.framebuffers[tCameraUUID].frameBuffer;
                             tGL.bindFramebuffer(tGL.FRAMEBUFFER, tFrameBuffer);
-                            if(prevWidth != tFrameBuffer.width || prevHeight != tFrameBuffer.height) tGL.viewport(0, 0, tFrameBuffer.width, tFrameBuffer.height)
+                            if(prevWidth != tFrameBuffer.width || prevHeight != tFrameBuffer.height) {
+                                tGL.viewport(0, 0, tFrameBuffer.width, tFrameBuffer.height)
+                            }
                             prevWidth = tFrameBuffer.width , prevHeight = tFrameBuffer.height
-                        }else{
-                            if (prevWidth != tCvsW || prevHeight != tCvsH) tGL.viewport(0, 0, tCvsW, tCvsH)
-                            prevWidth = tCvsW , prevHeight = tCvsH
                         }
                         tColor = priCameraProperty[tCameraUUID],
                         tGL.clearColor(tColor.r, tColor.g, tColor.b, tColor.a)
                         tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
+
                         // 대상 씬의 차일드 루프
-                        tChildren = privateChildren[tScene.uuid],
-                        tChildrenArray = privateChildrenArray[tScene.uuid],
+                        tChildren = privateChildren[tSceneUUID],
+                        tChildrenArray = privateChildrenArray[tSceneUUID],
                         i2 = tChildrenArray.length;
                         while(i2--){
                             tItem = tChildrenArray[i2],
@@ -482,13 +487,12 @@ var World = (function (makeUtil) {
                 // TODO 아래는 아직 다 못옮겨씀
                 // 프레임버퍼를 모아서 찍어!!!
                 if (len > 1) {
-                    tGL.viewport(0, 0, tCvs.width, tCvs.height);
                     tGL.clearColor(0, 0, 0, 1);
-                    tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LEQUAL);
-                    //tGL.disable(tGL.DEPTH_TEST);
-                    tGL.enable(tGL.BLEND);
-                    tGL.blendFunc(tGL.SRC_ALPHA, tGL.ONE_MINUS_SRC_ALPHA);
                     tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
+                    tGL.viewport(0, 0, tCvs.width, tCvs.height);
+                    tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LEQUAL);
+                    tGL.enable(tGL.BLEND),tGL.blendFunc(tGL.SRC_ALPHA, tGL.ONE_MINUS_SRC_ALPHA);
+
                     tVBO = tGPU.vbo['_FRAMERECT_'],
                     tUVBO = tGPU.uvbo['_FRAMERECT_'],
                     tIBO = tGPU.ibo['_FRAMERECT_'],
@@ -511,11 +515,7 @@ var World = (function (makeUtil) {
                     tGL.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, tGL.FLOAT, false, 0, 0),
                     tGL.bindBuffer(tGL.ARRAY_BUFFER, tUVBO),
                     tGL.vertexAttribPointer(tProgram.aUV, tUVBO.stride, tGL.FLOAT, false, 0, 0),
-
-                        //tGL.uniform3fv(tProgram.uRotate, [0, 0, 0]),
-                    tGL.uniform3fv(tProgram.uRotate, rM),
-                    tGL.uniformMatrix4fv(tProgram.uCameraMatrix, false, rectMatrix.raw);
-
+                    tGL.uniformMatrix4fv(tProgram.uCameraMatrix, false, rectMTX);
                     for (k in tCameraList) {
                         tCamera = tCameraList[k]
                         tCameraUUID = tCamera.uuid
@@ -551,10 +551,7 @@ var World = (function (makeUtil) {
                     }
 
                 }
-                
-                //this.dispatch(World.renderAfter, currentTime, totalVertex);
-                if(priListener[tUUID] && priListener[tUUID]['WORLD_RENDER_AFTER']) priListener[tUUID]['WORLD_RENDER_AFTER'][0].f(currentTime)
-                
+                if(tListener && tListener['WORLD_RENDER_AFTER']) tListener['WORLD_RENDER_AFTER'][0].f(currentTime)
                 //tGL.flush();
                 //tGL.finish()
             };
