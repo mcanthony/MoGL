@@ -73,22 +73,12 @@ var World = (function (makeUtil) {
                     th = cvs.height
                     var wRatio = tRenderArea[2] / tw;
                     var hRatio = tRenderArea[3] / th;
-                    /*
-                    tRenderArea = [
-                        typeof tRenderArea[0] == 'string' ? tw * tRenderArea[0].replace('%', '') * 0.01 : tRenderArea[0],
-                        typeof tRenderArea[1] == 'string' ? th * tRenderArea[1].replace('%', '') * 0.01 : tRenderArea[1],
-                        typeof tRenderArea[2] == 'string' ? tw * tRenderArea[2].replace('%', '') * 0.01 : tRenderArea[2],
-                        typeof tRenderArea[3] == 'string' ? th * tRenderArea[3].replace('%', '') * 0.01 : tRenderArea[3]
-                    ];
-                    camera.renderArea = [tRenderArea[0], tRenderArea[1], tw * wRatio, th * hRatio]
-                    */
                     tRenderArea[0] = typeof tRenderArea[0] == 'string' ? tw * tRenderArea[0].replace('%', '') * 0.01 : tRenderArea[0],
                     tRenderArea[1] = typeof tRenderArea[1] == 'string' ? th * tRenderArea[1].replace('%', '') * 0.01 : tRenderArea[1],
                     tRenderArea[2] = tw * wRatio,
                     tRenderArea[3] = th * hRatio,
                     camera.renderArea.byAutoArea=false
                 }else{
-                    //camera.renderArea = [0,0,cvs.width,cvs.height]
                     if (tRenderArea) {
                         tRenderArea[0] = tRenderArea[1] = 0,
                         tRenderArea[2] = cvs.width, tRenderArea[3] = cvs.height;
@@ -763,15 +753,13 @@ var World = (function (makeUtil) {
             "world.start();"
         ],
         value:function start() {
-            //var renderFunc = this.getRenderer(1)
-            var self = this
-            var renderFunc =function () {
-                self.render(Date.now());
-                //requestAnimationFrame(renderFunc);
+            var self;
+            if (!started[this.uuid]) {
+                self = this;
+                started[this.uuid] = MoGL.addInterval(function(t){
+                    self.render(t);   
+                });
             }
-            //started[this.uuid] = requestAnimationFrame(renderFunc);
-            var gap = 1000/60
-            started[self.uuid] = setInterval(renderFunc,gap);
             return this;
         }
     })
@@ -786,8 +774,10 @@ var World = (function (makeUtil) {
             "world.stop();"
         ],
         value:function stop() {
-            //cancelAnimationFrame(started[this.uuid]);
-            clearInterval(started[this.uuid])
+            if (started[this.uuid]) {
+                MoGL.removeInterval(started[this.uuid]);
+                started[this.uuid] = null;
+            }
             return this;
         }
     })
