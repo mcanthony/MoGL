@@ -4,6 +4,7 @@ var World = (function (makeUtil) {
     var makeVBO, makeVNBO, makeIBO, makeUVBO, makeProgram, makeTexture, makeFrameBuffer,makeBOs;
     var baseShaderUpdate, cameraRenderAreaUpdate;
 
+    var priRaw = $getPrivate('Matrix', 'raw')
     var tProjectionMtx
     var tCameraMtx
     glSetting = {
@@ -57,8 +58,6 @@ var World = (function (makeUtil) {
     },
     cameraRenderAreaUpdate = function (self) {
         var p, p2, k, k2;
-        var priRaw;
-        priRaw = $getPrivate('Matrix', 'raw'),
         p = sceneList[self]
         for (k in p) {
             p2 = p[k].cameras
@@ -243,9 +242,10 @@ var World = (function (makeUtil) {
                     tScene.updateList.camera.length = 0,
                     //////////////////////////////////////////////////////////////////////////////////////////////////////
                     tCameraList = tScene.cameras,
-                    baseLightRotate = tScene.baseLightRotate;
+                    baseLightRotate = tScene.baseLightRotate
                     for (k in tCameraList) {
                         tCamera = tCameraList[k],
+                        tCameraMtx = priRaw[camera.matrix.uuid];
                         tCameraUUID = tCamera.uuid
                         if (!tCamera.visible) continue;
                         //TODO 마우스용 프레임버퍼가 따로 필요하군 현재는 공용이자나!!!
