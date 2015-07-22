@@ -98,11 +98,13 @@
         var meshs, item, PI2, i;
         meshs = []
         PI2 = Math.PI * 2;
+        var a = new Material(Math.random(), Math.random(), Math.random(), 1)
+        var b = new Material(Math.random(), Math.random(), Math.random(), 1)
+        b.addTexture(Texture.diffuse, texture)
         for (i = 0; i < 500; i++) {
-            var a = new Material(Math.random(), Math.random(), Math.random(), 1)
-            if (i % 5 == 0) a.addTexture(Texture.diffuse, texture)
-            item = new Mesh(geo, a);
-            a.shading = Shading.phong
+            var m = (i % 5 == 0) ? b : a
+            item = new Mesh(geo, m);
+            m.shading = Shading.phong
             item.position = [Math.random() * 50 - 25, Math.random() * 50 - 25, Math.random() * 50 - 25]
             item.rotate = [Math.random() * PI2, Math.random() * PI2, Math.random() * PI2];
             scene.addChild(item);
