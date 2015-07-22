@@ -247,6 +247,7 @@ var World = (function (makeUtil) {
                     for (k in tCameraList) {
                         tCamera = tCameraList[k],
                         tCameraMtx = priRaw[tCamera.matrix.uuid];
+
                         tUUID_camera = tCamera.uuid
                         if (!tCamera.visible) continue;
                         //TODO 마우스용 프레임버퍼가 따로 필요하군 현재는 공용이자나!!!
