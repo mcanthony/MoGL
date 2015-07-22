@@ -368,7 +368,6 @@ var MoGL = (function() {
             if(!(cls.uuid in counter)) counter[cls.uuid] = 0;
 
             for (k in inheritedStatic) {
-
                 this.static(k, inheritedStatic[k]);
             }
             
@@ -614,6 +613,7 @@ var MoGL = (function() {
                                 ani.init = prop,
                                 ani.prop = init;
                             }
+                            inst.dispatch(MoGL.propertyRepeated);
                         } else {//완전히 종료
                             for (k1 in prop) inst[k1] = prop[k1];
                             delete target[k0];
@@ -878,6 +878,20 @@ var MoGL = (function() {
                 "mat.setProperties({x:50}, {time:1});"
             ],
             value:'propertyChanged'
+        })
+        .event('propertyRepeated', {
+            description:[
+                'setProperties 호출시 애니메이션 반복이 끝날때마다 발생함',
+            ],
+            type:'string',
+            sample: [
+                "var mat = new Matrix();",
+                "mat.addEventListener(MoGL.propertyRepeated, function(){",
+                "  console.log('propertyRepeated');",
+                "} );",
+                "mat.setProperties({x:50}, {time:1, repeat:3});"
+            ],
+            value:'propertyRepeated'
         })
         .constant('ease', {
             description:(function(){
