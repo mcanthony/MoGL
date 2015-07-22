@@ -13,7 +13,7 @@ var World = (function (makeUtil) {
         stencil: false,
         antialias: window.devicePixelRatio == 1 ? true : false,
         premultipliedAlpha: false,
-        preserveDrawingBuffer: false
+        preserveDrawingBuffer: true
     },
     getGL = function (canvas) {
         var gl, keys, i;
@@ -336,7 +336,7 @@ var World = (function (makeUtil) {
                         tColor != gCameraProperty[tUUID_camera] ? (
                             tColor = gCameraProperty[tUUID_camera],
                             tGL.clearColor(tColor.r, tColor.g, tColor.b, tColor.a)
-                        ) : 0
+                        ) : 0,
                         tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
 
                         // 대상 씬의 차일드 루프
@@ -348,6 +348,7 @@ var World = (function (makeUtil) {
                             k4 = tRenderList[k3]
                             // 지오가 바뀌는 시점
                             for (k5 in k4) {
+                                pDiffuse = pNormal = pSpecular = pShading = pMaterial = null
                                 k6 = k4[k5]
                                 i2 = k6.length;
                                 // 프로그램이 바뀌는 시점
@@ -355,7 +356,8 @@ var World = (function (makeUtil) {
                                 useTexture = tUseTexture,
                                 useNormalBuffer = 1,
                                 //TODO tShading을 해결해야하는군
-                                pShading = gMatShading[gMatShading[gMat[k6[0].uuid]].uuid],
+                                pShading = gMatShading[gMat[k6[0].uuid]],
+                                //console.log(gMatShading[gMat[k6[0].uuid]])
                                 tProgram = tGPU.programs[k5],
                                 useNormalBuffer = (k5 =='bitmap' || k5 == 'color') ? 0 : 1,
                                 tGL.useProgram(tProgram);
@@ -385,7 +387,6 @@ var World = (function (makeUtil) {
                                 }
                                 tIBO = tGPU.ibo[tGeo],
                                 tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO)
-
                                 while(i2--){
                                     tItem = k6[i2],
                                     tUUID_Item = tItem.uuid,
@@ -788,7 +789,8 @@ var World = (function (makeUtil) {
             }
             ////started[this.uuid] = requestAnimationFrame(renderFunc);
             var gap = 1000/60
-            started[self.uuid] = setInterval(renderFunc,gap);
+            //started[self.uuid] = setInterval(renderFunc,16);
+            setInterval(renderFunc,gap);
 
             //var fps = 60;
             //var now;

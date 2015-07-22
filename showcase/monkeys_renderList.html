@@ -120,12 +120,12 @@
             divCurrentFPS.textContent = currentFPS.toFixed(2);
             divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2) + ' / totalVertex : ' + totalVertex;
 
-            var i = meshs.length, item;
-//            while (i--) {
-//                item = meshs[i],
-//                item.rotateX += 0.05,
-//                item.rotateY += 0.05,
-//                item.rotateZ += 0.05
+//            var i = meshs.length, item;
+////            while (i--) {
+////                item = meshs[i],
+////                item.rotateX += 0.05,
+////                item.rotateY += 0.05,
+////                item.rotateZ += 0.05
 //            }
             camera.x = Math.sin(count / 50) * 50,
             camera.y = Math.cos(count / 100) * 50,
