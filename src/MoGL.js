@@ -1,7 +1,74 @@
 var MoGL = (function() {
     'use strict';
     var Definer, build, func, keys, val, param, checker,
-        MoGL, idProp, destroy, classGet, totalCount, error;
+        MoGL, idProp, destroy, classGet, totalCount, error,
+        addInterval, removeInterval, resumeInterval, stopInterval, stopDelay, resumeDelay;
+    (function() {
+        var intervalId = -1, interpolate = 0, pause = 0, interval = [], len = 0, 
+            timer, info = [], uuid = 0, loop, stop = 0;
+        loop = function loop(){
+            var t, i;
+            if (stop) return;
+            t = performance.now() - interpolate, i = len;
+            while (i--) interval[i](t);
+        },
+        resumeDelay = function(){
+            timer = 0, resumeInterval();
+        },
+        resumeInterval = function(t){
+            if (timer) return;
+            if (t) setTimeout(resumeDelay, timer = t * 1000);
+            else if (stop) {
+                interpolate += performance.now() - pause;
+                stop = 0;
+            }
+        },
+        stopDelay = function(){
+            timer = 0, stopInterval();
+        },
+        stopInterval = function(t){
+            if (timer) return;
+            if (t) setTimeout(stopDelay, timer = t * 1000);
+            else if (!stop) {
+                pause = performance.now();
+                stop = 1;
+            }
+        },
+        addInterval = function(f, key) {
+            if (key) {
+                if (info[key]) throw new Error(0);
+            } else {
+                key = uuid++;
+            }
+            interval[interval.length] = info[key] = f,
+            len = interval.length;
+            if (intervalId == -1) {
+                intervalId = setInterval(loop, 10),
+                interpolate = 0;
+            }
+            return key;
+        },
+        removeInterval = function(key) {
+            var f, i, k;
+            if (f = info[key]) {
+                delete info[key],
+                interval.splice(interval.indexOf(f), 1);
+            } else {
+                i = interval.indexOf(key);
+                if(i == -1) throw new Error(0);
+                f = interval[i];
+                for (k in info) {
+                    if (info[k] === f) {
+                        delete info[k];
+                        break;
+                    }
+                }
+                interval.splice(i, 1);
+            }
+            len = interval.length;
+            if (!len) clearInterval(intervalId), intervalId = -1;
+        };
+    })(),
     checker = {};
     param = function(v){
         var i;
@@ -512,10 +579,8 @@ var MoGL = (function() {
             ],
             value:(function(){
                 var loopstart, loop, target;
-                loop = function loop(){
-                    var t, k0, k1, ani, inst, prop, init, rate, ease, a, b, c;
-					t = performance.now();
-                    console.log(t);
+                loop = function loop(t){
+                    var k0, k1, ani, inst, prop, init, rate, ease, a, b, c;
                     for (k0 in target) {
                         ani = target[k0];
                         if (t < ani.start) continue;//딜레이대기체크
@@ -552,7 +617,7 @@ var MoGL = (function() {
                         } else {//완전히 종료
                             for (k1 in prop) inst[k1] = prop[k1];
                             delete target[k0];
-                            //inst.dispatch(MoGL.propertyChanged);
+                            inst.dispatch(MoGL.propertyChanged);
                         }
                     }
                 },
@@ -561,7 +626,6 @@ var MoGL = (function() {
                     var k, ani, start, end, term;
                     if (opt) {
                         target[this] = ani = {
-                            //ease:opt.ease || ($ease ? $ease.linear : function(){}),
                             ease:opt.ease || 'linear',
                             repeat:opt.repeat || 0,
                             yoyo:opt.yoyo || false,
@@ -574,9 +638,8 @@ var MoGL = (function() {
                         ani.end = ani.start + ani.term;
                         for (k in v) ani.init[k] = this[k], ani.prop[k] = v[k];
                         if (!loopstart) {
-                            console.log('start');
-                            loopstart = true;
-                            setInterval(loop, 16);
+                            loopstart = true,
+                            MoGL.addInterval(loop);
                         }
 					} else {
 						delete target[this];
@@ -695,6 +758,57 @@ var MoGL = (function() {
                 }
                 return this;
             }
+        })
+        .static('addInterval', {
+            description:'MoGL에서 관리하는 단일 전역 인터벌에 함수를 추가함',
+            param:[
+                'target:function - 인터벌에 등록할 함수',
+                '?key:string - 삭제시 사용할 등록키. 생략시 임의로 생성함'
+            ],
+            ret:'string - 방금 등록한 키',
+            sample:[
+                "var loop = function(time){",
+                "};",
+                "var id = MoGL.addInterval(loop);",
+                "//삭제시",
+                "MoGL.removeInterval(id);"
+            ],
+            value:addInterval
+        })
+        .static('removeInterval', {
+            description:'MoGL에서 관리하는 단일 전역 인터벌에 함수를 제거함',
+            param:'target:function of string - 인터벌에 등록한 함수 또는 id',
+            ret:'string - 방금 등록한 키',
+            sample:[
+                "var loop = function(time){};",
+                "var id = MoGL.addInterval(loop);",
+                "//id로 삭제",
+                "MoGL.removeInterval(id);",
+                "//함수로 삭제",
+                "MoGL.removeInterval(loop);"
+            ],
+            value:removeInterval
+        })
+        .static('resumeInterval', {
+            description:'MoGL.stopInterval로 중지한 인터벌을 되살림. 되살린 경우 중지된 시간동안의 보상은 반영되지 않음',
+            param:'?delay:second - 시간을 넣는 경우 경과후 살아남',
+            ret:'없음',
+            sample:[
+                "MoGL.addInterval(loop);",
+                "MoGL.stopInterval();",
+                "MoGL.resumeInterval(1);"
+            ],
+            value:resumeInterval
+        })
+        .static('stopInterval', {
+            description:'인터벌을 중지시킴.',
+            param:'?delay:second - 시간을 넣는 경우 경과후 정지함',
+            ret:'string - 방금 등록한 키',
+            sample:[
+                 "MoGL.addInterval(loop);",
+                "MoGL.stopInterval(2);"
+            ],
+            value:stopInterval
         })
         .static('classes', {
             param:'context:Object - 클래스를 복사할 객체. 생략시 빈 오브젝트가 생성됨',
