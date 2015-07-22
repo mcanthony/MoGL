@@ -571,7 +571,7 @@ var World = (function (makeUtil) {
 
                 }
                 if(tListener && tListener['WORLD_RENDER_AFTER']) tListener['WORLD_RENDER_AFTER'][0].f(currentTime,totalVertex)
-                tGL.flush();
+                //tGL.flush();
                 //tGL.finish()
             };
             var mouseEvent = ['mousemove','mousedown','mouseup'];
