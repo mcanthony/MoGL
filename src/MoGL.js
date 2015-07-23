@@ -43,7 +43,7 @@ var MoGL = (function() {
             interval[interval.length] = info[key] = f,
             len = interval.length;
             if (intervalId == -1) {
-                intervalId = setInterval(loop, 16),
+                intervalId = setInterval(loop, 10),
                 interpolate = 0;
             }
             return key;
