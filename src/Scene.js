@@ -396,7 +396,7 @@ var Scene = (function () {
                 if (k == v || p[k].id == v) {
                     childrenArray[this].splice(childrenArray[this].indexOf(p[k]), 1),
                     p[k].removeEventListener(MoGL.changed),
-                    updateList[this].removeMerged.push(p[k]),
+                    //updateList[this].removeMerged.push(p[k]),
                     delete p[k];
                     return true;
                 }

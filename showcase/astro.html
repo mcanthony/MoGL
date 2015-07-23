@@ -63,7 +63,6 @@ var init = function(isLoaded, imgs){
         .addChild(//main camera
             camera = Camera()
             .setProperties({fov:[bs('#stage').S('w'), bs('#stage').S('h'), 45]})
-            //.setProperties({rotateZ:360*toRadian}, {repeat:-1,time:7.2})
         )
         .addChild(//background
             bg = Mesh( 
@@ -73,11 +72,10 @@ var init = function(isLoaded, imgs){
                     .addTexture(Texture.diffuse, Texture(imgs[1]))
             )
             .setProperties({z:-370, scaleX:450, scaleY:450})
-            //.setProperties({rotateZ:-360*toRadian}, {repeat:-1,time:7})
         )
     );
     bs('#preloader').S(null);
-	world.setAutoSize(1).start();
+	world.setAutoSize(1) .start();
     (function(){
         var r = 0, x, y;
         bs.WIN.on('keydown', MoGL.stopInterval, 0, 1);
@@ -90,12 +88,6 @@ var init = function(isLoaded, imgs){
             bg.rotateZ = camera.y*.05;
             camera.lookAt(0, 0, -200);
         }, 0, 1);
-        
-        world.addEventListener(World.renderAfter, function(t) {
-            //camera.x = Math.cos(r)*25, camera.y = Math.sin(r)*25;
-            //camera.rotateZ = r;
-            r += .1;
-        });
     })();
 	(function(){
 		var loop, i, material, sphere, down, end, ani, prop, boom;
@@ -105,12 +97,11 @@ var init = function(isLoaded, imgs){
         material.addTexture(Texture.specular, Texture(bs.IMG.crop(imgs[0], 400, 0, 200, 160, true)));
         boom = Material('#F00').setProperties({shading:Shading.phong, specularColor:'#ff0000'}), 
         sphere = Primitive.sphere(3,3),
-        
 		down = (function(){
             var counter = bs('<div style="position:absolute;top:0;left:0;margin:10px;color:#fff">0</div>').S('<','body','this'), count = 0;
             return function(e){
                 count++;
-                counter.S('html',count);
+                counter.S('html', count);
                 this.material = boom;
                 this.removeEventListener(Mesh.down, down);
                 this.addEventListener(MoGL.propertyRepeated, end);
@@ -120,12 +111,12 @@ var init = function(isLoaded, imgs){
             this.setProperties(null);
             this.removeEventListener(MoGL.propertyRepeated, end);
             scene.removeChild(this);
-        }
+        },
 		ani = {time:3, repeat:-1},
 		prop = {rotateX:360*toRadian,rotateY:720*toRadian,rotateZ:360*toRadian},
-        i = 100;
+        i = 2000;
 		setTimeout(loop = function(){
-            var size = bs.randf(.7, 1.2);
+            var size = bs.randf(1.7, 2.2);//bs.randf(.7, 1.2);
             ani.time = bs.randf(3,6), ani.delay = bs.randf(0,10),
 			prop.x = bs.randf(-25,25), prop.y = bs.randf(-25,25), prop.z = bs.randf(10,200)
 			scene.addChild(
@@ -141,14 +132,6 @@ var init = function(isLoaded, imgs){
 			if (i--) setTimeout(loop, 1);
 		}, 1);
 	})();
-    
-    
-    
-	/*
-    
-    bs('#preloader').S(null);
-	world.setAutoSize(1).start();
-    */
 };
 bs.IMG.load(init, 'astro/map.png', 'astro/bg.jpg');
 </script>
