@@ -5,27 +5,35 @@
 
 **field**
 
-* [wireFrameColor](#wireFrameColor) - 와이어 프레임 컬러
+* [color](#color) - 재질 컬러색
+* [sprite](#sprite) - 이 재질이 스프라이트모드로 작동하게...
+* [spriteFrame](#spriteFrame) - 스프라이트의 현재 프레임
+* [spriteTotalFrame](#spriteTotalFrame) - 스프라이트의 전체 프레임
+* [count](#count) - 재질이 사용된 횟수
 * [wireFrame](#wireFrame) - 와이어 프레임 표현여부
+* [wireFrameColor](#wireFrameColor) - 와이어 프레임 컬러
 * [shading](#shading) - 재질 쉐이딩 적용
 * [lambert](#lambert) - 재질 쉐이딩 적용 강도 설정
-* [isLoaded](#isLoaded) - 재질에 적용된 텍스쳐들이 모두 로딩되...
+* [normalPower](#normalPower) - 재질 normalPower 적용 강도...
+* [specularPower](#specularPower) - 재질 specularPower 적용...
+* [specularColor](#specularColor) - specular 컬러색
 * [diffuse](#diffuse) - 재질에 적용된 디퓨즈 리스트 반환
-* [count](#count) - 재질이 사용된 횟수
-* [color](#color) - 재질 컬러색
+* [normal](#normal) - 재질에 적용된 normal 리스트 반...
+* [specular](#specular) - 재질에 적용된 specular 리스트...
+* [isLoaded](#isLoaded) - 재질에 적용된 텍스쳐들이 모두 로딩되...
 
 **method**
 
-* [removeTexture](#removeTexture) - removeTexture를 통해 등록...
 * [addTexture](#addTexture) - [Mesh](Mesh.md)를 통해...
+* [removeTexture](#removeTexture) - removeTexture를 통해 등록...
 
 **static**
 
-* [getMD](#getMD) - 해당 클래스를 마크다운 형식으로 문서...
-* [getInstance](#getInstance) - uuid 또는 id를 기반으로 인스턴...
 * [extend](#extend) - 이 클래스를 상속하는 자식클래스를 만...
-* [error](#error) - 정적함수에서 표준화된 예외를 처리함(...
+* [getInstance](#getInstance) - uuid 또는 id를 기반으로 인스턴...
 * [count](#count) - 이 클래스로 부터 만들어져 활성화된...
+* [error](#error) - 정적함수에서 표준화된 예외를 처리함(...
+* [getMD](#getMD) - 해당 클래스를 마크다운 형식으로 문서...
 
 **event**
 
@@ -43,8 +51,7 @@
 
 **param**
 
-?color:string - 재질의 기본적인 색상. 생략하면 색상 없음. 다음과 같은 형태가 올 수 있음.
-r, g, b, a : 각각 0~1 사이의 소수를 받으며 각각 대응함.
+?color:string - 재질의 기본적인 색상. 생략하면 FFFFFF 1.0
 
 **exception**
 
@@ -64,8 +71,8 @@ var mat5 = Material('#ff00000.8');
 
 [top](#)
 
-<a name="wireFrameColor"></a>
-###wireFrameColor
+<a name="color"></a>
+###color
 
 _field_
 
@@ -73,7 +80,7 @@ _field_
 **description**
 
 
-- 와이어 프레임 컬러
+- 재질 컬러색
 
 **setting**
 
@@ -84,7 +91,7 @@ _field_
 **defaultValue**
 
 
-- [Math.random(),Math.random(),Math.random(),1]
+- [1,1,1,1]
 
 **exception**
 
@@ -94,8 +101,160 @@ _field_
 **sample**
 
 ```javascript
-material.wireFrameColor = [1,0.5,1,1]; // r,g,b,a
-console.log(material.wireFrameColor);
+material.color = [0,1,2,1]; // 배열형식으로 입력
+material.color = "#ff2233; // 16진수로 입력"
+console.log(material.color);
+```
+
+[top](#)
+
+<a name="sprite"></a>
+###sprite
+
+_field_
+
+
+**description**
+
+
+- 이 재질이 스프라이트모드로 작동하게 만듬. 다음과 같은 오브젝트를 넘김
+{row:00, col:00, rate:00, start:00, yoyo:boolean, loop:boolean}
+* row - 이미지를 세로로 쪼갠 수
+* col - 이미지를 가로로 쪼갠 수
+* ?rate - 1프레임당 사용할 시간(초) 생략시 1초
+* ?start - 최초 시작시 보여질 프레임번호. 생략시 0
+* ?loop - 스프라이트 프레임이 몇 번 반복되는지 정함. 음수를 넣으면 무한반복. 생략시 -1
+* ?yoyo - 반복시 앞에서 뒤로 뒤에서 앞으로 형태로 반복됨
+
+**setting**
+
+- *writable*:true
+-  *enumerable*:false
+-  *configurable*:false
+
+**defaultValue**
+
+
+- none
+
+**exception**
+
+
+- none
+
+**sample**
+
+```javascript
+var mat = new Material("#fff");
+mat.sprite = {row:5, col:3};
+```
+
+[top](#)
+
+<a name="spriteFrame"></a>
+###spriteFrame
+
+_field_
+
+
+**description**
+
+
+- 스프라이트의 현재 프레임
+
+**setting**
+
+- *writable*:true
+-  *enumerable*:false
+-  *configurable*:false
+
+**defaultValue**
+
+
+- none
+
+**exception**
+
+
+- none
+
+**sample**
+
+```javascript
+var mat = new Material("#fff");
+mat.sprite = {row:5, col:3};
+mat.spriteFrame = 3;
+```
+
+[top](#)
+
+<a name="spriteTotalFrame"></a>
+###spriteTotalFrame
+
+_field_
+
+
+**description**
+
+
+- 스프라이트의 전체 프레임
+
+**setting**
+
+- *writable*:false
+-  *enumerable*:false
+-  *configurable*:false
+
+**defaultValue**
+
+
+- none
+
+**exception**
+
+
+- none
+
+**sample**
+
+```javascript
+console.log(material.sheetMode);
+```
+
+[top](#)
+
+<a name="count"></a>
+###count
+
+_field_
+
+
+**description**
+
+
+- 재질이 사용된 횟수
+
+**setting**
+
+- *writable*:false
+-  *enumerable*:false
+-  *configurable*:false
+
+**defaultValue**
+
+
+- 0
+
+**exception**
+
+
+- none
+
+**sample**
+
+```javascript
+// 미구현상태임
+console.log(material.count);
 ```
 
 [top](#)
@@ -132,6 +291,42 @@ _field_
 ```javascript
 material.wireFrame = true;
 console.log(material.wireFrame);
+```
+
+[top](#)
+
+<a name="wireFrameColor"></a>
+###wireFrameColor
+
+_field_
+
+
+**description**
+
+
+- 와이어 프레임 컬러
+
+**setting**
+
+- *writable*:true
+-  *enumerable*:false
+-  *configurable*:false
+
+**defaultValue**
+
+
+- [Math.random(),Math.random(),Math.random(),1]
+
+**exception**
+
+
+- none
+
+**sample**
+
+```javascript
+material.wireFrameColor = [1,0.5,1,1]; // r,g,b,a
+console.log(material.wireFrameColor);
 ```
 
 [top](#)
@@ -208,8 +403,8 @@ console.log(material.lambert);
 
 [top](#)
 
-<a name="isLoaded"></a>
-###isLoaded
+<a name="normalPower"></a>
+###normalPower
 
 _field_
 
@@ -217,18 +412,18 @@ _field_
 **description**
 
 
-- 재질에 적용된 텍스쳐들이 모두 로딩되었는지 확인
+- 재질 normalPower 적용 강도 설정
 
 **setting**
 
-- *writable*:false
+- *writable*:true
 -  *enumerable*:false
 -  *configurable*:false
 
 **defaultValue**
 
 
-- false
+- 20.0
 
 **exception**
 
@@ -238,7 +433,81 @@ _field_
 **sample**
 
 ```javascript
-console.log(material.isLoaded);
+material.normalPower = 1.0;
+console.log(material.normalPower);
+```
+
+[top](#)
+
+<a name="specularPower"></a>
+###specularPower
+
+_field_
+
+
+**description**
+
+
+- 재질 specularPower 적용 강도 설정
+
+**setting**
+
+- *writable*:true
+-  *enumerable*:false
+-  *configurable*:false
+
+**defaultValue**
+
+
+- 20.0
+
+**exception**
+
+
+- none
+
+**sample**
+
+```javascript
+material.specularPower = 20.0;
+console.log(material.specularPower);
+```
+
+[top](#)
+
+<a name="specularColor"></a>
+###specularColor
+
+_field_
+
+
+**description**
+
+
+- specular 컬러색
+
+**setting**
+
+- *writable*:true
+-  *enumerable*:false
+-  *configurable*:false
+
+**defaultValue**
+
+
+- [1,1,1,1]
+
+**exception**
+
+
+- none
+
+**sample**
+
+```javascript
+material.specularColor = [0,1,2,1]; // 배열형식으로 입력
+material.specularColor = "#ff2233; // 16진수로 입력"
+console.log(material.specularColor);
 ```
 
 [top](#)
@@ -278,8 +547,8 @@ console.log(material.diffuse);
 
 [top](#)
 
-<a name="count"></a>
-###count
+<a name="normal"></a>
+###normal
 
 _field_
 
@@ -287,7 +556,7 @@ _field_
 **description**
 
 
-- 재질이 사용된 횟수
+- 재질에 적용된 normal 리스트 반환
 
 **setting**
 
@@ -298,7 +567,7 @@ _field_
 **defaultValue**
 
 
-- 0
+- []
 
 **exception**
 
@@ -308,14 +577,13 @@ _field_
 **sample**
 
 ```javascript
-// 미구현상태임
-console.log(material.count);
+console.log(material.normal);
 ```
 
 [top](#)
 
-<a name="color"></a>
-###color
+<a name="specular"></a>
+###specular
 
 _field_
 
@@ -323,18 +591,18 @@ _field_
 **description**
 
 
-- 재질 컬러색
+- 재질에 적용된 specular 리스트 반환
 
 **setting**
 
-- *writable*:true
+- *writable*:false
 -  *enumerable*:false
 -  *configurable*:false
 
 **defaultValue**
 
 
-- [1,1,1,1]
+- []
 
 **exception**
 
@@ -344,49 +612,42 @@ _field_
 **sample**
 
 ```javascript
-material.color = [0,1,2,1]; // 배열형식으로 입력
-material.color = "#ff2233; // 16진수로 입력"
-console.log(material.color);
+console.log(material.specular);
 ```
 
 [top](#)
 
-<a name="removeTexture"></a>
-###removeTexture(type:string, [Texture](Texture.md))
+<a name="isLoaded"></a>
+###isLoaded
 
-_method_
+_field_
 
 
 **description**
 
 
-- removeTexture를 통해 등록된 텍스쳐를 제거함.
+- 재질에 적용된 텍스쳐들이 모두 로딩되었는지 확인
 
-**param**
+**setting**
 
-1. type:string - 어떠한 타입에 텍스쳐가 제거 될 것인가를 결정함.
-    * [Texture.diffuse](Texture.md#diffuse) or 'diffuse' - 디퓨즈 맵으로 등록함.
-    * [Texture.specular](Texture.md#specular) or 'specular' - 스페큘러 맵으로 등록함.
-    * [Texture.diffuseWrap](Texture.md#diffusewrap) or 'diffuseWrap' - 디퓨즈랩 맵으로 등록함.
-    * [Texture.normal](Texture.md#normal) or 'normal' - 노말 맵으로 등록함.
-    * [Texture.specularNormal](Texture.md#specularNormal) or 'diffuse' - 스페큘러노말 맵으로 등록함.
-7. [Texture](Texture.md) - 제거 될 Texture instance.
+- *writable*:false
+-  *enumerable*:false
+-  *configurable*:false
+
+**defaultValue**
+
+
+- false
 
 **exception**
 
 
 - none
 
-**return**
-
-
-- this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
-
 **sample**
 
 ```javascript
-material.addTexture(Texture.diffuse, indexTexture3, null, BlendMode.darken);
-material.removeTexture(Texture.diffuse, indexTexture3);
+console.log(material.isLoaded);
 ```
 
 [top](#)
@@ -464,19 +725,26 @@ indexTestMaterial.addTexture(Texture.diffuse, indexTexture4);
 
 [top](#)
 
-<a name="getMD"></a>
-###getMD()
+<a name="removeTexture"></a>
+###removeTexture(type:string, texture:[Texture](Texture.md))
 
-_static_
+_method_
 
 
 **description**
 
 
-- 해당 클래스를 마크다운 형식으로 문서화하여 출력함
+- removeTexture를 통해 등록된 텍스쳐를 제거함.
 
 **param**
 
+1. type:string - 어떠한 타입에 텍스쳐가 제거 될 것인가를 결정함.
+    * [Texture.diffuse](Texture.md#diffuse) or 'diffuse' - 디퓨즈 맵으로 등록함.
+    * [Texture.specular](Texture.md#specular) or 'specular' - 스페큘러 맵으로 등록함.
+    * [Texture.diffuseWrap](Texture.md#diffusewrap) or 'diffuseWrap' - 디퓨즈랩 맵으로 등록함.
+    * [Texture.normal](Texture.md#normal) or 'normal' - 노말 맵으로 등록함.
+    * [Texture.specularNormal](Texture.md#specularNormal) or 'diffuse' - 스페큘러노말 맵으로 등록함.
+7. texture:[Texture](Texture.md) - 제거 될 Texture instance.
 
 **exception**
 
@@ -486,45 +754,13 @@ _static_
 **return**
 
 
-- string - 클래스에 대한 문서 마크다운
+- this - 메소드체이닝을 위해 자신을 반환함 - 메서드체이닝을 위해 자신을 반환함.
 
 **sample**
 
 ```javascript
-//none
-```
-
-[top](#)
-
-<a name="getInstance"></a>
-###getInstance(uuid:string)
-
-_static_
-
-
-**description**
-
-
-- uuid 또는 id를 기반으로 인스턴스를 얻어냄
-
-**param**
-
-1. uuid:string - 얻고 싶은 인스턴스의 uuid 또는 id
-
-**exception**
-
-
-- none
-
-**return**
-
-
-- Object - 해당되는 인스턴스
-
-**sample**
-
-```javascript
-var instance = Mesh.getInstance(uuid);
+material.addTexture(Texture.diffuse, indexTexture3, null, BlendMode.darken);
+material.removeTexture(Texture.diffuse, indexTexture3);
 ```
 
 [top](#)
@@ -574,6 +810,71 @@ var classA = MoGL.extend('classA', function(){}).build();
 
 [top](#)
 
+<a name="getInstance"></a>
+###getInstance(uuid:string)
+
+_static_
+
+
+**description**
+
+
+- uuid 또는 id를 기반으로 인스턴스를 얻어냄
+
+**param**
+
+1. uuid:string - 얻고 싶은 인스턴스의 uuid 또는 id
+
+**exception**
+
+
+- none
+
+**return**
+
+
+- Object - 해당되는 인스턴스
+
+**sample**
+
+```javascript
+var instance = Mesh.getInstance(uuid);
+```
+
+[top](#)
+
+<a name="count"></a>
+###count()
+
+_static_
+
+
+**description**
+
+
+- 이 클래스로 부터 만들어져 활성화된 인스턴스의 수
+
+**param**
+
+
+**exception**
+
+
+- none
+
+**return**
+
+
+- int - 활성화된 인스턴스의 수
+
+**sample**
+
+```javascript
+var meshCount = Mesh.count();
+```
+
+[top](#)
+
 <a name="error"></a>
 ###error(method:string, id:int)
 
@@ -612,8 +913,8 @@ var classA = MoGL.extend('classA', function(){})
 
 [top](#)
 
-<a name="count"></a>
-###count()
+<a name="getMD"></a>
+###getMD()
 
 _static_
 
@@ -621,7 +922,7 @@ _static_
 **description**
 
 
-- 이 클래스로 부터 만들어져 활성화된 인스턴스의 수
+- 해당 클래스를 마크다운 형식으로 문서화하여 출력함
 
 **param**
 
@@ -634,12 +935,12 @@ _static_
 **return**
 
 
-- int - 활성화된 인스턴스의 수
+- string - 클래스에 대한 문서 마크다운
 
 **sample**
 
 ```javascript
-var meshCount = Mesh.count();
+//none
 ```
 
 [top](#)
