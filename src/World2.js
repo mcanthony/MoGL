@@ -13,7 +13,7 @@ var World = (function (makeUtil) {
         stencil: false,
         antialias: window.devicePixelRatio == 1 ? true : false,
         premultipliedAlpha: false,
-        preserveDrawingBuffer: true
+        preserveDrawingBuffer: false
     },
     getGL = function (canvas) {
         var gl, keys, i;
@@ -279,10 +279,10 @@ var World = (function (makeUtil) {
                                 tVBO = tGPU.vbo[tGeo],
                                 tIBO = tGPU.ibo[tGeo],
                                 tCull = gCull[tUUID_Item];
-                                if (tVBO != pVBO) {
-                                    tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
-                                    tGL.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, tGL.FLOAT, false, 0, 0);
-                                }
+
+                                tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
+                                tGL.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, tGL.FLOAT, false, 0, 0);
+
                                 tGL.uniform4fv(tProgram.uColor, gPickColors[tUUID_Item]),
                                 tGL.uniform3fv(tProgram.uAffine,
                                     (
@@ -291,7 +291,7 @@ var World = (function (makeUtil) {
                                         f9[6] = tItem.scaleX, f9[7] = tItem.scaleY, f9[8] = tItem.scaleZ, f9
                                     )
                                 ),
-                                tIBO != pIBO ? tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO) : 0,
+                                tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO) ,
                                 tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_INT, 0)
                             }
                             if (mousePickLength && (tMouse = mouse[tUUID]) && tMouse.x) {
@@ -332,12 +332,14 @@ var World = (function (makeUtil) {
                                 tGL.viewport(0, 0, tFrameBuffer.width, tFrameBuffer.height)
                             }
                             prevWidth = tFrameBuffer.width , prevHeight = tFrameBuffer.height
+                        }else{
+                            tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
                         }
                         tColor != gCameraProperty[tUUID_camera] ? (
                             tColor = gCameraProperty[tUUID_camera],
                             tGL.clearColor(tColor.r, tColor.g, tColor.b, tColor.a)
                         ) : 0,
-                        tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
+
 
                         // 대상 씬의 차일드 루프
                         tChildren = gChild[tUUID_Scene],
@@ -413,8 +415,8 @@ var World = (function (makeUtil) {
                                         (tCull == Mesh.cullingNone ?  tGL.disable(tGL.CULL_FACE) :
                                         tCull == Mesh.cullingBack ?  (tGL.enable(tGL.CULL_FACE), tGL.frontFace(tGL.CCW)) :
                                         tCull == Mesh.cullingFront ?  (tGL.enable(tGL.CULL_FACE), tGL.frontFace(tGL.CW)) : 0
-                                    ) : 0
-                                    if(tMaterial != pMaterial){
+                                    ) : 0;
+                                    //if(tMaterial != pMaterial){
                                         ///////////////////////////////////////////////////////////////
                                         //텍스쳐
                                         if (useTexture) {
@@ -479,7 +481,7 @@ var World = (function (makeUtil) {
                                         }else{
                                             tGL.uniform1i(tProgram.useSpecularMap, false);
                                         }
-                                    }
+                                    //}
                                     ///////////////////////////////////////////////////////////////
                                     // 드로우
                                     tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_INT, 0);
@@ -726,52 +728,6 @@ var World = (function (makeUtil) {
             return null;
         }
     })
-    //.method('getRenderer', {
-    //    description:[
-    //        "setInterval이나 requestAnimationFrame에서 사용될 렌더링 함수를 얻음.",
-    //        "실제로는 본인과 바인딩된 render함수를 반환하고 한 번 반환한 이후는 캐쉬로 잡아둠."
-    //    ],
-    //    param:[
-    //        "isRequestAnimationFrame:boolean - 애니메이션프레임용으로 반환하는 경우는 내부에서 다시 requestAnimationFrame을 호출하는 기능이 추가됨."
-    //    ],
-    //    ret:"function - this.render.bind(this) 형태로 본인과 바인딩된 함수를 반환함.",
-    //    sample:[
-    //        "var world = new World('canvasID');",
-    //        "world.addScene(Scene().setId('lobby'));",
-    //        "//인터벌용",
-    //        "setInterval(world.getRenderer());",
-    //        "//raf용",
-    //        "requestAnimationFrame(world.getRenderer(true));"
-    //    ],
-    //    value:function getRenderer(isRequestAnimationFrame) {
-    //        var p, self;
-    //        p = renderList[this];
-    //        if (!p) {
-    //            // 없으니까 생성
-    //            p = {}
-    //        }
-    //        self = this;
-    //        /*
-    //        if (isRequestAnimationFrame) {
-    //            if (p[1]) return p[1];
-    //            else {
-    //                return p[1] = function requestAni(currentTime) {
-    //                        self.render(currentTime);
-    //                        started[self.uuid] = requestAnimationFrame(p[1]);
-    //                }
-    //            }
-    //        } else {
-    //            */
-    //            if (p[0]) return p[0];
-    //            else {
-    //                p[0] = function intervalAni(currentTime) {
-    //                    self.render(currentTime);
-    //                }
-    //                return p[0];
-    //            }
-    //        //}
-    //    }
-    //})
     .method('start', {
         description:[
             "requestAnimationFrame을 이용해 자동으로 render를 호출함."
@@ -782,35 +738,15 @@ var World = (function (makeUtil) {
             "world.start();"
         ],
         value:function start() {
-            var self = this
-            var renderFunc =function () {
-                //requestAnimationFrame(renderFunc);
-                self.render(Date.now());
+            var self;
+            if (!started[this.uuid]) {
+                self = this;
+                started[this.uuid] = MoGL.addInterval(function(t){
+                    self.render(t);
+                });
             }
-            ////started[this.uuid] = requestAnimationFrame(renderFunc);
-            var gap = 1000/60
-            //started[self.uuid] = setInterval(renderFunc,16);
-            setInterval(renderFunc,gap);
-
-            //var fps = 60;
-            //var now;
-            //var then = performance.now();
-            //var interval = 1000/120;
-            //var fpsGap = 1000/fps;
-            //var delta;
-            //
-            //function draw() {
-            //    now = performance.now();
-            //    delta = now - then;
-            //    if (delta > fpsGap) {
-            //        then = now - (delta % fpsGap);
-            //        self.render(now);
-            //    }else{
-            //    }
-            //}
-            //setInterval(draw,interval)
-
             return this;
+
         }
     })
     .method('stop', {
@@ -824,8 +760,10 @@ var World = (function (makeUtil) {
             "world.stop();"
         ],
         value:function stop() {
-            //cancelAnimationFrame(started[this.uuid]);
-            clearInterval(started[this.uuid])
+            if (started[this.uuid]) {
+                MoGL.removeInterval(started[this.uuid]);
+                started[this.uuid] = null;
+            }
             return this;
         }
     })
