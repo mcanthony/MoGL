@@ -85,6 +85,7 @@
     xmlhttp.onreadystatechange = function () {
         if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
             var geo = getGeometry(JSON.parse(xmlhttp.responseText));
+//            var geo = Primitive.cube();
             makeItems(geo)
             world.setAutoSize(1)
             world.start()
@@ -103,6 +104,7 @@
         b.addTexture(Texture.diffuse, texture)
         for (i = 0; i < 500; i++) {
             var m = (i % 5 == 0) ? b : a
+//            var m = a
             item = new Mesh(geo, m);
             m.shading = Shading.phong
             item.position = [Math.random() * 50 - 25, Math.random() * 50 - 25, Math.random() * 50 - 25]
@@ -112,20 +114,20 @@
 
         }
 
-        var currentFPS, prevTime = 0, count = 0, sum = 0
-        world.addEventListener(World.renderAfter, function (currTime, totalVertex) {
-            var currentFPS = 1000 / ( currTime - prevTime );
-            prevTime = currTime;
+        var  count = 0, sum = 0
+        world.addEventListener(World.renderAfter, function (fps, totalVertex) {
+            var currentFPS = fps;
             count++
             divCurrentFPS.textContent = currentFPS.toFixed(2);
             divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2) + ' / totalVertex : ' + totalVertex;
 
-//            var i = meshs.length, item;
-////            while (i--) {
-////                item = meshs[i],
-////                item.rotateX += 0.05,
-////                item.rotateY += 0.05,
-////                item.rotateZ += 0.05
+            var i = meshs.length, item;
+//            i=500
+//            while (i--) {
+//                item = meshs[i],
+//                item.rotateX += 0.05,
+//                item.rotateY += 0.05,
+//                item.rotateZ += 0.05
 //            }
             camera.x = Math.sin(count / 50) * 50,
             camera.y = Math.cos(count / 100) * 50,

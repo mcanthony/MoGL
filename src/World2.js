@@ -8,7 +8,7 @@ var World = (function (makeUtil) {
     var tProjectionMtx
     var tCameraMtx
     glSetting = {
-        alpha: true,
+        alpha: false,
         depth: true,
         stencil: false,
         antialias: window.devicePixelRatio == 1 ? true : false,
@@ -20,7 +20,7 @@ var World = (function (makeUtil) {
         if (glContext) {
             gl = canvas.getContext(glContext, glSetting);
         } else {
-            keys = 'experimental-webgl,webgl,webkit-3d,moz-webgl,3d'.split(','), i = keys.length;
+            keys = 'webgl,experimental-webgl,,webkit-3d,moz-webgl,3d'.split(','), i = keys.length;
             while (i--) {
                 if (gl = canvas.getContext(keys[i], glSetting)) {
                     glContext = keys[i];
@@ -130,11 +130,11 @@ var World = (function (makeUtil) {
         value:(function(){
             var cameraLength = 0;
             var prevWidth, prevHeight
-            var f9 = new Float32Array(9);
+            var f9 = new Float32Array(9),f3 = new Float32Array(3);
             var tGPU, tGL, tScene, tSceneList, tCameraList, tCamera, tChildren, tChildrenArray,tRenderList;
 
             var tCvs, tCvsW, tCvsH;
-            var tItem, tMaterial,pMaterial;
+            var tItem, tMaterial,pUUID_mat;
             var tUUID, tUUID_camera, tUUID_Item, tUUID_mat, tUUID_Scene;
             var tGeo,tColor,tDiffuseMaps, tNormalMaps, tSpecularMaps;
             var tCull, tVBO, tVNBO, tUVBO, tIBO, tDiffuse, tNormal, tSpecular, tShading, tFrameBuffer, tProgram;
@@ -216,11 +216,12 @@ var World = (function (makeUtil) {
                 var i = tSceneList.length, j, k, k2, k3, k4, k5, k6, i2, i3, list, curr;
                 var sheetInfo;
 
+
                 tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LEQUAL),
                 tGL.enable(tGL.BLEND), tGL.blendFunc(tGL.SRC_ALPHA, tGL.ONE_MINUS_SRC_ALPHA);
 
                 tListener = priListener[tUUID]
-                if(tListener && tListener['WORLD_RENDER_BEFORE']) tListener['WORLD_RENDER_BEFORE'][0].f(currentTime,totalVertex)
+                //if(tListener && tListener['WORLD_RENDER_BEFORE']) tListener['WORLD_RENDER_BEFORE'][0].f(currentTime,totalVertex)
                 while (i--) {
                     tScene = tSceneList[i];
                     tUUID_Scene = tScene.uuid
@@ -246,8 +247,15 @@ var World = (function (makeUtil) {
                     //////////////////////////////////////////////////////////////////////////////////////////////////////
                     tCameraList = tScene.cameras,
                     baseLightRotate = tScene.baseLightRotate
+
+                    //TODO for k로 돌리니 먼가 쌓이는듯한데?
+                    var cList = []
                     for (k in tCameraList) {
-                        tCamera = tCameraList[k],
+                        cList.push(tCameraList[k])
+                    }
+                    var cLen = cList.length
+                    while(cLen--){
+                        tCamera = cList[cLen],
                         tCameraMtx = priRaw[tCamera.matrix.uuid];
                         tUUID_camera = tCamera.uuid
                         if (!tCamera.visible) continue;
@@ -265,66 +273,70 @@ var World = (function (makeUtil) {
                         tGL.useProgram(tProgram),
                         useNormalBuffer = useTexture = tUseTexture = mousePickLength = 0;
 
-                        if(mouseCheck = !mouseCheck){
-                            // TODO 이놈도 지오별로 렌더하게 변경해야함
-                            tFrameBuffer = tGPU.framebuffers[tUUID_camera].frameBuffer,
-                            tGL.bindFramebuffer(tGL.FRAMEBUFFER, tFrameBuffer)
-                            if(prevWidth != tFrameBuffer.width || prevHeight != tFrameBuffer.height) tGL.viewport(0, 0, tFrameBuffer.width, tFrameBuffer.height)
-                            prevWidth = tFrameBuffer.width , prevHeight = tFrameBuffer.height
-                            for (k2 in gPickMeshs) {
-                                mousePickLength++,
-                                tItem = gPickMeshs[k2].mesh,
-                                tUUID_Item = tItem.uuid,
-                                tGeo = gGeo[tUUID_Item].uuid,
-                                tVBO = tGPU.vbo[tGeo],
-                                tIBO = tGPU.ibo[tGeo],
-                                tCull = gCull[tUUID_Item];
-
-                                tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
-                                tGL.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, tGL.FLOAT, false, 0, 0);
-
-                                tGL.uniform4fv(tProgram.uColor, gPickColors[tUUID_Item]),
-                                tGL.uniform3fv(tProgram.uAffine,
-                                    (
-                                        f9[0] = tItem.x, f9[1] = tItem.y, f9[2] = tItem.z,
-                                        f9[3] = tItem.rotateX, f9[4] = tItem.rotateY, f9[5] = tItem.rotateZ,
-                                        f9[6] = tItem.scaleX, f9[7] = tItem.scaleY, f9[8] = tItem.scaleZ, f9
-                                    )
-                                ),
-                                tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO) ,
-                                tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_INT, 0)
-                            }
-                            if (mousePickLength && (tMouse = mouse[tUUID]) && tMouse.x) {
-                                tGL.readPixels(tMouse.x, tMouse.y, 1, 1, tGL.RGBA , tGL.UNSIGNED_BYTE, mouseCurrent),
-                                mouseCurrentItem = gPickMeshs[''+mouseCurrent[0]+mouseCurrent[1]+mouseCurrent[2]+'255'],
-                                mouseObj.x = tMouse.x,
-                                mouseObj.y = tMouse.y,
-                                mouseObj.z = 0;
-
-                                if (mouseCurrentItem) mouseObj.target = mouseCurrentItem.mesh;
-                                if (tMouse.down && mouseCurrentItem ) {
-                                    mouseCurrentItem.mesh.dispatch(Mesh.down, mouseObj);
-                                } else if (tMouse.up && mouseCurrentItem) {
-                                    mouseCurrentItem.mesh.dispatch(Mesh.up, mouseObj),
-                                    tMouse.x = null;
-                                } else  if (mouseCurrentItem != mouseOldItem) {
-                                    if (mouseOldItem) mouseOldItem.mesh.dispatch(Mesh.out, mouseObj);
-                                    if (mouseCurrentItem) mouseCurrentItem.mesh.dispatch(Mesh.over, mouseObj);
-                                    mouseOldItem = mouseCurrentItem;
-                                } else if (mouseOldItem && tMouse.move) {
-                                    mouseOldItem.mesh.dispatch(Mesh.move, mouseObj);
-                                }
-
-                                tMouse.down ?  tMouse.down = false : 0;
-                                tMouse.move ?  tMouse.move = false : 0;
-                                tMouse.up ?  tMouse.up = false : 0;
-                                tGL.clearColor(0,0,0,0)
-                                tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
-                            }
-                            tGL.bindFramebuffer(tGL.FRAMEBUFFER, null);
-                        }
+                        //if(mouseCheck = !mouseCheck){
+                        //    // TODO 이놈도 지오별로 렌더하게 변경해야함
+                        //    tFrameBuffer = tGPU.framebuffers[tUUID_camera].frameBuffer,
+                        //    tGL.bindFramebuffer(tGL.FRAMEBUFFER, tFrameBuffer)
+                        //    if(prevWidth != tFrameBuffer.width || prevHeight != tFrameBuffer.height) tGL.viewport(0, 0, tFrameBuffer.width, tFrameBuffer.height)
+                        //    prevWidth = tFrameBuffer.width , prevHeight = tFrameBuffer.height
+                        //    for (k2 in gPickMeshs) {
+                        //        mousePickLength++,
+                        //        tItem = gPickMeshs[k2].mesh,
+                        //        tUUID_Item = tItem.uuid,
+                        //        tGeo = gGeo[tUUID_Item].uuid,
+                        //        tVBO = tGPU.vbo[tGeo],
+                        //        tIBO = tGPU.ibo[tGeo],
+                        //        tCull = gCull[tUUID_Item];
+                        //
+                        //        tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
+                        //        tGL.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, tGL.FLOAT, false, 0, 0);
+                        //
+                        //        tGL.uniform4fv(tProgram.uColor, gPickColors[tUUID_Item]),
+                        //        tGL.uniform3fv(tProgram.uAffine,
+                        //            (
+                        //                f9[0] = tItem.x, f9[1] = tItem.y, f9[2] = tItem.z,
+                        //                f9[3] = tItem.rotateX, f9[4] = tItem.rotateY, f9[5] = tItem.rotateZ,
+                        //                f9[6] = tItem.scaleX, f9[7] = tItem.scaleY, f9[8] = tItem.scaleZ, f9
+                        //            )
+                        //        ),
+                        //        tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO) ,
+                        //        tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_INT, 0)
+                        //    }
+                        //    if (mousePickLength && (tMouse = mouse[tUUID]) && tMouse.x) {
+                        //        tGL.readPixels(tMouse.x, tMouse.y, 1, 1, tGL.RGBA , tGL.UNSIGNED_BYTE, mouseCurrent),
+                        //        mouseCurrentItem = gPickMeshs[''+mouseCurrent[0]+mouseCurrent[1]+mouseCurrent[2]+'255'],
+                        //        mouseObj.x = tMouse.x,
+                        //        mouseObj.y = tMouse.y,
+                        //        mouseObj.z = 0;
+                        //
+                        //        if (mouseCurrentItem) mouseObj.target = mouseCurrentItem.mesh;
+                        //        if (tMouse.down && mouseCurrentItem ) {
+                        //            mouseCurrentItem.mesh.dispatch(Mesh.down, mouseObj);
+                        //        } else if (tMouse.up && mouseCurrentItem) {
+                        //            mouseCurrentItem.mesh.dispatch(Mesh.up, mouseObj),
+                        //            tMouse.x = null;
+                        //        } else  if (mouseCurrentItem != mouseOldItem) {
+                        //            if (mouseOldItem) mouseOldItem.mesh.dispatch(Mesh.out, mouseObj);
+                        //            if (mouseCurrentItem) mouseCurrentItem.mesh.dispatch(Mesh.over, mouseObj);
+                        //            mouseOldItem = mouseCurrentItem;
+                        //        } else if (mouseOldItem && tMouse.move) {
+                        //            mouseOldItem.mesh.dispatch(Mesh.move, mouseObj);
+                        //        }
+                        //
+                        //        tMouse.down ?  tMouse.down = false : 0;
+                        //        tMouse.move ?  tMouse.move = false : 0;
+                        //        tMouse.up ?  tMouse.up = false : 0;
+                        //        tGL.clearColor(0,0,0,0)
+                        //        tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
+                        //    }
+                        //    tGL.bindFramebuffer(tGL.FRAMEBUFFER, null);
+                        //}
                         // draw Start
                         // 뷰포트설정
+                        tColor != gCameraProperty[tUUID_camera] ? (
+                            tColor = gCameraProperty[tUUID_camera],
+                                tGL.clearColor(tColor.r, tColor.g, tColor.b, tColor.a)
+                        ) : 0
                         if (cameraLength > 1) {
                             tFrameBuffer = tGPU.framebuffers[tUUID_camera].frameBuffer;
                             tGL.bindFramebuffer(tGL.FRAMEBUFFER, tFrameBuffer);
@@ -333,12 +345,9 @@ var World = (function (makeUtil) {
                             }
                             prevWidth = tFrameBuffer.width , prevHeight = tFrameBuffer.height
                         }else{
+                            tGL.bindFramebuffer(tGL.FRAMEBUFFER, null);
                             tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
                         }
-                        tColor != gCameraProperty[tUUID_camera] ? (
-                            tColor = gCameraProperty[tUUID_camera],
-                            tGL.clearColor(tColor.r, tColor.g, tColor.b, tColor.a)
-                        ) : 0,
 
 
                         // 대상 씬의 차일드 루프
@@ -346,27 +355,25 @@ var World = (function (makeUtil) {
                         tChildrenArray = gChildArray[tUUID_Scene],
                         tRenderList = gRenderList[tUUID_Scene]
 
+
                         for (k3 in tRenderList) {
                             k4 = tRenderList[k3]
                             // 지오가 바뀌는 시점
+                            tGeo = k3
                             for (k5 in k4) {
-                                pDiffuse = pNormal = pSpecular = pShading = pMaterial = null
+                                pDiffuse = pNormal = pSpecular = pShading = pUUID_mat = null
                                 k6 = k4[k5]
                                 i2 = k6.length;
                                 // 프로그램이 바뀌는 시점
                                 tUseTexture = k5.indexOf('bitmap')>-1 ? 1 : 0
                                 useTexture = tUseTexture,
                                 useNormalBuffer = 1,
-                                //TODO tShading을 해결해야하는군
                                 pShading = gMatShading[gMat[k6[0].uuid]],
                                 //console.log(gMatShading[gMat[k6[0].uuid]])
                                 tProgram = tGPU.programs[k5],
                                 useNormalBuffer = (k5 =='bitmap' || k5 == 'color') ? 0 : 1,
                                 tGL.useProgram(tProgram);
 
-                                ///////////////////////////////////////////////////////////////
-                                //버퍼
-                                tGeo = k3
                                 ///////////////////////////////////////////////////////////////
                                 // 버텍스버퍼설정
                                 tVBO = tGPU.vbo[tGeo],
@@ -377,7 +384,7 @@ var World = (function (makeUtil) {
                                 if (useNormalBuffer) {
                                     tVNBO = tGPU.vnbo[tGeo];
                                     tGL.bindBuffer(tGL.ARRAY_BUFFER, tVNBO),
-                                    tGL.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, tGL.FLOAT, false, 0, 0);
+                                    tGL.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, tGL.FLOAT, true, 0, 0);
                                     tGL.uniform1f(tProgram.uLambert, gMatLambert[tUUID_mat]);
                                 }
                                 ///////////////////////////////////////////////////////////////
@@ -398,17 +405,13 @@ var World = (function (makeUtil) {
                                     tDiffuseMaps = gMatDiffuseMaps[tUUID_mat],
                                     ///////////////////////////////////////////////////////////////
                                     //총정점수계산
-                                    totalVertex += gGeoVertexCount[tGeo],
+                                    totalVertex += gGeoVertexCount[ tGeo = gGeo[tUUID_Item].uuid],
                                     ///////////////////////////////////////////////////////////////
                                     //아핀관련정보 입력
-                                    tGL.uniform3fv(tProgram.uAffine,
-                                        (
-                                            f9[0] = tItem.x, f9[1] = tItem.y, f9[2] = tItem.z,
-                                            f9[3] = tItem.rotateX, f9[4] = tItem.rotateY, f9[5] = tItem.rotateZ,
-                                            f9[6] = tItem.scaleX, f9[7] = tItem.scaleY, f9[8] = tItem.scaleZ,
-                                            f9
-                                        )
-                                    )
+                                    f9[0] = tItem.x, f9[1] = tItem.y, f9[2] = tItem.z,
+                                    f9[3] = tItem.rotateX, f9[4] = tItem.rotateY, f9[5] = tItem.rotateZ,
+                                    f9[6] = tItem.scaleX, f9[7] = tItem.scaleY, f9[8] = tItem.scaleZ,
+                                    tGL.uniform3fv(tProgram.uAffine, f9)
                                     ///////////////////////////////////////////////////////////////
                                     //총정점수계산
                                     tCull != pCull ?
@@ -416,39 +419,39 @@ var World = (function (makeUtil) {
                                         tCull == Mesh.cullingBack ?  (tGL.enable(tGL.CULL_FACE), tGL.frontFace(tGL.CCW)) :
                                         tCull == Mesh.cullingFront ?  (tGL.enable(tGL.CULL_FACE), tGL.frontFace(tGL.CW)) : 0
                                     ) : 0;
-                                    //if(tMaterial != pMaterial){
+
+                                    ///////////////////////////////////////////////////////////////
+                                    //텍스쳐
+                                    if (useTexture) {
+                                        //스프라이트
+                                        //sheetInfo = gMatSheetMode[tUUID_mat];
+                                        //if (sheetInfo.enable) {
+                                        //    sheetInfo.currentGap += 16;
+                                        //    if (sheetInfo.currentGap > sheetInfo.cycle) sheetInfo.frame++, sheetInfo.currentGap = 0;
+                                        //    if (sheetInfo.frame == sheetInfo.wNum * sheetInfo.hNum) sheetInfo.frame = 0;
+                                        //    sheetOffset[0] = 1 / sheetInfo.wNum,
+                                        //        sheetOffset[1] = 1 / sheetInfo.hNum,
+                                        //        sheetOffset[2] = sheetInfo.frame % sheetInfo.wNum,
+                                        //        sheetOffset[3] = Math.floor(sheetInfo.frame / sheetInfo.wNum),
+                                        //        tGL.uniform4fv(tProgram.uSheetOffset, sheetOffset),
+                                        //        tGL.uniform1i(tProgram.uSheetMode, 1);
+                                        //}else{
+                                        //    tGL.uniform1i(tProgram.uSheetMode, 0);
+                                        //}
                                         ///////////////////////////////////////////////////////////////
-                                        //텍스쳐
-                                        if (useTexture) {
-                                            //스프라이트
-                                            sheetInfo = gMatSheetMode[tUUID_mat];
-                                            if (sheetInfo.enable) {
-                                                sheetInfo.currentGap += 16;
-                                                if (sheetInfo.currentGap > sheetInfo.cycle) sheetInfo.frame++, sheetInfo.currentGap = 0;
-                                                if (sheetInfo.frame == sheetInfo.wNum * sheetInfo.hNum) sheetInfo.frame = 0;
-                                                sheetOffset[0] = 1 / sheetInfo.wNum,
-                                                sheetOffset[1] = 1 / sheetInfo.hNum,
-                                                sheetOffset[2] = sheetInfo.frame % sheetInfo.wNum,
-                                                sheetOffset[3] = Math.floor(sheetInfo.frame / sheetInfo.wNum),
-                                                tGL.uniform4fv(tProgram.uSheetOffset, sheetOffset),
-                                                tGL.uniform1i(tProgram.uSheetMode, 1);
-                                            }else{
-                                                tGL.uniform1i(tProgram.uSheetMode, 0);
-                                            }
-                                            ///////////////////////////////////////////////////////////////
-                                            //디퓨즈
-                                            tDiffuse = tGPU.textures[tDiffuseMaps[tDiffuseMaps.length - 1].tex.uuid];
-                                            if (tDiffuse != pDiffuse && tDiffuse != null) {
-                                                tGL.activeTexture(tGL.TEXTURE0),
-                                                tGL.bindTexture(tGL.TEXTURE_2D, tDiffuse),
-                                                tGL.uniform1i(tProgram.uSampler, 0);
-                                            }
-                                        }else{
-                                            ///////////////////////////////////////////////////////////////
-                                            //색상
-                                            tColor = gMatColor[tUUID_mat],
-                                            tGL.uniform4fv(tProgram.uColor, tColor);
+                                        //디퓨즈
+                                        tDiffuse = tGPU.textures[tDiffuseMaps[tDiffuseMaps.length - 1].tex.uuid];
+                                        if (tDiffuse != pDiffuse && tDiffuse != null) {
+                                            tGL.activeTexture(tGL.TEXTURE0),
+                                            tGL.bindTexture(tGL.TEXTURE_2D, tDiffuse)
+                                            tGL.uniform1i(tProgram.uSampler, 0);
                                         }
+                                    }else{
+                                        ///////////////////////////////////////////////////////////////
+                                        //색상
+                                        tGL.uniform4fv(tProgram.uColor, gMatColor[tUUID_mat]);
+                                    }
+                                    if(tUUID_mat != pUUID_mat){
                                         ///////////////////////////////////////////////////////////////
                                         //노말
                                         if(useNormalBuffer){
@@ -481,7 +484,7 @@ var World = (function (makeUtil) {
                                         }else{
                                             tGL.uniform1i(tProgram.useSpecularMap, false);
                                         }
-                                    //}
+                                    }
                                     ///////////////////////////////////////////////////////////////
                                     // 드로우
                                     tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_INT, 0);
@@ -494,89 +497,89 @@ var World = (function (makeUtil) {
                                             tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
                                             tGL.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, tGL.FLOAT, false, 0, 0),
                                             tGL.uniform3fv(tProgram.uAffine,f9),
-                                            tColor = priMatWireColor[tUUID_mat],
-                                            tGL.uniform4fv(tProgram.uColor, tColor),
+                                            tGL.uniform4fv(tProgram.uColor, priMatWireColor[tUUID_mat]),
                                             tGL.drawElements(tGL.LINES, tIBO.numItem, tGL.UNSIGNED_INT, 0),
                                             tProgram = tempProgram,
                                             tGL.useProgram(tProgram)
                                     ) : 0
                                     pCull = tCull, pDiffuse = tDiffuse, pNormal = tNormal, pSpecular = tSpecular
-                                    pMaterial = tMaterial
+                                    pUUID_mat = tUUID_mat
                                 }
                             }
                         }
                         if (cameraLength > 1) {
-                            tGL.bindFramebuffer(tGL.FRAMEBUFFER, pDiffuse = pNormal = pSpecular = pShading = pMaterial = null);
+                            tGL.bindFramebuffer(tGL.FRAMEBUFFER, pDiffuse = pNormal = pSpecular = pShading = pUUID_mat = null);
                         }
                     }
-                }
 
+                }
+                tGL.flush()
                 // TODO 아래는 아직 다 못옮겨씀
-                // 프레임버퍼를 모아서 찍어!!!
-                if (cameraLength > 1) {
-                    tGL.clearColor(0, 0, 0, 1);
-                    tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
-                    tGL.viewport(0, 0, tCvs.width, tCvs.height);
-                    tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LEQUAL);
-                    tGL.enable(tGL.BLEND),tGL.blendFunc(tGL.SRC_ALPHA, tGL.ONE_MINUS_SRC_ALPHA);
-
-                    tVBO = tGPU.vbo['_FRAMERECT_'],
-                    tUVBO = tGPU.uvbo['_FRAMERECT_'],
-                    tIBO = tGPU.ibo['_FRAMERECT_'],
-                    tProgram = tGPU.programs['postBase'];
-                    if (!tVBO) return;
-                    tGL.useProgram(tProgram);
-                    /*tGL.uniformMatrix4fv(tProgram.uPixelMatrix, false, [
-                     2 / tCvs.clientWidth, 0, 0, 0,
-                     0, -2 / tCvs.clientHeight, 0, 0,
-                     0, 0, 0, 0,
-                     -1, 1, 0, 1
-                     ]);
-                     */
-                    pM[0] = 2 / tCvs.clientWidth, pM[1] = pM[2] = pM[3] = 0,
-                    pM[4] = 0, pM[5] = -2 / tCvs.clientHeight, pM[6] = pM[7] = 0,
-                    pM[8] = pM[9] = pM[10] = pM[11] = 0,
-                    pM[12] = -1, pM[13] = 1, pM[14] = 0, pM[15] = 1,
-                    tGL.uniformMatrix4fv(tProgram.uPixelMatrix, false, pM),
-                    tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
-                    tGL.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, tGL.FLOAT, false, 0, 0),
-                    tGL.bindBuffer(tGL.ARRAY_BUFFER, tUVBO),
-                    tGL.vertexAttribPointer(tProgram.aUV, tUVBO.stride, tGL.FLOAT, false, 0, 0),
-                    tGL.uniformMatrix4fv(tProgram.uCameraMatrix, false, rectMTX);
-                    for (k in tCameraList) {
-                        tCamera = tCameraList[k]
-                        tUUID_camera = tCamera.uuid
-                        if (tCamera.visible) {
-                            tFrameBuffer = tGPU.framebuffers[tUUID_camera].frameBuffer;
-                            tGL.uniform1i(tProgram.uFXAA, tCamera.antialias);
-                            if (tCamera.antialias) {
-                                /*
-                                 if (tCamera.renderArea) tGL.uniform2fv(tProgram.uTexelSize, [1 / tFrameBuffer.width, 1 / tFrameBuffer.height]);
-                                 else tGL.uniform2fv(tProgram.uTexelSize, [1 / tCvs.width, 1 / tCvs.height]);
-                                 */
-                                if (tCamera.renderArea) uTS[0] = 1 / tFrameBuffer.width, uTS[1] = 1 / tFrameBuffer.height;
-                                else uTS[0] = 1 / tCvs.width, uTS[1] = 1 / tCvs.height;
-                                tGL.uniform2fv(tProgram.uTexelSize, uTS);
-                            }
-
-                            tGL.uniform3fv(tProgram.uAffine,
-                                (
-                                    f9[0] = tFrameBuffer.x + tFrameBuffer.width / 2 / pRatio, f9[1] = tFrameBuffer.y + tFrameBuffer.height / 2 / pRatio , f9[2] = 0,
-                                    f9[3] = 0, f9[4] = 0, f9[5] = 0,
-                                    f9[6] = tFrameBuffer.width / 2 / pRatio, f9[7] = tFrameBuffer.height / 2 / pRatio, f9[8] = 1,
-                                        f9
-                                )
-                            ),
-                            //tGL.activeTexture(tGL.TEXTURE0),
-                            tGL.bindTexture(tGL.TEXTURE_2D, tGPU.framebuffers[tUUID_camera].texture),
-                            tGL.uniform1i(tProgram.uSampler, 0),
-                            tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO),
-                            tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_INT, 0);
-                        }
-                    }
-
-                }
-                if(tListener && tListener['WORLD_RENDER_AFTER']) tListener['WORLD_RENDER_AFTER'][0].f(currentTime,totalVertex)
+                //// 프레임버퍼를 모아서 찍어!!!
+                //if (cameraLength > 1) {
+                //    tGL.clearColor(0, 0, 0, 1);
+                //    tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
+                //    tGL.viewport(0, 0, tCvs.width, tCvs.height);
+                //    tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LEQUAL);
+                //    tGL.enable(tGL.BLEND),tGL.blendFunc(tGL.SRC_ALPHA, tGL.ONE_MINUS_SRC_ALPHA);
+                //
+                //    tVBO = tGPU.vbo['_FRAMERECT_'],
+                //    tUVBO = tGPU.uvbo['_FRAMERECT_'],
+                //    tIBO = tGPU.ibo['_FRAMERECT_'],
+                //    tProgram = tGPU.programs['postBase'];
+                //    if (!tVBO) return;
+                //    tGL.useProgram(tProgram);
+                //    /*tGL.uniformMatrix4fv(tProgram.uPixelMatrix, false, [
+                //     2 / tCvs.clientWidth, 0, 0, 0,
+                //     0, -2 / tCvs.clientHeight, 0, 0,
+                //     0, 0, 0, 0,
+                //     -1, 1, 0, 1
+                //     ]);
+                //     */
+                //    pM[0] = 2 / tCvs.clientWidth, pM[1] = pM[2] = pM[3] = 0,
+                //    pM[4] = 0, pM[5] = -2 / tCvs.clientHeight, pM[6] = pM[7] = 0,
+                //    pM[8] = pM[9] = pM[10] = pM[11] = 0,
+                //    pM[12] = -1, pM[13] = 1, pM[14] = 0, pM[15] = 1,
+                //    tGL.uniformMatrix4fv(tProgram.uPixelMatrix, false, pM),
+                //    tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
+                //    tGL.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, tGL.FLOAT, false, 0, 0),
+                //    tGL.bindBuffer(tGL.ARRAY_BUFFER, tUVBO),
+                //    tGL.vertexAttribPointer(tProgram.aUV, tUVBO.stride, tGL.FLOAT, false, 0, 0),
+                //    tGL.uniformMatrix4fv(tProgram.uCameraMatrix, false, rectMTX);
+                //    for (k in tCameraList) {
+                //        tCamera = tCameraList[k]
+                //        tUUID_camera = tCamera.uuid
+                //        if (tCamera.visible) {
+                //            tFrameBuffer = tGPU.framebuffers[tUUID_camera].frameBuffer;
+                //            tGL.uniform1i(tProgram.uFXAA, tCamera.antialias);
+                //            if (tCamera.antialias) {
+                //                /*
+                //                 if (tCamera.renderArea) tGL.uniform2fv(tProgram.uTexelSize, [1 / tFrameBuffer.width, 1 / tFrameBuffer.height]);
+                //                 else tGL.uniform2fv(tProgram.uTexelSize, [1 / tCvs.width, 1 / tCvs.height]);
+                //                 */
+                //                if (tCamera.renderArea) uTS[0] = 1 / tFrameBuffer.width, uTS[1] = 1 / tFrameBuffer.height;
+                //                else uTS[0] = 1 / tCvs.width, uTS[1] = 1 / tCvs.height;
+                //                tGL.uniform2fv(tProgram.uTexelSize, uTS);
+                //            }
+                //
+                //            tGL.uniform3fv(tProgram.uAffine,
+                //                (
+                //                    f9[0] = tFrameBuffer.x + tFrameBuffer.width / 2 / pRatio, f9[1] = tFrameBuffer.y + tFrameBuffer.height / 2 / pRatio , f9[2] = 0,
+                //                    f9[3] = 0, f9[4] = 0, f9[5] = 0,
+                //                    f9[6] = tFrameBuffer.width / 2 / pRatio, f9[7] = tFrameBuffer.height / 2 / pRatio, f9[8] = 1,
+                //                    f9
+                //                )
+                //            ),
+                //            //tGL.activeTexture(tGL.TEXTURE0),
+                //            tGL.bindTexture(tGL.TEXTURE_2D, tGPU.framebuffers[tUUID_camera].texture),
+                //            tGL.uniform1i(tProgram.uSampler, 0),
+                //            tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO),
+                //            tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_INT, 0);
+                //        }
+                //    }
+                //
+                //}
+                //if(tListener && tListener['WORLD_RENDER_AFTER']) tListener['WORLD_RENDER_AFTER'][0].f(currentTime,totalVertex)
             };
             var mouseEvent = ['mousemove','mousedown','mouseup'];
             var mouseListener = function(e){
@@ -656,6 +659,7 @@ var World = (function (makeUtil) {
                         canvas._autoSize = isAutoSize,
                         cameraRenderAreaUpdate(self);
                         gpu[self].gl.viewport(0, 0, canvas.width, canvas.height);
+                        //gpu[self].gl.viewport(0, 0, gpu[self].gl.drawingBufferWidth, gpu[self].gl.drawingBufferHeight);
                     };
                 }
                 window.addEventListener('resize', autoSizer[this]),
@@ -739,13 +743,33 @@ var World = (function (makeUtil) {
         ],
         value:function start() {
             var self;
+            var priListener = $getPrivate('MoGL', 'listener')
+            var tListener
             if (!started[this.uuid]) {
                 self = this;
-                started[this.uuid] = MoGL.addInterval(function(t){
-                    self.render(t);
+                tListener = priListener[self.uuid]
+                var prev = performance.now(), prev2 = performance.now(), next = prev + 16, gap = 0, fps = 60
+                started[this.uuid] = MoGL.addInterval(function (t) {
+                    gap = t-prev
+                    if (tListener && tListener['WORLD_RENDER_BEFORE']) tListener['WORLD_RENDER_BEFORE'][0].f(fps)
+                    if (t > next) {
+                        self.render(t);
+                        fps = 1000/(t-prev2)
+                        t = performance.now()
+                        next = t + 16 - gap
+                        prev2 = t- gap
+                    }
+                    prev = t
                 });
+                if(tListener && tListener['WORLD_RENDER_AFTER']) tListener['WORLD_RENDER_AFTER'][0].f(fps)
             }
-            return this;
+            //var self = this
+            //var renderFunc =function (t) {
+            //    requestAnimationFrame(renderFunc);
+            //    self.render(t);
+            //}
+            //started[this.uuid] = requestAnimationFrame(renderFunc);
+            //return this;
 
         }
     })
