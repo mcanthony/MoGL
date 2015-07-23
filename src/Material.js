@@ -2,15 +2,12 @@ var Material = (function () {
     'use strict';
     var textureLoaded, texType,
         diffuse, normal, specular, diffuseWrap, specularNormal,
-        shading, lambert, specularPower,specularColor, wireFrame, wireFrameColor, count, color, sheetMode;
+        normalPower, specularPower, specularColor,
+        shading, lambert, wireFrame, wireFrameColor, count, color, sprite;
     
     //private
     shading = {},
-
     lambert = {},
-
-    specularPower = {},
-    specularColor = {},
     wireFrame = {},
     wireFrameColor = {},
 
@@ -22,21 +19,27 @@ var Material = (function () {
     normal = {},
     specular = {},
     specularNormal = {},
-    sheetMode = {}
+    
+    normalPower = {},
+    specularPower = {},
+    specularColor = {},
+    
+    sprite = {},
 
     //shared private
     $setPrivate('Material', {
-        color: color,
-        wireFrame: wireFrame,
-        wireFrameColor: wireFrameColor,
-        shading: shading,
-        lambert: lambert,
-        specularPower: specularPower,
-        specularColor: specularColor,
+        color:color,
+        wireFrame:wireFrame,
+        wireFrameColor:wireFrameColor,
+        shading:shading,
+        lambert:lambert,
+        normalPower:normalPower,
+        specularPower:specularPower,
+        specularColor:specularColor,
         specular:specular,
-        diffuse: diffuse,
-        normal: normal,
-        sheetMode : sheetMode
+        diffuse:diffuse,
+        normal:normal,
+        sprite:sprite
     }),
     //lib
     textureLoaded = function(mat){
@@ -70,45 +73,19 @@ var Material = (function () {
             "var mat5 = Material('#ff00000.8');"
         ],
         value:function Material() {
-            color[this] = [1,1,1,1]
+            color[this] = [1,1,1,1];
             if (arguments.length) {
                 this.color = arguments.length > 1 ? arguments : arguments[0]
             }
-            wireFrameColor[this] = [Math.random(),Math.random(),Math.random(),1]
-            wireFrame[this] = false;
-            lambert[this] = 1.0
-            specularPower[this] = 20.0
-            specularColor[this] = [1,1,1,1]
-            shading[this] = Shading.none
-            sheetMode [this] = {
-                enable : false,
-                wNum : 8,
-                hNum : 1,
-                frame : 0,
-                cycle : 32,
-                currentGap : 0
-            }
+            wireFrame[this] = false,
+            wireFrameColor[this] = [Math.random(),Math.random(),Math.random(),1],
+            lambert[this] = 1.0,
+            normalPower[this] = 1.0,
+            specularPower[this] = 20.0,
+            specularColor[this] = [1,1,1,1],
+            shading[this] = Shading.none;
         }
     })
-    .field('sheetMode', {
-            description: "시트모드",
-            sample: [
-                'console.log(material.sheetMode);'
-            ],
-            defaultValue:'{ enable : false, wNum : 8, hNum : 8 }',
-            get: $getter(sheetMode, false, 0)
-        }
-    )
-    .field('count', {
-            description: "재질이 사용된 횟수",
-            sample: [
-                '// 미구현상태임',
-                'console.log(material.count);'
-            ],
-            defaultValue:'0',
-            get: $getter(count, false, 0)
-        }
-    )
     .field('color', {
         description: "재질 컬러색",
         sample: [
@@ -124,6 +101,88 @@ var Material = (function () {
             p[0] = v[0], p[1] = v[1], p[2] = v[2], p[3] = v[3];
        }
     })
+    .field('sprite', {
+        description:[
+            "이 재질이 스프라이트모드로 작동하게 만듬. 다음과 같은 오브젝트를 넘김",
+            "{row:00, col:00, rate:00, start:00, yoyo:boolean, loop:boolean}",
+            "* row - 이미지를 세로로 쪼갠 수",
+            "* col - 이미지를 가로로 쪼갠 수",
+            "* ?rate - 1프레임당 사용할 시간(초) 생략시 1초",
+            "* ?start - 최초 시작시 보여질 프레임번호. 생략시 0",
+            "* ?loop - 스프라이트 프레임이 몇 번 반복되는지 정함. 음수를 넣으면 무한반복. 생략시 -1",
+            "* ?yoyo - 반복시 앞에서 뒤로 뒤에서 앞으로 형태로 반복됨"
+        ],
+        sample:[
+            'var mat = new Material("#fff");',
+            'mat.sprite = {row:5, col:3};'
+        ],
+        get:function(){
+            return sprite[this].getter || null;
+        },
+        set:function(o){
+            var target, k, v;
+            if (o === null ) {
+                sprite[this] = null;
+                return;
+            }
+            if (!sprite[this]) sprite[this] = {
+                rate:1000,
+                start:0,
+                loop:-1,
+                yoyo:false,
+                curr:0,
+                total:0,
+                prev:0,
+                getter:{rate:1, start:0, loop:-1, yoyo:false}
+            };
+            target = sprite[this];
+            for (k in o) {
+                v = o[k];
+                target.getter[k] = v;
+                if (k == 'rate') v *= 1000;
+                else if(k == 'row' || k == 'col') target['_' + k] = 1 / v;
+                target[k] = v;
+            }
+            target.total = target.getter.row * target.getter.col,
+            target.curr = target.start,
+            target.prev = 0;
+        }
+    })
+    .field('spriteFrame', {
+        description:"스프라이트의 현재 프레임",
+        sample:[
+            'var mat = new Material("#fff");',
+            'mat.sprite = {row:5, col:3};',
+            'mat.spriteFrame = 3;'
+        ],
+        get:function(){
+            return sprite[this] && sprite[this].curr;
+        },
+        set:function(v){
+            var target = sprite[this];
+            if (!target || v >= target.total) return;
+            target.curr = parseInt(v);
+        }
+    })
+    .field('spriteTotalFrame', {
+        description:"스프라이트의 전체 프레임",
+        sample:[
+            'console.log(material.sheetMode);'
+        ],
+        get:function(){
+            return sprite[this] && sprite[this].total;
+        }
+    })
+    .field('count', {
+            description: "재질이 사용된 횟수",
+            sample: [
+                '// 미구현상태임',
+                'console.log(material.count);'
+            ],
+            defaultValue:'0',
+            get: $getter(count, false, 0)
+        }
+    )
     .field('wireFrame', {
         description: "와이어 프레임 표현여부",
         sample: [
@@ -168,6 +227,16 @@ var Material = (function () {
         get:$getter(lambert),
         set:$setter(lambert)
     })
+    .field('normalPower', {
+        description: "재질 normalPower 적용 강도 설정",
+        sample: [
+            'material.normalPower = 1.0;',
+            'console.log(material.normalPower);'
+        ],
+        defaultValue:'20.0',
+        get:$getter(specularPower),
+        set:$setter(specularPower)
+    })
     .field('specularPower', {
         description: "재질 specularPower 적용 강도 설정",
         sample: [
@@ -178,7 +247,6 @@ var Material = (function () {
         get:$getter(specularPower),
         set:$setter(specularPower)
     })
-
     .field('specularColor', {
         description: "specular 컬러색",
         sample: [

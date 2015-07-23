@@ -113,12 +113,15 @@ var init = function(isLoaded, imgs){
             scene.removeChild(this);
         },
 		ani = {time:3, repeat:-1},
-		prop = {rotateX:360*toRadian,rotateY:720*toRadian,rotateZ:360*toRadian},
-        i = 2000;
+		prop = {},
+        i = 500;
 		setTimeout(loop = function(){
             var size = bs.randf(1.7, 2.2);//bs.randf(.7, 1.2);
             ani.time = bs.randf(3,6), ani.delay = bs.randf(0,10),
-			prop.x = bs.randf(-25,25), prop.y = bs.randf(-25,25), prop.z = bs.randf(10,200)
+			prop.x = bs.randf(-25,25), prop.y = bs.randf(-25,25), prop.z = bs.randf(10,200),
+            prop.rotateX = bs.randf(360,1000)*toRadian,
+            prop.rotateY = bs.randf(360,1000)*toRadian,
+            prop.rotateZ = bs.randf(360,1000)*toRadian,
 			scene.addChild(
                 Mesh(sphere, material)
                 .setProperties({

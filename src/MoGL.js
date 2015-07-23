@@ -892,24 +892,6 @@ var MoGL = (function() {
                 "mat.setProperties({x:50}, {time:1, repeat:3});"
             ],
             value:'propertyRepeated'
-        })
-        .constant('ease', {
-            description:(function(){
-                var i, v = [
-                    'setProperties의 애니메이션에 사용될 보간함수',
-                    '다음과 같은 값이 올 수 있음'
-                ];
-                for (i in $ease) {
-                    v[v.length] = '* MoGL.ease.' + i;
-                }
-                return v;
-            })(),
-            type:'function',
-            sample: [
-                "var mat = new Matrix();",
-                "mat.setProperties({x:50}, {time:1, ease:MoGL.ease.sineOut});"
-            ],
-            value:$ease
         });
         return init.build();
     })(),
