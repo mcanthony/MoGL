@@ -49,8 +49,8 @@ var Mesh = (function () {
         value:function Mesh(geometry, material) {
             this.geometry = geometry,
             this.material = material,
-            pickingColors[this] = getUniqueColor()
-            billBoard[this] = false
+            pickingColors[this] = getUniqueColor(),
+            billBoard[this] = false;
 
             var self = this;
             (function () {
