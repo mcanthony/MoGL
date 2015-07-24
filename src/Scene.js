@@ -1,10 +1,11 @@
 var Scene = (function () {
     'use strict';
-    var vertexShaderParser, fragmentShaderParser, mkGet, mkAdd, mkAddShader, mkRemove,
+    var vertexShaderParser, fragmentShaderParser, mkGet, mkAdd, mkAddShader, mkRemove,addRenderList,renderList,
         children,childrenArray, cameras, textures, materials, geometrys, vertexShaders, fragmentShaders, updateList,baseLightRotate,cameraLength;
     //private
     children = {},
     childrenArray = {},
+    renderList = {},
     cameras = {},
     baseLightRotate={},
     textures = {},
@@ -18,6 +19,7 @@ var Scene = (function () {
     $setPrivate('Scene', {
         children:children,
         childrenArray:childrenArray,
+        renderList : renderList,
         cameraLength : cameraLength
     }),
     //lib
@@ -65,6 +67,28 @@ var Scene = (function () {
             }
             return false;
         }
+    },
+    addRenderList = function(v,list){
+        var geo, shading;
+        geo = v.geometry,
+        shading = v.material.shading
+
+        var useTexture = v.material.diffuse ? 1 : 0;
+
+        shading=
+        shading == Shading.phong ? useTexture ? 'bitmapPhong' : 'colorPhong' :
+        shading == Shading.gouraud ? useTexture ? 'bitmapGouraud' : 'colorGouraud' :
+        shading == Shading.toon ? 'toonPhong' :
+        shading == Shading.blinn ? 'bitmapBlinn' :
+        useTexture ? 'bitmap' : 'color';
+
+        if(!list[geo]){
+            list[geo] = {}
+        }
+        if(!list[geo][shading]){
+            list[geo][shading] = []
+        }
+        list[geo][shading].push(v)
     };
     return MoGL.extend('Scene', {
         description:[
@@ -83,6 +107,7 @@ var Scene = (function () {
             geometrys[this] = {},
             vertexShaders[this] = {},
             fragmentShaders[this] = {},
+            renderList[this] = {},
             updateList[this] = {
                 geometry:[],
                 texture:[],
@@ -250,6 +275,7 @@ var Scene = (function () {
                     loaded.call(target, update.texture);
                 }
                 target.addEventListener(Material.changed, loaded, null, update.texture);
+                addRenderList(v,renderList[this])
                 return this;
             };
         })()
@@ -370,7 +396,7 @@ var Scene = (function () {
                 if (k == v || p[k].id == v) {
                     childrenArray[this].splice(childrenArray[this].indexOf(p[k]), 1),
                     p[k].removeEventListener(MoGL.changed),
-                    updateList[this].removeMerged.push(p[k]),
+                    //updateList[this].removeMerged.push(p[k]),
                     delete p[k];
                     return true;
                 }
