@@ -301,19 +301,4 @@ $md = function(classes){
         md[md.length] = '\n[top](#)';
         return md.join('\n');
     };
-},
-Object.freeze($ease = {
-    linear:function(a,c,b){return b*a+c},
-    backIn:function(a,c,b){return b*a*a*(2.70158*a-1.70158)+c},
-    backOut:function(a,c,b){a-=1;return b*(a*a*(2.70158*a+1.70158)+1)+c},
-    backInOut:function(a,c,b){a*=2;if(1>a)return 0.5*b*a*a*(3.5949095*a-2.5949095)+c;a-=2;return 0.5*b*(a*a*(3.70158*a+2.70158)+2)+c},
-    bounceOut:function(a,c,b){if(0.363636>a)return 7.5625*b*a*a+c;if(0.727272>a)return a-=0.545454,b*(7.5625*a*a+0.75)+c;if(0.90909>a)return a-=0.818181,b*(7.5625*a*a+0.9375)+c;a-=0.95454;return b*(7.5625*a*a+0.984375)+c},
-    sineIn:function(a,c,b){return -b*Math.cos(a*PIH)+b+c},
-    sineOut:function(a,c,b){return b*Math.sin(a*PIH)+c},
-    sineInOut:function(a,c,b){return 0.5*-b*(Math.cos(PI*a)-1)+c},
-    circleIn:function(a,c,b){return -b*(Math.sqrt(1-a*a)-1)+c},
-    circleOut:function(a,c,b){a-=1;return b*Math.sqrt(1-a*a)+c},
-    circleInOut:function(a,c,b){a*=2;if(1>a)return 0.5*-b*(Math.sqrt(1-a*a)-1)+c;a-=2;return 0.5*b*(Math.sqrt(1-a*a)+1)+c},
-    quadraticIn:function(a,c,b){return b*a*a+c},
-    quadraticOut:function(a,c,b){return -b*a*(a-2)+c}
-});
+};

@@ -2,52 +2,52 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <title>MoGL Showcase - normalMap</title>
-    <meta charset="utf-8"/>
-    <meta property="og:title" content="Monkey"/>
-    <meta property="og:description" content="MoGL.js version"/>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <meta name="format-detection" content="telephone=no"/>
-    <meta name="apple-mobile-web-app-capable" content="yes"/>
-    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
-    <style>
-        body {
-            background-color: #000;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            height: 100%;
-        }
+<title>MoGL Showcase - normalMap</title>
+<meta charset="utf-8"/>
+<meta property="og:title" content="Monkey"/>
+<meta property="og:description" content="MoGL.js version"/>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="format-detection" content="telephone=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+<style>
+    body {
+        background-color: #000;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        height: 100%;
+    }
 
-        .FPS {
-            color: #FFF;
-            left: 0px;
-            top: 0px;
-            position: absolute
-        }
-    </style>
-    <script src="../src/$.js"></script>
-    <script src="../src/make.js"></script>
-    <script src="../src/MoGL.js"></script>
-    <script src="../src/BlendMode.js"></script>
-    <script src="../src/Filter.js"></script>
-    <script src="../src/Primitive.js"></script>
-    <script src="../src/Vertex.js"></script>
-    <script src="../src/Shading.js"></script>
-    <script src="../src/VertexShaderFunctions.js"></script>
-    <script src="../src/Shader.js"></script>
-    <script src="../src/Matrix.js"></script>
-    <script src="../src/Texture.js"></script>
-    <script src="../src/Geometry.js"></script>
-    <script src="../src/Material.js"></script>
-    <script src="../src/Mesh.js"></script>
-    <script src="../src/Group.js"></script>
-    <script src="../src/Camera.js"></script>
-    <script src="../src/Scene.js"></script>
-    <script src="../src/World.js"></script>
-    <script src="../showcase/dat.gui.min.js"></script>
+    .FPS {
+        color: #FFF;
+        left: 0px;
+        top: 0px;
+        position: absolute
+    }
+</style>
+<script src="../src/$.js"></script>
+<script src="../src/make.js"></script>
+<script src="../src/MoGL.js"></script>
+<script src="../src/BlendMode.js"></script>
+<script src="../src/Filter.js"></script>
+<script src="../src/Primitive.js"></script>
+<script src="../src/Vertex.js"></script>
+<script src="../src/Shading.js"></script>
+<script src="../src/VertexShaderFunctions.js"></script>
+<script src="../src/Shader.js"></script>
+<script src="../src/Matrix.js"></script>
+<script src="../src/Texture.js"></script>
+<script src="../src/Geometry.js"></script>
+<script src="../src/Material.js"></script>
+<script src="../src/Mesh.js"></script>
+<script src="../src/Group.js"></script>
+<script src="../src/Camera.js"></script>
+<script src="../src/Scene.js"></script>
+<script src="../src/World.js"></script>
+<script src="../showcase/dat.gui.min.js"></script>
 </head>
 <body>
 <img src="sheet/sheet.png" id="testIMG1" style="position: absolute;top:0px; display:none" width="256"
@@ -62,100 +62,69 @@
 </div>
 
 <script>
-    'use strict';
-    // basic settings
-    var divCurrentFPS, divAverageFPS, prevTime;
-    var world, scene, camera;
+'use strict';
+MoGL.classes(window);
 
-    divCurrentFPS = document.getElementById('currentFPS')
-    divAverageFPS = document.getElementById('averageFPS')
-    prevTime = 0
+var divCurrentFPS, divAverageFPS, prevTime;
+var currentFPS, prevTime = 0, count = 0, sum = 0;
+var testItem, geo = Primitive.plane();
 
-    world = new World('canvas')
-    scene = new Scene()
-    camera = new Camera()
-
-
-    world.addScene(scene)
-    scene.addChild(camera)
-    var testMat, testMat2
-    var testItem, testItem2
-    var texture, texture2
-    var geo = Primitive.plane()
-
-    world.setAutoSize(1)
-    world.start()
-
-
-    texture = new Texture(document.getElementById('testIMG1'))
-
-    texture2 = new Texture(document.getElementById('testIMG2'))
-
-
-    testMat = new Material()
-    testMat.shading = Shading.phong
-    testMat.sheetMode.enable= true
-
-    testMat.addTexture(Texture.diffuse, texture)
-    testItem = new Mesh(geo, testMat);
-    testItem.rotateX =  Math.PI/2
-    testItem.x = -1
-
-    scene.addChild(testItem);
-
-    testMat2 = new Material()
-    testMat2.shading = Shading.phong
-    testMat2.sheetMode.enable= true
-    testMat2.sheetMode.wNum = 6
-    testMat2.sheetMode.hNum = 4
-
-    testMat2.addTexture(Texture.diffuse, texture2)
-    testItem2 = new Mesh(geo, testMat2);
-    testItem2.rotateX =  Math.PI/2
-    testItem2.x = 1
-
-    scene.addChild(testItem2);
-
-
-
-    var currentFPS, prevTime = 0, count = 0, sum = 0
-    world.addEventListener(World.renderAfter, function (currTime, totalVertex) {
-        var currentFPS = 1000 / ( currTime - prevTime );
-        prevTime = currTime;
-        count++
-        divCurrentFPS.textContent = currentFPS.toFixed(2);
-        divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2) + '/ totalVertex : ' + totalVertex;
-        testItem.rotateY += 0.01
-
-    })
-    var geoTest = Primitive.cube()
-
-    var tex = new Texture(document.getElementById('testIMG2'))
-    testItem.addEventListener(Mesh.down, function (e) {
-        var mat, item
-
-        mat = new Material()
-        mat.shading = Shading.phong
-        mat.sheetMode.enable = true
-        mat.sheetMode.wNum = 6
-        mat.sheetMode.hNum = 4
-
-        mat.addTexture(Texture.diffuse, tex)
-        item = new Mesh(geoTest, mat);
-        item.rotateX = Math.PI / 2
-
-        console.log(e)
-        item.x = e.target.x * Math.random()-0.5
-        item.y =Math.random()-0.5
-
-        scene.addChild(item);
-
-    })
-
-    ////////////////////////////////////////////////////////////////////////////
-
-
-
+divCurrentFPS = document.getElementById('currentFPS'),
+divAverageFPS = document.getElementById('averageFPS'),
+prevTime = 0;
+while(!document.getElementById('testIMG1').complete);
+World('canvas')
+.addScene(
+    Scene()
+    .addChild(Camera())
+    .addChild(
+        testItem = Mesh(
+            geo, 
+            Material()
+            .setProperties({
+                shading:Shading.phong,
+                sprite:{
+                    col:8, row:1, start:0
+                }
+            })
+            .addTexture(Texture.diffuse, Texture(document.getElementById('testIMG1')))
+            .setProperties({spriteFrame:7}, {time:.3, repeat:-1})
+        )
+        .setProperties({rotateX:Math.PI/2, x:-1})
+        .setProperties({x:-5},{time:4, yoyo:1, repeat:-1, ease:'circleIn'})
+        
+    ).addChild(
+        Mesh(
+            geo, 
+            Material()
+            .setProperties({
+                shading:Shading.phong,
+                sprite:{
+                    col:6, row:4
+                }
+            })
+            .addTexture(Texture.diffuse, Texture(document.getElementById('testIMG2')))
+            .setProperties({spriteFrame:23}, {time:1, repeat:-1})
+        )
+        .setProperties({
+            scaleX:3, scaleY:3, scaleZ:3,
+            rotateX:Math.PI/2,
+            x:1
+        })
+        .setProperties({y:3},{time:1, repeat:-1, ease:'circleOut'})        
+    )
+)
+.addEventListener(World.renderAfter, function(currTime, totalVertex) {
+    var currentFPS = 1000 / ( currTime - prevTime );
+    prevTime = currTime,
+    count++,
+    divCurrentFPS.textContent = currentFPS.toFixed(2),
+    divAverageFPS.textContent = ((sum += currentFPS) / count).toFixed(2) + 
+        '/ totalVertex : ' + 
+        totalVertex;
+})
+.setAutoSize(1)
+.start();
 </script>
 </body>
 </html>
