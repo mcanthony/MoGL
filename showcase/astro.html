@@ -104,7 +104,7 @@ var init = function(isLoaded, imgs){
                 prop0 = {shading:Shading.phong, sprite:{col:28, row:1, start:0}},
                 propAni = {spriteFrame:27}, 
                 ani = {time:1},
-                plane = Primitive.plane(),
+                plane = Primitive.plane(2,2),
                 prop1 = {rotateX:Math.PI/2},
                 propertyChanged = function(){
                     scene.removeChild(this);

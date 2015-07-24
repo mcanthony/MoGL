@@ -329,8 +329,9 @@ var World = (function (makeUtil) {
                         tChildren = gChild[tUUID_Scene],
                         tChildrenArray = gChildArray[tUUID_Scene],
                         i2 = tChildrenArray.length;
+                        var i3 = 0
                         while(i2--){
-                            tItem = tChildrenArray[i2],
+                            tItem = tChildrenArray[i3++],
                             tUUID_Item = tItem.uuid,
                             tCull = gCull[tUUID_Item];
                             if (tCull != pCull) {

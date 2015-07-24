@@ -756,12 +756,13 @@ var World = (function (makeUtil) {
                         self.render(t);
                         fps = 1000/(t-prev2)
                         t = performance.now()
-                        next = t + 16 - gap
+                        next = t + 14 - gap
                         prev2 = t- gap
                     }
                     prev = t
+                    if(tListener && tListener['WORLD_RENDER_AFTER']) tListener['WORLD_RENDER_AFTER'][0].f(fps)
                 });
-                if(tListener && tListener['WORLD_RENDER_AFTER']) tListener['WORLD_RENDER_AFTER'][0].f(fps)
+
             }
             //var self = this
             //var renderFunc =function (t) {
