@@ -31,10 +31,11 @@
     <script src="../src/$.js"></script>
     <script src="../src/make.js"></script>
     <script src="../src/MoGL.js"></script>
-    <script src="../src/BlendMode.js"></script>
+    <script src="../src/Vector.js"></script>
     <script src="../src/Filter.js"></script>
-    <script src="../src/Primitive.js"></script>
     <script src="../src/Vertex.js"></script>
+    <script src="../src/BlendMode.js"></script>
+    <script src="../src/Primitive.js"></script>
     <script src="../src/Shading.js"></script>
     <script src="../src/VertexShaderFunctions.js"></script>
     <script src="../src/Shader.js"></script>
@@ -46,8 +47,8 @@
     <script src="../src/Group.js"></script>
     <script src="../src/Camera.js"></script>
     <script src="../src/Scene.js"></script>
-    <script src="../src/Vector.js"></script>
     <script src="../src/World2.js"></script>
+    <script src="http://js.bsapi.co/"></script>
 </head>
 <body>
 <img src="monkey/Suzanne.jpg" id="testIMG2" style="position: absolute;top:0px; display:none" width="256" height="256">
@@ -71,8 +72,10 @@
     scene = new Scene()
     camera = new Camera()
 
+
     world.addScene(scene)
     scene.addChild(camera)
+
 
     var material, texture;
     material = new Material('#fff')
@@ -89,8 +92,6 @@
             makeItems(geo)
             world.setAutoSize(1)
             world.start()
-
-
         }
     };
     xmlhttp.send(null);
@@ -115,7 +116,7 @@
         }
 
         var  count = 0, sum = 0
-        world.addEventListener(World.renderAfter, function (fps, totalVertex) {
+        world.addEventListener(World.renderBefore, function (fps,time, totalVertex) {
             var currentFPS = fps;
             count++
             divCurrentFPS.textContent = currentFPS.toFixed(2);
@@ -129,9 +130,9 @@
 //                item.rotateY += 0.05,
 //                item.rotateZ += 0.05
 //            }
-            camera.x = Math.sin(count / 50) * 50,
-            camera.y = Math.cos(count / 100) * 50,
-            camera.z = Math.cos(count / 50) * 50
+            camera.x = Math.sin((time/10) / 50) * 50,
+            camera.y = Math.cos((time/10) / 100) * 50,
+            camera.z = Math.cos((time/10) / 50) * 50
             camera.lookAt(0, 0, 0);
         })
     }
