@@ -449,13 +449,13 @@ var Shader = (function () {
                             precision: 'mediump float',
                             uniforms: [
                                 'float uLambert', 'vec3 uDLite',
-                                'bool uWireMode', 'vec4 uWireColor'
+                                'float uWire[5]'
                             ],
                             varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec4 vColor'],
                             function: [],
                             main: [
-                                'if( uWireMode ){\n' +
-                                    'gl_FragColor = uWireColor;\n' +
+                                'if( uWire[0] == 1.0 ){\n' +
+                                    'gl_FragColor = vec4(uWire[1],uWire[2],uWire[3],uWire[4]);\n' +
                                 '}else{\n' +
                                     'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
                                     'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
@@ -593,13 +593,13 @@ var Shader = (function () {
                                 'sampler2D uSpecularSampler', 'float uSpecularMap[2]','float uSpecular[5]',
                                 'float uLambert',
                                 'vec3 uDLite',
-                                'bool uWireMode', 'vec4 uWireColor'
+                                'float uWire[5]'
                             ],
                             varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition'],
                             function: [],
                             main: [
-                                'if( uWireMode ){\n' +
-                                    'gl_FragColor = uWireColor;\n' +
+                                'if( uWire[0] == 1.0 ){\n' +
+                                    'gl_FragColor = vec4(uWire[1],uWire[2],uWire[3],uWire[4]);\n' +
                                 '}else{\n' +
                                     'vec4 diffuse = texture2D( uSampler, vUV );\n' + // 디퓨즈를 계산함
                                     'float alpha = diffuse[3];\n' + // 디퓨즈를 계산함

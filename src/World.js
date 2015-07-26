@@ -166,6 +166,7 @@ var World = (function (makeUtil) {
             var sheetF = new Float32Array(5), pM=[], rM = [0, 0, 0], uTS = []
             var specularMapF = new Float32Array(2), specularF = new Float32Array(5)
             var normalMapF = new Float32Array(2)
+            var wireF = new Float32Array(5)
             var priListener = $getPrivate('MoGL', 'listener')
 
             gCameraProperty = $getPrivate('Camera', 'property'),
@@ -453,12 +454,12 @@ var World = (function (makeUtil) {
                                         ///////////////////////////////////////////////////////////////
                                         //노말
                                         if(useNormalBuffer){
-                                            specularF[0] = gMatSpecularPower[tUUID_mat] // 스페큘라 파워
-                                            tColor2 = gMatSpecularColor[tUUID_mat]
-                                            specularF[1] =  tColor2[0] // 스페큘라 컬러 r
-                                            specularF[2] =  tColor2[1] // 스페큘라 컬러 g
-                                            specularF[3] =  tColor2[2] // 스페큘라 컬러 b
-                                            specularF[4] =  tColor2[3] // 스페큘라 컬러 a
+                                            tColor2 = gMatSpecularColor[tUUID_mat],
+                                            specularF[0] = gMatSpecularPower[tUUID_mat], // 스페큘라 파워
+                                            specularF[1] =  tColor2[0], // 스페큘라 컬러 r
+                                            specularF[2] =  tColor2[1], // 스페큘라 컬러 g
+                                            specularF[3] =  tColor2[2], // 스페큘라 컬러 b
+                                            specularF[4] =  tColor2[3], // 스페큘라 컬러 a
                                             tGL.uniform1fv(tProgram.uSpecular, specularF)
 
                                             if (tNormalMaps = gMatNormalMaps[tUUID_mat]) {
@@ -468,7 +469,7 @@ var World = (function (makeUtil) {
                                                     tGL.bindTexture(tGL.TEXTURE_2D, tNormal),
                                                     tGL.uniform1i(tProgram.uNormalSampler, 1)
                                                 }
-                                                normalMapF[0] = 1.0 // 노말맵 사용여부
+                                                normalMapF[0] = 1.0, // 노말맵 사용여부
                                                 normalMapF[1] = 1.0 // 노말맵강도
                                             } else {
                                                 normalMapF[1] = 0.0
@@ -499,10 +500,16 @@ var World = (function (makeUtil) {
                                     ///////////////////////////////////////////////////////////////
                                     //와이어프레임 그리기
                                     gMatWire[tUUID_mat] ? (
-                                        tGL.uniform1i(tProgram.uWireMode, true),
-                                        tGL.uniform4fv(tProgram.uWireColor, priMatWireColor[tUUID_mat]),
+                                        tColor2 = priMatWireColor[tUUID_mat],
+                                        wireF[0] = 1.0,
+                                        wireF[1] = tColor2[0],
+                                        wireF[2] = tColor2[1],
+                                        wireF[3] = tColor2[2],
+                                        wireF[4] = tColor2[3],
+                                        tGL.uniform1fv(tProgram.uWire, wireF),
                                         tGL.drawElements(tGL.LINES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0),
-                                        tGL.uniform1i(tProgram.uWireMode, false)
+                                        wireF[0] = 0.0,
+                                        tGL.uniform1fv(tProgram.uWire, wireF)
                                     ) : 0
                                     pCull = tCull, pDiffuse = tDiffuse, pNormal = tNormal, pSpecular = tSpecular
                                     pUUID_mat = tUUID_mat
