@@ -120,8 +120,14 @@ var Scene = (function () {
                 list.sprite[shading].splice(list.sprite[shading].indexOf(v), 1)
             }
         } else {
-            if (list[geo][shading]) {
-                list[geo][shading].splice(list[geo][shading].indexOf(v), 1)
+            var k, tGeo
+            tGeo = list[geo]
+            for(k in tGeo){
+                if (tGeo[k]) {
+                    if(tGeo[k].indexOf(v)>-1){
+                        tGeo[k].splice(tGeo[k].indexOf(v), 1)
+                    }
+                }
             }
         }
     }
@@ -279,7 +285,7 @@ var Scene = (function () {
                 }
             };
             return function addMesh(v){
-                var target, update;
+                var target, update,render;
                 
                 if (!(v instanceof Mesh)) this.error(1);
                 
@@ -297,12 +303,15 @@ var Scene = (function () {
                 update.geometry.push(v.geometry),
                 update.merged.push(v),
 
+                render = renderList[this]
                 v.addEventListener(Mesh.changed, function() {
                 if (update.geometry.indexOf(v.geometry)==-1) update.geometry.push(v.geometry);
                     target = v.material;
                     if (target.isLoaded) {
                         loaded.call(target, update.texture);
                     }
+                    removeRenderItem(v,render)
+                    addRenderList(v,render)
                 });
 
                 target = v.material;

@@ -26,6 +26,13 @@ body {
 	color:#fff;
 	text-align:center;
 }
+.FPS {
+    color: #FFF;
+    left: 0px;
+    top: 0px;
+    font-size: 11px;
+    position: absolute
+}
 </style>
 <script src="../src/$.js"></script>
 <script src="../src/make.js"></script>
@@ -52,6 +59,10 @@ body {
 <body>
 <canvas id="stage"></canvas>
 <div id="preloader">Texture Loading...</div>
+<div class="FPS">
+    Current FPS: <span id="currentFPS"></span>
+    Average FPS: <span id="averageFPS"></span>
+</div>
 <script>
 'use strict';
 var init = function(isLoaded, imgs){
@@ -76,6 +87,22 @@ var init = function(isLoaded, imgs){
     );
     bs('#preloader').S(null);
 	world.setAutoSize(1) .start();
+
+    var divCurrentFPS, divAverageFPS;
+    divCurrentFPS = bs('#currentFPS')
+    divAverageFPS = bs('#averageFPS')
+    var count222 = 0, sum = 0
+    world.addEventListener(World.renderBefore, function (fps, time, totalVertex, totalObject) {
+        var currentFPS = fps;
+        count222++
+        divCurrentFPS.S('html', currentFPS.toFixed(2));
+        divAverageFPS.S('html', ( ( sum += currentFPS ) / count222 ).toFixed(2) + ' / totalVertex : ' + totalVertex + ' / totalObject : ' + totalObject);
+
+//        camera.x = Math.sin((time/10) / 50) * 50,
+//        camera.y = Math.cos((time/10) / 100) * 50,
+        camera.z = Math.cos((time / 10) / 50) * 50 - 100
+//        camera.lookAt(0, 0, 0);
+    });
     (function(){
         var r = 0, x, y;
         bs.WIN.on('keydown', MoGL.stopInterval, 0, 1);

@@ -133,7 +133,7 @@
             var explosion = Texture(imgs[2]),
                     prop0 = {shading: Shading.phong, sprite: {col: 29, row: 1, start: 0}},
                     propAni = {spriteFrame: 27},
-                    ani = {time: 1},
+                    ani = {time: 0.7},
                     plane = Primitive.plane(),
                     prop1 = {rotateX: Math.PI / 2},
                     propertyChanged = function () {
@@ -142,9 +142,6 @@
 
                     down = (function () {
                         var counter = bs('<div style="position:absolute;top:0;left:0;margin:10px;color:#fff">0</div>').S('<', 'body', 'this'), count = 0;
-
-
-
 
 
 
@@ -183,35 +180,35 @@
                     prop = {},
                     i = 500;
 
-//            var aaaa
-//            setInterval(function(){
-//                var mesh, mat,s;
-//                var prop0 = {shading: Shading.phong, sprite: {col: 29, row: 1, start: 0}},
-//                        propAni = {spriteFrame: 27},
-//                        ani = {time:.8},
-//                        plane = Primitive.plane(),
-//                        prop1 = {rotateX: Math.PI / 2}
-//                s = Math.random()*15
-//                prop1.x = Math.random()*50-25,
-//                prop1.y = Math.random()*50-25,
-//                prop1.z = Math.random()*100-Math.random()*150,
-//                prop1.scaleX = s
-//                prop1.scaleY = s
-//                prop1.scaleZ = s
-//                if(aaaa) scene.removeChild(aaaa)
-//                scene.addChild(
-//                        mesh = Mesh(
-//                                plane,
-//                                mat = Material()
-//                                        .setProperties(prop0)
-//                                        .setProperties(propAni, ani)
-//                                        .addTexture(Texture.diffuse, explosion)
-//                        )
-//                                .setProperties(prop1)
-//                ),
-//                mat.addEventListener(MoGL.propertyChanged, propertyChanged, mesh);
-//                aaaa = mesh
-//            },800);
+            var aaaa
+            setInterval(function(){
+                var mesh, mat,s;
+                var prop0 = {shading: Shading.phong, sprite: {col: 29, row: 1, start: 0}},
+                        propAni = {spriteFrame: 27},
+                        ani = {time:.8},
+                        plane = Primitive.plane(),
+                        prop1 = {rotateX: Math.PI / 2}
+                s = Math.random()*15
+                prop1.x = Math.random()*50-25,
+                prop1.y = Math.random()*50-25,
+                prop1.z = Math.random()*100-Math.random()*150,
+                prop1.scaleX = s
+                prop1.scaleY = s
+                prop1.scaleZ = s
+
+                scene.addChild(
+                        mesh = Mesh(
+                                plane,
+                                mat = Material()
+                                        .setProperties(prop0)
+                                        .setProperties(propAni, ani)
+                                        .addTexture(Texture.diffuse, explosion)
+                        )
+                                .setProperties(prop1)
+                ),
+                mat.addEventListener(MoGL.propertyChanged, propertyChanged, mesh);
+                aaaa = mesh
+            },10);
 
             setTimeout(loop = function () {
                 var size = bs.randf(1.7, 2.2);//bs.randf(.7, 1.2);
