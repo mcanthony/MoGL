@@ -197,22 +197,21 @@ var World = (function (makeUtil) {
 
             var render = function render(currentTime) {
                 tUUID = this.uuid,
-                    pCull = null,
-                    tCvs = cvsList[tUUID], tSceneList = sceneList[tUUID],
-                    tGPU = gpu[tUUID], tGL = tGPU.gl,
-                    tCvsW = tCvs.width, tCvsH = tCvs.height,
-                    tDiffuseMaps = tNormalMaps = pShading = null,
-                    totalVertex = 0;
+                pCull = null,
+                tCvs = cvsList[tUUID], tSceneList = sceneList[tUUID],
+                tGPU = gpu[tUUID], tGL = tGPU.gl,
+                tCvsW = tCvs.width, tCvsH = tCvs.height,
+                tDiffuseMaps = tNormalMaps = pShading = null,
+                totalVertex = 0;
                 totalObject = 0
                 var i = tSceneList.length, j, k, k2, k3, k4, k5, k6, i2, i3, list, curr;
                 var sheetInfo;
 
 
                 tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LEQUAL),
-                    tGL.enable(tGL.BLEND), tGL.blendFunc(tGL.SRC_ALPHA, tGL.ONE_MINUS_SRC_ALPHA);
+                tGL.enable(tGL.BLEND), tGL.blendFunc(tGL.SRC_ALPHA, tGL.ONE_MINUS_SRC_ALPHA);
 
                 tListener = priListener[tUUID]
-                //if(tListener && tListener['WORLD_RENDER_BEFORE']) tListener['WORLD_RENDER_BEFORE'][0].f(currentTime,totalVertex)
                 while (i--) {
                     tScene = tSceneList[i];
                     tUUID_Scene = tScene.uuid
@@ -235,19 +234,14 @@ var World = (function (makeUtil) {
                     }
                     if (tScene.updateList.camera.length) cameraRenderAreaUpdate(tUUID);
                     tScene.updateList.camera.length = 0,
-                        //////////////////////////////////////////////////////////////////////////////////////////////////////
-                        tCameraList = tScene.cameras,
-                        baseLightRotate = tScene.baseLightRotate
+                    //////////////////////////////////////////////////////////////////////////////////////////////////////
+                    tCameraList = tScene.cameras,
+                    baseLightRotate = tScene.baseLightRotate
 
                     //TODO for k로 돌리니 먼가 쌓이는듯한데?
-                    var cList = []
                     for (k in tCameraList) {
-                        cList.push(tCameraList[k])
-                    }
-                    var cLen = cList.length
-                    while(cLen--){
-                        tCamera = cList[cLen],
-                            tCameraMtx = priRaw[tCamera.matrix.uuid];
+                        tCamera = tCameraList[k],
+                        tCameraMtx = priRaw[tCamera.matrix.uuid];
                         tUUID_camera = tCamera.uuid
                         if (!tCamera.visible) continue;
                         //TODO 마우스용 프레임버퍼가 따로 필요하군 현재는 공용이자나!!!
@@ -266,32 +260,34 @@ var World = (function (makeUtil) {
 
                         if(mouseCheck = !mouseCheck){
                             // TODO 이놈도 지오별로 렌더하게 변경해야함
+                            var pVBO = null
                             tFrameBuffer = tGPU.framebuffers[tUUID_camera].frameBuffer,
-                                tGL.bindFramebuffer(tGL.FRAMEBUFFER, tFrameBuffer)
+                            tGL.bindFramebuffer(tGL.FRAMEBUFFER, tFrameBuffer)
                             if(prevWidth != tFrameBuffer.width || prevHeight != tFrameBuffer.height) tGL.viewport(0, 0, tFrameBuffer.width, tFrameBuffer.height)
                             prevWidth = tFrameBuffer.width , prevHeight = tFrameBuffer.height
                             for (k2 in gPickMeshs) {
                                 mousePickLength++,
-                                    tItem = gPickMeshs[k2].mesh,
-                                    tUUID_Item = tItem.uuid,
-                                    tGeo = gGeo[tUUID_Item].uuid,
-                                    tVBO = tGPU.vbo[tGeo],
-                                    tIBO = tGPU.ibo[tGeo],
-                                    tCull = gCull[tUUID_Item];
-
-                                tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
+                                tItem = gPickMeshs[k2].mesh,
+                                tUUID_Item = tItem.uuid,
+                                tGeo = gGeo[tUUID_Item].uuid,
+                                tVBO = tGPU.vbo[tGeo],
+                                tIBO = tGPU.ibo[tGeo],
+                                tCull = gCull[tUUID_Item];
+                                if(tVBO != pVBO){
+                                    tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
                                     tGL.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, tGL.FLOAT, false, 0, 0);
-
+                                    tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO)
+                                }
                                 tGL.uniform4fv(tProgram.uColor, gPickColors[tUUID_Item]),
-                                    tGL.uniform3fv(tProgram.uAffine,
-                                        (
-                                            f9[0] = tItem.x, f9[1] = tItem.y, f9[2] = tItem.z,
-                                                f9[3] = tItem.rotateX, f9[4] = tItem.rotateY, f9[5] = tItem.rotateZ,
-                                                f9[6] = tItem.scaleX, f9[7] = tItem.scaleY, f9[8] = tItem.scaleZ, f9
-                                        )
-                                    ),
-                                    tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO) ,
-                                    tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0)
+                                tGL.uniform3fv(tProgram.uAffine,
+                                    (
+                                        f9[0] = tItem.x, f9[1] = tItem.y, f9[2] = tItem.z,
+                                            f9[3] = tItem.rotateX, f9[4] = tItem.rotateY, f9[5] = tItem.rotateZ,
+                                            f9[6] = tItem.scaleX, f9[7] = tItem.scaleY, f9[8] = tItem.scaleZ, f9
+                                    )
+                                )
+                                tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0)
+                                pVBO = tVBO
                             }
                             if (mousePickLength && (tMouse = mouse[tUUID]) && tMouse.x) {
                                 tGL.readPixels(tMouse.x, tMouse.y, 1, 1, tGL.RGBA , tGL.UNSIGNED_BYTE, mouseCurrent),
@@ -463,8 +459,8 @@ var World = (function (makeUtil) {
                                                 tNormal = tGPU.textures[tNormalMaps[tNormalMaps.length - 1].tex.uuid]
                                                 if (tNormal != pNormal && tNormal != null) {
                                                     tGL.activeTexture(tGL.TEXTURE1),
-                                                        tGL.bindTexture(tGL.TEXTURE_2D, tNormal),
-                                                        tGL.uniform1i(tProgram.uNormalSampler, 1)
+                                                    tGL.bindTexture(tGL.TEXTURE_2D, tNormal),
+                                                    tGL.uniform1i(tProgram.uNormalSampler, 1)
                                                 }
                                                 tGL.uniform1i(tProgram.useNormalMap, true),
                                                     tGL.uniform1f(tProgram.uNormalPower, 1.0) //TODO 파워도 받아야함
@@ -480,11 +476,11 @@ var World = (function (makeUtil) {
                                             tSpecular = tGPU.textures[tSpecularMaps[tSpecularMaps.length - 1].tex.uuid]
                                             if (tSpecular != pSpecular && tSpecular != null) {
                                                 tGL.activeTexture(tGL.TEXTURE2),
-                                                    tGL.bindTexture(tGL.TEXTURE_2D, tSpecular),
-                                                    tGL.uniform1i(tProgram.uSpecularSampler, 2)
+                                                tGL.bindTexture(tGL.TEXTURE_2D, tSpecular),
+                                                tGL.uniform1i(tProgram.uSpecularSampler, 2)
                                             }
                                             tGL.uniform1i(tProgram.useSpecularMap, true),
-                                                tGL.uniform1f(tProgram.uSpecularMapPower, 1.5);  //TODO 파워도 받아야함
+                                            tGL.uniform1f(tProgram.uSpecularMapPower, 1.5);  //TODO 파워도 받아야함
                                         }else{
                                             tGL.uniform1i(tProgram.useSpecularMap, false);
                                         }
@@ -755,8 +751,6 @@ var World = (function (makeUtil) {
                     if (tListener && tListener['WORLD_RENDER_BEFORE']){
                         tListener['WORLD_RENDER_BEFORE'][0].f(fps,t,totalVertex,totalObject)
                     }
-                    //self.render();
-                    //if(after &&tListener && tListener['WORLD_RENDER_AFTER']) tListener['WORLD_RENDER_AFTER'][0].f(fps,t,totalVertex)
                     if(after && tListener && tListener['WORLD_RENDER_AFTER']) {
                         tListener['WORLD_RENDER_AFTER'][0].f(fps,t,totalVertex,totalObject)
                     }
@@ -766,11 +760,10 @@ var World = (function (makeUtil) {
                         fps = 1000/(t-prev)
                         prev = t
                     }
-                    //console.log(priListener[self.uuid]['WORLD_RENDER_AFTER'][0].f)
-
                 });
 
             }
+            //TODO 삭제를 어찌할꺼지?
             var self = this
             var renderFunc =function () {
                 self.render();
