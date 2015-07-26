@@ -447,24 +447,31 @@ var Shader = (function () {
                     return cache || (cache = new Shader({
                             id: 'colorFragmentShaderPhong',
                             precision: 'mediump float',
-                            uniforms: ['float uLambert', 'vec3 uDLite'],
+                            uniforms: [
+                                'float uLambert', 'vec3 uDLite',
+                                'bool uWireMode', 'vec4 uWireColor'
+                            ],
                             varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec4 vColor'],
                             function: [],
                             main: [
-                                'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
-                                'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
-                                'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
+                                'if( uWireMode ){\n' +
+                                    'gl_FragColor = uWireColor;\n' +
+                                '}else{\n' +
+                                    'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
+                                    'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
+                                    'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
 
-                                'vec3 position = normalize(vPosition);\n' +
-                                'vec3 normal = normalize(vNormal);\n' +
-                                'vec3 lightDir = normalize(uDLite);\n' +
-                                'vec3 reflectDir = reflect(-lightDir, normal);\n' +
-                                'float specular = max( dot(reflectDir, position), 0.0 );\n' +
-                                'specular = pow(specular,20.0);\n' +
+                                    'vec3 position = normalize(vPosition);\n' +
+                                    'vec3 normal = normalize(vNormal);\n' +
+                                    'vec3 lightDir = normalize(uDLite);\n' +
+                                    'vec3 reflectDir = reflect(-lightDir, normal);\n' +
+                                    'float specular = max( dot(reflectDir, position), 0.0 );\n' +
+                                    'specular = pow(specular,20.0);\n' +
 
-                                'float light = max( 0.05, dot(normal,lightDir) * uLambert);\n' +
-                                'gl_FragColor = vColor*light*vec4( ambientColor+ diffuseColor + specular*specColor , 1.0);\n' +
-                                'gl_FragColor.a = vColor[3];'
+                                    'float light = max( 0.05, dot(normal,lightDir) * uLambert);\n' +
+                                    'gl_FragColor = vColor*light*vec4( ambientColor+ diffuseColor + specular*specColor , 1.0);\n' +
+                                    'gl_FragColor.a = vColor[3];\n'+
+                                '}\n'
                             ]
                         }))
                 }
@@ -549,7 +556,7 @@ var Shader = (function () {
                             attributes: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
                             uniforms: [
                                 'mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uAffine[3]',
-                                'bool uSheetMode', 'vec4 uSheetOffset'
+                                'float uSheet[5]'
                             ],
                             varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition'],
                             function: [VertexShader.baseFunction],
@@ -559,8 +566,8 @@ var Shader = (function () {
                                 'gl_Position = uPixelMatrix*position;\n' +
                                 'vPosition = position.xyz;\n' +
                                 'vNormal = (mv * vec4(-aVertexNormal, 0.0)).xyz;\n' +
-                                'if( uSheetMode ) {' +
-                                '   vUV = vec2(aUV.x*uSheetOffset[0]+uSheetOffset[0]*uSheetOffset[2], aUV.y*uSheetOffset[1]+uSheetOffset[1]*uSheetOffset[3]);' +
+                                'if( uSheet[0] == 1.0 ) {' +
+                                '   vUV = vec2(aUV.x*uSheet[1]+uSheet[1]*uSheet[3], aUV.y*uSheet[2]+uSheet[2]*uSheet[4]);' +
                                 '}else{' +
                                 '   vUV = aUV;' +
                                 '}'
@@ -582,8 +589,8 @@ var Shader = (function () {
                             precision: 'mediump float',
                             uniforms: [
                                 'sampler2D uSampler',
-                                'sampler2D uNormalSampler', 'bool useNormalMap', 'float uNormalPower',
-                                'sampler2D uSpecularSampler', 'bool useSpecularMap', 'float uSpecularMapPower',
+                                'sampler2D uNormalSampler', 'float uNormalMap[2]',
+                                'sampler2D uSpecularSampler', 'float uSpecularMap[2]',
                                 'float uLambert', 'float uSpecularPower', 'vec4 uSpecularColor',
                                 'vec3 uDLite',
                                 'bool uWireMode', 'vec4 uWireColor'
@@ -608,21 +615,21 @@ var Shader = (function () {
                                         'float light = max( 0.05, dot(normal,lightDir) * uLambert);\n' + // 라이트강도 구하고
 
                                         'float specular\n;' +
-                                        'if( useNormalMap ){\n' +
+                                        'if( uNormalMap[0] == 1.0 ){\n' +
                                         '   vec4 bump = texture2D( uNormalSampler, vUV );\n' +
                                         '   bump.rgb= bump.rgb*2.0-1.0 ;\n' + // 범프값을 -1~1로 교정
                                         '   float normalSpecular = max( dot(reflectDir, position-bump.g), 0.5 );\n' + // 맵에서 얻어낸 노말 스페큘라
                                         '   specular = pow(normalSpecular,uSpecularPower)*specColor[3];\n' + // 스페큘라
-                                        '   gl_FragColor = ( diffuse *light * ambientColor * ambientColor[3] + specular * specColor ) + normalSpecular * bump.g * uNormalPower  ;\n' +
+                                        '   gl_FragColor = ( diffuse *light * ambientColor * ambientColor[3] + specular * specColor ) + normalSpecular * bump.g * uNormalMap[1]  ;\n' +
                                         '}else{' +
                                         '   specular = max( dot(reflectDir, position), 0.5 );\n' +
                                         '   specular = pow(specular,uSpecularPower)*specColor[3];\n' +
                                         '   gl_FragColor = diffuse *light * ambientColor * ambientColor[3] + specular * specColor ;\n' +
                                         '}\n' +
-                                        'if( useSpecularMap ){\n' +
+                                        'if( uSpecularMap[0] == 1.0 ){\n' +
                                         '   specular = max( dot(reflectDir, position), 0.5 );\n' +
                                         '   specular = pow(specular,texture2D( uSpecularSampler, vUV ).a);\n' +
-                                        '   gl_FragColor = gl_FragColor + gl_FragColor * specColor * specular * texture2D( uSpecularSampler, vUV ) *uSpecularMapPower;\n' +
+                                        '   gl_FragColor = gl_FragColor + gl_FragColor * specColor * specular * texture2D( uSpecularSampler, vUV ) * uSpecularMap[1];\n' +
                                         '}\n' +
                                         'gl_FragColor.a = alpha;\n'+
                                     '}\n'+
