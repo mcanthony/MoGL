@@ -163,7 +163,7 @@ var World = (function (makeUtil) {
             var tMouse
 
 
-            var sheetOffset = [], pM=[], rM = [0, 0, 0], uTS = []
+            var sheet = new Float32Array(5), pM=[], rM = [0, 0, 0], uTS = []
             var priListener = $getPrivate('MoGL', 'listener')
 
             gCameraProperty = $getPrivate('Camera', 'property'),
@@ -208,7 +208,7 @@ var World = (function (makeUtil) {
                 var sheetInfo;
 
 
-                tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LEQUAL),
+                tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS),
                 tGL.enable(tGL.BLEND), tGL.blendFunc(tGL.SRC_ALPHA, tGL.ONE_MINUS_SRC_ALPHA);
 
                 tListener = priListener[tUUID]
@@ -282,8 +282,8 @@ var World = (function (makeUtil) {
                                 tGL.uniform3fv(tProgram.uAffine,
                                     (
                                         f9[0] = tItem.x, f9[1] = tItem.y, f9[2] = tItem.z,
-                                            f9[3] = tItem.rotateX, f9[4] = tItem.rotateY, f9[5] = tItem.rotateZ,
-                                            f9[6] = tItem.scaleX, f9[7] = tItem.scaleY, f9[8] = tItem.scaleZ, f9
+                                        f9[3] = tItem.rotateX, f9[4] = tItem.rotateY, f9[5] = tItem.rotateZ,
+                                        f9[6] = tItem.scaleX, f9[7] = tItem.scaleY, f9[8] = tItem.scaleZ, f9
                                     )
                                 )
                                 tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0)
@@ -301,7 +301,7 @@ var World = (function (makeUtil) {
                                     mouseCurrentItem.mesh.dispatch(Mesh.down, mouseObj);
                                 } else if (tMouse.up && mouseCurrentItem) {
                                     mouseCurrentItem.mesh.dispatch(Mesh.up, mouseObj),
-                                        tMouse.x = null;
+                                    tMouse.x = null;
                                 } else  if (mouseCurrentItem != mouseOldItem) {
                                     if (mouseOldItem) mouseOldItem.mesh.dispatch(Mesh.out, mouseObj);
                                     if (mouseCurrentItem) mouseCurrentItem.mesh.dispatch(Mesh.over, mouseObj);
@@ -340,16 +340,13 @@ var World = (function (makeUtil) {
 
                         // 대상 씬의 차일드 루프
                         tChildren = gChild[tUUID_Scene],
-                            tChildrenArray = gChildArray[tUUID_Scene],
-                            tRenderList = gRenderList[tUUID_Scene]
+                        tChildrenArray = gChildArray[tUUID_Scene],
+                        tRenderList = gRenderList[tUUID_Scene]
 
                         for (k3 in tRenderList) {
                             k4 = tRenderList[k3]
-                            if(k3=='sprite') {
-                                tGeo = k4.geo
-                            }else{
-                                tGeo = k3
-                            }
+                            if(k3=='sprite') tGeo = k4.geo
+                            else tGeo = k3
                             // 지오가 바뀌는 시점
                             for (k5 in k4) {
                                 if(k5=='geo' ) continue
@@ -362,11 +359,11 @@ var World = (function (makeUtil) {
                                 useTexture = tUseTexture,
                                 useNormalBuffer = 1,
                                 pShading = null,
-                                //console.log(gMatShading[gMat[k6[0].uuid]])
                                 tProgram = tGPU.programs[k5],
                                 useNormalBuffer = (k5 =='bitmap' || k5 == 'color') ? 0 : 1,
                                 tGL.useProgram(tProgram);
                                 if(k3=='sprite') {
+                                    //TODO 뎁스문제 처리해야함
                                     tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.ALWAYS)
                                 }
 
@@ -399,7 +396,7 @@ var World = (function (makeUtil) {
                                 while(i2--){
                                     tItem = k6[i2],
                                     tUUID_Item = tItem.uuid,
-                                    tCull = gCull[tUUID_Item];
+                                    tCull = gCull[tUUID_Item],
                                     tMaterial = gMat[tUUID_Item],
                                     tShading = gMatShading[tUUID_mat = tMaterial.uuid],
                                     tDiffuseMaps = gMatDiffuseMaps[tUUID_mat],
@@ -416,11 +413,12 @@ var World = (function (makeUtil) {
                                     tGL.uniform3fv(tProgram.uAffine, f9)
                                     ///////////////////////////////////////////////////////////////
                                     //총정점수계산
+                                    // TODO 컬링 별로도 리스트를 나눠줘야하는군
                                     tCull != pCull ?
                                         (tCull == Mesh.cullingNone ?  tGL.disable(tGL.CULL_FACE) :
                                         tCull == Mesh.cullingBack ?  (tGL.enable(tGL.CULL_FACE), tGL.frontFace(tGL.CCW)) :
                                         tCull == Mesh.cullingFront ?  (tGL.enable(tGL.CULL_FACE), tGL.frontFace(tGL.CW)) : 0
-                                        ) : 0;
+                                    ) : 0;
 
                                     ///////////////////////////////////////////////////////////////
                                     //텍스쳐
@@ -429,7 +427,7 @@ var World = (function (makeUtil) {
                                         tDiffuse = tGPU.textures[tDiffuseMaps[tDiffuseMaps.length - 1].tex.uuid];
                                         if (tDiffuse != pDiffuse && tDiffuse != null) {
                                             tGL.activeTexture(tGL.TEXTURE0),
-                                                tGL.bindTexture(tGL.TEXTURE_2D, tDiffuse)
+                                            tGL.bindTexture(tGL.TEXTURE_2D, tDiffuse),
                                             tGL.uniform1i(tProgram.uSampler, 0);
                                         }
                                     }else{
@@ -440,21 +438,21 @@ var World = (function (makeUtil) {
                                     //스프라이트
                                     ///////////////////////////////////////////////////////////////
                                     if (sheetInfo = gMatSprite[tUUID_mat]) {
-                                        sheetOffset[0] = sheetInfo._col,
-                                            sheetOffset[1] = sheetInfo._row,
-                                            sheetOffset[2] = sheetInfo.curr % sheetInfo.col,
-                                            sheetOffset[3] = parseInt(sheetInfo.curr / sheetInfo.col),
-                                            tGL.uniform4fv(tProgram.uSheetOffset, sheetOffset),
-                                            tGL.uniform1i(tProgram.uSheetMode, 1);
-                                    } else {
-                                        tGL.uniform1i(tProgram.uSheetMode, 0);
+                                        sheet[1] = sheetInfo._col,
+                                        sheet[2] = sheetInfo._row,
+                                        sheet[3] = sheetInfo.curr % sheetInfo.col,
+                                        sheet[4] = parseInt(sheetInfo.curr / sheetInfo.col),
+                                        sheet[0] = 1.0
+                                    }else{
+                                        sheet[0] = 0.0
                                     }
+                                    tGL.uniform1fv(tProgram.uSheet, sheet);
                                     if(tUUID_mat != pUUID_mat){
                                         ///////////////////////////////////////////////////////////////
                                         //노말
                                         if(useNormalBuffer){
                                             tGL.uniform1f(tProgram.uSpecularPower, gMatSpecularPower[tUUID_mat]),
-                                                tGL.uniform4fv(tProgram.uSpecularColor, gMatSpecularColor[tUUID_mat])
+                                            tGL.uniform4fv(tProgram.uSpecularColor, gMatSpecularColor[tUUID_mat])
                                             if (tNormalMaps = gMatNormalMaps[tUUID_mat]) {
                                                 tNormal = tGPU.textures[tNormalMaps[tNormalMaps.length - 1].tex.uuid]
                                                 if (tNormal != pNormal && tNormal != null) {
@@ -490,17 +488,17 @@ var World = (function (makeUtil) {
                                     tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0);
                                     ///////////////////////////////////////////////////////////////
                                     //와이어프레임 그리기
-                                    if(gMatWire[tUUID_mat]){
-                                        tGL.uniform1i(tProgram.uWireMode, true)
+                                    gMatWire[tUUID_mat] ? (
+                                        tGL.uniform1i(tProgram.uWireMode, true),
                                         tGL.uniform4fv(tProgram.uWireColor, priMatWireColor[tUUID_mat]),
-                                        tGL.drawElements(tGL.LINES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0)
+                                        tGL.drawElements(tGL.LINES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0),
                                         tGL.uniform1i(tProgram.uWireMode, false)
-                                    }
+                                    ) : 0
                                     pCull = tCull, pDiffuse = tDiffuse, pNormal = tNormal, pSpecular = tSpecular
                                     pUUID_mat = tUUID_mat
                                 }
                                 if(k3=='sprite') {
-                                    tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LEQUAL)
+                                    tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS)
                                 }
                             }
                         }

@@ -145,9 +145,9 @@ var init = function(isLoaded, imgs){
                 prop1.x = this.x,
                 prop1.y = this.y,
                 prop1.z = this.z,
-                prop1.scaleX = this.scaleX*4,
-                prop1.scaleY = this.scaleY*4,
-                prop1.scaleZ = this.scaleZ*4
+                prop1.scaleX = this.scaleX*6,
+                prop1.scaleY = this.scaleY*6,
+                prop1.scaleZ = this.scaleZ*6
                 scene.addChild(
                     mesh = Mesh(
                         plane, 
@@ -168,7 +168,7 @@ var init = function(isLoaded, imgs){
         },
 		ani = {time:3, repeat:-1},
 		prop = {},
-        i = 1000;
+        i = 500;
 		setTimeout(loop = function(){
             var size = bs.randf(1.7, 2.2);//bs.randf(.7, 1.2);
             ani.time = bs.randf(3,6), ani.delay = bs.randf(0,10),

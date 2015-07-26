@@ -556,7 +556,7 @@ var Shader = (function () {
                             attributes: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
                             uniforms: [
                                 'mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uAffine[3]',
-                                'bool uSheetMode', 'vec4 uSheetOffset'
+                                'float uSheet[5]'
                             ],
                             varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition'],
                             function: [VertexShader.baseFunction],
@@ -566,8 +566,8 @@ var Shader = (function () {
                                 'gl_Position = uPixelMatrix*position;\n' +
                                 'vPosition = position.xyz;\n' +
                                 'vNormal = (mv * vec4(-aVertexNormal, 0.0)).xyz;\n' +
-                                'if( uSheetMode ) {' +
-                                '   vUV = vec2(aUV.x*uSheetOffset[0]+uSheetOffset[0]*uSheetOffset[2], aUV.y*uSheetOffset[1]+uSheetOffset[1]*uSheetOffset[3]);' +
+                                'if( uSheet[0] == 1.0 ) {' +
+                                '   vUV = vec2(aUV.x*uSheet[1]+uSheet[1]*uSheet[3], aUV.y*uSheet[2]+uSheet[2]*uSheet[4]);' +
                                 '}else{' +
                                 '   vUV = aUV;' +
                                 '}'
