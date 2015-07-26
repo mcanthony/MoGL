@@ -459,8 +459,8 @@ var World = (function (makeUtil) {
                                                 tNormal = tGPU.textures[tNormalMaps[tNormalMaps.length - 1].tex.uuid]
                                                 if (tNormal != pNormal && tNormal != null) {
                                                     tGL.activeTexture(tGL.TEXTURE1),
-                                                        tGL.bindTexture(tGL.TEXTURE_2D, tNormal),
-                                                        tGL.uniform1i(tProgram.uNormalSampler, 1)
+                                                    tGL.bindTexture(tGL.TEXTURE_2D, tNormal),
+                                                    tGL.uniform1i(tProgram.uNormalSampler, 1)
                                                 }
                                                 tGL.uniform1i(tProgram.useNormalMap, true),
                                                     tGL.uniform1f(tProgram.uNormalPower, 1.0) //TODO 파워도 받아야함
@@ -476,11 +476,11 @@ var World = (function (makeUtil) {
                                             tSpecular = tGPU.textures[tSpecularMaps[tSpecularMaps.length - 1].tex.uuid]
                                             if (tSpecular != pSpecular && tSpecular != null) {
                                                 tGL.activeTexture(tGL.TEXTURE2),
-                                                    tGL.bindTexture(tGL.TEXTURE_2D, tSpecular),
-                                                    tGL.uniform1i(tProgram.uSpecularSampler, 2)
+                                                tGL.bindTexture(tGL.TEXTURE_2D, tSpecular),
+                                                tGL.uniform1i(tProgram.uSpecularSampler, 2)
                                             }
                                             tGL.uniform1i(tProgram.useSpecularMap, true),
-                                                tGL.uniform1f(tProgram.uSpecularMapPower, 1.5);  //TODO 파워도 받아야함
+                                            tGL.uniform1f(tProgram.uSpecularMapPower, 1.5);  //TODO 파워도 받아야함
                                         }else{
                                             tGL.uniform1i(tProgram.useSpecularMap, false);
                                         }
