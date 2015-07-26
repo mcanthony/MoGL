@@ -98,10 +98,6 @@ var init = function(isLoaded, imgs){
         divCurrentFPS.S('html', currentFPS.toFixed(2));
         divAverageFPS.S('html', ( ( sum += currentFPS ) / count222 ).toFixed(2) + ' / totalVertex : ' + totalVertex + ' / totalObject : ' + totalObject);
 
-//        camera.x = Math.sin((time/10) / 50) * 50,
-//        camera.y = Math.cos((time/10) / 100) * 50,
-        camera.z = Math.cos((time / 10) / 50) * 50 - 100
-//        camera.lookAt(0, 0, 0);
     });
     (function(){
         var r = 0, x, y;
