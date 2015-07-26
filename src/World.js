@@ -463,7 +463,7 @@ var World = (function (makeUtil) {
                                                     tGL.uniform1i(tProgram.uNormalSampler, 1)
                                                 }
                                                 tGL.uniform1i(tProgram.useNormalMap, true),
-                                                    tGL.uniform1f(tProgram.uNormalPower, 1.0) //TODO 파워도 받아야함
+                                                tGL.uniform1f(tProgram.uNormalPower, 1.0) //TODO 파워도 받아야함
                                             } else {
                                                 tGL.uniform1i(tProgram.useNormalMap, false);
                                             }

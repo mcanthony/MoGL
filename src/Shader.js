@@ -447,24 +447,31 @@ var Shader = (function () {
                     return cache || (cache = new Shader({
                             id: 'colorFragmentShaderPhong',
                             precision: 'mediump float',
-                            uniforms: ['float uLambert', 'vec3 uDLite'],
+                            uniforms: [
+                                'float uLambert', 'vec3 uDLite',
+                                'bool uWireMode', 'vec4 uWireColor'
+                            ],
                             varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec4 vColor'],
                             function: [],
                             main: [
-                                'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
-                                'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
-                                'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
+                                'if( uWireMode ){\n' +
+                                    'gl_FragColor = uWireColor;\n' +
+                                '}else{\n' +
+                                    'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
+                                    'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
+                                    'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
 
-                                'vec3 position = normalize(vPosition);\n' +
-                                'vec3 normal = normalize(vNormal);\n' +
-                                'vec3 lightDir = normalize(uDLite);\n' +
-                                'vec3 reflectDir = reflect(-lightDir, normal);\n' +
-                                'float specular = max( dot(reflectDir, position), 0.0 );\n' +
-                                'specular = pow(specular,20.0);\n' +
+                                    'vec3 position = normalize(vPosition);\n' +
+                                    'vec3 normal = normalize(vNormal);\n' +
+                                    'vec3 lightDir = normalize(uDLite);\n' +
+                                    'vec3 reflectDir = reflect(-lightDir, normal);\n' +
+                                    'float specular = max( dot(reflectDir, position), 0.0 );\n' +
+                                    'specular = pow(specular,20.0);\n' +
 
-                                'float light = max( 0.05, dot(normal,lightDir) * uLambert);\n' +
-                                'gl_FragColor = vColor*light*vec4( ambientColor+ diffuseColor + specular*specColor , 1.0);\n' +
-                                'gl_FragColor.a = vColor[3];'
+                                    'float light = max( 0.05, dot(normal,lightDir) * uLambert);\n' +
+                                    'gl_FragColor = vColor*light*vec4( ambientColor+ diffuseColor + specular*specColor , 1.0);\n' +
+                                    'gl_FragColor.a = vColor[3];\n'+
+                                '}\n'
                             ]
                         }))
                 }

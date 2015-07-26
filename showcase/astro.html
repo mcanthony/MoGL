@@ -118,7 +118,8 @@ var init = function(isLoaded, imgs){
         material.addTexture(Texture.diffuse, Texture(bs.IMG.crop(imgs[0], 0, 0, 200, 160, true)));
         material.addTexture(Texture.normal, Texture(bs.IMG.crop(imgs[0], 200, 0, 200, 160, true)));
         material.addTexture(Texture.specular, Texture(bs.IMG.crop(imgs[0], 400, 0, 200, 160, true)));
-        boom = Material('#F00').setProperties({shading:Shading.phong, specularColor:'#ff0000'}), 
+        boom = Material('#F00').setProperties({shading:Shading.phong, specularColor:'#ff0000'}),
+        boom.wireFrame = 1
         sphere = Primitive.sphere(3,3),
 		down = (function(){
             var counter = bs('<div style="position:absolute;top:0;left:0;margin:10px;color:#fff">0</div>').S('<','body','this'), count = 0;
@@ -167,7 +168,7 @@ var init = function(isLoaded, imgs){
         },
 		ani = {time:3, repeat:-1},
 		prop = {},
-        i = 500;
+        i = 1000;
 		setTimeout(loop = function(){
             var size = bs.randf(1.7, 2.2);//bs.randf(.7, 1.2);
             ani.time = bs.randf(3,6), ani.delay = bs.randf(0,10),
