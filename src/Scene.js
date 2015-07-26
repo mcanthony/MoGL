@@ -74,7 +74,6 @@ var Scene = (function () {
         shading = v.material.shading
 
         var useTexture = v.material.diffuse ? 1 : 0;
-
         shading=
         shading == Shading.phong ? useTexture ? 'bitmapPhong' : 'colorPhong' :
         shading == Shading.gouraud ? useTexture ? 'bitmapGouraud' : 'colorGouraud' :
@@ -109,19 +108,21 @@ var Scene = (function () {
             shading = v.material.shading
 
         var useTexture = v.material.diffuse ? 1 : 0;
-
         shading =
             shading == Shading.phong ? useTexture ? 'bitmapPhong' : 'colorPhong' :
             shading == Shading.gouraud ? useTexture ? 'bitmapGouraud' : 'colorGouraud' :
             shading == Shading.toon ? 'toonPhong' :
             shading == Shading.blinn ? 'bitmapBlinn' :
         useTexture ? 'bitmap' : 'color';
+
         if (v.material.sprite) {
             if (list.sprite[shading]) {
                 list.sprite[shading].splice(list.sprite[shading].indexOf(v), 1)
             }
         } else {
-            list[geo][shading].splice(list[geo][shading].indexOf(v), 1)
+            if (list[geo][shading]) {
+                list[geo][shading].splice(list[geo][shading].indexOf(v), 1)
+            }
         }
     }
     return MoGL.extend('Scene', {
