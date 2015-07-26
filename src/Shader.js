@@ -449,13 +449,13 @@ var Shader = (function () {
                             precision: 'mediump float',
                             uniforms: [
                                 'float uLambert', 'vec3 uDLite',
-                                'bool uWireMode', 'vec4 uWireColor'
+                                'float uWire[5]'
                             ],
                             varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec4 vColor'],
                             function: [],
                             main: [
-                                'if( uWireMode ){\n' +
-                                    'gl_FragColor = uWireColor;\n' +
+                                'if( uWire[0] == 1.0 ){\n' +
+                                    'gl_FragColor = vec4(uWire[1],uWire[2],uWire[3],uWire[4]);\n' +
                                 '}else{\n' +
                                     'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
                                     'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
@@ -590,23 +590,23 @@ var Shader = (function () {
                             uniforms: [
                                 'sampler2D uSampler',
                                 'sampler2D uNormalSampler', 'float uNormalMap[2]',
-                                'sampler2D uSpecularSampler', 'float uSpecularMap[2]',
-                                'float uLambert', 'float uSpecularPower', 'vec4 uSpecularColor',
+                                'sampler2D uSpecularSampler', 'float uSpecularMap[2]','float uSpecular[5]',
+                                'float uLambert',
                                 'vec3 uDLite',
-                                'bool uWireMode', 'vec4 uWireColor'
+                                'float uWire[5]'
                             ],
                             varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition'],
                             function: [],
                             main: [
-                                'if( uWireMode ){\n' +
-                                    'gl_FragColor = uWireColor;\n' +
+                                'if( uWire[0] == 1.0 ){\n' +
+                                    'gl_FragColor = vec4(uWire[1],uWire[2],uWire[3],uWire[4]);\n' +
                                 '}else{\n' +
                                     'vec4 diffuse = texture2D( uSampler, vUV );\n' + // 디퓨즈를 계산함
                                     'float alpha = diffuse[3];\n' + // 디퓨즈를 계산함
                                     'if(alpha==0.0) discard;\n'+
                                     'else {\n'+
                                         'vec4 ambientColor = vec4(1.0, 1.0, 1.0, 1.0);\n' +
-                                        'vec4 specColor = uSpecularColor;\n' +
+                                        'vec4 specColor = vec4(uSpecular[1],uSpecular[2],uSpecular[3],uSpecular[4]);\n' +
 
                                         'vec3 position = normalize(vPosition);\n' +
                                         'vec3 normal = normalize(vNormal);\n' +
@@ -619,11 +619,11 @@ var Shader = (function () {
                                         '   vec4 bump = texture2D( uNormalSampler, vUV );\n' +
                                         '   bump.rgb= bump.rgb*2.0-1.0 ;\n' + // 범프값을 -1~1로 교정
                                         '   float normalSpecular = max( dot(reflectDir, position-bump.g), 0.5 );\n' + // 맵에서 얻어낸 노말 스페큘라
-                                        '   specular = pow(normalSpecular,uSpecularPower)*specColor[3];\n' + // 스페큘라
+                                        '   specular = pow(normalSpecular,uSpecular[0])*specColor[3];\n' + // 스페큘라
                                         '   gl_FragColor = ( diffuse *light * ambientColor * ambientColor[3] + specular * specColor ) + normalSpecular * bump.g * uNormalMap[1]  ;\n' +
                                         '}else{' +
                                         '   specular = max( dot(reflectDir, position), 0.5 );\n' +
-                                        '   specular = pow(specular,uSpecularPower)*specColor[3];\n' +
+                                        '   specular = pow(specular,uSpecular[0])*specColor[3];\n' +
                                         '   gl_FragColor = diffuse *light * ambientColor * ambientColor[3] + specular * specColor ;\n' +
                                         '}\n' +
                                         'if( uSpecularMap[0] == 1.0 ){\n' +
