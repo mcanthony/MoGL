@@ -128,7 +128,7 @@ var World = (function (makeUtil) {
             var tCvs, tCvsW, tCvsH;
             var tItem, tMaterial,pUUID_mat;
             var tUUID, tUUID_camera, tUUID_Item, tUUID_mat, tUUID_Scene;
-            var tGeo,tColor,tDiffuseMaps, tNormalMaps, tSpecularMaps;
+            var tGeo,tColor,tColor2,tDiffuseMaps, tNormalMaps, tSpecularMaps;
             var tCull, tVBO, tVNBO, tUVBO, tIBO, tDiffuse, tNormal, tSpecular, tShading, tFrameBuffer, tProgram;
             var pCull, pDiffuse, pNormal, pSpecular, pShading;
             var tListener
@@ -164,7 +164,8 @@ var World = (function (makeUtil) {
 
 
             var sheetF = new Float32Array(5), pM=[], rM = [0, 0, 0], uTS = []
-            var specularMapF = new Float32Array(2), normalMapF = new Float32Array(2)
+            var specularMapF = new Float32Array(2), specularF = new Float32Array(5)
+            var normalMapF = new Float32Array(2)
             var priListener = $getPrivate('MoGL', 'listener')
 
             gCameraProperty = $getPrivate('Camera', 'property'),
@@ -443,7 +444,7 @@ var World = (function (makeUtil) {
                                         sheetF[2] = sheetInfo._row,
                                         sheetF[3] = sheetInfo.curr % sheetInfo.col,
                                         sheetF[4] = parseInt(sheetInfo.curr / sheetInfo.col),
-                                        sheetF[0] = 1.0
+                                        sheetF[0] = 1.0 // 사용여부
                                     }else{
                                         sheetF[0] = 0.0
                                     }
@@ -452,8 +453,14 @@ var World = (function (makeUtil) {
                                         ///////////////////////////////////////////////////////////////
                                         //노말
                                         if(useNormalBuffer){
-                                            tGL.uniform1f(tProgram.uSpecularPower, gMatSpecularPower[tUUID_mat]),
-                                            tGL.uniform4fv(tProgram.uSpecularColor, gMatSpecularColor[tUUID_mat])
+                                            specularF[0] = gMatSpecularPower[tUUID_mat] // 스페큘라 파워
+                                            tColor2 = gMatSpecularColor[tUUID_mat]
+                                            specularF[1] =  tColor2[0] // 스페큘라 컬러 r
+                                            specularF[2] =  tColor2[1] // 스페큘라 컬러 g
+                                            specularF[3] =  tColor2[2] // 스페큘라 컬러 b
+                                            specularF[4] =  tColor2[3] // 스페큘라 컬러 a
+                                            tGL.uniform1fv(tProgram.uSpecular, specularF)
+
                                             if (tNormalMaps = gMatNormalMaps[tUUID_mat]) {
                                                 tNormal = tGPU.textures[tNormalMaps[tNormalMaps.length - 1].tex.uuid]
                                                 if (tNormal != pNormal && tNormal != null) {
