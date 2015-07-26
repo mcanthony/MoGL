@@ -1,6 +1,6 @@
 var Scene = (function () {
     'use strict';
-    var vertexShaderParser, fragmentShaderParser, mkGet, mkAdd, mkAddShader, mkRemove,addRenderList,renderList,
+    var vertexShaderParser, fragmentShaderParser, mkGet, mkAdd, mkAddShader, mkRemove,addRenderList,removeRenderItem,renderList,
         children,childrenArray, cameras, textures, materials, geometrys, vertexShaders, fragmentShaders, updateList,baseLightRotate,cameraLength;
     //private
     children = {},
@@ -74,7 +74,6 @@ var Scene = (function () {
         shading = v.material.shading
 
         var useTexture = v.material.diffuse ? 1 : 0;
-
         shading=
         shading == Shading.phong ? useTexture ? 'bitmapPhong' : 'colorPhong' :
         shading == Shading.gouraud ? useTexture ? 'bitmapGouraud' : 'colorGouraud' :
@@ -82,14 +81,56 @@ var Scene = (function () {
         shading == Shading.blinn ? 'bitmapBlinn' :
         useTexture ? 'bitmap' : 'color';
 
-        if(!list[geo]){
-            list[geo] = {}
+        if(v.material.sprite){
+            if(!list.sprite){
+                list.sprite = {
+                    geo : geo
+                }
+            }
+            if(!list.sprite[shading]){
+                list.sprite[shading] = []
+            }
+            list.sprite[shading].push(v)
+        }else{
+            if(!list[geo]){
+                list[geo] = {}
+            }
+            if(!list[geo][shading]){
+                list[geo][shading] = []
+            }
+            list[geo][shading].push(v)
         }
-        if(!list[geo][shading]){
-            list[geo][shading] = []
+
+    },
+    removeRenderItem = function(v,list){
+        var geo, shading;
+        geo = v.geometry,
+            shading = v.material.shading
+
+        var useTexture = v.material.diffuse ? 1 : 0;
+        shading =
+            shading == Shading.phong ? useTexture ? 'bitmapPhong' : 'colorPhong' :
+            shading == Shading.gouraud ? useTexture ? 'bitmapGouraud' : 'colorGouraud' :
+            shading == Shading.toon ? 'toonPhong' :
+            shading == Shading.blinn ? 'bitmapBlinn' :
+        useTexture ? 'bitmap' : 'color';
+
+        if (v.material.sprite) {
+            if (list.sprite[shading]) {
+                list.sprite[shading].splice(list.sprite[shading].indexOf(v), 1)
+            }
+        } else {
+            var k, tGeo
+            tGeo = list[geo]
+            for(k in tGeo){
+                if (tGeo[k]) {
+                    if(tGeo[k].indexOf(v)>-1){
+                        tGeo[k].splice(tGeo[k].indexOf(v), 1)
+                    }
+                }
+            }
         }
-        list[geo][shading].push(v)
-    };
+    }
     return MoGL.extend('Scene', {
         description:[
             '실제 렌더링될 구조체는 Scene별로 집결됨.',
@@ -244,7 +285,7 @@ var Scene = (function () {
                 }
             };
             return function addMesh(v){
-                var target, update;
+                var target, update,render;
                 
                 if (!(v instanceof Mesh)) this.error(1);
                 
@@ -262,12 +303,15 @@ var Scene = (function () {
                 update.geometry.push(v.geometry),
                 update.merged.push(v),
 
+                render = renderList[this]
                 v.addEventListener(Mesh.changed, function() {
                 if (update.geometry.indexOf(v.geometry)==-1) update.geometry.push(v.geometry);
                     target = v.material;
                     if (target.isLoaded) {
                         loaded.call(target, update.texture);
                     }
+                    removeRenderItem(v,render)
+                    addRenderList(v,render)
                 });
 
                 target = v.material;
@@ -396,7 +440,7 @@ var Scene = (function () {
                 if (k == v || p[k].id == v) {
                     childrenArray[this].splice(childrenArray[this].indexOf(p[k]), 1),
                     p[k].removeEventListener(MoGL.changed),
-                    //updateList[this].removeMerged.push(p[k]),
+                    removeRenderItem(v,renderList[this])
                     delete p[k];
                     return true;
                 }

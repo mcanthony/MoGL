@@ -114,7 +114,7 @@ var Material = (function () {
             'mat.sprite = {row:5, col:3};'
         ],
         get:function(){
-            return sprite[this].getter || null;
+            return sprite[this] || null;
         },
         set:function(o){
             var target, k, v;
