@@ -589,8 +589,8 @@ var Shader = (function () {
                             precision: 'mediump float',
                             uniforms: [
                                 'sampler2D uSampler',
-                                'sampler2D uNormalSampler', 'bool useNormalMap', 'float uNormalPower',
-                                'sampler2D uSpecularSampler', 'bool useSpecularMap', 'float uSpecularMapPower',
+                                'sampler2D uNormalSampler', 'float uNormalMap[2]',
+                                'sampler2D uSpecularSampler', 'float uSpecularMap[2]',
                                 'float uLambert', 'float uSpecularPower', 'vec4 uSpecularColor',
                                 'vec3 uDLite',
                                 'bool uWireMode', 'vec4 uWireColor'
@@ -615,21 +615,21 @@ var Shader = (function () {
                                         'float light = max( 0.05, dot(normal,lightDir) * uLambert);\n' + // 라이트강도 구하고
 
                                         'float specular\n;' +
-                                        'if( useNormalMap ){\n' +
+                                        'if( uNormalMap[0] == 1.0 ){\n' +
                                         '   vec4 bump = texture2D( uNormalSampler, vUV );\n' +
                                         '   bump.rgb= bump.rgb*2.0-1.0 ;\n' + // 범프값을 -1~1로 교정
                                         '   float normalSpecular = max( dot(reflectDir, position-bump.g), 0.5 );\n' + // 맵에서 얻어낸 노말 스페큘라
                                         '   specular = pow(normalSpecular,uSpecularPower)*specColor[3];\n' + // 스페큘라
-                                        '   gl_FragColor = ( diffuse *light * ambientColor * ambientColor[3] + specular * specColor ) + normalSpecular * bump.g * uNormalPower  ;\n' +
+                                        '   gl_FragColor = ( diffuse *light * ambientColor * ambientColor[3] + specular * specColor ) + normalSpecular * bump.g * uNormalMap[1]  ;\n' +
                                         '}else{' +
                                         '   specular = max( dot(reflectDir, position), 0.5 );\n' +
                                         '   specular = pow(specular,uSpecularPower)*specColor[3];\n' +
                                         '   gl_FragColor = diffuse *light * ambientColor * ambientColor[3] + specular * specColor ;\n' +
                                         '}\n' +
-                                        'if( useSpecularMap ){\n' +
+                                        'if( uSpecularMap[0] == 1.0 ){\n' +
                                         '   specular = max( dot(reflectDir, position), 0.5 );\n' +
                                         '   specular = pow(specular,texture2D( uSpecularSampler, vUV ).a);\n' +
-                                        '   gl_FragColor = gl_FragColor + gl_FragColor * specColor * specular * texture2D( uSpecularSampler, vUV ) *uSpecularMapPower;\n' +
+                                        '   gl_FragColor = gl_FragColor + gl_FragColor * specColor * specular * texture2D( uSpecularSampler, vUV ) * uSpecularMap[1];\n' +
                                         '}\n' +
                                         'gl_FragColor.a = alpha;\n'+
                                     '}\n'+

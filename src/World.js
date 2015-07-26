@@ -163,7 +163,8 @@ var World = (function (makeUtil) {
             var tMouse
 
 
-            var sheet = new Float32Array(5), pM=[], rM = [0, 0, 0], uTS = []
+            var sheetF = new Float32Array(5), pM=[], rM = [0, 0, 0], uTS = []
+            var specularMapF = new Float32Array(2), normalMapF = new Float32Array(2)
             var priListener = $getPrivate('MoGL', 'listener')
 
             gCameraProperty = $getPrivate('Camera', 'property'),
@@ -438,15 +439,15 @@ var World = (function (makeUtil) {
                                     //스프라이트
                                     ///////////////////////////////////////////////////////////////
                                     if (sheetInfo = gMatSprite[tUUID_mat]) {
-                                        sheet[1] = sheetInfo._col,
-                                        sheet[2] = sheetInfo._row,
-                                        sheet[3] = sheetInfo.curr % sheetInfo.col,
-                                        sheet[4] = parseInt(sheetInfo.curr / sheetInfo.col),
-                                        sheet[0] = 1.0
+                                        sheetF[1] = sheetInfo._col,
+                                        sheetF[2] = sheetInfo._row,
+                                        sheetF[3] = sheetInfo.curr % sheetInfo.col,
+                                        sheetF[4] = parseInt(sheetInfo.curr / sheetInfo.col),
+                                        sheetF[0] = 1.0
                                     }else{
-                                        sheet[0] = 0.0
+                                        sheetF[0] = 0.0
                                     }
-                                    tGL.uniform1fv(tProgram.uSheet, sheet);
+                                    tGL.uniform1fv(tProgram.uSheet, sheetF);
                                     if(tUUID_mat != pUUID_mat){
                                         ///////////////////////////////////////////////////////////////
                                         //노말
@@ -460,14 +461,15 @@ var World = (function (makeUtil) {
                                                     tGL.bindTexture(tGL.TEXTURE_2D, tNormal),
                                                     tGL.uniform1i(tProgram.uNormalSampler, 1)
                                                 }
-                                                tGL.uniform1i(tProgram.useNormalMap, true),
-                                                tGL.uniform1f(tProgram.uNormalPower, 1.0) //TODO 파워도 받아야함
+                                                normalMapF[0] = 1.0 // 노말맵 사용여부
+                                                normalMapF[1] = 1.0 // 노말맵강도
                                             } else {
-                                                tGL.uniform1i(tProgram.useNormalMap, false);
+                                                normalMapF[1] = 0.0
                                             }
                                         }else{
-                                            tGL.uniform1i(tProgram.useNormalMap, false);
+                                            normalMapF[1] = 0.0
                                         }
+                                        tGL.uniform1fv(tProgram.uNormalMap, normalMapF);
                                         ///////////////////////////////////////////////////////////////
                                         //스페큘러
                                         if(tSpecularMaps = gMatSpecularMaps[tUUID_mat]){
@@ -477,11 +479,12 @@ var World = (function (makeUtil) {
                                                 tGL.bindTexture(tGL.TEXTURE_2D, tSpecular),
                                                 tGL.uniform1i(tProgram.uSpecularSampler, 2)
                                             }
-                                            tGL.uniform1i(tProgram.useSpecularMap, true),
-                                            tGL.uniform1f(tProgram.uSpecularMapPower, 1.5);  //TODO 파워도 받아야함
+                                            specularMapF[0] = 1.0, // 스페큘러맵사용여부
+                                            specularMapF[1] = 1.5 // 스페큘러맵 강도
                                         }else{
-                                            tGL.uniform1i(tProgram.useSpecularMap, false);
+                                            specularMapF[0] = 0.0
                                         }
+                                        tGL.uniform1fv(tProgram.uSpecularMap, specularMapF);
                                     }
                                     ///////////////////////////////////////////////////////////////
                                     // 드로우
