@@ -1,15 +1,17 @@
 var Mesh = (function () {
     'use strict';
-    var geometry, material, culling,pickingColors,pickingMeshs,billBoard;
+    var geometry, material, culling,pickingColors,pickingMeshs,billBoard,alpha;
     //private
     geometry = {},
     material = {},
-    culling = {};
-    pickingColors = {}
-    pickingMeshs = {}
-    billBoard = {}
+    culling = {},
+    pickingColors = {},
+    pickingMeshs = {},
+    billBoard = {},
+    alpha = {},
     //shared private
     $setPrivate('Mesh', {
+        alpha : alpha,
         geometry : geometry,
         material : material,
         culling : culling,
@@ -51,6 +53,7 @@ var Mesh = (function () {
             this.material = material,
             pickingColors[this] = getUniqueColor(),
             billBoard[this] = false;
+            alpha[this] = 1.0
 
             var self = this;
             (function () {
@@ -73,7 +76,6 @@ var Mesh = (function () {
             })()
         }
     })
-
     .field('billBoard', {
         description: "현재 Mesh의 billBoard 정보",
         sample: [
@@ -85,6 +87,18 @@ var Mesh = (function () {
             billBoard[this] = v;
         }
     })
+    .field('alpha', {
+        description: "현재 Mesh의 alpha 정보",
+        sample: [
+            'mesh1.alpha = 0.5;'
+        ],
+        defaultValue:"1.0",
+        get:$getter(alpha),
+        set:function alphaSet(v) {
+            alpha[this] = v;
+        }
+    })
+
     .field('culling', {
         description: "현재 Mesh의 Face Culling 정보",
         sample: [
