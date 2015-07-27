@@ -167,10 +167,6 @@ var World = (function (makeUtil) {
             var specularMapF = new Float32Array(2), specularF = new Float32Array(5)
             var normalMapF = new Float32Array(2)
             var wireF = new Float32Array(5)
-
-            var vs = new Float32Array(20)
-            var fs = new Float32Array(20)
-
             var priListener = $getPrivate('MoGL', 'listener')
 
             gCameraProperty = $getPrivate('Camera', 'property'),
@@ -350,6 +346,7 @@ var World = (function (makeUtil) {
                             tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
                         }
 
+
                         // 대상 씬의 차일드 루프
                         tChild = gChild[tUID_Scene],
                         tChildArray = gChildArray[tUID_Scene],
@@ -420,9 +417,10 @@ var World = (function (makeUtil) {
                                     if (gBillboard[tUID_Item]) {
                                         tItem.lookAt(tCamera.x,tCamera.y,-tCamera.z).rotateX = propLookAt.rotateX
                                     }
-                                    vs[0] = tItem.x, vs[1] = tItem.y, vs[2] = tItem.z,
-                                    vs[3] = tItem.rotateX, vs[4] = tItem.rotateY, vs[5] = tItem.rotateZ,
-                                    vs[6] = tItem.scaleX, vs[7] = tItem.scaleY, vs[8] = tItem.scaleZ,
+                                    f9[0] = tItem.x, f9[1] = tItem.y, f9[2] = tItem.z,
+                                    f9[3] = tItem.rotateX, f9[4] = tItem.rotateY, f9[5] = tItem.rotateZ,
+                                    f9[6] = tItem.scaleX, f9[7] = tItem.scaleY, f9[8] = tItem.scaleZ,
+                                    tGL.uniform3fv(tProgram.uAffine, f9)
                                     ///////////////////////////////////////////////////////////////
                                     //총정점수계산
                                     // TODO 컬링 별로도 리스트를 나눠줘야하는군
@@ -435,14 +433,15 @@ var World = (function (makeUtil) {
                                     //스프라이트
                                     ///////////////////////////////////////////////////////////////
                                     if (sheetInfo = gMatSprite[tUID_mat]) {
-                                        vs[9] = 1.0 // 사용여부
-                                        vs[10] = sheetInfo._col,
-                                        vs[11] = sheetInfo._row,
-                                        vs[12] = sheetInfo.curr % sheetInfo.col,
-                                        vs[13] = parseInt(sheetInfo.curr / sheetInfo.col)
+                                        sheetF[1] = sheetInfo._col,
+                                        sheetF[2] = sheetInfo._row,
+                                        sheetF[3] = sheetInfo.curr % sheetInfo.col,
+                                        sheetF[4] = parseInt(sheetInfo.curr / sheetInfo.col),
+                                        sheetF[0] = 1.0 // 사용여부
                                     }else{
-                                        vs[9] = 0.0
+                                        sheetF[0] = 0.0
                                     }
+                                    tGL.uniform1fv(tProgram.uSheet, sheetF);
                                     if(tUID_mat != pUUID_mat){
                                         ///////////////////////////////////////////////////////////////
                                         //텍스쳐
@@ -457,22 +456,19 @@ var World = (function (makeUtil) {
                                         }else{
                                             ///////////////////////////////////////////////////////////////
                                             //색상
-                                            tColor2 = gMatColor[tUID_mat],
-                                            fs[0] = tColor2[0],
-                                            fs[1] = tColor2[1],
-                                            fs[2] = tColor2[2],
-                                            fs[3] = tColor2[3]
+                                            tGL.uniform4fv(tProgram.uColor, gMatColor[tUID_mat]);
                                         }
                                         ///////////////////////////////////////////////////////////////
                                         //노말
                                         if(useNormalBuffer){
-                                            fs[10] = gMatLambert[tUID_mat] // 램버트 강도 설정
-                                            fs[11] = gMatSpecularPower[tUID_mat], // 스페큘라 파워
+                                            tGL.uniform1f(tProgram.uLambert, gMatLambert[tUID_mat]), // 램버트 설정
                                             tColor2 = gMatSpecularColor[tUID_mat],
-                                            fs[12] =  tColor2[0], // 스페큘라 컬러 r
-                                            fs[13] =  tColor2[1], // 스페큘라 컬러 g
-                                            fs[14] =  tColor2[2], // 스페큘라 컬러 b
-                                            fs[15] =  tColor2[3] // 스페큘라 컬러 a
+                                            specularF[0] = gMatSpecularPower[tUID_mat], // 스페큘라 파워
+                                            specularF[1] =  tColor2[0], // 스페큘라 컬러 r
+                                            specularF[2] =  tColor2[1], // 스페큘라 컬러 g
+                                            specularF[3] =  tColor2[2], // 스페큘라 컬러 b
+                                            specularF[4] =  tColor2[3], // 스페큘라 컬러 a
+                                            tGL.uniform1fv(tProgram.uSpecular, specularF)
 
                                             if (tNormalMaps = gMatNormalMaps[tUID_mat]) {
                                                 tNormal = tTextures[tNormalMaps[tNormalMaps.length - 1].tex.uuid]
@@ -481,14 +477,15 @@ var World = (function (makeUtil) {
                                                     tGL.bindTexture(tGL.TEXTURE_2D, tNormal),
                                                     tGL.uniform1i(tProgram.uNormalSampler, 1)
                                                 }
-                                                fs[16] = 1.0, // 노말맵 사용여부
-                                                fs[17] = gMatNormalPower[tUID_mat] // 노말맵강도
+                                                normalMapF[0] = 1.0, // 노말맵 사용여부
+                                                normalMapF[1] = gMatNormalPower[tUID_mat] // 노말맵강도
                                             } else {
-                                                fs[16] = 0.0 // 노말맵 사용여부
+                                                normalMapF[1] = 0.0
                                             }
                                         }else{
-                                            fs[16] = 0.0 // 노말맵 사용여부
+                                            normalMapF[1] = 0.0
                                         }
+                                        tGL.uniform1fv(tProgram.uNormalMap, normalMapF);
                                         ///////////////////////////////////////////////////////////////
                                         //스페큘러
                                         if(tSpecularMaps = gMatSpecularMaps[tUID_mat]){
@@ -498,31 +495,32 @@ var World = (function (makeUtil) {
                                                 tGL.bindTexture(tGL.TEXTURE_2D, tSpecular),
                                                 tGL.uniform1i(tProgram.uSpecularSampler, 2)
                                             }
-                                            fs[18] = 1.0, // 스페큘러맵사용여부
-                                            fs[19] = gMatSpecularMapPower[tUID_mat] // 스페큘러맵 강도
+                                            specularMapF[0] = 1.0, // 스페큘러맵사용여부
+                                            specularMapF[1] = gMatSpecularMapPower[tUID_mat] // 스페큘러맵 강도
                                         }else{
-                                            fs[18] = 0.0 // 스페큘러맵사용여부
+                                            specularMapF[0] = 0.0
                                         }
+                                        tGL.uniform1fv(tProgram.uSpecularMap, specularMapF);
                                     }
                                     ///////////////////////////////////////////////////////////////
                                     // 드로우
-                                    fs[9] = gAlpha[tUID_Item] // 메쉬의 알파
-                                    tGL.uniform1fv(tProgram.uVS,vs),
+                                    // TODO 이놈은 어디로 태워보내지..
+                                    tGL.uniform1f(tProgram.uAlpha,gAlpha[tUID_Item]),
+                                    tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0);
                                     ///////////////////////////////////////////////////////////////
                                     //와이어프레임 그리기
                                     gMatWire[tUID_mat] ? (
                                         tColor2 = priMatWireColor[tUID_mat],
-                                        fs[4] = 1.0,
-                                        fs[5] = tColor2[0],
-                                        fs[6] = tColor2[1],
-                                        fs[7] = tColor2[2],
-                                        fs[8] = tColor2[3],
-                                        tGL.uniform1fv(tProgram.uFS, fs),
+                                        wireF[0] = 1.0,
+                                        wireF[1] = tColor2[0],
+                                        wireF[2] = tColor2[1],
+                                        wireF[3] = tColor2[2],
+                                        wireF[4] = tColor2[3],
+                                        tGL.uniform1fv(tProgram.uWire, wireF),
                                         tGL.drawElements(tGL.LINES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0),
-                                        fs[4] = 0.0
-                                    ) : 0,
-                                    tGL.uniform1fv(tProgram.uFS,fs),
-                                    tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0),
+                                        wireF[0] = 0.0,
+                                        tGL.uniform1fv(tProgram.uWire, wireF)
+                                    ) : 0
                                     pCull = tCull, pDiffuse = tDiffuse, pNormal = tNormal, pSpecular = tSpecular
                                     pUUID_mat = tUID_mat
                                 }
