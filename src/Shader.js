@@ -156,7 +156,7 @@ var Shader = (function () {
                             varyings: ['vec4 vColor'],
                             function: [VertexShader.baseFunction],
                             main: [
-                                'gl_Position = uPixelMatrix * uCameraMatrix * positionMTX(uAffine[0])*quaternionXYZ(uAffine[1])*scaleMTX(uAffine[2]) * vec4(aVertexPosition, 1.0);\n' +
+                                'gl_Position = uPixelMatrix * uCameraMatrix * positionMTX( uAffine[0] ) * quaternionZYX( uAffine[1] ) * scaleMTX( uAffine[2] ) * vec4(aVertexPosition, 1.0);\n' +
                                 'vColor = uColor;'
                             ]
                         }))
@@ -195,11 +195,11 @@ var Shader = (function () {
                     return cache || (cache = new Shader({
                             id: 'colorVertexShader',
                             attributes: ['vec3 aVertexPosition'],
-                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uAffine[3]', 'vec4 uColor'],
+                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'float uVS[20]', 'vec4 uColor'],
                             varyings: ['vec4 vColor'],
                             function: [VertexShader.baseFunction],
                             main: [
-                                'gl_Position = uPixelMatrix * uCameraMatrix * positionMTX(uAffine[0])*quaternionXYZ(uAffine[1])*scaleMTX(uAffine[2]) * vec4(aVertexPosition, 1.0);\n' +
+                                'gl_Position = uPixelMatrix * uCameraMatrix * positionMTX( vec3(uVS[0], uVS[1], uVS[2]) ) * quaternionZYX( vec3(uVS[3], uVS[4], uVS[5]) ) * scaleMTX( vec3(uVS[6], uVS[7], uVS[8]) ) * vec4(aVertexPosition, 1.0);\n' +
                                 'vColor = uColor;'
                             ]
                         }))
@@ -238,11 +238,11 @@ var Shader = (function () {
                     return cache || (cache = new Shader({
                             id: 'wireFrameVertexShader',
                             attributes: ['vec3 aVertexPosition'],
-                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uAffine[3]', 'vec4 uColor'],
+                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'float uVS[20]', 'vec4 uColor'],
                             varyings: ['vec4 vColor'],
                             function: [VertexShader.baseFunction],
                             main: [
-                                'gl_Position = uPixelMatrix * uCameraMatrix * positionMTX(uAffine[0])*quaternionXYZ(uAffine[1])*scaleMTX(uAffine[2]) * vec4(aVertexPosition, 1.0);\n' +
+                                'gl_Position = uPixelMatrix * uCameraMatrix * positionMTX( vec3(uVS[0], uVS[1], uVS[2]) ) * quaternionZYX( vec3(uVS[3], uVS[4], uVS[5]) ) * scaleMTX( vec3(uVS[6], uVS[7], uVS[8]) ) * vec4(aVertexPosition, 1.0);\n' +
                                 'vColor = uColor ;'
                             ]
                         }))
@@ -281,11 +281,14 @@ var Shader = (function () {
                     return cache || (cache = new Shader({
                             id: 'bitmapVertexShader',
                             attributes: ['vec3 aVertexPosition', 'vec2 aUV'],
-                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uAffine[3]'],
+                            uniforms: [
+                                'mat4 uPixelMatrix', 'mat4 uCameraMatrix',
+                                'float uVS[20]'
+                            ],
                             varyings: ['vec2 vUV'],
                             function: [VertexShader.baseFunction],
                             main: [
-                                'gl_Position = uPixelMatrix * uCameraMatrix * positionMTX(uAffine[0])*quaternionXYZ(uAffine[1])*scaleMTX(uAffine[2]) * vec4(aVertexPosition, 1.0);\n' +
+                                'gl_Position = uPixelMatrix * uCameraMatrix * positionMTX( vec3(uVS[0], uVS[1], uVS[2]) ) * quaternionZYX( vec3(uVS[3], uVS[4], uVS[5]) ) * scaleMTX( vec3(uVS[6], uVS[7], uVS[8]) ) * vec4(aVertexPosition, 1.0);\n' +
                                 'vUV = aUV;'
                             ]
                         }))
@@ -324,11 +327,11 @@ var Shader = (function () {
                     return cache || (cache = new Shader({
                             id: 'colorVertexShaderGouraud',
                             attributes: ['vec3 aVertexPosition', 'vec3 aVertexNormal'],
-                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uDLite', 'float uLambert', 'vec3 uAffine[3]', 'vec4 uColor'],
+                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uDLite', 'float uLambert', 'float uVS[20]', 'vec4 uColor'],
                             varyings: ['vec4 vColor'],
                             function: [VertexShader.baseFunction],
                             main: [
-                                ' mat4 mv = uCameraMatrix* positionMTX(uAffine[0])*quaternionXYZ(uAffine[1])*scaleMTX(uAffine[2]);\n' +
+                                ' mat4 mv = uCameraMatrix* positionMTX( vec3(uVS[0], uVS[1], uVS[2]) ) * quaternionZYX( vec3(uVS[3], uVS[4], uVS[5]) ) * scaleMTX( vec3(uVS[6], uVS[7], uVS[8]) );\n' +
                                 ' gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
                                 ' vec3 normal = normalize(mv * vec4(-aVertexNormal, 0.0)).xyz;\n' +
                                 ' float light = max( 0.05, dot(normal, normalize(uDLite)) * uLambert);\n' +
@@ -371,11 +374,11 @@ var Shader = (function () {
                     return cache || (cache = new Shader({
                             id: 'bitmapVertexShaderGouraud',
                             attributes: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
-                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uDLite', 'float uLambert', 'vec3 uAffine[3]'],
+                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uDLite', 'float uLambert', 'float uVS[20]'],
                             varyings: ['vec2 vUV', 'vec4 vLight'],
                             function: [VertexShader.baseFunction],
                             main: [
-                                ' mat4 mv = uCameraMatrix* positionMTX(uAffine[0])*quaternionXYZ(uAffine[1])*scaleMTX(uAffine[2]) ;\n' +
+                                ' mat4 mv = uCameraMatrix* positionMTX( vec3(uVS[0], uVS[1], uVS[2]) ) * quaternionZYX( vec3(uVS[3], uVS[4], uVS[5]) ) * scaleMTX( vec3(uVS[6], uVS[7], uVS[8]) ) ;\n' +
                                 ' gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
                                 ' vec3 normal = normalize(mv * vec4(-aVertexNormal, 0.0)).xyz;\n' +
                                 ' float light = max( 0.05, dot(normal,normalize(uDLite)) * uLambert);\n' +
@@ -421,11 +424,11 @@ var Shader = (function () {
                     return cache || (cache = new Shader({
                             id: 'colorVertexShaderPhong',
                             attributes: ['vec3 aVertexPosition', 'vec3 aVertexNormal'],
-                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uAffine[3]'],
+                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'float uVS[20]'],
                             varyings: ['vec3 vNormal', 'vec3 vPosition'],
                             function: [VertexShader.baseFunction],
                             main: ['' +
-                            'mat4 mv = uCameraMatrix* positionMTX(uAffine[0])*quaternionXYZ(uAffine[1])*scaleMTX(uAffine[2]) ;\n' +
+                            'mat4 mv = uCameraMatrix* positionMTX( vec3(uVS[0], uVS[1], uVS[2]) ) * quaternionZYX( vec3(uVS[3], uVS[4], uVS[5]) ) * scaleMTX( vec3(uVS[6], uVS[7], uVS[8]) ) ;\n' +
                             'vec4 position = mv * vec4(aVertexPosition, 1.0);\n' +
                             'gl_Position = uPixelMatrix*position;\n' +
                             'vPosition = position.xyz;\n' +
@@ -487,11 +490,11 @@ var Shader = (function () {
                     return cache || (cache = new Shader({
                             id: 'toonVertexShaderPhong',
                             attributes: ['vec3 aVertexPosition', 'vec3 aVertexNormal'],
-                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uAffine[3]', 'vec4 uColor'],
+                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'float uVS[20]', 'vec4 uColor'],
                             varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec4 vColor'],
                             function: [VertexShader.baseFunction],
                             main: [
-                                'mat4 mv = uCameraMatrix * positionMTX(uAffine[0])*quaternionXYZ(uAffine[1])*scaleMTX(uAffine[2]);\n' +
+                                'mat4 mv = uCameraMatrix * positionMTX( vec3(uVS[0], uVS[1], uVS[2]) ) * quaternionZYX( vec3(uVS[3], uVS[4], uVS[5]) ) * scaleMTX( vec3(uVS[6], uVS[7], uVS[8]) );\n' +
                                 'vec4 position = mv * vec4(aVertexPosition, 1.0);\n' +
                                 'gl_Position = uPixelMatrix*position;\n' +
                                 'vPosition = position.xyz;\n' +
@@ -555,7 +558,6 @@ var Shader = (function () {
                             attributes: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
                             uniforms: [
                                 'mat4 uPixelMatrix', 'mat4 uCameraMatrix',
-                                'vec3 uAffine[3]',
                                 'float uVS[20]'
                             ],
                             varyings: [
@@ -564,13 +566,13 @@ var Shader = (function () {
                             ],
                             function: [VertexShader.baseFunction],
                             main: [
-                                'mat4 mv = uCameraMatrix * positionMTX(uAffine[0])*quaternionZYX(uAffine[1])*scaleMTX(uAffine[2]);\n' +
+                                'mat4 mv = uCameraMatrix * positionMTX( vec3(uVS[0], uVS[1], uVS[2]) )*quaternionZYX( vec3(uVS[3], uVS[4], uVS[5]) )*scaleMTX( vec3(uVS[6], uVS[7], uVS[8]) );\n' +
                                 'vec4 position = mv * vec4(aVertexPosition, 1.0);\n' +
                                 'gl_Position = uPixelMatrix*position;\n' +
                                 'vPosition = position.xyz;\n' +
                                 'vNormal = (mv * vec4(-aVertexNormal, 0.0)).xyz;\n' +
-                                'if( uVS[0] == 1.0 ) {' +
-                                '   vUV = vec2(aUV.x*uVS[1]+uVS[1]*uVS[3], aUV.y*uVS[2]+uVS[2]*uVS[4]);' +
+                                'if( uVS[9] == 1.0 ) {' +
+                                '   vUV = vec2(aUV.x*uVS[10]+uVS[10]*uVS[12], aUV.y*uVS[11]+uVS[11]*uVS[13]);' +
                                 '}else{' +
                                 '   vUV = aUV;' +
                                 '}'
@@ -581,26 +583,31 @@ var Shader = (function () {
         })
 
         ////////////////////
-        //    vs[0] - 시트 사용여부 1.0 or 0.0
-        //    vs[1~4] - 시트 정보
+
+        //vs[0~2] = x,y,z
+        //vs[3~5] = rx,ry,rz
+        //vs[6~8] = sx,sy,sz
+        //vs[9] - 시트 사용여부 1.0 or 0.0
+        //vs[10~13] - 시트 정보
         //
-        //    fs[0~3] - 컬러 정보
-        //    fs[4] - 와이어 사용여부 1.0 or 0.0
-        //    fs[5~8] - 와이어 컬러
-        //    fs[9] - 메쉬 알파
+        //fs[0~3] - 컬러 정보
+        //fs[4] - 와이어 사용여부 1.0 or 0.0
+        //fs[5~8] - 와이어 컬러
+        //fs[9] - 메쉬 알파
         //
-        //    fs[10] = gMatLambert[tUID_mat] // 램버트 강도 설정
-        //    fs[11] = gMatSpecularPower[tUID_mat], // 스페큘라 파워
-        //    fs[12] =  tColor2[0], // 스페큘라 컬러 r
-        //    fs[13] =  tColor2[1], // 스페큘라 컬러 g
-        //    fs[14] =  tColor2[2], // 스페큘라 컬러 b
-        //    fs[15] =  tColor2[3], // 스페큘라 컬러 a
+        //fs[10] = gMatLambert[tUID_mat] // 램버트 강도 설정
+        //fs[11] = gMatSpecularPower[tUID_mat], // 스페큘라 파워
+        //fs[12] =  tColor2[0], // 스페큘라 컬러 r
+        //fs[13] =  tColor2[1], // 스페큘라 컬러 g
+        //fs[14] =  tColor2[2], // 스페큘라 컬러 b
+        //fs[15] =  tColor2[3], // 스페큘라 컬러 a
         //
-        //    fs[16] = 1.0, // 노말맵 사용여부
-        //    fs[17] = gMatNormalPower[tUID_mat] // 노말맵강도
+        //fs[16] = 1.0, // 노말맵 사용여부
+        //fs[17] = gMatNormalPower[tUID_mat] // 노말맵강도
         //
-        //      fs[18] = 1.0, // 스페큘러맵사용여부
-        //    fs[19] = gMatSpecularMapPower[tUID_mat] // 스페큘러맵 강도
+        //fs[18] = 1.0, // 스페큘러맵사용여부
+        //fs[19] = gMatSpecularMapPower[tUID_mat] // 스페큘러맵 강도
+
         ////////////////
             .constant('bitmapFragmentShaderPhong', {
             description: "비트맵 퐁 프레그먼트 쉐이더",
@@ -676,11 +683,11 @@ var Shader = (function () {
                     return cache || (cache = new Shader({
                             id: 'bitmapVertexShaderBlinn',
                             attributes: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
-                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uAffine[3]'],
+                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'float uVS[20]'],
                             varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition'],
                             function: [VertexShader.baseFunction],
                             main: ['' +
-                            'mat4 mv = uCameraMatrix * positionMTX(uAffine[0])*quaternionXYZ(uAffine[1])*scaleMTX(uAffine[2]);\n' +
+                            'mat4 mv = uCameraMatrix * positionMTX( vec3(uVS[0], uVS[1], uVS[2]) ) * quaternionZYX( vec3(uVS[3], uVS[4], uVS[5]) ) * scaleMTX( vec3(uVS[6], uVS[7], uVS[8]) );\n' +
                             'gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
                             'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
                             'vNormal = vec3( mv * vec4(-aVertexNormal, 0.0));\n' +
@@ -740,11 +747,11 @@ var Shader = (function () {
                     return cache || (cache = new Shader({
                             id: 'postBaseVertexShader',
                             attributes: ['vec3 aVertexPosition', 'vec2 aUV'],
-                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uAffine[3]'],
+                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'float uVS[20]'],
                             varyings: ['vec2 vUV'],
                             function: [VertexShader.baseFunction],
                             main: ['' +
-                            'gl_Position = uPixelMatrix*uCameraMatrix* positionMTX(uAffine[0])*quaternionXYZ(uAffine[1])*scaleMTX(uAffine[2]) *vec4(aVertexPosition, 1.0);\n' +
+                            'gl_Position = uPixelMatrix*uCameraMatrix* positionMTX( vec3(uVS[0], uVS[1], uVS[2]) ) * quaternionZYX( vec3(uVS[3], uVS[4], uVS[5]) ) * scaleMTX( vec3(uVS[6], uVS[7], uVS[8]) ) *vec4(aVertexPosition, 1.0);\n' +
                             'vUV = aUV;'
                             ]
                         }))
