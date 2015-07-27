@@ -159,6 +159,7 @@ var init = function(isLoaded, imgs){
                     .setProperties(prop1)
                 ),
                 mesh.alpha = Math.random()
+                mesh.billboard = 1
                 mat.addEventListener(MoGL.propertyChanged, propertyChanged, mesh);
     		};
         })(),

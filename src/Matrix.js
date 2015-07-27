@@ -148,6 +148,7 @@ var Matrix = (function () {
                 //this.rotationX = Math.atan2(dz, Math.sqrt(dx * dx + dy * dy)) - Math.PI / 2;
                 //this.rotationY = 0;
                 //this.rotationZ = -Math.atan2(dx, dy);
+                return this
             };
         })()
     })
