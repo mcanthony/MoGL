@@ -415,7 +415,7 @@ var World = (function (makeUtil) {
                                     ///////////////////////////////////////////////////////////////
                                     //아핀관련정보 입력
                                     if (gBillboard[tUID_Item]) {
-                                        tItem.lookAt(tCamera.x,tCamera.y,-tCamera.z)
+                                        tItem.lookAt(tCamera.x,tCamera.y,-tCamera.z).rotateX = propLookAt.rotateX
                                     }
                                     f9[0] = tItem.x, f9[1] = tItem.y, f9[2] = tItem.z,
                                     f9[3] = tItem.rotateX, f9[4] = tItem.rotateY, f9[5] = tItem.rotateZ,
