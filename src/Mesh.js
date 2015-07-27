@@ -1,13 +1,13 @@
 var Mesh = (function () {
     'use strict';
-    var geometry, material, culling,pickingColors,pickingMeshs,billBoard,alpha;
+    var geometry, material, culling,pickingColors,pickingMeshs,billboard,alpha;
     //private
     geometry = {},
     material = {},
     culling = {},
     pickingColors = {},
     pickingMeshs = {},
-    billBoard = {},
+    billboard = {},
     alpha = {},
     //shared private
     $setPrivate('Mesh', {
@@ -17,7 +17,7 @@ var Mesh = (function () {
         culling : culling,
         pickingColors : pickingColors,
         pickingMeshs : pickingMeshs,
-        billBoard : billBoard
+        billboard : billboard
     });
     var getUniqueColor = (function () {
         var color = 1677215, r = 0, g = 0, b = 0, r1 = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i, r, g, b, t0;
@@ -52,7 +52,7 @@ var Mesh = (function () {
             this.geometry = geometry,
             this.material = material,
             pickingColors[this] = getUniqueColor(),
-            billBoard[this] = false;
+            billboard[this] = false;
             alpha[this] = 1.0
 
             var self = this;
@@ -76,15 +76,15 @@ var Mesh = (function () {
             })()
         }
     })
-    .field('billBoard', {
-        description: "현재 Mesh의 billBoard 정보",
+    .field('billboard', {
+        description: "현재 Mesh의 billboard 정보",
         sample: [
             'mesh1.billBoard = true;'
         ],
         defaultValue:"false",
-        get:$getter(billBoard),
-        set:function billBoardSet(v) {
-            billBoard[this] = v;
+        get:$getter(billboard),
+        set:function billboardSet(v) {
+            billboard[this] = v;
         }
     })
     .field('alpha', {
