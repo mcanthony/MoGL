@@ -1,6 +1,6 @@
 var Mesh = (function () {
     'use strict';
-    var geometry, material, culling,pickingColors,pickingMeshs,billboard,alpha;
+    var geometry, material, culling,pickingColors,pickingMeshs,billboard,alpha,visible;
     //private
     geometry = {},
     material = {},
@@ -9,6 +9,7 @@ var Mesh = (function () {
     pickingMeshs = {},
     billboard = {},
     alpha = {},
+    visible = {},
     //shared private
     $setPrivate('Mesh', {
         alpha : alpha,
@@ -17,7 +18,8 @@ var Mesh = (function () {
         culling : culling,
         pickingColors : pickingColors,
         pickingMeshs : pickingMeshs,
-        billboard : billboard
+        billboard : billboard,
+        visible : visible
     });
     var getUniqueColor = (function () {
         var color = 1677215, r = 0, g = 0, b = 0, r1 = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i, r, g, b, t0;
@@ -54,6 +56,7 @@ var Mesh = (function () {
             pickingColors[this] = getUniqueColor(),
             billboard[this] = false;
             alpha[this] = 1.0
+            visible[this] = 1
 
             var self = this;
             (function () {
@@ -98,7 +101,17 @@ var Mesh = (function () {
             alpha[this] = v;
         }
     })
-
+    .field('visible', {
+        description: "현재 Mesh의 visible 정보",
+        sample: [
+            'mesh1.visible = 1;'
+        ],
+        defaultValue:"1",
+        get:$getter(visible),
+        set:function visibleSet(v) {
+            visible[this] = v;
+        }
+    })
     .field('culling', {
         description: "현재 Mesh의 Face Culling 정보",
         sample: [
