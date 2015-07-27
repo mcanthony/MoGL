@@ -1,7 +1,7 @@
 var Material = (function () {
     'use strict';
     var textureLoaded, texType,
-        diffuse, normal, specular, diffuseWrap, specularNormal,
+        diffuse, normal, specular, diffuseWrap, specularNormal,specularMapPower,
         normalPower, specularPower, specularColor,
         shading, lambert, wireFrame, wireFrameColor, count, color, sprite;
     
@@ -18,6 +18,7 @@ var Material = (function () {
     diffuse = {},
     normal = {},
     specular = {},
+    specularMapPower = {},
     specularNormal = {},
     
     normalPower = {},
@@ -36,6 +37,7 @@ var Material = (function () {
         normalPower:normalPower,
         specularPower:specularPower,
         specularColor:specularColor,
+        specularMapPower : specularMapPower,
         specular:specular,
         diffuse:diffuse,
         normal:normal,
@@ -79,6 +81,7 @@ var Material = (function () {
             lambert[this] = 1.0,
             normalPower[this] = 1.0,
             specularPower[this] = 20.0,
+            specularMapPower[this] = 1.0,
             specularColor[this] = [1,1,1,1],
             shading[this] = Shading.none;
         }
@@ -234,8 +237,8 @@ var Material = (function () {
             'console.log(material.normalPower);'
         ],
         defaultValue:'20.0',
-        get:$getter(specularPower),
-        set:$setter(specularPower)
+        get:$getter(normalPower),
+        set:$setter(normalPower)
     })
     .field('specularPower', {
         description: "재질 specularPower 적용 강도 설정",
@@ -246,6 +249,16 @@ var Material = (function () {
         defaultValue:'20.0',
         get:$getter(specularPower),
         set:$setter(specularPower)
+    })
+    .field('specularMapPower', {
+        description: "재질 specularMapPower 적용 강도 설정",
+        sample: [
+            'material.specularMapPower = 1.5;',
+            'console.log(material.specularMapPower);'
+        ],
+        defaultValue:'1.0',
+        get:$getter(specularMapPower),
+        set:$setter(specularMapPower)
     })
     .field('specularColor', {
         description: "specular 컬러색",
