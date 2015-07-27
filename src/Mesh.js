@@ -142,11 +142,18 @@ var Mesh = (function () {
         exception:"* 'Mesh.materialSet:0' - material객체가 아닌 값를 필드에 입력하려는 경우",
         get:$getter(material),
         set:function materialSet(v) {
+            var self = this
             if (v instanceof Material) {
-                material[this] = v;
-                this.dispatch('changed')
+                if(material[self]) {
+                    material[self].removeEventListener(Material.changed)
+                }
+                material[self] = v;
+                self.dispatch('changed')
+                v.addEventListener(Material.changed,function(){
+                    self.dispatch('changed')
+                })
             } else {
-                this.error(0);
+                self.error(0);
             }
         }
     })
