@@ -159,7 +159,7 @@ var init = function(isLoaded, imgs){
                     .setProperties(prop1)
                 ),
                 mesh.alpha = Math.random()
-                mesh.billboard = 1
+
                 mat.addEventListener(MoGL.propertyChanged, propertyChanged, mesh);
     		};
         })(),
@@ -172,6 +172,7 @@ var init = function(isLoaded, imgs){
 		prop = {},
         i = 500;
 		setTimeout(loop = function(){
+            var a
             var size = bs.randf(1.7, 2.2);//bs.randf(.7, 1.2);
             ani.time = bs.randf(3,6), ani.delay = bs.randf(0,10),
 			prop.x = bs.randf(-25,25), prop.y = bs.randf(-25,25), prop.z = bs.randf(10,200),
@@ -179,7 +180,7 @@ var init = function(isLoaded, imgs){
             prop.rotateY = bs.randf(360,1000)*toRadian,
             prop.rotateZ = bs.randf(360,1000)*toRadian,
 			scene.addChild(
-                Mesh(sphere, material)
+                a = Mesh(sphere, material)
                 .setProperties({
                     scaleX:size, scaleY:size, scaleZ:size,
                     x:bs.randf(-20, 20), y:bs.randf(-20, 20), z:-450
@@ -187,7 +188,7 @@ var init = function(isLoaded, imgs){
                 .setProperties(prop, ani)
                 .addEventListener(Mesh.down, down)
             );
-
+//            a.billboard = 1
 			if (i--) setTimeout(loop, 1);
 		}, 1);
 	})();
