@@ -77,12 +77,12 @@ var init = function(isLoaded, imgs){
         )
         .addChild(//background
             bg = Mesh( 
-                Primitive.cube(), 
+                Primitive.sphere(),
                 Material('#ff2233')
                     .setProperties({shading:Shading.none})
                     .addTexture(Texture.diffuse, Texture(imgs[1]))
             )
-            .setProperties({z:-370, scaleX:450, scaleY:450})
+            .setProperties({z: camera.z, scaleX: 50, scaleY: 50, scaleZ: 350})
         )
     );
     bs('#preloader').S(null);
@@ -105,21 +105,19 @@ var init = function(isLoaded, imgs){
         var r = 0, x, y;
         bs.WIN.on('move', function(e){
             var s = bs.WIN.size();
-            camera.x = ((e.x - s.w*.5)*.01).toPrecision(2), 
-            camera.y = ((s.h*.5 - e.y)*.01).toPrecision(2),
-            bg.rotateX = camera.x*.05;
-            bg.rotateZ = camera.y*.05;
-            camera.lookAt(0, 0, -200);
+            camera.x = ((e.x - s.w*.5)*.001).toPrecision(2),
+            camera.y = ((s.h*.5 - e.y)*.001).toPrecision(2),
+            bg.rotateX = camera.x*.005;
+            bg.rotateZ = camera.y*.005;
+            camera.lookAt(0, 0, 0);
         }, 0, 1);
     })();
 	(function(){
-		var loop, i, material, sphere, down, end, ani, prop, boom;
+		var loop, i, material, sphere, down, ani, prop, propOri;
         material = Material('#FFF').setProperties({shading:Shading.phong, specularColor:'#ff2233'})
         material.addTexture(Texture.diffuse, Texture(bs.IMG.crop(imgs[0], 0, 0, 200, 160, true)));
         material.addTexture(Texture.normal, Texture(bs.IMG.crop(imgs[0], 200, 0, 200, 160, true)));
         material.addTexture(Texture.specular, Texture(bs.IMG.crop(imgs[0], 400, 0, 200, 160, true)));
-        boom = Material('#F00').setProperties({shading:Shading.phong, specularColor:'#ff0000'}),
-        boom.wireFrame = 1
         sphere = Primitive.sphere(3,3),
 		down = (function(){
             var counter = bs('<div style="position:absolute;top:0;left:0;margin:10px;color:#fff">0</div>').S('<','body','this'), count = 0;            
@@ -136,15 +134,11 @@ var init = function(isLoaded, imgs){
                 var mesh, mat;
                 count++;
                 counter.S('html', count);
-                this.alpha = .2;
                 this.removeEventListener(Mesh.down, down);
-                this.addEventListener(MoGL.propertyRepeated, end);
-                prop1.x = this.x,
-                prop1.y = this.y,
-                prop1.z = this.z - 20,
-                prop1.scaleX = this.scaleX*4.5,
-                prop1.scaleY = this.scaleY*4.5,
-                prop1.scaleZ = this.scaleZ*4.5
+                this.setProperties(null);
+                scene.removeChild(this);
+                prop1.x = this.x, prop1.y = this.y, prop1.z = this.z - 20,
+                prop1.scaleX = this.scaleX*4.5, prop1.scaleY = this.scaleY*4.5, prop1.scaleZ = this.scaleZ*4.5,
                 scene.addChild(
                     mesh = Mesh(
                         plane, 
@@ -158,32 +152,25 @@ var init = function(isLoaded, imgs){
                 mat.addEventListener(MoGL.propertyChanged, propertyChanged, mesh);
     		};
         })(),
-        end = function(){
-            this.setProperties(null);
-            this.removeEventListener(MoGL.propertyRepeated, end);
-            scene.removeChild(this);
-        },
 		ani = {time:3, repeat:-1},
-		prop = {},
+		prop = {alpha:2.5},
+        propOri = {alpha:0, z:-450},
         i = 500;
 		setTimeout(loop = function(){
-            var a
             var size = bs.randf(1.7, 2.2);//bs.randf(.7, 1.2);
             ani.time = bs.randf(3,6), ani.delay = bs.randf(0,10),
 			prop.x = bs.randf(-25,25), prop.y = bs.randf(-25,25), prop.z = bs.randf(10,200),
             prop.rotateX = bs.randf(360,1000)*toRadian,
             prop.rotateY = bs.randf(360,1000)*toRadian,
             prop.rotateZ = bs.randf(360,1000)*toRadian,
+            propOri.scaleX = propOri.scaleY = propOri.scaleZ = size,
+            propOri.x = bs.randf(-20, 20), propOri.y = bs.randf(-20, 20),
 			scene.addChild(
-                a = Mesh(sphere, material)
-                .setProperties({
-                    scaleX:size, scaleY:size, scaleZ:size,
-                    x:bs.randf(-20, 20), y:bs.randf(-20, 20), z:-450
-                })
+                Mesh(sphere, material)
+                .setProperties(propOri)
                 .setProperties(prop, ani)
                 .addEventListener(Mesh.down, down)
             );
-//            a.billboard = 1
 			if (i--) setTimeout(loop, 1);
 		}, 1);
 	})();
