@@ -212,7 +212,10 @@ var Material = (function () {
         ],
         defaultValue:'Shading.none',
         get:$getter(shading),
-        set:$setter(shading)
+        set:function(v){
+            shading[this] = v
+            this.dispatch(Material.changed);
+        }
     })
     .field('lambert', {
         description: "재질 쉐이딩 적용 강도 설정",

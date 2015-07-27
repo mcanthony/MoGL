@@ -135,7 +135,7 @@ var World = (function (makeUtil) {
 
             var gChild, gChildArray, gCameraLen;
             var gGeo, gMat;
-            var gCull;
+            var gCull,gAlpha;
 
             var gRenderList
             var gMatColor,gMatWire, priMatWireColor;
@@ -181,6 +181,7 @@ var World = (function (makeUtil) {
                 gPickColors = $getPrivate('Mesh', 'pickingColors'),
                 gPickMeshs = $getPrivate('Mesh', 'pickingMeshs'),
                 gCull = $getPrivate('Mesh', 'culling'),
+                gAlpha = $getPrivate('Mesh', 'alpha'),
 
                 gMatColor = $getPrivate('Material', 'color'),
                 gMatWire = $getPrivate('Material', 'wireFrame'),
@@ -496,6 +497,7 @@ var World = (function (makeUtil) {
                                     }
                                     ///////////////////////////////////////////////////////////////
                                     // 드로우
+                                    tGL.uniform1f(tProgram.uAlpha,gAlpha[tUUID_Item]),
                                     tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0);
                                     ///////////////////////////////////////////////////////////////
                                     //와이어프레임 그리기

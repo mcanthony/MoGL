@@ -591,7 +591,7 @@ var Shader = (function () {
                                 'sampler2D uSampler',
                                 'sampler2D uNormalSampler', 'float uNormalMap[2]',
                                 'sampler2D uSpecularSampler', 'float uSpecularMap[2]','float uSpecular[5]',
-                                'float uLambert',
+                                'float uLambert','float uAlpha',
                                 'vec3 uDLite',
                                 'float uWire[5]'
                             ],
@@ -599,7 +599,7 @@ var Shader = (function () {
                             function: [],
                             main: [
                                 'if( uWire[0] == 1.0 ){\n' +
-                                    'gl_FragColor = vec4(uWire[1],uWire[2],uWire[3],uWire[4]);\n' +
+                                    'gl_FragColor = vec4(uWire[1],uWire[2],uWire[3],uWire[4])*uAlpha;\n' +
                                 '}else{\n' +
                                     'vec4 diffuse = texture2D( uSampler, vUV );\n' + // 디퓨즈를 계산함
                                     'float alpha = diffuse[3];\n' + // 디퓨즈를 계산함
@@ -631,7 +631,7 @@ var Shader = (function () {
                                         '   specular = pow(specular,texture2D( uSpecularSampler, vUV ).a);\n' +
                                         '   gl_FragColor = gl_FragColor + gl_FragColor * specColor * specular * texture2D( uSpecularSampler, vUV ) * uSpecularMap[1];\n' +
                                         '}\n' +
-                                        'gl_FragColor.a = alpha;\n'+
+                                        'gl_FragColor.a = alpha*uAlpha;\n'+
                                     '}\n'+
                                 '};'
 
