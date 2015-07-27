@@ -219,7 +219,7 @@
     }
     function setUI() {
         var controllerParams = {
-            normalMapPower: 1.0,
+            normalPower: 1.0,
             specularPower: 20.0,
             specularMapPower : 1.5,
             r: 1, g: 1, b: 1, a: 1
@@ -231,10 +231,10 @@
             testMat2.specularPower = value
         })
         panel.add(controllerParams, 'specularMapPower', 0.5, 3).onChange(function (value) {
-            specularTexture.specularMapPower = value
+            testMat2.specularMapPower = value
         })
-        panel.add(controllerParams, 'normalMapPower', -3, 3).onChange(function (value) {
-            normalTexture.normalMapPower = value
+        panel.add(controllerParams, 'normalPower', -3, 3).onChange(function (value) {
+            testMat2.normalPower = value
         })
         panel.add(controllerParams, 'r', 0, 1).onChange(function (value) {
             testMat2.specularColor = [value, testMat2.specularColor[1], testMat2.specularColor[2], testMat2.specularColor[3]]

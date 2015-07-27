@@ -79,7 +79,9 @@
         mesh.scaleY = 0.08;
         mesh.scaleZ = 0.08;
         scene.addChild( mesh);
-        mesh.material.shading = Shading.phong
+        setTimeout(function(){
+            mesh.material.shading = Shading.phong
+        },1000)
         world.addEventListener(World.renderBefore, function () {
             mesh.rotateY -= 0.02;
         })

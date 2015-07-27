@@ -110,7 +110,8 @@ var Geometry = (function () {
                 triangleCount[this] = tIndex.length / 3,
                 uv[this] = new Float32Array(tUV),
                 color[this] = new Float32Array(tCo),
-                index[this] = tIndex instanceof Uint32Array ? tIndex : new Uint32Array(tIndex);
+                //index[this] = tIndex instanceof Uint32Array ? tIndex : new Uint32Array(tIndex);
+                index[this] = tIndex instanceof Uint16Array ? tIndex : new Uint16Array(tIndex);
             };
         })()
     })

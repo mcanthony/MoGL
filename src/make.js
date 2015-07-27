@@ -123,7 +123,6 @@ var makeUtil = (function(){
             while (i--) {
                 if(tList[i].indexOf('[')>-1) {
                     var t = tList[i].split('[')
-
                     program[t[0]] = gl.getUniformLocation(program, t[0]);
                 }else{
                     program[tList[i]] = gl.getUniformLocation(program, tList[i]);
@@ -132,7 +131,12 @@ var makeUtil = (function(){
             tList = fSource.uniforms,
             i = tList.length;
             while (i--) {
-                program[tList[i]] = gl.getUniformLocation(program, tList[i]);
+                if(tList[i].indexOf('[')>-1) {
+                    var t = tList[i].split('[')
+                    program[t[0]] = gl.getUniformLocation(program, t[0]);
+                }else{
+                    program[tList[i]] = gl.getUniformLocation(program, tList[i]);
+                }
             }
 
             if(!gl.getProgramParameter(program, gl.LINK_STATUS)) {

@@ -26,6 +26,13 @@ body {
 	color:#fff;
 	text-align:center;
 }
+.FPS {
+    color: #FFF;
+    left: 0px;
+    top: 0px;
+    font-size: 11px;
+    position: absolute
+}
 </style>
 <script src="../src/$.js"></script>
 <script src="../src/make.js"></script>
@@ -52,6 +59,10 @@ body {
 <body>
 <canvas id="stage"></canvas>
 <div id="preloader">Texture Loading...</div>
+<div class="FPS">
+    Current FPS: <span id="currentFPS"></span>
+    Average FPS: <span id="averageFPS"></span>
+</div>
 <script>
 'use strict';
 var init = function(isLoaded, imgs){
@@ -75,11 +86,23 @@ var init = function(isLoaded, imgs){
         )
     );
     bs('#preloader').S(null);
-	world.setAutoSize(1) .start();
+	world.setAutoSize(1).start();
+
+    var divCurrentFPS, divAverageFPS;
+    divCurrentFPS = bs('#currentFPS'),
+    divAverageFPS = bs('#averageFPS');
+    var count222 = 0, sum = 0;
+    world.addEventListener(World.renderBefore, function (fps, time, totalVertex, totalObject) {
+        var currentFPS = fps;
+        count222++;
+        divCurrentFPS.S('html', currentFPS.toFixed(2));
+        divAverageFPS.S('html', 
+            ((sum += currentFPS) / count222).toFixed(2) + 
+            ' / totalVertex : ' + 
+            totalVertex + ' / totalObject : ' + totalObject);
+    });
     (function(){
         var r = 0, x, y;
-        bs.WIN.on('keydown', MoGL.stopInterval, 0, 1);
-        bs.WIN.on('keyup', MoGL.resumeInterval, 0, 1);
         bs.WIN.on('move', function(e){
             var s = bs.WIN.size();
             camera.x = ((e.x - s.w*.5)*.01).toPrecision(2), 
@@ -95,36 +118,37 @@ var init = function(isLoaded, imgs){
         material.addTexture(Texture.diffuse, Texture(bs.IMG.crop(imgs[0], 0, 0, 200, 160, true)));
         material.addTexture(Texture.normal, Texture(bs.IMG.crop(imgs[0], 200, 0, 200, 160, true)));
         material.addTexture(Texture.specular, Texture(bs.IMG.crop(imgs[0], 400, 0, 200, 160, true)));
-        boom = Material('#F00').setProperties({shading:Shading.phong, specularColor:'#ff0000'}), 
+        boom = Material('#F00').setProperties({shading:Shading.phong, specularColor:'#ff0000'}),
+        boom.wireFrame = 1
         sphere = Primitive.sphere(3,3),
 		down = (function(){
-            var counter = bs('<div style="position:absolute;top:0;left:0;margin:10px;color:#fff">0</div>').S('<','body','this'), count = 0;
-            
+            var counter = bs('<div style="position:absolute;top:0;left:0;margin:10px;color:#fff">0</div>').S('<','body','this'), count = 0;            
             var explosion = Texture(imgs[2]),
-                prop0 = {shading:Shading.phong, sprite:{col:28, row:1, start:0}},
-                propAni = {spriteFrame:27}, 
-                ani = {time:1},
+                prop0 = {shading:Shading.phong, sprite:{col:29, row:1, start:0}},
+                propAni = {spriteFrame:27},
+                ani = {time:.7},
                 plane = Primitive.plane(),
-                prop1 = {rotateX:Math.PI/2},
+                prop1 = {billboard:true, alpha:.8},
                 propertyChanged = function(){
                     scene.removeChild(this);
                 };
-                
-            
             return function(e){
                 var mesh, mat;
                 count++;
                 counter.S('html', count);
-                this.material = boom;
+                this.alpha = .2;
                 this.removeEventListener(Mesh.down, down);
                 this.addEventListener(MoGL.propertyRepeated, end);
                 prop1.x = this.x,
                 prop1.y = this.y,
-                prop1.z = this.z,
+                prop1.z = this.z - 20,
+                prop1.scaleX = this.scaleX*4.5,
+                prop1.scaleY = this.scaleY*4.5,
+                prop1.scaleZ = this.scaleZ*4.5
                 scene.addChild(
                     mesh = Mesh(
                         plane, 
-                        mat = Material()
+                        mat = Material('#f00')
                         .setProperties(prop0)
                         .setProperties(propAni, ani)
                         .addTexture(Texture.diffuse, explosion)
@@ -143,6 +167,7 @@ var init = function(isLoaded, imgs){
 		prop = {},
         i = 500;
 		setTimeout(loop = function(){
+            var a
             var size = bs.randf(1.7, 2.2);//bs.randf(.7, 1.2);
             ani.time = bs.randf(3,6), ani.delay = bs.randf(0,10),
 			prop.x = bs.randf(-25,25), prop.y = bs.randf(-25,25), prop.z = bs.randf(10,200),
@@ -150,7 +175,7 @@ var init = function(isLoaded, imgs){
             prop.rotateY = bs.randf(360,1000)*toRadian,
             prop.rotateZ = bs.randf(360,1000)*toRadian,
 			scene.addChild(
-                Mesh(sphere, material)
+                a = Mesh(sphere, material)
                 .setProperties({
                     scaleX:size, scaleY:size, scaleZ:size,
                     x:bs.randf(-20, 20), y:bs.randf(-20, 20), z:-450
@@ -158,7 +183,7 @@ var init = function(isLoaded, imgs){
                 .setProperties(prop, ani)
                 .addEventListener(Mesh.down, down)
             );
-
+//            a.billboard = 1
 			if (i--) setTimeout(loop, 1);
 		}, 1);
 	})();
