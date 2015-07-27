@@ -136,7 +136,7 @@ var World = (function (makeUtil) {
 
             var gChild, gChildArray, gCameraLen;
             var gGeo, gMat;
-            var gCull, gAlpha, gBillboard, propLookAt = {rotateX: Math.PI / 2};
+            var gCull, gAlpha, gBillboard, propLookAt = {rotateX: Math.PI / 2},gVisible
 
             var gRenderList
             var gMatColor,gMatWire, priMatWireColor;
@@ -187,6 +187,7 @@ var World = (function (makeUtil) {
             gCull = $getPrivate('Mesh', 'culling'),
             gAlpha = $getPrivate('Mesh', 'alpha'),
             gBillboard = $getPrivate('Mesh', 'billboard'),
+            gVisible = $getPrivate('Mesh', 'visible'),
 
             gMatColor = $getPrivate('Material', 'color'),
             gMatWire = $getPrivate('Material', 'wireFrame'),
@@ -345,7 +346,6 @@ var World = (function (makeUtil) {
                             }
                             prevWidth = tFrameBuffer.width , prevHeight = tFrameBuffer.height
                         }else{
-                            tGL.bindFramebuffer(tGL.FRAMEBUFFER, null);
                             tGL.enable(tGL.BLEND), tGL.blendFunc(tGL.SRC_ALPHA, tGL.ONE_MINUS_SRC_ALPHA);
                             tGL.clear(tGL.COLOR_BUFFER_BIT | tGL.DEPTH_BUFFER_BIT);
                         }
@@ -405,7 +405,8 @@ var World = (function (makeUtil) {
 
                                 while(i2--){
                                     tItem = k6[i2],
-                                    tUID_Item = tItem.uuid,
+                                    tUID_Item = tItem.uuid;
+                                    if(!gVisible[tUID_Item]) continue;
                                     tCull = gCull[tUID_Item],
                                     tMaterial = gMat[tUID_Item],
                                     tUID_mat = tMaterial.uuid,
