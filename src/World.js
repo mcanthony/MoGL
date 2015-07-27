@@ -10,7 +10,7 @@ var World = (function (makeUtil) {
     var totalVertex = 0
     var totalObject = 0
     glSetting = {
-        alpha: true,
+        alpha: false,
         depth: true,
         stencil: false,
         antialias: window.devicePixelRatio == 1 ? true : false,
