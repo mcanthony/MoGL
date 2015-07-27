@@ -420,10 +420,9 @@ var World = (function (makeUtil) {
                                     if (gBillboard[tUID_Item]) {
                                         tItem.lookAt(tCamera.x,tCamera.y,-tCamera.z).rotateX = propLookAt.rotateX
                                     }
-                                    f9[0] = tItem.x, f9[1] = tItem.y, f9[2] = tItem.z,
-                                    f9[3] = tItem.rotateX, f9[4] = tItem.rotateY, f9[5] = tItem.rotateZ,
-                                    f9[6] = tItem.scaleX, f9[7] = tItem.scaleY, f9[8] = tItem.scaleZ,
-                                    tGL.uniform3fv(tProgram.uAffine, f9)
+                                    vs[0] = tItem.x, vs[1] = tItem.y, vs[2] = tItem.z,
+                                    vs[3] = tItem.rotateX, vs[4] = tItem.rotateY, vs[5] = tItem.rotateZ,
+                                    vs[6] = tItem.scaleX, vs[7] = tItem.scaleY, vs[8] = tItem.scaleZ,
                                     ///////////////////////////////////////////////////////////////
                                     //총정점수계산
                                     // TODO 컬링 별로도 리스트를 나눠줘야하는군
@@ -436,13 +435,13 @@ var World = (function (makeUtil) {
                                     //스프라이트
                                     ///////////////////////////////////////////////////////////////
                                     if (sheetInfo = gMatSprite[tUID_mat]) {
-                                        vs[1] = sheetInfo._col,
-                                        vs[2] = sheetInfo._row,
-                                        vs[3] = sheetInfo.curr % sheetInfo.col,
-                                        vs[4] = parseInt(sheetInfo.curr / sheetInfo.col),
-                                        vs[0] = 1.0 // 사용여부
+                                        vs[9] = 1.0 // 사용여부
+                                        vs[10] = sheetInfo._col,
+                                        vs[11] = sheetInfo._row,
+                                        vs[12] = sheetInfo.curr % sheetInfo.col,
+                                        vs[13] = parseInt(sheetInfo.curr / sheetInfo.col)
                                     }else{
-                                        vs[0] = 0.0
+                                        vs[9] = 0.0
                                     }
                                     if(tUID_mat != pUUID_mat){
                                         ///////////////////////////////////////////////////////////////
