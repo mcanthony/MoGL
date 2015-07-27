@@ -508,8 +508,6 @@ var World = (function (makeUtil) {
                                     // 드로우
                                     fs[9] = gAlpha[tUID_Item] // 메쉬의 알파
                                     tGL.uniform1fv(tProgram.uVS,vs),
-                                    tGL.uniform1fv(tProgram.uFS,fs),
-                                    tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0);
                                     ///////////////////////////////////////////////////////////////
                                     //와이어프레임 그리기
                                     gMatWire[tUID_mat] ? (
@@ -521,9 +519,10 @@ var World = (function (makeUtil) {
                                         fs[8] = tColor2[3],
                                         tGL.uniform1fv(tProgram.uFS, fs),
                                         tGL.drawElements(tGL.LINES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0),
-                                        fs[4] = 0.0,
-                                        tGL.uniform1fv(tProgram.uFS, fs)
-                                    ) : 0
+                                        fs[4] = 0.0
+                                    ) : 0,
+                                    tGL.uniform1fv(tProgram.uFS,fs),
+                                    tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0),
                                     pCull = tCull, pDiffuse = tDiffuse, pNormal = tNormal, pSpecular = tSpecular
                                     pUUID_mat = tUID_mat
                                 }
