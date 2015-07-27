@@ -77,12 +77,12 @@ var init = function(isLoaded, imgs){
         )
         .addChild(//background
             bg = Mesh( 
-                Primitive.cube(), 
+                Primitive.sphere(),
                 Material('#ff2233')
                     .setProperties({shading:Shading.none})
                     .addTexture(Texture.diffuse, Texture(imgs[1]))
             )
-            .setProperties({z:-370, scaleX:450, scaleY:450})
+            .setProperties({z: camera.z, scaleX: 50, scaleY: 50, scaleZ: 350})
         )
     );
     bs('#preloader').S(null);
@@ -105,11 +105,11 @@ var init = function(isLoaded, imgs){
         var r = 0, x, y;
         bs.WIN.on('move', function(e){
             var s = bs.WIN.size();
-            camera.x = ((e.x - s.w*.5)*.01).toPrecision(2), 
-            camera.y = ((s.h*.5 - e.y)*.01).toPrecision(2),
-            bg.rotateX = camera.x*.05;
-            bg.rotateZ = camera.y*.05;
-            camera.lookAt(0, 0, -200);
+            camera.x = ((e.x - s.w*.5)*.001).toPrecision(2),
+            camera.y = ((s.h*.5 - e.y)*.001).toPrecision(2),
+            bg.rotateX = camera.x*.005;
+            bg.rotateZ = camera.y*.005;
+            camera.lookAt(0, 0, 0);
         }, 0, 1);
     })();
 	(function(){
