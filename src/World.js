@@ -127,7 +127,7 @@ var World = (function (makeUtil) {
 
             var tCvs, tCvsW, tCvsH;
             var tItem, tMaterial,pUUID_mat;
-            var tUUID, tUUID_camera, tUUID_Item, tUUID_mat, tUUID_Scene;
+            var tID, tUID_camera, tUID_Item, tUID_mat, tUID_Scene;
             var tGeo,tBgColor,tColor2,tDiffuseMaps, tNormalMaps, tSpecularMaps;
             var tCull, tVBO, tVNBO, tUVBO, tIBO, tDiffuse, tNormal, tSpecular, tShading, tFrameBuffer, tProgram;
             var pCull, pDiffuse, pNormal, pSpecular, pShading;
@@ -136,7 +136,7 @@ var World = (function (makeUtil) {
 
             var gChild, gChildArray, gCameraLen;
             var gGeo, gMat;
-            var gCull,gAlpha;
+            var gCull, gAlpha, gBillboard, propLookAt = {rotateX: Math.PI / 2};
 
             var gRenderList
             var gMatColor,gMatWire, priMatWireColor;
@@ -182,6 +182,7 @@ var World = (function (makeUtil) {
             gPickMeshs = $getPrivate('Mesh', 'pickingMeshs'),
             gCull = $getPrivate('Mesh', 'culling'),
             gAlpha = $getPrivate('Mesh', 'alpha'),
+            gBillboard = $getPrivate('Mesh', 'billboard'),
 
             gMatColor = $getPrivate('Material', 'color'),
             gMatWire = $getPrivate('Material', 'wireFrame'),
@@ -202,10 +203,10 @@ var World = (function (makeUtil) {
             gTextureIsLoaded =$getPrivate('Texture', 'isLoaded')
 
             var render = function render() {
-                tUUID = this.uuid,
+                tID = this.uuid,
                 pCull = null,
-                tCvs = cvsList[tUUID], tSceneList = sceneList[tUUID],
-                tGPU = gpu[tUUID], tGL = tGPU.gl,
+                tCvs = cvsList[tID], tSceneList = sceneList[tID],
+                tGPU = gpu[tID], tGL = tGPU.gl,
                 tTextures = tGPU.textures,
                 tCvsW = tCvs.width, tCvsH = tCvs.height,
                 tDiffuseMaps = tNormalMaps = pShading = null,
@@ -218,11 +219,11 @@ var World = (function (makeUtil) {
                 tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS),
                 tGL.disable(tGL.BLEND)
 
-                tListener = priListener[tUUID]
+                tListener = priListener[tID]
                 while (i--) {
                     tScene = tSceneList[i];
-                    tUUID_Scene = tScene.uuid
-                    cameraLength = gCameraLen[tUUID_Scene]
+                    tUID_Scene = tScene.uuid
+                    cameraLength = gCameraLen[tUID_Scene]
                     //버퍼 업데이트
                     list = tScene.updateList.geometry;
                     if (j = list.length) {
@@ -239,7 +240,7 @@ var World = (function (makeUtil) {
                             if(gTextureIsLoaded[curr.uuid]) makeTexture(tGPU, curr),list.shift();
                         }
                     }
-                    if (tScene.updateList.camera.length) cameraRenderAreaUpdate(tUUID);
+                    if (tScene.updateList.camera.length) cameraRenderAreaUpdate(tID);
                     tScene.updateList.camera.length = 0,
                     //////////////////////////////////////////////////////////////////////////////////////////////////////
                     tCameraList = tScene.cameras,
@@ -249,7 +250,7 @@ var World = (function (makeUtil) {
                     for (k in tCameraList) {
                         tCamera = tCameraList[k],
                         tCameraMtx = priRaw[tCamera.matrix.uuid];
-                        tUUID_camera = tCamera.uuid
+                        tUID_camera = tCamera.uuid
                         if (!tCamera.visible) continue;
                         //TODO 마우스용 프레임버퍼가 따로 필요하군 현재는 공용이자나!!!
 
@@ -268,24 +269,24 @@ var World = (function (makeUtil) {
                         if(mouseCheck = !mouseCheck){
                             // TODO 이놈도 지오별로 렌더하게 변경해야함
                             var pVBO = null
-                            tFrameBuffer = tGPU.framebuffers[tUUID_camera].frameBuffer,
+                            tFrameBuffer = tGPU.framebuffers[tUID_camera].frameBuffer,
                             tGL.bindFramebuffer(tGL.FRAMEBUFFER, tFrameBuffer)
                             if(prevWidth != tFrameBuffer.width || prevHeight != tFrameBuffer.height) tGL.viewport(0, 0, tFrameBuffer.width, tFrameBuffer.height)
                             prevWidth = tFrameBuffer.width , prevHeight = tFrameBuffer.height
                             for (k2 in gPickMeshs) {
                                 mousePickLength++,
                                 tItem = gPickMeshs[k2].mesh,
-                                tUUID_Item = tItem.uuid,
-                                tGeo = gGeo[tUUID_Item].uuid,
+                                tUID_Item = tItem.uuid,
+                                tGeo = gGeo[tUID_Item].uuid,
                                 tVBO = tGPU.vbo[tGeo],
                                 tIBO = tGPU.ibo[tGeo],
-                                tCull = gCull[tUUID_Item];
+                                tCull = gCull[tUID_Item];
                                 if(tVBO != pVBO){
                                     tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
                                     tGL.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, tGL.FLOAT, false, 0, 0);
                                     tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO)
                                 }
-                                tGL.uniform4fv(tProgram.uColor, gPickColors[tUUID_Item]),
+                                tGL.uniform4fv(tProgram.uColor, gPickColors[tUID_Item]),
                                 tGL.uniform3fv(tProgram.uAffine,
                                     (
                                         f9[0] = tItem.x, f9[1] = tItem.y, f9[2] = tItem.z,
@@ -296,7 +297,7 @@ var World = (function (makeUtil) {
                                 tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0)
                                 pVBO = tVBO
                             }
-                            if (mousePickLength && (tMouse = mouse[tUUID]) && tMouse.x) {
+                            if (mousePickLength && (tMouse = mouse[tID]) && tMouse.x) {
                                 tGL.readPixels(tMouse.x, tMouse.y, 1, 1, tGL.RGBA , tGL.UNSIGNED_BYTE, mouseCurrent),
                                 mouseCurrentItem = gPickMeshs[''+mouseCurrent[0]+mouseCurrent[1]+mouseCurrent[2]+'255'],
                                 mouseObj.x = tMouse.x,
@@ -328,12 +329,12 @@ var World = (function (makeUtil) {
 
                         // draw Start
                         // 뷰포트설정
-                        tBgColor != gCameraProperty[tUUID_camera] ? (
-                            tBgColor = gCameraProperty[tUUID_camera],
+                        tBgColor != gCameraProperty[tUID_camera] ? (
+                            tBgColor = gCameraProperty[tUID_camera],
                             tGL.clearColor(tBgColor.r, tBgColor.g, tBgColor.b, tBgColor.a)
                         ) : 0
                         if (cameraLength > 1) {
-                            tFrameBuffer = tGPU.framebuffers[tUUID_camera].frameBuffer;
+                            tFrameBuffer = tGPU.framebuffers[tUID_camera].frameBuffer;
                             tGL.bindFramebuffer(tGL.FRAMEBUFFER, tFrameBuffer);
                             if(prevWidth != tFrameBuffer.width || prevHeight != tFrameBuffer.height) {
                                 tGL.viewport(0, 0, tFrameBuffer.width, tFrameBuffer.height)
@@ -347,9 +348,9 @@ var World = (function (makeUtil) {
 
 
                         // 대상 씬의 차일드 루프
-                        tChild = gChild[tUUID_Scene],
-                        tChildArray = gChildArray[tUUID_Scene],
-                        tRenderList = gRenderList[tUUID_Scene]
+                        tChild = gChild[tUID_Scene],
+                        tChildArray = gChildArray[tUID_Scene],
+                        tRenderList = gRenderList[tUID_Scene]
 
                         for (k3 in tRenderList) {
                             k4 = tRenderList[k3]
@@ -401,18 +402,21 @@ var World = (function (makeUtil) {
 
                                 while(i2--){
                                     tItem = k6[i2],
-                                    tUUID_Item = tItem.uuid,
-                                    tCull = gCull[tUUID_Item],
-                                    tMaterial = gMat[tUUID_Item],
-                                    tUUID_mat = tMaterial.uuid,
-                                    tShading = gMatShading[tUUID_mat],
-                                    tDiffuseMaps = gMatDiffuseMaps[tUUID_mat],
+                                    tUID_Item = tItem.uuid,
+                                    tCull = gCull[tUID_Item],
+                                    tMaterial = gMat[tUID_Item],
+                                    tUID_mat = tMaterial.uuid,
+                                    tShading = gMatShading[tUID_mat],
+                                    tDiffuseMaps = gMatDiffuseMaps[tUID_mat],
                                     ///////////////////////////////////////////////////////////////
                                     //총정점수계산
                                     totalObject++,
-                                    totalVertex += gGeoVertexCount[ tGeo = gGeo[tUUID_Item].uuid]
+                                    totalVertex += gGeoVertexCount[ tGeo = gGeo[tUID_Item].uuid]
                                     ///////////////////////////////////////////////////////////////
                                     //아핀관련정보 입력
+                                    if (gBillboard[tUID_Item]) {
+                                        tItem.lookAt(tCamera.x,tCamera.y,tCamera.z).setProperties(propLookAt);
+                                    }
                                     f9[0] = tItem.x, f9[1] = tItem.y, f9[2] = tItem.z,
                                     f9[3] = tItem.rotateX, f9[4] = tItem.rotateY, f9[5] = tItem.rotateZ,
                                     f9[6] = tItem.scaleX, f9[7] = tItem.scaleY, f9[8] = tItem.scaleZ,
@@ -428,7 +432,7 @@ var World = (function (makeUtil) {
 
                                     //스프라이트
                                     ///////////////////////////////////////////////////////////////
-                                    if (sheetInfo = gMatSprite[tUUID_mat]) {
+                                    if (sheetInfo = gMatSprite[tUID_mat]) {
                                         sheetF[1] = sheetInfo._col,
                                         sheetF[2] = sheetInfo._row,
                                         sheetF[3] = sheetInfo.curr % sheetInfo.col,
@@ -438,7 +442,7 @@ var World = (function (makeUtil) {
                                         sheetF[0] = 0.0
                                     }
                                     tGL.uniform1fv(tProgram.uSheet, sheetF);
-                                    if(tUUID_mat != pUUID_mat){
+                                    if(tUID_mat != pUUID_mat){
                                         ///////////////////////////////////////////////////////////////
                                         //텍스쳐
                                         if (useTexture) {
@@ -452,22 +456,21 @@ var World = (function (makeUtil) {
                                         }else{
                                             ///////////////////////////////////////////////////////////////
                                             //색상
-                                            tGL.uniform4fv(tProgram.uColor, gMatColor[tUUID_mat]);
+                                            tGL.uniform4fv(tProgram.uColor, gMatColor[tUID_mat]);
                                         }
                                         ///////////////////////////////////////////////////////////////
                                         //노말
                                         if(useNormalBuffer){
-                                            tGL.uniform1f(tProgram.uLambert, gMatLambert[tUUID_mat]), // 램버트 설정
-
-                                            tColor2 = gMatSpecularColor[tUUID_mat],
-                                            specularF[0] = gMatSpecularPower[tUUID_mat], // 스페큘라 파워
+                                            tGL.uniform1f(tProgram.uLambert, gMatLambert[tUID_mat]), // 램버트 설정
+                                            tColor2 = gMatSpecularColor[tUID_mat],
+                                            specularF[0] = gMatSpecularPower[tUID_mat], // 스페큘라 파워
                                             specularF[1] =  tColor2[0], // 스페큘라 컬러 r
                                             specularF[2] =  tColor2[1], // 스페큘라 컬러 g
                                             specularF[3] =  tColor2[2], // 스페큘라 컬러 b
                                             specularF[4] =  tColor2[3], // 스페큘라 컬러 a
                                             tGL.uniform1fv(tProgram.uSpecular, specularF)
 
-                                            if (tNormalMaps = gMatNormalMaps[tUUID_mat]) {
+                                            if (tNormalMaps = gMatNormalMaps[tUID_mat]) {
                                                 tNormal = tTextures[tNormalMaps[tNormalMaps.length - 1].tex.uuid]
                                                 if (tNormal != pNormal && tNormal != null) {
                                                     tGL.activeTexture(tGL.TEXTURE1),
@@ -475,7 +478,7 @@ var World = (function (makeUtil) {
                                                     tGL.uniform1i(tProgram.uNormalSampler, 1)
                                                 }
                                                 normalMapF[0] = 1.0, // 노말맵 사용여부
-                                                normalMapF[1] = gMatNormalPower[tUUID_mat] // 노말맵강도
+                                                normalMapF[1] = gMatNormalPower[tUID_mat] // 노말맵강도
                                             } else {
                                                 normalMapF[1] = 0.0
                                             }
@@ -485,7 +488,7 @@ var World = (function (makeUtil) {
                                         tGL.uniform1fv(tProgram.uNormalMap, normalMapF);
                                         ///////////////////////////////////////////////////////////////
                                         //스페큘러
-                                        if(tSpecularMaps = gMatSpecularMaps[tUUID_mat]){
+                                        if(tSpecularMaps = gMatSpecularMaps[tUID_mat]){
                                             tSpecular = tTextures[tSpecularMaps[tSpecularMaps.length - 1].tex.uuid]
                                             if (tSpecular != pSpecular && tSpecular != null) {
                                                 tGL.activeTexture(tGL.TEXTURE2),
@@ -493,7 +496,7 @@ var World = (function (makeUtil) {
                                                 tGL.uniform1i(tProgram.uSpecularSampler, 2)
                                             }
                                             specularMapF[0] = 1.0, // 스페큘러맵사용여부
-                                            specularMapF[1] = gMatSpecularMapPower[tUUID_mat] // 스페큘러맵 강도
+                                            specularMapF[1] = gMatSpecularMapPower[tUID_mat] // 스페큘러맵 강도
                                         }else{
                                             specularMapF[0] = 0.0
                                         }
@@ -502,12 +505,12 @@ var World = (function (makeUtil) {
                                     ///////////////////////////////////////////////////////////////
                                     // 드로우
                                     // TODO 이놈은 어디로 태워보내지..
-                                    tGL.uniform1f(tProgram.uAlpha,gAlpha[tUUID_Item]),
+                                    tGL.uniform1f(tProgram.uAlpha,gAlpha[tUID_Item]),
                                     tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0);
                                     ///////////////////////////////////////////////////////////////
                                     //와이어프레임 그리기
-                                    gMatWire[tUUID_mat] ? (
-                                        tColor2 = priMatWireColor[tUUID_mat],
+                                    gMatWire[tUID_mat] ? (
+                                        tColor2 = priMatWireColor[tUID_mat],
                                         wireF[0] = 1.0,
                                         wireF[1] = tColor2[0],
                                         wireF[2] = tColor2[1],
@@ -519,7 +522,7 @@ var World = (function (makeUtil) {
                                         tGL.uniform1fv(tProgram.uWire, wireF)
                                     ) : 0
                                     pCull = tCull, pDiffuse = tDiffuse, pNormal = tNormal, pSpecular = tSpecular
-                                    pUUID_mat = tUUID_mat
+                                    pUUID_mat = tUID_mat
                                 }
                                 if(k3=='sprite') {
                                     tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS)
@@ -565,9 +568,9 @@ var World = (function (makeUtil) {
                 //    tGL.uniformMatrix4fv(tProgram.uCameraMatrix, false, rectMTX);
                 //    for (k in tCameraList) {
                 //        tCamera = tCameraList[k]
-                //        tUUID_camera = tCamera.uuid
+                //        tUID_camera = tCamera.uuid
                 //        if (tCamera.visible) {
-                //            tFrameBuffer = tGPU.framebuffers[tUUID_camera].frameBuffer;
+                //            tFrameBuffer = tGPU.framebuffers[tUID_camera].frameBuffer;
                 //            tGL.uniform1i(tProgram.uFXAA, tCamera.antialias);
                 //            if (tCamera.antialias) {
                 //                /*
@@ -588,7 +591,7 @@ var World = (function (makeUtil) {
                 //                )
                 //            ),
                 //            //tGL.activeTexture(tGL.TEXTURE0),
-                //            tGL.bindTexture(tGL.TEXTURE_2D, tGPU.framebuffers[tUUID_camera].texture),
+                //            tGL.bindTexture(tGL.TEXTURE_2D, tGPU.framebuffers[tUID_camera].texture),
                 //            tGL.uniform1i(tProgram.uSampler, 0),
                 //            tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO),
                 //            tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0);
