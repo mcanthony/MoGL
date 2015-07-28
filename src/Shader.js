@@ -650,7 +650,7 @@ var Shader = (function () {
                                         'if( uFS[16] == 1.0 ){\n' +
                                         '   vec4 bump = texture2D( uNormalSampler, vUV );\n' +
                                         '   bump.rgb= bump.rgb*2.0-1.0 ;\n' + // 범프값을 -1~1로 교정
-                                        '   float normalSpecular = max( dot(reflectDir, position-bump.g), 0.5 );\n' + // 맵에서 얻어낸 노말 스페큘라
+                                        '   float normalSpecular = max( dot(reflectDir, normalize(position-bump.rgb)), 0.3 );\n' + // 맵에서 얻어낸 노말 스페큘라
                                         '   specular = pow(normalSpecular,uFS[11])*specColor[3];\n' + // 스페큘라
                                         '   gl_FragColor = ( diffuse *light * ambientColor * ambientColor[3] + specular * specColor ) + normalSpecular * bump.g * uFS[17]  ;\n' +
                                         '}else{' +
