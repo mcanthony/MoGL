@@ -71,7 +71,7 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'colorMergeFShader',
-                            precision: 'mediump float',
+                            precision: 'lowp float',
                             uniforms: [
                                 'sampler2D uSampler0', 'sampler2D uSampler1', 'sampler2D uSampler2', 'sampler2D uSampler3', 'sampler2D uSampler4', 'sampler2D uSampler5', 'sampler2D uSampler6', 'sampler2D uSampler7', 'sampler2D uSampler8',
                                 'vec3 uDLite'],
@@ -173,7 +173,7 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'mouseFragmentShader',
-                            precision: 'mediump float',
+                            precision: 'lowp float',
                             uniforms: [],
                             varyings: ['vec4 vColor'],
                             function: [],
@@ -216,7 +216,7 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'colorFragmentShader',
-                            precision: 'mediump float',
+                            precision: 'lowp float',
                             uniforms: [],
                             varyings: ['vec4 vColor'],
                             function: [],
@@ -259,7 +259,7 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'wireFrameFragmentShader',
-                            precision: 'mediump float',
+                            precision: 'lowp float',
                             uniforms: [],
                             varyings: ['vec4 vColor'],
                             function: [],
@@ -305,7 +305,7 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'bitmapFragmentShader',
-                            precision: 'mediump float',
+                            precision: 'lowp float',
                             uniforms: ['sampler2D uSampler'],
                             varyings: ['vec2 vUV'],
                             function: [],
@@ -352,7 +352,7 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'colorFragmentShaderGouraud',
-                            precision: 'mediump float',
+                            precision: 'lowp float',
                             uniforms: ['sampler2D uSampler'],
                             varyings: ['vec4 vColor'],
                             function: [],
@@ -400,7 +400,7 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'bitmapFragmentShaderGouraud',
-                            precision: 'mediump float',
+                            precision: 'lowp float',
                             uniforms: ['sampler2D uSampler'],
                             varyings: ['vec2 vUV', 'vec4 vLight'],
                             function: [],
@@ -448,7 +448,7 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'colorFragmentShaderPhong',
-                            precision: 'mediump float',
+                            precision: 'lowp float',
                             uniforms: [
                                 'vec3 uDLite',
                                 'float uFS[20]'
@@ -515,7 +515,7 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'toonFragmentShaderPhong',
-                            precision: 'mediump float',
+                            precision: 'lowp float',
                             uniforms: ['float uLambert', 'vec3 uDLite'],
                             varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec4 vColor'],
                             function: [],
@@ -619,7 +619,7 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'bitmapFragmentShaderPhong',
-                            precision: 'mediump float',
+                            precision: 'lowp float',
                             uniforms: [
                                 'sampler2D uSampler',
                                 'sampler2D uNormalSampler',
@@ -707,7 +707,7 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'bitmapFragmentShaderBlinn',
-                            precision: 'mediump float',
+                            precision: 'lowp float',
                             uniforms: ['sampler2D uSampler', 'float uLambert', 'vec3 uDLite'],
                             varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition'],
                             function: [],
@@ -768,7 +768,7 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'postBaseFragmentShader',
-                            precision: 'mediump float',
+                            precision: 'lowp float',
                             uniforms: ['sampler2D uSampler', 'vec2 uTexelSize', 'int uFXAA'],
                             varyings: ['vec2 vUV'],
                             function: [],
