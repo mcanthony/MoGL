@@ -79,8 +79,8 @@ var init = function(isLoaded, imgs){
             bg = Mesh( 
                 Primitive.sphere(),
                 Material('#ff2233')
-                    .setProperties({shading:Shading.none})
-                    .addTexture(Texture.diffuse, Texture(imgs[1]))
+                .setProperties({shading:Shading.none})
+                .addTexture(Texture.diffuse, Texture(imgs[1]))
             )
             .setProperties({z: camera.z, scaleX: 50, scaleY: 50, scaleZ: 350})
         )
