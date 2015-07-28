@@ -72,6 +72,8 @@
         var camera = new Camera();
         scene.addChild(camera);
 
+        world.setAutoSize(1).start();
+
         var imgTag = document.createElement('img');
         imgTag.src = 'lol/ahri_base_tx_cm.png';
         var mat = new Material();
@@ -110,7 +112,7 @@
                 mat.wireFrame = 0;
             });
 
-            world.start()
+
             scene.addChild(mesh);
 
             var count = 0, sum = 0
