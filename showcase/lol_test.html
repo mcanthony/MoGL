@@ -10,7 +10,8 @@
     <meta name="format-detection" content="telephone=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <style>
         body {
             background-color: #000;
@@ -62,15 +63,15 @@
         var scene = new Scene();
         var canvas = document.getElementById('canvas');
 
-        var divCurrentFPS = document.getElementById( 'currentFPS' );
-        var divAverageFPS = document.getElementById( 'averageFPS' );
+        var divCurrentFPS = document.getElementById('currentFPS');
+        var divAverageFPS = document.getElementById('averageFPS');
         var prevTime = 0;
 
         canvas.width = W.innerWidth;
         canvas.height = W.innerHeight;
 
         world.addScene(scene);
-        var camera = new Camera();        
+        var camera = new Camera();
         scene.addChild(camera);
 
         var imgTag = document.createElement('img');
@@ -79,9 +80,9 @@
         var texture = new Texture(imgTag);
         mat.addTexture(Texture.diffuse, texture);
         // mat.shading = Shading.gouraud;
-        // mat.shading = Shading.phong;
+        mat.shading = Shading.phong;
         // mat.shading = Shading.toon;
-        
+
 
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.open('GET', 'lol/lol_test.json', true);
@@ -101,36 +102,31 @@
             var mesh = new Mesh(geo, mat);
             mesh.y = -80;
             mesh.z = -200;
-            
-            
-            mesh.addEventListener("over", function(){
-                mat.wireFrame = 1;                       
-            });
-            
-            mesh.addEventListener("out", function(){
-                mat.wireFrame = 0;                       
+
+
+            mesh.addEventListener("over", function () {
+                mat.wireFrame = 1;
             });
 
-            
+            mesh.addEventListener("out", function () {
+                mat.wireFrame = 0;
+            });
+
+            world.start()
             scene.addChild(mesh);
 
-            var sum = 0, count = 1;
+            var count = 0, sum = 0
+            world.addEventListener(World.renderBefore, function (fps, time, totalVertex) {
+                var currentFPS = fps;
+                count++
+                divCurrentFPS.textContent = currentFPS.toFixed(2);
+                divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2) + ' / totalVertex : ' + totalVertex;
 
-            function render( currTime ) {
-                var currentFPS = 1000 / ( currTime - prevTime );
-                prevTime = currTime;
 
-                divCurrentFPS.textContent = currentFPS.toFixed( 2 );
-                divAverageFPS.textContent = ( ( sum += currentFPS ) / count++ ).toFixed( 2 );
+                mesh.rotateY+=0.01
+            })
 
-                mesh.rotateY -= 0.01;
 
-                world.render();
-
-                requestAnimationFrame( render );
-            }
-
-           requestAnimationFrame( render );
         }
     })(this);
 </script>
