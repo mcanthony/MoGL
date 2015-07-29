@@ -12,9 +12,9 @@
 </head>
 <body>
 <img src="../src/ohno.png"/>
-<canvas id="canvasTest" style="position: absolute"></canvas>
-<canvas id="canvasTest2" style="position: absolute"></canvas>
-<canvas id="canvasTest3" style="position: absolute"></canvas>
+<canvas id="canvasTest" style="position:absolute; display:none"></canvas>
+<canvas id="canvasTest2" style="position:absolute; display:none"></canvas>
+<canvas id="canvasTest3" style="position:absolute; display:none"></canvas>
 <div id="stage"></div>
 <div id="result"></div>
 <div id="test"></div>
@@ -130,29 +130,25 @@
 
     bsTest('scene',
             function () {
-                var test = 1;
                 var scene = new Scene();
                 var world = new World('canvasTest3');
                 world.addScene(scene);
                 try {
                     world.addScene(scene);
                 } catch (e) {
-                    test = e.toString();
+                    return e.toString().indexOf('Error: World.addScene:0') > -1;
                 }
-                return test;
-            }, 'Error: World.addScene:0',
+            }, true,
             function () {
-                var test = '', Class = function () {
-                };
-                var instance = new Class();
+                var Cls = function (){};
+                var instance = new Cls();
                 var world = new World('canvasTest3');
                 try {
                     world.addScene(instance);
                 } catch (e) {
-                    test = e.toString();
+                    return e.toString().indexOf('Error: World.addScene:1') > -1;
                 }
-                return test;
-            }, 'Error: World.addScene:1',
+            }, true,
             function () {
                 var world = new World('canvasTest3');
                 var testScene = new Scene().setId('scene1');
@@ -175,16 +171,14 @@
                 return world.getScene('scene')
             }, null,
             function () {
-                var world = new World('canvasTest3'), test = '';
+                var world = new World('canvasTest3');
                 try {
                     world.removeScene('testScene');
                 } catch (e) {
-                    test = e.toString();
+                    return e.toString().indexOf('Error: World.removeScene:0') > -1;
                 }
-                return test;
-            }, 'Error: World.removeScene:0'
+            }, true
     );
-
 </script>
 </body>
 </html>

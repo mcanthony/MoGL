@@ -12,7 +12,7 @@
 </head>
 <body>
 <img src="../src/ohno.png" id="img1">
-<canvas id="world" style="position: absolute"></canvas>
+<canvas id="world" style="position:absolute;display:none"></canvas>
 <div id="stage"></div>
 <div id="result"></div>
 <div id="test"></div>
@@ -38,190 +38,161 @@
 <script src="../src/World.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
 <script>
-    //////////////////////////////////////////////////////////////
-    var world = World('world')
-    var scene1
-    var scene2
-    var testGeometry1 = Geometry([], [])
-    var testMaterial1 = Material('#fff')
-    var testMesh1 = new Mesh(testGeometry1, testMaterial1)
+    var world = World('world');
+    var scene1;
+    var scene2;
+    var testGeometry1 = Geometry([], []);
+    var testMaterial1 = Material('#fff');
+    var testMesh1 = new Mesh(testGeometry1, testMaterial1);
     //    var testMesh2 = new Mesh(testGeometry1, testMaterial1)
-    var testResult
+    var testResult;
     bsTest('new',
             function () {
                 scene1 = new Scene(); //일반적은 new방식
-                world.addScene(scene1)
+                world.addScene(scene1);
                 return scene1.isAlive;
             }, true,
             function () {
                 scene2 = Scene(); //factory함수로도 작동
-                world.addScene(scene2)
+                world.addScene(scene2);
                 return scene2.isAlive;
             }, true
     );
     bsTest('child',
             function () {
                 // 추가가 잘되었나
-                scene1.addChild(testMesh1.setId('meshKey1'))
+                scene1.addChild(testMesh1.setId('meshKey1'));
                 return scene1.getChild('meshKey1');
             }, testMesh1,
             function () {
                 // 지정한 키로 잘찾아지나
-                return scene1.getChild('meshKey1')
+                return scene1.getChild('meshKey1');
             }, testMesh1,
             function () {
                 // 같은걸 등록하는걸 잘 체크하나..
-                testResult = 1
+                try {
+                    scene1.addChild(testMesh1);
+                } catch (e) {
+                    return e.toString().indexOf('Error: Scene.addMesh:0') > -1;
+                }
+            }, true,
+            function () {
+                // 같은 값으로 등록하는걸 잘 체크하나..
                 try {
                     scene1.addChild(testMesh1)
                 } catch (e) {
-                    console.log(e)
-                    testResult = 0
+                    return e.toString().indexOf('Error: Scene.addMesh:0') > -1;
                 }
-                return testResult
-            }, 0,
-            function () {
-                // 같은 값으로 등록하는걸 잘 체크하나..
-                testResult = 1
-                try {
-                    scene1.addChild(testMesh2)
-                } catch (e) {
-                    console.log(e)
-                    testResult = 0
-                }
-                return scene1.getChild('meshKey1')
-            }, testMesh1,
+            }, true,
             function () {
                 // Mesh가 아닌객체를 잘 걸러내나
-                testResult = 1
                 try {
                     scene1.addChild({})
                 } catch (e) {
-                    console.log(e)
-                    testResult = 0
+                    return e.toString().indexOf('Error: Scene.addChild:0') > -1;
                 }
-                return testResult
-            }, 0,
+            }, true,
             function () {
                 // Mesh가 아닌객체를 등록하고 나서 혹시나 키가 들어가있나..
-                return scene1.getChild('wantError')
+                return scene1.getChild('empty');
             }, null,
             function () {
                 // 삭제는 잘되나..
-                scene1.removeChild('meshKey1')
-                return scene1.getChild('meshkey1')
+                scene1.removeChild('meshKey1');
+                return scene1.getChild('meshkey1');
             }, null
     );
     bsTest('Geometry',
             function () {
                 // 없는걸 찾으면 null이 나와야함
-                return scene1.getGeometry(testGeometry1)
+                return scene1.getGeometry(testGeometry1);
             }, null,
             function () {
                 // 지오메트리를 등록하고 잘 찾아지나 테스트
-                scene1.addGeometry(testGeometry1.setId('addGeoTest1'))
-                return scene1.getGeometry('addGeoTest1')
+                scene1.addGeometry(testGeometry1.setId('addGeoTest1'));
+                return scene1.getGeometry('addGeoTest1');
             }, testGeometry1,
             function () {
                 // 지오메트리가 아닌녀석을 등록시도할때
-                testResult = 1
                 try {
-                    scene1.addGeometry({})
+                    scene1.addGeometry({});
                 } catch (e) {
-                    console.log(e)
-                    testResult = 0
+                    return e.toString().indexOf('Error: Scene.addGeometry:1') > -1;
                 }
-                return testResult
-            }, 0,
+            }, true,
             function () {
                 // 중복 추가
-                testResult = 1
                 try {
-                    scene1.addGeometry(testGeometry1)
+                    scene1.addGeometry(testGeometry1);
                 } catch (e) {
-                    console.log(e)
-                    testResult = 0
+                    return e.toString().indexOf('Error: Scene.addGeometry:0') > -1;
                 }
-                return testResult
-            }, 0,
+            }, true,
             function () {
                 // 찾아진놈이 지오메트리의 인스턴스인가!
-                return scene1.getGeometry('addGeoTest1') instanceof Geometry
+                return scene1.getGeometry('addGeoTest1') instanceof Geometry;
             }, true
     )
     bsTest('Material',
             function () {
                 // 없는걸 찾으면 null이 나와야함
-                return scene1.getMaterial('addMaterialTest1')
+                return scene1.getMaterial('addMaterialTest1');
             }, null,
             function () {
                 // Material을 등록하고 잘 찾아지나 테스트
-                scene1.addMaterial(testMaterial1.setId('addMaterialTest1'))
-                return scene1.getMaterial('addMaterialTest1')
+                scene1.addMaterial(testMaterial1.setId('addMaterialTest1'));
+                return scene1.getMaterial('addMaterialTest1');
             }, testMaterial1,
             function () {
                 // Material가 아닌녀석을 등록시도할때
-                testResult = 1
                 try {
-                    scene1.addMaterial({})
+                    scene1.addMaterial({});
                 } catch (e) {
-                    console.log(e)
-                    testResult = 0
+                    return e.toString().indexOf('Error: Scene.addMaterial:1') > -1;
                 }
-                return testResult
-            }, 0,
+            }, true,
             function () {
                 // 중복 ID 추가
-                testResult = 1
                 try {
-                    scene1.addMaterial(testMaterial1)
+                    scene1.addMaterial(testMaterial1);
                 } catch (e) {
-                    console.log(e)
-                    testResult = 0
+                    return e.toString().indexOf('Error: Scene.addMaterial:0') > -1;
                 }
-                return testResult
-            }, 0,
+            }, true,
             function () {
                 // 찾아진놈이 Material 인스턴스인가!
-                return scene1.getMaterial('addMaterialTest1') instanceof Material
+                return scene1.getMaterial('addMaterialTest1') instanceof Material;
             }, true
-    )
+    );
 
-    var textureTest = new Texture()
-    textureTest.img = document.getElementById('img1')
+    var textureTest = new Texture('primitive/honey1.png');
     bsTest('Texture',
             function () {
                 // 없는 키값을 조회할때
-                return scene1.getTexture('wantNull')
+                return scene1.getTexture('empty');
             }, null,
             function () {
                 // 텍스쳐 추가
-                scene1.addTexture(textureTest.setId('addTextureTest1'))
-                return scene1.getTexture('addTextureTest1')
+                scene1.addTexture(textureTest.setId('addTextureTest1'));
+                return scene1.getTexture('addTextureTest1');
             }, textureTest,
             function () {
                 // 중복 ID 추가
-                testResult = 1
                 try {
-                    scene1.addTexture(textureTest)
+                    scene1.addTexture(textureTest);
                 } catch (e) {
-                    console.log(e)
-                    testResult = 0
+                    return e.toString().indexOf('Error: Scene.addTexture:0') > -1;
                 }
-                return testResult
-            }, 0,
+            }, true,
             function () {
                 // 텍스쳐가 아닌놈 테스트
-                testResult = 1
                 try {
-                    scene1.addTexture({})
+                    scene1.addTexture({});
                 } catch (e) {
-                    console.log(e)
-                    testResult = 0
+                    return e.toString().indexOf('Error: Scene.addTexture:1') > -1;
                 }
-                return testResult
-            }, 0
-    )
+            }, true
+    );
     //    bsTest('FragmentShader',
     //            function () {
     //                // TODO 구현
@@ -234,9 +205,6 @@
     //                return true
     //            }, true
     //    )
-
-
 </script>
-
 </body>
 </html>

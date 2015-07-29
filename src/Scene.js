@@ -104,33 +104,36 @@ var Scene = (function () {
     },
     removeRenderItem = function(v,list){
         var geo, shading;
-        geo = v.geometry,
-            shading = v.material.shading
+        geo = v.geometry;
 
-        var useTexture = v.material.diffuse ? 1 : 0;
-        shading =
-            shading == Shading.phong ? useTexture ? 'bitmapPhong' : 'colorPhong' :
-            shading == Shading.gouraud ? useTexture ? 'bitmapGouraud' : 'colorGouraud' :
-            shading == Shading.toon ? 'toonPhong' :
-            shading == Shading.blinn ? 'bitmapBlinn' :
-        useTexture ? 'bitmap' : 'color';
+        if(v.material){
+            shading = v.material.shading;
 
-        if (v.material.sprite) {
-            if (list.sprite[shading]) {
-                list.sprite[shading].splice(list.sprite[shading].indexOf(v), 1)
-            }
-        } else {
-            var k, tGeo
-            tGeo = list[geo]
-            for(k in tGeo){
-                if (tGeo[k]) {
-                    if(tGeo[k].indexOf(v)>-1){
-                        tGeo[k].splice(tGeo[k].indexOf(v), 1)
+            var useTexture = v.material.diffuse ? 1 : 0;
+            shading =
+                shading == Shading.phong ? useTexture ? 'bitmapPhong' : 'colorPhong' :
+                shading == Shading.gouraud ? useTexture ? 'bitmapGouraud' : 'colorGouraud' :
+                shading == Shading.toon ? 'toonPhong' :
+                shading == Shading.blinn ? 'bitmapBlinn' :
+                useTexture ? 'bitmap' : 'color';
+
+            if (v.material.sprite) {
+                if (list.sprite[shading]) {
+                    list.sprite[shading].splice(list.sprite[shading].indexOf(v), 1)
+                }
+            } else {
+                var k, tGeo;
+                tGeo = list[geo];
+                for(k in tGeo){
+                    if (tGeo[k]) {
+                        if(tGeo[k].indexOf(v) > -1){
+                            tGeo[k].splice(tGeo[k].indexOf(v), 1);
+                        }
                     }
                 }
             }
         }
-    }
+    };
     return MoGL.extend('Scene', {
         description:[
             '실제 렌더링될 구조체는 Scene별로 집결됨.',
@@ -440,7 +443,7 @@ var Scene = (function () {
                 if (k == v || p[k].id == v) {
                     childrenArray[this].splice(childrenArray[this].indexOf(p[k]), 1),
                     p[k].removeEventListener(MoGL.changed),
-                    removeRenderItem(v,renderList[this])
+                    removeRenderItem(v, renderList[this]);
                     delete p[k];
                     return true;
                 }
