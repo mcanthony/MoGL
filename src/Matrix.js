@@ -153,57 +153,81 @@ var Matrix = (function () {
         })()
     })
     .method('matIdentity', {
-        description:'현재 매트릭스를 초기화한다.',
+        description:'현재 매트릭스를 단위 매트릭스로 초기화한다.',
         sample:[
             'var mtx = new Matrix();',
             'mtx.matIdentity();'
         ],
-        ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
+        ret: ['this - 메서드체이닝을 위해 매트릭스 자신을 반환함.'],
         value:function matIdentity() {
             var a = raw[this];
-            a[0] = 1, a[1] = 0, a[2] = 0, a[3] = 0, a[4] = 0, a[5] = 1, a[6] = 0, a[7] = 0, a[8] = 0, a[9] = 0, a[10] = 1, a[11] = 0, a[12] = 0, a[13] = 0, a[14] = 0, a[15] = 1;
+            a[0]  = 1,  a[1]  = 0,  a[2]  = 0,  a[3]  = 0,
+            a[4]  = 0,  a[5]  = 1,  a[6]  = 0,  a[7]  = 0,
+            a[8]  = 0,  a[9]  = 0,  a[10] = 1,  a[11] = 0,
+            a[12] = 0,  a[13] = 0,  a[14] = 0,  a[15] = 1;
             return this;
         }
     })
     .method('matClone', {
-        description: '현재 매트릭스를 복제',
+        description: '현재 매트릭스를 복제한 새로운 매트릭스 생성 및 반환',
         sample: [
             'var mtx = new Matrix();',
-            'mtx.matClone();'
+            'var clonedMatrix = mtx.matClone();'
         ],
-        ret: ['Matrix - 복제한 매트릭스를 반환.'],
+        ret: ['Matrix - 복제하여 새로 생성한 매트릭스'],
         value:function matClone() {
-            var a, b,out;
-            a = raw[this],
-                out = new Matrix(),
-                b = raw[out];
-            b[0] = a[0], b[1] = a[1], b[2] = a[2], b[3] = a[3], b[4] = a[4], b[5] = a[5], b[6] = a[6], b[7] = a[7], b[8] = a[8], b[9] = a[9], b[10] = a[10], b[11] = a[11], b[12] = a[12], b[13] = a[13], b[14] = a[14], b[15] = a[15];
-            return out;
+            var source, target, clonedMatrix, i;
+            source = raw[this],
+            clonedMatrix = new Matrix(),
+            target = raw[clonedMatrix];
+            //target[0] = source[0], target[1] = source[1], target[2] = source[2], target[3] = source[3],
+            //target[4] = source[4], target[5] = source[5], target[6] = source[6], target[7] = source[7],
+            //target[8] = source[8], target[9] = source[9], target[10] = source[10], target[11] = source[11],
+            //target[12] = source[12], target[13] = source[13], target[14] = source[14], target[15] = source[15];
+            for (i = 0 ; i < 16 ; i++) {
+                target[i] = source[i];
+            }
+            return clonedMatrix;
         }
     })
     .method('matCopy', {
-        description:'대상 매트릭스에 현재 매트릭스의 상태를 복사',
+        description:'현재 매트릭스의 값을 대상 매트릭스에 복사하여 덮어쓴다.',
         sample: [
-            'var mtx = new Matrix();',
-            'var mtx2 = new Matrix();',
-            'mtx.matClone(mtx2);  // mtx2에 mtx의 속성이 복사됨.'
+            'var source = new Matrix();',
+            'var target = new Matrix();',
+            'source.matClone(target);  // source의 값을 target에 복사하여 덮어쓴다.'
         ],
-        ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
+        exception:"* 'Matrix.matCopy:0' - Matrix 객체가 아닌 값을 파라미터로 전달하는 경우",
+        ret: ['this - 메서드체이닝을 위해 source 매트릭스 자신'],
         param:[
             'matrix:Matrix - 복사 대상 매트릭스'
         ],
-        value:function matCopy(t) {
-            var a = raw[this];
-            t = raw[t];
-            t[0] = a[0], t[1] = a[1], t[2] = a[2], t[3] = a[3], t[4] = a[4], t[5] = a[5], t[6] = a[6], t[7] = a[7], t[8] = a[8], t[9] = a[9], t[10] = a[10], t[11] = a[11], t[12] = a[12], t[13] = a[13], t[14] = a[14], t[15] = a[15];
+        value:function matCopy(target) {
+            if (!target instanceof Matrix) this.error(0);
+            var source = raw[this];
+            target = raw[target];
+            target[0] = source[0], target[1] = source[1], target[2] = source[2], target[3] = source[3],
+            target[4] = source[4], target[5] = source[5], target[6] = source[6], target[7] = source[7],
+            target[8] = source[8], target[9] = source[9], target[10] = source[10], target[11] = source[11],
+            target[12] = source[12], target[13] = source[13], target[14] = source[14], target[15] = source[15];
             return this;
         }
     })
-    .method('matInvert', function matInvert(out) {
-            this
-            var a  = raw[this]
-            out = new Matrix()
-            var t =raw[out];
+    .method('matInvert', {
+        description:'현재 매트릭스의 역행렬을 새로 생성해서 반환한다.',
+        sample: [
+            'var source = new Matrix();',
+            'var inverted = source.matInvert();',
+        ],
+        ret: ['invertedMatrix - 새로 생성된 역행렬'],
+        param:[
+            'matrix:Matrix - 복사 대상 매트릭스'
+        ],
+        value:function matInvert() {
+            var a  = raw[this],
+                invertedMatrix = new Matrix(),
+                t = raw[invertedMatrix];
+
             var a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
                 a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7],
                 a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11],
@@ -247,30 +271,36 @@ var Matrix = (function () {
             t[14] = (a31 * b01 - a30 * b03 - a32 * b00) * det;
             t[15] = (a20 * b03 - a21 * b01 + a22 * b00) * det;
 
-            return out;
+            return invertedMatrix;
         }
-    )
+    })
 
     //.method('matTranspose', function matTranspose(t) {
     //     return this;
     //};
     .method('matMultiply', {
-        description:'현재매트릭스에 대상 매트릭스를 곱한다. ',
+        description:'현재 매트릭스에 대상 매트릭스를 곱한 값을 현재 매트릭스에 덮어쓰고 현재 매트릭스를 반환한다. ',
         sample: [
             'var mtx = new Matrix();',
             'var mtx2 = new Matrix();',
-            'mtx.matMultiply(mtx2);  // mtx에 mtx2를 곱한 결과를 반환'
+            'mtx.matMultiply(mtx2);  // mtx * mtx2'
         ],
+        exception:"* 'Matrix.matMultiply:0' - Matrix 객체가 아닌 값을 파라미터로 전달하는 경우",
         ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
         param:[
-            'matrix:Matrix - 곱할 매트릭스'
+            'multiplier:Matrix - 곱할 매트릭스'
         ],
-        value:function matMultiply(t) {
-            var a = raw[this];
-            t = raw[t];
-            var a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3], a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7], a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11], a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15];
+        value:function matMultiply(multiplier) {
+            if (!multiplier instanceof Matrix) this.error(0);
+            var a = raw[this],
+                t = raw[multiplier];
+            var a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
+                a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7],
+                a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11],
+                a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15];
             var b0 = t[0], b1 = t[1], b2 = t[2], b3 = t[3];
-            a[0] = a00 * b0 + a10 * b1 + a20 * b2 + a30 * b3, a[1] = a01 * b0 + a11 * b1 + a21 * b2 + a31 * b3, a[2] = a02 * b0 + a12 * b1 + a22 * b2 + a32 * b3, a[3] = a03 * b0 + a13 * b1 + a23 * b2 + a33 * b3,
+            a[0] = a00 * b0 + a10 * b1 + a20 * b2 + a30 * b3,
+                a[1] = a01 * b0 + a11 * b1 + a21 * b2 + a31 * b3, a[2] = a02 * b0 + a12 * b1 + a22 * b2 + a32 * b3, a[3] = a03 * b0 + a13 * b1 + a23 * b2 + a33 * b3,
                 b0 = t[4], b1 = t[5], b2 = t[6], b3 = t[7],
                 a[4] = a00 * b0 + a10 * b1 + a20 * b2 + a30 * b3 , a[5] = a01 * b0 + a11 * b1 + a21 * b2 + a31 * b3, a[6] = a02 * b0 + a12 * b1 + a22 * b2 + a32 * b3, a[7] = a03 * b0 + a13 * b1 + a23 * b2 + a33 * b3,
                 b0 = t[8], b1 = t[9], b2 = t[10], b3 = t[11],
