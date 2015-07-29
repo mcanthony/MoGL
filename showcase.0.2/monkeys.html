@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>Monkey</title>
+    <meta charset="utf-8"/>
+    <meta property="og:image" content="http://shallaa.github.io/SoftEngine/og/2.jpg"/>
+    <meta property="og:title" content="Monkey"/>
+    <meta property="og:description" content="MoGL.js version"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <script type="text/javascript" src="dat.gui.min.js"></script>
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .FPS {
+            color: #FFF;
+            left: 0px;
+            top: 0px;
+            position: absolute;
+        }
+    </style>
+    <script src="lib/mogl.min.js"></script>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<div class="FPS">
+    Current FPS: <span id="currentFPS"></span>
+    Average FPS: <span id="averageFPS"></span>
+</div>
+<script>
+    MoGL.globalization();
+    (function (W) {
+        'use strict';
+
+        var world = new World('canvas');
+        var scene = new Scene();
+
+
+        var divCurrentFPS = document.getElementById('currentFPS');
+        var divAverageFPS = document.getElementById('averageFPS');
+        var prevTime = 0;
+
+        world.addScene('scene', scene);
+
+        scene.addChild('camera', new Camera());
+        scene.addMaterial('material', new Material());
+        scene.addTexture('texture', 'monkey/Suzanne.jpg');
+        scene.getMaterial('material').addTexture(Texture.diffuse, 'texture');
+        scene.getMaterial('material').setShading(Shading.phong)
+//        scene.getMaterial('material').setShading(Shading.gouraud)
+
+        world.addRender('scene', 'camera');
+
+        var xmlhttp = new XMLHttpRequest();
+
+        xmlhttp.open('GET', 'monkey/monkey.json', true);
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+                start(JSON.parse(xmlhttp.responseText));
+            }
+        };
+        xmlhttp.send(null);
+
+        function start(json) {
+            var mesh = json.meshes[0];
+            var vertices = mesh.vertices;
+            var indices = mesh.indices;
+            var uvCount = mesh.uvCount;
+            var verticesStep = 1;
+
+            switch (uvCount) {
+                case 0:
+                    verticesStep = 6;
+                    break;
+                case 1:
+                    verticesStep = 8;
+                    break;
+                case 2:
+                    verticesStep = 10;
+                    break;
+            }
+
+            var verticesCount = vertices.length / verticesStep;
+            var facesCount = indices.length / 3;
+            var vertex = [];
+            var index = [];
+            var i = 0;
+            var j;
+
+            for (; i < verticesCount; i++) {
+                j = i * verticesStep;
+
+                vertex.push(vertices[j], vertices[j + 1], vertices[j + 2], vertices[j + 3], vertices[j + 4], vertices[j + 5]);
+
+                if (uvCount > 0) {
+                    vertex.push(vertices[j + 6], vertices[j + 7]);
+                } else {
+                    vertex.push(0, 0);
+                }
+            }
+
+            for (i = 0; i < facesCount; i++) {
+                j = i * 3;
+
+                index.push(indices[j], indices[j + 1], indices[j + 2]);
+            }
+
+            scene.addGeometry('geometry', new Geometry(vertex, index, [Vertex.x, Vertex.y, Vertex.z, Vertex.normalX, Vertex.normalY, Vertex.normalZ, Vertex.u, Vertex.v]));
+
+            var meshes = [];
+            var monkey;
+            var PI2 = Math.PI * 2;
+
+            for (i = 0; i < 500; i++) {
+                monkey = new Mesh('geometry', 'material');
+                monkey.x = Math.random() * 50 - 25;
+                monkey.y = Math.random() * 50 - 25;
+                monkey.z = Math.random() * 50 - 25;
+                monkey.rotateX = Math.random() * PI2;
+                monkey.rotateY = Math.random() * PI2;
+                monkey.rotateZ = Math.random() * PI2;
+
+                scene.addChild('monkey' + i, monkey);
+
+                meshes.push(monkey);
+
+
+            }
+            monkey = new Mesh(Primitive.sphere(), 'material');
+            scene.addChild('center', monkey);
+            monkey.setScale(3, 3, 3)
+
+            monkey = new Mesh(Primitive.sphere(), 'material');
+            scene.addChild('center1', monkey);
+            monkey.setScale(2, 2, 2)
+            monkey.setPosition(-3, 0, 0)
+
+            monkey = new Mesh(Primitive.sphere(), 'material');
+            scene.addChild('center2', monkey);
+            monkey.setScale(2, 2, 2)
+            monkey.setPosition(3, 0, 0)
+
+            var sum = 0, count = 1;
+
+            function render(currTime) {
+                var currentFPS = 1000 / ( currTime - prevTime );
+                prevTime = currTime;
+
+                count++
+                divCurrentFPS.textContent = currentFPS.toFixed(2);
+                divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
+
+                var i = 0;
+                var j = meshes.length;
+                var mesh;
+
+                for (; i < j; i++) {
+                    mesh = meshes[i];
+                    mesh.rotateX += 0.05;
+                    mesh.rotateY += 0.05;
+                    mesh.rotateZ += 0.05;
+                }
+//                console.log(scene.getChild('camera').x)
+                scene.getChild('camera').x = Math.sin(count / 100) * 50
+                scene.getChild('camera').y = Math.cos(count / 100) * 50
+                scene.getChild('camera').z = Math.cos(count / 100) * 50 + Math.sin(count / 100) * 50
+//                scene.getChild('camera').z = 10
+//                scene.getChild('camera').z = 0
+//                scene.getChild('camera').x =50
+//                scene.getChild('camera').y =10
+                scene.getChild('camera').lookAt(0, 0, 0);
+//                                scene.getChild('camera').rotateY+=0.01
+                world.render();
+
+                requestAnimationFrame(render);
+            }
+
+            requestAnimationFrame(render);
+        }
+
+
+        var testMat = scene.getMaterial('material')
+        var params = {
+            color: function () {
+                testMat.removeTexture('texture');
+                testMat.setShading(Shading.none)
+            },
+            toon: function () {
+                testMat.removeTexture('texture');
+                testMat.setShading(Shading.toon)
+            },
+            PhongColor: function () {
+                testMat.removeTexture('texture');
+                testMat.setShading(Shading.phong)
+            },
+            GouraudColor: function () {
+                testMat.removeTexture('texture');
+                testMat.setShading(Shading.gouraud)
+            },
+            GouraudTexture: function () {
+                testMat.removeTexture('texture');
+                testMat.addTexture(Texture.diffuse, 'texture');
+                testMat.setShading(Shading.gouraud)
+            },
+            PhongTexture: function () {
+                testMat.removeTexture('texture');
+                testMat.addTexture(Texture.diffuse, 'texture');
+                testMat.setShading(Shading.phong)
+            }
+        };
+
+        var gui = new dat.GUI();
+        gui.add(params, 'color');
+        gui.add(params, 'toon');
+        gui.add(params, 'GouraudColor');
+        gui.add(params, 'PhongColor');
+        gui.add(params, 'GouraudTexture');
+        gui.add(params, 'PhongTexture');
+    })(this);
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL Showcase - Primitive_Geodesic</title>
+    <meta charset="utf-8"/>
+    <meta property="og:title" content="Monkey"/>
+    <meta property="og:description" content="MoGL.js version"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<script src="../src/$.js"></script>
+<script src="../src/make.js"></script>
+<script src="../src/MoGL.js"></script>
+<script src="../src/BlendMode.js"></script>
+<script src="../src/Filter.js"></script>
+<script src="../src/Primitive.js"></script>
+<script src="../src/Vertex.js"></script>
+<script src="../src/Shading.js"></script>
+<script src="../src/VertexShaderFunctions.js"></script>
+<script src="../src/Shader.js"></script>
+<script src="../src/Matrix.js"></script>
+<script src="../src/Texture.js"></script>
+<script src="../src/Geometry.js"></script>
+<script src="../src/Material.js"></script>
+<script src="../src/Mesh.js"></script>
+<script src="../src/Group.js"></script>
+<script src="../src/Camera.js"></script>
+<script src="../src/Scene.js"></script>
+<script src="../src/World.js"></script>
+<script src="../showcase/dat.gui.min.js"></script>
+<script src="http://js.bsapi.co/test/"></script>
+<script>
+</script>
+<img src="primitive/geodesicTest.jpg" id="testIMG2" style="position: absolute;top:0px; display:none" width="256">
+<canvas id='canvas'></canvas>
+<script>
+    'use strict';
+    // basic settings
+    var world, scene, camera;
+    var texture, mat
+
+    world = new World('canvas')
+    scene = new Scene()
+    camera = new Camera()
+
+    world.setAutoSize(1)
+    world.start()
+
+    world.addScene(scene)
+    scene.addChild(camera)
+
+    texture = new Texture(document.getElementById('testIMG2'))
+    mat = new Material('#FFF')
+    mat.addTexture(Texture.diffuse, texture).wireFrame = 1
+
+    ////////////////////////////////////////////////////////////////
+
+    var geodesic1_1 = Primitive.geodesic()
+    var geodesic2_2 = Primitive.geodesic(3)
+    var geodesic2_3 = Primitive.geodesic(4)
+    var geodesic10_10 = Primitive.geodesic(10)
+
+    var geodesic1_1Mesh = new Mesh(geodesic1_1, mat);
+    var geodesic2_2Mesh = new Mesh(geodesic2_2, mat);
+    var geodesic2_3Mesh = new Mesh(geodesic2_3, mat);
+    var geodesic10_10Mesh = new Mesh(geodesic10_10, mat);
+
+    mat.wireFrame = 1
+    scene.addChild(geodesic1_1Mesh);
+    scene.addChild(geodesic2_2Mesh);
+    scene.addChild(geodesic2_3Mesh);
+    scene.addChild(geodesic10_10Mesh);
+
+    geodesic1_1Mesh.rotateX = Math.PI / 2
+    geodesic2_2Mesh.rotateX = Math.PI / 2
+    geodesic2_3Mesh.rotateX = Math.PI / 2
+    geodesic10_10Mesh.rotateX = Math.PI / 2
+
+    geodesic1_1Mesh.x = -3
+    geodesic2_2Mesh.x = -1
+    geodesic2_3Mesh.x = 1
+    geodesic10_10Mesh.x = 3
+    geodesic1_1Mesh.y = geodesic2_2Mesh.y = geodesic2_3Mesh.y = geodesic10_10Mesh.y = -1
+
+    var testMesh = new Mesh(Primitive.geodesic(), mat)
+    scene.addChild(testMesh.setId('testMesh'))
+    testMesh.rotateX = Math.PI / 2
+    testMesh.scale = [2, 2, 2]
+    testMesh.y = 1
+
+    /////////////////////////////////////////////
+    // UI
+    /////////////////////////////////////////////
+    var shadingParams = {
+        WireFrame: true,
+        geodesic: function () {
+            testMesh.geometry = Primitive.geodesic()
+            testMesh.rotateX = Math.PI / 2
+            testMesh.scale = [2, 2, 2]
+            testMesh.y = 1
+        },
+        geodesic2_2: function () {
+            testMesh.geometry = Primitive.geodesic(2)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.scale = [2, 2, 2]
+            testMesh.y = 1
+        },
+        geodesic3_3: function () {
+            testMesh.geometry = Primitive.geodesic(3)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.scale = [2, 2, 2]
+            testMesh.y = 1
+        },
+        geodesic10_10: function () {
+            testMesh.geometry = Primitive.geodesic(10)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.scale = [2, 2, 2]
+            testMesh.y = 1
+        },
+        geodesic6_2: function () {
+            testMesh.geometry = Primitive.geodesic(6)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.scale = [2, 2, 2]
+            testMesh.y = 1
+        }
+    };
+    var gui = new dat.GUI();
+    var shading = gui.addFolder('Shading');
+    shading.add(shadingParams, 'geodesic');
+    shading.add(shadingParams, 'geodesic2_2');
+    shading.add(shadingParams, 'geodesic3_3');
+    shading.add(shadingParams, 'geodesic10_10');
+    shading.add(shadingParams, 'geodesic6_2');
+    shading.open()
+</script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL Test Suite - Camera.js</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <link rel="stylesheet" type="text/css" href="css.css"/>
+</head>
+<body>
+<img src="../src/ohno.png">
+<canvas id="world" style="position: absolute"></canvas>
+<div>TODO</div>
+<div>setProjectionMatrix 이후 far,near,fov값 추출 정상작동하는지 확인</div>
+<div id="stage"></div>
+<div id="result"></div>
+<div id="test"></div>
+<script src="lib/mogl.min.js"></script>
+<script src="http://js.bsapi.co/test/"></script>
+<script>
+    MoGL.classes(window);
+    var world = new World('world')
+    var scene = new Scene()
+    var camera = new Camera();
+    var camera2 = new Camera();
+
+    world.addScene(scene)
+    scene.addChild(camera)
+    scene.addChild(camera2)
+
+    bsTest('new', function () {
+                // 일반 new - new Camera()
+                return camera.isAlive;
+            }, true,
+            function () {
+                // factory type - Camera()
+                return camera2.isAlive;
+            }, true
+    )
+    //
+    bsTest('antialias', function () {
+                // 기본값은 false
+                return camera.antialias;
+            }, false,
+            function () {
+                // antialias 설정
+                // 숫자로 넣어도 불린값으로 변경
+                camera.antialias = 1;
+                return camera.antialias;
+            }, true,
+            function () {
+                // antialias 설정
+                // 숫자로 넣어도 불린값으로 변경
+                camera.antialias = 0;
+                return camera.antialias;
+            }, false,
+            function () {
+                // antialias 설정
+                camera.antialias = false;
+                return camera.antialias;
+            }, false
+    )
+    bsTest('visible', function () {
+                // 기본값은 true
+                return camera.visible;
+            }, true,
+            function () {
+                // visible 설정
+                // 숫자로 넣어도 불린값으로 변경
+                camera.visible = 1;
+                return camera.visible;
+            }, true,
+            function () {
+                // visible 설정
+                camera.visible = false;
+                return camera.visible
+            }, false
+    )
+    bsTest('backgroundColor', function () {
+                // 기본값은 [0,0,0,1]
+                return camera.backgroundColor.toString();
+            }, [0, 0, 0, 1].toString(),
+            function () {
+                // #fff
+                camera.backgroundColor = '#fff';
+                return camera.backgroundColor.toString();
+            }, [1, 1, 1, 1].toString(),
+            function () {
+                // 1,0,0,1
+                camera.backgroundColor = [1, 0, 0, 1];
+                return camera.backgroundColor.toString();
+            }, [1, 0, 0, 1].toString(),
+            function () {
+                // #ffffff
+                camera.backgroundColor = '#ffffff';
+                return camera.backgroundColor.toString();
+            }, [1, 1, 1, 1].toString(),
+            function () {
+                // #ffffff0.7
+                camera.backgroundColor = '#ffffff0.7';
+                return camera.backgroundColor.toString();
+            }, [1, 1, 1, 0.7].toString()
+    )
+    bsTest('clipPlane',
+            function () {
+                //기본값 : near = 0.1, far = 1000000
+                return camera.clipPlaneNear;
+            }, 0.1,
+            function () {
+                //기본값 : near = 0.1, far = 1000000
+                return camera.clipPlaneFar;
+            }, 10000,
+            function () {
+                camera.clipPlaneNear = 100
+                camera.clipPlaneFar = 300
+                return [camera.clipPlaneNear, camera.clipPlaneFar].toString();
+            }, [100, 300].toString()
+    )
+    bsTest('fov', function () {
+                camera.fov = 45;
+                return camera.fov;
+            }, 45,
+            function () {
+                camera.fov = [1280, 760, 90];
+                return camera.fov;
+            }, 62,
+            function () {
+                camera.fov = [1920, 760, 60];
+                return camera.fov;
+            }, 26,
+            function () {
+                return camera.fov
+            }, 26
+    )
+    bsTest('renderArea',
+            function () {
+                camera.renderArea = ['10%', '10%', 300, 300];
+                return [document.getElementById('world').width * 0.1, document.getElementById('world').height * 0.1, 300, 300].toString();
+            }, [document.getElementById('world').width * 0.1, document.getElementById('world').height * 0.1, 300, 300].toString(),
+            function () {
+                camera.renderArea = [100, 200, 300, 300];
+                return camera.renderArea.toString();
+            }, [100, 200, 300, 300].toString()
+    )
+    //    bsTest('filter', function () {
+    //                camera.setFilter(Filter.anaglyph);
+    //                camera.setFilter(Filter.bloom);
+    //                camera.setFilter(Filter.colorMatrix);
+    //                camera.removeFilter(Filter.bloom);
+    //                return camera.getFilters().toString();
+    //            }, [Filter.anaglyph, Filter.colorMatrix].toString(),
+    //            function () {
+    //                camera.removeFilter(Filter.anaglyph);
+    //                camera.removeFilter(Filter.colorMatrix);
+    //                camera.setFilter(Filter.displacementMap);
+    //                console.log(camera._filters[Filter.displacementMap]);
+    //                var baseValue = {
+    //                    mapTextureID: null,
+    //                    mapPoint: null,
+    //                    componentX: 0,
+    //                    componentY: 0,
+    //                    scaleX: 0.0,
+    //                    scaleY: 0.0,
+    //                    mode: "wrap",
+    //                    color: 0,
+    //                    alpha: 0.0
+    //                };
+    //                var result = true;
+    //                for (var k in camera._filters[Filter.displacementMap]) {
+    //                    console.log(k, baseValue[k], camera._filters[Filter.displacementMap][k]);
+    //                    if (baseValue[k] != camera._filters[Filter.displacementMap][k]) result = false;
+    //                }
+    //                return result;
+    //            }, true
+    //    )
+    bsTest('fog',
+            function () {
+                return camera.fog;
+            }, false,
+            function () {
+                camera.fog = false;
+                return camera.fog;
+            }, false,
+            function () {
+                camera.fogFar = 12345;
+                return camera.fogFar;
+            }, 12345,
+            function () {
+                camera.fogNear = 54321;
+                return camera.fogNear;
+            }, 54321,
+            function () {
+                camera.fogColor = '#fff'
+                return camera.fogColor.toString()
+            }, [1,1,1,1].toString(),
+            function () {
+                camera.fogColor = '#000000'
+                return camera.fogColor.toString()
+            }, [0, 0, 0, 1].toString(),
+            function () {
+                camera.fogColor = '#0000000.5'
+                return camera.fogColor.toString()
+            }, [0, 0, 0, 0.5].toString()
+    )
+
+
+</script>
+<div></div>
+</body>
+</html>

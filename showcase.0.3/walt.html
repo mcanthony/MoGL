@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>WaltHead</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .FPS {
+            color: #FFF;
+            left: 0px;
+            top: 0px;
+            position: absolute
+        }
+    </style>
+    <script src="lib/mogl.min.js"></script>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+    'use strict';
+    MoGL.classes(window);
+    var world = new World('canvas');
+    var scene = new Scene();
+    world.addScene(scene);
+    world.setAutoSize(1)
+    scene.addChild(new Camera());
+    scene.addMaterial( new Material(Math.random(),Math.random(),Math.random(),1).setId('material'));
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('GET', 'walt/walt.json', true);
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+            start(JSON.parse(xmlhttp.responseText));
+        }
+    };
+    xmlhttp.send(null);
+
+    function start(json) {
+        var vertices = json.vertices, faces = json.faces;
+        var vertexBuffer = [], indexBuffer = [], i, j;
+        for (i = 0, j = vertices.length; i < j; i++) {
+            vertexBuffer.push(vertices[i][0], vertices[i][1], vertices[i][2]);
+        }
+        for (i = 0, j = faces.length; i < j; i++) {
+            indexBuffer.push(faces[i][0], faces[i][1], faces[i][2]);
+        }
+        scene.addGeometry( new Geometry(vertexBuffer, indexBuffer, [Vertex.x, Vertex.y, Vertex.z]).setId('geometry'));
+
+        var mesh = new Mesh(scene.getGeometry('geometry'), scene.getMaterial('material'));
+        mesh.y -= 2;
+        mesh.scaleX = 0.08;
+        mesh.scaleY = 0.08;
+        mesh.scaleZ = 0.08;
+        scene.addChild( mesh);
+        mesh.material.shading = Shading.phong
+        world.addEventListener(World.renderBefore, function () {
+            mesh.rotateY -= 0.02;
+        })
+        world.start()
+    }
+
+</script>
+</body>
+</html>

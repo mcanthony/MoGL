@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL Test Suite - Primitive.js</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <link rel="stylesheet" type="text/css" href="css.css"/>
+
+</head>
+<body>
+<div id="stage"></div>
+<div id="result"></div>
+<div id="test"></div>
+<script src="../src/$.js"></script>
+<script src="../src/make.js"></script>
+<script src="../src/MoGL.js"></script>
+<script src="../src/Vector.js"></script>
+<script src="../src/Filter.js"></script>
+<script src="../src/Vertex.js"></script>
+<script src="../src/BlendMode.js"></script>
+<script src="../src/Primitive.js"></script>
+<script src="../src/Shading.js"></script>
+<script src="../src/VertexShaderFunctions.js"></script>
+<script src="../src/Shader.js"></script>
+<script src="../src/Matrix.js"></script>
+<script src="../src/Texture.js"></script>
+<script src="../src/Geometry.js"></script>
+<script src="../src/Material.js"></script>
+<script src="../src/Mesh.js"></script>
+<script src="../src/Group.js"></script>
+<script src="../src/Camera.js"></script>
+<script src="../src/Scene.js"></script>
+<script src="../src/World.js"></script>
+<script src="http://js.bsapi.co/test/"></script>
+<script>
+    var polygon, xyz = 3, xyzuv = 5;
+    bsTest('polygon',
+            function () {
+                // 삼각형이면 polygon.getVertexCount() == 3
+                polygon = Primitive.polygon(3);
+                return polygon.vertexCount;
+            }, 3,
+            function () {
+                // 삼각형이면 polygon.getTriangleCount() == 1
+                polygon = Primitive.polygon(3);
+                return polygon.triangleCount;
+            }, 1,
+            function () {
+                // 사각형이면 polygon.getVertexCount() == 4
+                polygon = Primitive.polygon(4);
+                return polygon.vertexCount;
+            }, 4,
+            function () {
+                // 사각형이면 polygon.getTriangleCount() == 2
+                polygon = Primitive.polygon(4);
+                return polygon.triangleCount;
+            }, 2,
+            function () {
+                // 오각형이면 polygon.getVertexCount() == 5
+                polygon = Primitive.polygon(5);
+                return polygon.vertexCount;
+            }, 5,
+            function () {
+                // 오각형이면 polygon.getTriangleCount() == 3
+                polygon = Primitive.polygon(5);
+                return polygon.triangleCount;
+            }, 3,
+            function () {
+                // 홀수각형이면
+                // n / 2 미만 번째 점의 x좌표 < 0
+                // n / 2 이상 번째 점의 x좌표 > 0
+                var vArr, checkPosNeg,
+                        n = 17, i;
+                checkPosNeg = true;
+                polygon = Primitive.polygon(n);
+                vArr = polygon.position;
+
+                for (i = 1 ; i < n ; i++) {
+                    if (i < (n / 2))
+                        checkPosNeg = checkPosNeg && (vArr[i *= xyz] < 0);
+                    else
+                        checkPosNeg = checkPosNeg && (vArr[i *= xyz] > 0);
+                }
+
+                return checkPosNeg;
+            }, true,
+            function () {
+                // 짝수각형이면
+                // n / 2 미만 번째 점의 x좌표 < 0
+                // n / 2 번째 점의 x 좌표 == 0
+                // n / 2 초과 번째 점의 x좌표 > 0
+                var vArr, checkPosNeg,
+                        n = 8, i;
+                checkPosNeg = true;
+                polygon = Primitive.polygon(n, 1);
+                vArr = polygon.position;
+
+                for (i = 1 ; i < n ; i++) {
+                    if (i < (n / 2))
+                        checkPosNeg = checkPosNeg && (vArr[i *= xyz] < 0);
+                    else if ( i == (n / 2))
+                        checkPosNeg = checkPosNeg && (Math.round(vArr[i *= xyz]) == 0);
+                    else
+                        checkPosNeg = checkPosNeg && (vArr[i *= xyz] > 0);
+                }
+
+                return checkPosNeg;
+            }, true,
+            function () {
+                // 파라미터 전달 안하면 반경 1인 삼각형 반환
+                polygon = Primitive.polygon();
+
+                return polygon.vertexCount == 3 && polygon.position[1] == 1;
+            }, true
+    );
+</script>
+<canvas id='polygon' width=500 height=500></canvas>
+<script>
+    (function() {
+        var world = new World('polygon'),
+                scene = new Scene(),
+                camera = new Camera(),
+                solidWhite = new Material('#ffffff'),
+                texture = new Texture(),
+                uuids = [];
+
+        world.addScene(scene);
+        scene.addChild(camera);
+        //scene.addTexture('primitive/honey1.png');
+        uuids.push(texture.uuid);
+        scene.addTexture(texture);
+
+        var setMesh = function(n) {
+            var polygon = Primitive.polygon(n),
+                newMesh = new Mesh(polygon, new Material().addTexture(Texture.diffuse, new Texture()));
+
+            scene.removeChild(uuids.pop());
+            uuids.push(newMesh.uuid);
+            scene.addChild(newMesh);
+        };
+
+        var start = 3, end = 15,
+                intervalId;
+
+        intervalId = setInterval( function() {
+            if (start < end) {
+                setMesh(start++);
+                world.render();
+            }
+        }, 300);
+        if (start == end)
+            clearInterval(intervalId);
+    }());
+</script>
+<hr/>
+
+
+</body>
+</html>

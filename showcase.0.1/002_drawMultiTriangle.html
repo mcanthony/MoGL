@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL HelloWorld </title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <link rel="stylesheet" type="text/css" href="../test/css.css"/>
+    <script src="lib/mogl.min.js"></script>
+</head>
+<body>
+<canvas id="firstWorld" width="600" height="512"></canvas>
+<script>
+    ////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
+    var world = new World('firstWorld')
+    // 씬 생성
+    var scene = new Scene()
+    world.addScene('firstScene', scene)
+    // 카메라 생성
+    var camera = new Camera()
+    scene.addChild('testCamera', camera)
+    // 렌더 추가
+    world.addRender('firstScene', 'testCamera')
+    ////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
+
+    // 씬에 지오메트리, 재질, 매쉬 등록
+    scene.addGeometry('triangle', new Geometry([-1, 0, 0, 1, 0, 0, 0, 1, 0], [0, 1, 2]))
+    scene.addMaterial('white', new Material('#ffffff'))
+
+    scene.addChild('mesh1', new Mesh('triangle', 'white'))
+    scene.addChild('mesh2', new Mesh('triangle', new Material(0.3, 0.2, 0.1, 1)))
+
+
+    scene.getChild('mesh1').z = -5
+
+
+    scene.getChild('mesh2').x = 5
+    scene.getChild('mesh2').z = -10
+
+    setInterval(function () {
+        world.render();
+    }, 1000 / 60)
+    // 렌더 루프 추가
+    world.LOOP['test'] = function () {
+        scene.getChild('mesh1').rotateX += 0.1
+        scene.getChild('mesh1').rotateY += 0.1
+        scene.getChild('mesh1').rotateZ += 0.1
+        scene.getChild('mesh2').setRotate(scene.getChild('mesh1').rotateX, scene.getChild('mesh1').rotateX, scene.getChild('mesh1').rotateX)
+    }
+</script>
+<div>GitHub - <a href="https://github.com/projectBS/MoGL">https://github.com/projectBS/MoGL</a></div>
+<div>Facebook - <a href="https://www.facebook.com/groups/MObilewebGL/">https://www.facebook.com/groups/MObilewebGL/</a>
+</div>
+</body>
+</html>

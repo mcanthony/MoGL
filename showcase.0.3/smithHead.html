@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL Showcase - smithHead</title>
+    <meta charset="utf-8"/>
+    <meta property="og:title" content="Monkey"/>
+    <meta property="og:description" content="MoGL.js version"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .FPS {
+            color: #FFF;
+            left: 0px;
+            top: 0px;
+            position: absolute
+        }
+    </style>
+    <script src="lib/mogl.min.js"></script>
+</head>
+<body>
+<img src="smithHead/Map-COL.jpg" id="testIMG" style="position: absolute;top:0px;;display:none" width="128" height="128">
+<img src="monkey/Suzanne.jpg" id="testIMG2" style="position: absolute;top:0px;;display:none" width="128" height="128">
+<canvas id="canvas"></canvas>
+<div class="FPS">
+    Current FPS: <span id="currentFPS"></span>
+    Average FPS: <span id="averageFPS"></span>
+</div>
+
+<script>
+    'use strict';
+    MoGL.classes(window);
+    // basic settings
+    var divCurrentFPS, divAverageFPS, prevTime;
+    var world, scene, camera;
+
+    divCurrentFPS = document.getElementById('currentFPS')
+    divAverageFPS = document.getElementById('averageFPS')
+    prevTime = 0
+
+    world = new World('canvas')
+    scene = new Scene()
+    camera = new Camera()
+
+    world.addScene(scene)
+    scene.addChild(camera)
+
+    world.setAutoSize(1)
+    ////////////////////////////////////////////////////////////////////////////
+    var mat1, mat2, mat3;
+    var texture1, texture2, texture3;
+    // 재질생성
+    mat1 = new Material('#fff')
+    mat2 = new Material('#22f232')
+    mat3 = new Material('#fef232')
+    // 텍스쳐생성
+    texture1 = new Texture().setId('texture1')
+    texture2 = new Texture().setId('texture2')
+    texture1.img = document.getElementById('testIMG')
+    // 재질에 텍스쳐 주입
+    mat1.addTexture(Texture.diffuse, texture1)
+    // 씬에 텍스쳐 등록
+    scene.addTexture(texture1);
+    scene.addTexture(texture2);
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('GET', 'smithHead/smith_head.json', true);
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+            var geo = getGeometryFromJSON(JSON.parse(xmlhttp.responseText));
+            makeItems(geo)
+            world.start()
+        }
+    };
+    xmlhttp.send(null);
+    function makeItems(geo) {
+        var mesh = new Mesh(geo, mat1);
+        mesh.scale = [10, 10, 10]
+        scene.addChild(mesh);
+
+        mat1.wireFrame = 1
+        mat2.wireFrame = 1
+        mat3.wireFrame = 1
+
+        var mesh2 = new Mesh(geo, mat2);
+        mesh2.scale = [10, 10, 10]
+        scene.addChild(mesh2);
+
+        var mesh3 = new Mesh(geo, mat3);
+        mesh3.scale = [10, 10, 10]
+        scene.addChild(mesh3);
+
+        mat1.shading = Shading.phong
+        mat2.shading = Shading.phong
+        mat3.shading = Shading.phong
+        mat3.lambert = 1.5
+
+        mesh.x = -3
+        mesh2.x = 3
+        mesh3.y = -1
+
+        setTimeout(function () {
+            texture2 = new Texture()
+            texture2.img = document.getElementById('testIMG2')
+            texture3 = new Texture()
+            texture3.img = document.getElementById('testIMG')
+
+            mat1.addTexture(Texture.diffuse, texture2)
+            mat2.addTexture(Texture.diffuse, texture3)
+            check1()
+
+        }, 1000)
+        var check1 = function(){
+            mesh.material = mat1
+            mesh2.material = mat2
+            setTimeout(check2, 1000)
+        }
+        var check2 = function(){
+            mesh.material = mat2
+            mesh2.material = mat1
+            setTimeout(check1, 1000)
+        }
+        var currentFPS, prevTime = 0, count = 0, sum = 0
+        world.addEventListener(World.renderBefore, function (currTime) {
+                    currentFPS = 1000 / ( currTime - prevTime );
+                    prevTime = currTime;
+                    count++
+                    divCurrentFPS.textContent = currentFPS.toFixed(2);
+                    divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
+                    mesh.rotateY -= 0.01;
+                    mesh2.rotateY -= 0.01;
+                    mesh3.rotateY -= 0.01;
+                }
+        )
+    }
+    function getGeometryFromJSON(json) {
+        var vertices = json.vertices, faces = json.faces, uvs = json.uv;
+        var vertexBuffer = [], indexBuffer = [], uvArray = [], i, j, fv = 0, uvSize = uvs.length;
+        faces.forEach(function (v) {
+            v.forEach(function (vv) {
+                if (fv < uvSize)
+                    uvArray[vv] = uvs[fv];
+                fv++;
+            })
+        });
+        for (i = 0, j = vertices.length; i < j; i++) {
+            vertexBuffer.push(
+                    vertices[i][0], vertices[i][1], vertices[i][2],
+                    uvArray[i][0], 1.0 - uvArray[i][1]
+            );
+        }
+        for (i = 0, j = faces.length; i < j; i++) {
+            indexBuffer.push(faces[i][0], faces[i][1], faces[i][2]);
+            indexBuffer.push(faces[i][0], faces[i][2], faces[i][3]);
+        }
+        return new Geometry(vertexBuffer, indexBuffer, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v])
+    }
+</script>
+</body>
+</html>

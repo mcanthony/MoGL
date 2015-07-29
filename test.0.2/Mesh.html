@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL Test Suite - Mesh.js</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <link rel="stylesheet" type="text/css" href="css.css"/>
+</head>
+<body>
+<img src="../src/ohno.png">
+
+<div id="stage"></div>
+<div id="result"></div>
+<div id="test"></div>
+<script src="lib/mogl.min.js"></script>
+<script src="http://js.bsapi.co/test/"></script>
+<script>
+    var mesh1 = new Mesh('cube', 'mat1');
+    var mesh2 = new Mesh(new Geometry([], []), new Material('#f00'));
+    var mesh3 = Mesh('cube', 'mat1');
+    var mesh4 = Mesh(null, null);
+    var testGeometry1 = new Geometry([], []);
+    var testGeometry2 = new Geometry([], []);
+    var testMaterial1 = Material('#f00');
+    var testMaterial2 = Material('#f00');
+
+    var testScene = Scene();
+    testScene.addMaterial("red", new Material("#ff0000"));
+    testScene.addGeometry("triangle", new Geometry([-1, 0, 0, 1, 0, 0, 0, 1, 0], [0, 1, 2]));
+    var mesh5 = Mesh("triangle", "red");
+    var mesh6 = Mesh("triangle", "red");
+
+    var tempGeo, tempMaterial;
+    var temp;
+    bsTest('new',
+            function () {
+                // new Mesh('cube', 'mat1');
+                return mesh1.isAlive;
+            }, true,
+            function () {
+                // new Mesh(new Geometry([], []), new Material('#f00'));
+                return mesh2.isAlive;
+            }, true,
+            function () {
+                // Mesh('cube', 'mat1');
+                return mesh3.isAlive;
+            }, true,
+            function () {
+                // Mesh();
+                return mesh4.isAlive;
+            }, true
+    );
+    bsTest('nullInit',
+            function () {
+                // null을 입력하면?;
+                return mesh4.getGeometry();
+            }, null,
+            function () {
+                // null을 입력하면?;
+                return mesh4.getMaterial();
+            }, null
+    );
+    bsTest('Geometry',
+            function () {
+                // 신에 등록하기전
+                return mesh1.getGeometry();
+            }, null,
+            function () {
+                // 신에 등록하기전 - new Mesh('cube', 'mat1')
+                mesh1.setGeometry(testGeometry1);
+                return mesh1.getGeometry();
+            }, null,
+            function () {
+                // 신에 등록하기전
+                return mesh2.getGeometry();
+            }, null,
+            function () {
+                // 신에 등록하기전
+                return mesh3.getGeometry();
+            }, null,
+            function () {
+                // 신에 등록하기전
+                return mesh4.getGeometry();
+            }, null
+    );
+    bsTest('Material',
+            function () {
+                // 신에 등록하기전
+                return mesh1.getMaterial();
+            }, null,
+            function () {
+                // 신에 등록하기전
+                mesh1.setMaterial(testMaterial1);
+                return mesh1.getMaterial();
+            }, null,
+            function () {
+                // 신에 등록하기전
+                return mesh2.getMaterial();
+            }, null,
+            function () {
+                // 신에 등록하기전
+                return mesh3.getMaterial();
+            }, null,
+            function () {
+                // 신에 등록하기전
+                return mesh4.getMaterial();
+            }, null
+    );
+    bsTest('after AddChild',
+            function () {
+                // 씬에 등록후 지오메트리가 제대로 찾아지나 점검
+                testScene.addChild('testGeometry1', mesh1);
+                tempGeo = null;
+                testScene.getChild('testGeometry1').setGeometry(testGeometry1);
+                tempGeo = testScene.getChild('testGeometry1').getGeometry();
+                return tempGeo;
+            }, testGeometry1,
+            function () {
+                // 등록된 녀석이 지오메트리 형식이냐?
+                return tempGeo instanceof Geometry;
+            }, true,
+            function () {
+                // 잘 바뀌나 테스트
+                mesh1.setGeometry(testGeometry2);
+                return mesh1.getGeometry() == testGeometry1;
+            }, false,
+            function () {
+                // 잘 바뀌나 테스트
+                return mesh1.getGeometry() == testGeometry2;
+            }, true,
+            function () {
+                // 씬에 등록후 재질이 제대로 찾아지나 점검
+                tempMaterial = null
+                testScene.getChild('testGeometry1').setMaterial(testMaterial1);
+                tempMaterial = testScene.getChild('testGeometry1').getMaterial();
+                return tempMaterial;
+            }, testMaterial1,
+            function () {
+                // 등록된 녀석이 Material 형식이냐..
+                tempMaterial = testScene.getChild('testGeometry1').getMaterial();
+                return tempMaterial instanceof Material;
+            }, true,
+            function () {
+                // 잘 바뀌나 테스트
+                mesh1.setMaterial(testMaterial2);
+                return mesh1.getMaterial() == testMaterial1;
+            }, false,
+            function () {
+                // 잘 바뀌나 테스트
+                return mesh1.getMaterial() == testMaterial2;
+            }, true,
+            function () {
+                // 널로 된놈은 등록후에도 찾아지면안됨
+                return mesh4.getMaterial() == null;
+            }, true,
+            function () {
+                // 널로 된놈은 등록후에도 찾아지면안됨
+                return mesh4.getGeometry() == null;
+            }, true,
+            function () {
+                try {
+                    // 등록 안되어있는 Geometry id 로 생성된 mesh를 scene에 추가
+                    return testScene.addChild("mesh3", mesh3);
+                }catch(e){
+                    console.log(e);
+                    return false;
+                }
+            }, false,
+            function () {
+                try {
+                    // 이미 씬에 등록된 mesh 에 Geometry를 바꿈
+                    mesh1.setGeometry("unkwon_geo");
+                }catch(e){
+                    console.log(e);
+                    return false;
+                }
+            }, false,
+            function () {
+                try {
+                    // 이미 씬에 등록된 mesh 에 Geometry 에 null 입력
+                    testScene.addChild('mesh6', mesh6);
+                    mesh6.setGeometry(null);
+                }catch(e){
+                    console.log(e);
+                    return e.toString();
+                }
+            }, "Error: Mesh.setGeometry:0",
+            function () {
+                try {
+                    // 이미 씬에 등록된 mesh 에 Material 바꿈
+                    testScene.addChild('mesh5', mesh5);
+                    mesh5.setMaterial("unkwon_meter");
+                }catch(e){
+                    console.log(e);
+                    return false;
+                }
+            },false
+    )
+
+    bsTest('getParent',
+            function () {
+                // getParent
+                return mesh1.getParent() instanceof Scene || testScene.getChild('testGeometry1').getParent() instanceof Group;
+            }, true,
+            function () {
+                // not yet addChild - return false
+                return mesh2.getParent() instanceof Scene || mesh2.getParent() instanceof Group;
+            }, false
+    )
+    bsTest('position',
+            function () {
+                // Position - return type
+                temp = mesh1.getPosition();
+                return temp instanceof Float32Array
+            }, true,
+            function () {
+                // Position - no param - initialization
+                mesh1.setPosition();
+                return mesh1.x == 0 && mesh1.y == 0 && mesh1.z == 0;
+            }, true,
+            function () {
+                // Position - 1 array param [x, y, z]
+                mesh1.setPosition([10, 20, 30]);
+                return mesh1.x == 10 && mesh1.y == 20 && mesh1.z == 30;
+            }, true,
+            function () {
+                // Position - x, y, z
+                mesh1.setPosition(10, 20, 30);
+                return mesh1.x == 10 && mesh1.y == 20 && mesh1.z == 30;
+            }, true,
+            function () {
+                // Position
+                temp = mesh1.getPosition();
+                return mesh1.x == temp[0] && mesh1.y == temp[1] && mesh1.z == temp[2];
+            }, true,
+            function () {
+                // Position
+                mesh1.x = 11, mesh1.y = 12, mesh1.z = 13;
+                temp = mesh1.getPosition();
+                return mesh1.x == temp[0] && mesh1.y == temp[1] && mesh1.z == temp[2];
+            }, true
+    )
+    bsTest('rotation',
+            function () {
+                // rotation - return type
+                temp = mesh1.getRotate();
+                return temp instanceof Float32Array
+            }, true,
+            function () {
+                // rotation - no param - initialization
+                mesh1.setRotate();
+                return mesh1.rotateX == 0 && mesh1.rotateY == 0 && mesh1.rotateZ == 0;
+            }, true,
+            function () {
+                // rotation - 1 array param [rotateX, rotateY, rotateZ]
+                mesh1.setRotate([10, 20, 30]);
+                return mesh1.rotateX == 10 && mesh1.rotateY == 20 && mesh1.rotateZ == 30;
+            }, true,
+            function () {
+                // rotation - rotateX, rotateY, rotateZ
+                mesh1.setRotate(10, 20, 30);
+                return mesh1.rotateX == 10 && mesh1.rotateY == 20 && mesh1.rotateZ == 30;
+            }, true,
+            function () {
+                // rotation
+                temp = mesh1.getRotate();
+                return mesh1.rotateX == temp[0] && mesh1.rotateY == temp[1] && mesh1.rotateZ == temp[2];
+            }, true,
+            function () {
+                // rotation
+                mesh1.rotateX = 11, mesh1.rotateY = 12, mesh1.rotateZ = 13
+                temp = mesh1.getRotate();
+                return mesh1.rotateX == temp[0] && mesh1.rotateY == temp[1] && mesh1.rotateZ == temp[2];
+            }, true
+    )
+    bsTest('scale',
+            function () {
+                // scale - return type
+                temp = mesh1.getScale();
+                return temp instanceof Float32Array
+            }, true,
+            function () {
+                // scale - no param - initialization
+                mesh1.setScale();
+                return mesh1.scaleX == 1 && mesh1.scaleY == 1 && mesh1.scaleZ == 1;
+            }, true,
+            function () {
+                // scale - 1 array param [scaleX, scaleY, scaleZ]
+                mesh1.setScale([10, 20, 30]);
+                return mesh1.scaleX == 10 && mesh1.scaleY == 20 && mesh1.scaleZ == 30;
+            }, true,
+            function () {
+                // scale - scaleX, scaleY, scaleZ
+                mesh1.setScale(10, 20, 30);
+                return mesh1.scaleX == 10 && mesh1.scaleY == 20 && mesh1.scaleZ == 30;
+            }, true,
+            function () {
+                // scale
+                temp = mesh1.getScale();
+                return mesh1.scaleX == temp[0] && mesh1.scaleY == temp[1] && mesh1.scaleZ == temp[2];
+            }, true,
+            function () {
+                // scale
+                mesh1.scaleX = 11, mesh1.scaleY = 12, mesh1.scaleZ = 13;
+                temp = mesh1.getScale();
+                return mesh1.scaleX == temp[0] && mesh1.scaleY == temp[1] && mesh1.scaleZ == temp[2];
+            }, true
+    )
+
+    bsTest('Matrix',
+            function () {
+                // type check
+                return mesh5.getMatrix() instanceof Float32Array;
+            }, true,
+            function () {
+                // getMatrix - init
+                return Matrix.str(mesh5.getMatrix());
+            }, "Matrix(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)",
+            function () {
+                // getMatrix - psoition change
+                mesh5.setPosition(3, 6, 9);
+                return Matrix.str(mesh5.getMatrix());
+            }, "Matrix(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3, 6, 9, 1)",
+            function () {
+                // getMatrix - scale change
+                mesh6.setScale(10, 20, 30);
+                return Matrix.str(mesh6.getMatrix());
+            }, "Matrix(10, 0, 0, 0, 0, 20, 0, 0, 0, 0, 30, 0, 0, 0, 0, 1)"
+    )
+
+    var sceneMeshByKey = Scene()
+    sceneMeshByKey.addGeometry('cube', new Geometry([], []));
+    sceneMeshByKey.addMaterial('mat1', new Material('#fff'));
+    var testMesh;
+    bsTest('byKey',
+            function () {
+                // 키로 등록하고 addChild하기전에 조사
+                testMesh = Mesh('cube', 'mat1');
+                return testMesh.getGeometry() == null && testMesh.getMaterial() == null;
+            }, true,
+            function () {
+                // 키로 등록해 본다.
+                sceneMeshByKey.addChild('testByKeyMesh', testMesh);
+                return sceneMeshByKey.getChild('testByKeyMesh') == testMesh;
+            }, true,
+            function () {
+                // 등록후에 키로 등록된 녀석이 Geometry와 Material로 변경이 되었나 확인
+                console.log(testMesh.getGeometry());
+                console.log(typeof testMesh.getGeometry());
+                return testMesh.getGeometry() instanceof Geometry;
+            }, true
+    )
+
+    mesh1.destroy();
+    mesh2.destroy();
+    mesh3.destroy();
+    bsTest('destroy',
+            function () {
+                return mesh1.isAlive;
+            }, false,
+            function () {
+                return mesh2.isAlive;
+            }, false,
+            function () {
+                return mesh3.isAlive;
+            }, false
+    );
+
+
+</script>
+</body>
+</html>

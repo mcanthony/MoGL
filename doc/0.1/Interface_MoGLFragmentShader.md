@@ -1,1 +1,0 @@
-# MoGL Fragment Shader Interface

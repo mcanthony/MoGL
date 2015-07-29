@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL Showcase - Primitive_Plane</title>
+    <meta charset="utf-8"/>
+    <meta property="og:title" content="Monkey"/>
+    <meta property="og:description" content="MoGL.js version"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<script src="../src/$.js"></script>
+<script src="../src/make.js"></script>
+<script src="../src/MoGL.js"></script>
+<script src="../src/BlendMode.js"></script>
+<script src="../src/Filter.js"></script>
+<script src="../src/Primitive.js"></script>
+<script src="../src/Vertex.js"></script>
+<script src="../src/Shading.js"></script>
+<script src="../src/VertexShaderFunctions.js"></script>
+<script src="../src/Shader.js"></script>
+<script src="../src/Matrix.js"></script>
+<script src="../src/Texture.js"></script>
+<script src="../src/Geometry.js"></script>
+<script src="../src/Material.js"></script>
+<script src="../src/Mesh.js"></script>
+<script src="../src/Group.js"></script>
+<script src="../src/Camera.js"></script>
+<script src="../src/Scene.js"></script>
+<script src="../src/World.js"></script>
+<script src="../showcase/dat.gui.min.js"></script>
+<script src="http://js.bsapi.co/test/"></script>
+<script>
+</script>
+<img src="primitive/geodesicTest.jpg" id="testIMG2" style="position: absolute;top:0px; display:none" width="256">
+<canvas id='canvas'></canvas>
+<script>
+    'use strict';
+    // basic settings
+    var world, scene, camera;
+    var texture, mat
+
+    world = new World('canvas')
+    scene = new Scene()
+    camera = new Camera()
+
+    world.setAutoSize(1)
+    world.start()
+
+    world.addScene(scene)
+    scene.addChild(camera)
+
+    texture = new Texture(document.getElementById('testIMG2'))
+    mat = new Material('#FFF')
+    mat.addTexture(Texture.diffuse, texture).wireFrame = 1
+
+    ////////////////////////////////////////////////////////////////
+
+    var plane1_1 = Primitive.plane()
+    var plane2_2 = Primitive.plane(2, 2)
+    var plane2_3 = Primitive.plane(2, 3)
+    var plane10_10 = Primitive.plane(10, 10)
+
+    var plane1_1Mesh = new Mesh(plane1_1, mat);
+    var plane2_2Mesh = new Mesh(plane2_2, mat);
+    var plane2_3Mesh = new Mesh(plane2_3, mat);
+    var plane10_10Mesh = new Mesh(plane10_10, mat);
+
+
+    mat.wireFrame = 1
+    scene.addChild(plane1_1Mesh);
+    scene.addChild(plane2_2Mesh);
+    scene.addChild(plane2_3Mesh);
+    scene.addChild(plane10_10Mesh);
+
+
+    plane1_1Mesh.rotateX = Math.PI / 2
+    plane2_2Mesh.rotateX = Math.PI / 2
+    plane2_3Mesh.rotateX = Math.PI / 2
+    plane10_10Mesh.rotateX = Math.PI / 2
+
+    plane1_1Mesh.x = -3
+    plane2_2Mesh.x = -1
+    plane2_3Mesh.x = 1
+    plane10_10Mesh.x = 3
+    plane1_1Mesh.y = plane2_2Mesh.y = plane2_3Mesh.y = plane10_10Mesh.y = -1
+
+    var testMesh = new Mesh(Primitive.plane(), mat)
+    scene.addChild(testMesh)
+    testMesh.rotateX = Math.PI / 2
+    testMesh.scale = [2, 2, 2]
+    testMesh.y = 1
+
+    /////////////////////////////////////////////
+    // UI
+    /////////////////////////////////////////////
+    var shadingParams = {
+        WireFrame: true,
+        plane: function () {
+            testMesh.geometry = Primitive.plane()
+            testMesh.rotateX = Math.PI / 2
+            testMesh.scale = [2, 2, 2]
+            testMesh.y = 1
+        },
+        plane2_2: function () {
+            testMesh.geometry = Primitive.plane(2, 2)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.scale = [2, 2, 2]
+            testMesh.y = 1
+        },
+        plane3_3: function () {
+            testMesh.geometry = Primitive.plane(3, 3)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.scale = [2, 2, 2]
+            testMesh.y = 1
+        },
+        plane10_10: function () {
+            testMesh.geometry = Primitive.plane(10, 10)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.scale = [2, 2, 2]
+            testMesh.y = 1
+        },
+        plane6_2: function () {
+            testMesh.geometry = Primitive.plane(6, 2)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.scale = [2, 2, 2]
+            testMesh.y = 1
+        }
+    };
+    var gui = new dat.GUI();
+    var shading = gui.addFolder('Shading');
+    shading.add(shadingParams, 'plane');
+    shading.add(shadingParams, 'plane2_2');
+    shading.add(shadingParams, 'plane3_3');
+    shading.add(shadingParams, 'plane10_10');
+    shading.add(shadingParams, 'plane6_2');
+    shading.open()
+
+    world.addEventListener(World.renderBefore, function () {
+        plane1_1Mesh.rotateY += 0.01
+        plane2_2Mesh.rotateY += 0.01
+        plane2_3Mesh.rotateY += 0.01
+        plane10_10Mesh.rotateY += 0.01
+        plane1_1Mesh.rotateX += 0.01
+        plane2_2Mesh.rotateX += 0.01
+        plane2_3Mesh.rotateX += 0.01
+        plane10_10Mesh.rotateX += 0.01
+        testMesh.rotateY += 0.01
+        testMesh.rotateX += 0.01
+    })
+</script>
+</body>
+</html>

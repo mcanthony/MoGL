@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL Test Suite - Material.js</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <link rel="stylesheet" type="text/css" href="css.css"/>
+</head>
+<body>
+<img src="../src/ohno.png" id="img0" height="50"><img src="../src/ohno.png" id="img1" height="50">
+<canvas id="canvas" height="10" style="position: absolute"></canvas>
+<div>TODO - Mesh.setMaterial등으로 변경되는 요소들을 어떻게 카운팅할것인가!</div>
+<div id="stage"></div>
+<div id="result"></div>
+<div id="test"></div>
+<script src="../src/$.js"></script>
+<script src="../src/make.js"></script>
+<script src="../src/MoGL.js"></script>
+<script src="../src/Vector.js"></script>
+<script src="../src/Filter.js"></script>
+<script src="../src/Vertex.js"></script>
+<script src="../src/BlendMode.js"></script>
+<script src="../src/Primitive.js"></script>
+<script src="../src/Shading.js"></script>
+<script src="../src/VertexShaderFunctions.js"></script>
+<script src="../src/Shader.js"></script>
+<script src="../src/Matrix.js"></script>
+<script src="../src/Texture.js"></script>
+<script src="../src/Geometry.js"></script>
+<script src="../src/Material.js"></script>
+<script src="../src/Mesh.js"></script>
+<script src="../src/Group.js"></script>
+<script src="../src/Camera.js"></script>
+<script src="../src/Scene.js"></script>
+<script src="../src/World.js"></script>
+<script src="http://js.bsapi.co/test/"></script>
+<script>
+
+    bsTest('Constructor',
+        function () {
+            var material = new Material('#000');
+            return material.isAlive;
+        }, true,
+        function () {
+            var material = new Material('#000000');
+            return material.isAlive;
+        }, true,
+        function () {
+            var material = new Material('#ffffff0.8');
+            return material.isAlive;
+        }, true,
+        function () {
+            var material = new Material(0xff / 0xff, 0xaf / 0xff, 0x45 / 0xff, 0.5);
+            return material.isAlive;
+        }, true,
+        function () {
+            var material = new Material('#ffffff127.8');
+            return material.isAlive;
+        }, true,
+        function () {
+            var material = Material('#ffffff127.8');
+            return material.isAlive;
+        }, true
+    );
+    bsTest('colorCheck',
+            function () {
+                var material = new Material('#000');
+                return material.color.toString();
+            }, [0, 0, 0, 1].toString(),
+            function () {
+                var material = new Material('#000000');
+                return material.color.toString();
+            }, [0, 0, 0, 1].toString(),
+            function () {
+                var material = new Material('#ffffff0.8');
+                return material.color.toString();
+            }, [1, 1, 1, 0.8].toString(),
+            function () {
+                var material = new Material(0xff / 0xff, 0xaf / 0xff, 0x45 / 0xff, 0.5);
+                return material.color.toString()
+            }, [0xff / 0xff, 0xaf / 0xff, 0x45 / 0xff, 0.5].toString(),
+            function () {
+                var material = new Material('#ffffff127.8');
+                return material.color.toString()
+            }, [1, 1, 1, 1].toString(),
+            function () {
+                var material = Material('#ffffff127.8');
+                return material.color.toString();
+            }, [1, 1, 1, 1].toString()
+    );
+
+    var world = new World('canvas');
+    var lobby = new Scene().setId('lobby');
+    world.addScene(lobby);
+
+    var texture1 = new Texture().setId('floorTexture');
+    texture1.img = document.getElementById('img0');
+    var texture2 = new Texture().setId('scratchTexture');
+    texture2.img = document.getElementById('img1');
+
+    // 텍스쳐용 이미지 등록
+    lobby.addTexture(texture1);
+    lobby.addTexture(texture2);
+    // Material 생성 및 Scene에 등록
+    var sceneAddedMaterial = new Material('#fff');
+    var testResult;
+
+
+    bsTest('texture',
+            function () {
+                var result = '';
+                try {
+                    sceneAddedMaterial.addTexture(Texture.diffuse, texture1);
+                } catch (e) {
+                    result = e.toString();
+                }
+                return result;
+            }, '',
+            function () {
+                testResult = 1
+                try {
+                    //이미 등록된 textureId를 다시 등록하려고 하면 에러발생.
+                    sceneAddedMaterial.addTexture(Texture.diffuse, texture1);
+                } catch (e) {
+                    testResult = 0
+                    console.log(e); //'Material.addTexture:1'
+                }
+                return testResult
+            }, 0,
+            function () {
+                return sceneAddedMaterial.diffuse[0].tex
+            }, lobby.getTexture('floorTexture'),
+            function () {
+                //다중 texture 등록
+                sceneAddedMaterial.addTexture(Texture.diffuse, texture2, null, BlendMode.multiply);
+                return sceneAddedMaterial.diffuse[1].tex
+            }, lobby.getTexture('scratchTexture'),
+            function () {
+                sceneAddedMaterial.removeTexture(Texture.diffuse, texture2)
+                return sceneAddedMaterial.diffuse[0].tex
+            }, texture1
+    )
+
+
+    bsTest('color',
+            function () {
+                var mat = new Material();
+                mat.color = '#fff';
+                return mat.color[0];
+            }, 1,
+            function () {
+                var mat = new Material();
+                mat.color = '#ff0000';
+                return mat.color[2];
+            }, 0,
+            function () {
+                var mat = new Material();
+                mat.color = '#ff00000.8';
+                return mat.color[3]
+            }, 0.8,
+            function () {
+                var mat = new Material();
+                mat.color = [0xff / 0xff, 0xaf / 0xff, 0x45 / 0xff, 0.5];
+                return mat.color[1];
+            }, 0xaf / 0xff
+    );
+    //
+    bsTest('lambert',
+            function () {
+                var mat = new Material();
+                mat.lambert = 0.5;
+                return mat.lambert;
+            }, 0.5
+    );
+
+    bsTest('setShading',
+            function () {
+                var mat = new Material();
+                mat.shading = Shading.none
+                return mat.shading
+            }, 'none',
+            function () {
+                var mat = new Material();
+                mat.shading = Shading.gouraud
+                return mat.shading
+            }, 'gouraud',
+            function () {
+                var mat = new Material();
+                mat.shading = Shading.phong
+                return mat.shading
+            }, 'phong',
+            function () {
+                var mat = new Material();
+                mat.shading = Shading.blinn
+                return mat.shading
+            }, 'blinn',
+            function () {
+                var mat = new Material();
+                mat.shading = Shading.flat
+                return mat.shading
+            }, 'flat',
+            function () {
+                var mat = new Material();
+                mat.shading = Shading.toon
+                return mat.shading
+            }, 'toon'
+    );
+
+    bsTest('wireFrame',
+            function () {
+                var mat = new Material();
+                mat.wireFrame = true;
+                return mat.wireFrame;
+            }, true,
+            function () {
+                var mat = new Material();
+                mat.wireFrame = true;
+                mat.wireFrameColor = '#fff';
+                return mat.wireFrameColor[0]
+            }, 1
+    );
+
+
+
+    bsTest('addTexture',
+            function () {
+                var world = new World('canvas'),
+                    scene = new Scene(),
+                    texture = new Texture(),
+                    test = '';
+
+
+                world.addScene(scene);
+                texture.img = document.getElementById('img0');
+
+                var mat = new Material();
+                try {
+                    mat.addTexture(Texture.diffuse, texture);
+                } catch (e) {
+                    test = e.toString();
+                }
+                return test;
+            }, '',
+            function () {
+                var world = new World('canvas'),
+                    scene = new Scene(),
+                    texture = new Texture(),
+                    test = '';
+
+
+                world.addScene(scene);
+                texture.img = document.getElementById('img0');
+
+                var mat = new Material();
+                try {
+                    mat.addTexture('', texture);
+                } catch (e) {
+                    test = e.toString();
+                    console.log(test);
+                }
+                return test;
+            }, 'Error: Material.addTexture:0',
+            function () {
+                var world = new World('canvas'),
+                        scene = new Scene(),
+                        texture = new Texture(),
+                        test = '';
+
+
+                world.addScene(scene);
+                texture.img = document.getElementById('img0');
+
+                var mat = new Material();
+                try {
+                    mat.addTexture(Texture.diffuse, new Object());
+                } catch (e) {
+                    test = e.toString();
+                }
+                return test;
+            }, 'Error: Material.addTexture:1',
+            function () {
+                var world = new World('canvas'),
+                        scene = new Scene(),
+                        texture = new Texture(),
+                        test = '';
+
+
+                world.addScene(scene);
+                texture.img = document.getElementById('img0');
+
+                var mat = new Material();
+                try {
+                    mat.addTexture(Texture.diffuse, texture);
+                    mat.addTexture(Texture.diffuse, texture);
+                } catch (e) {
+                    test = e.toString();
+                }
+                return test;
+            }, 'Error: Material.addTexture:2',
+            function () {
+                var world = new World('canvas'),
+                        scene = new Scene(),
+                        texture = new Texture(),
+                        test = '';
+
+
+                world.addScene(scene);
+                texture.img = document.getElementById('img0');
+
+                var mat = new Material();
+                try {
+                    mat.addTexture(Texture.diffuse, texture, 'String');
+                } catch (e) {
+                    test = e.toString();
+                }
+                return test;
+            }, 'Error: Material.addTexture:3',
+            function () {
+                var world = new World('canvas'),
+                        scene = new Scene(),
+                        texture = new Texture(),
+                        test = '';
+
+
+                world.addScene(scene);
+                texture.img = document.getElementById('img0');
+
+                var mat = new Material();
+                try {
+                    mat.addTexture(Texture.diffuse, texture, -1);
+                } catch (e) {
+                    test = e.toString();
+                }
+                return test;
+            }, 'Error: Material.addTexture:4',
+            function () {
+                var world = new World('canvas'),
+                        scene = new Scene(),
+                        texture = new Texture(),
+                        test = '';
+
+
+                world.addScene(scene);
+                texture.img = document.getElementById('img0');
+
+                var mat = new Material();
+                try {
+                    mat.addTexture(Texture.diffuse, texture, new Texture());
+                } catch (e) {
+                    test = e.toString();
+                }
+                return test;
+            }, 'Error: Material.addTexture:5'
+    );
+
+    bsTest('removeTexture',
+            function () {
+                var world = new World('canvas'),
+                        scene = new Scene(),
+                        texture = new Texture(),
+                        test = '';
+
+
+                world.addScene(scene);
+                texture.img = document.getElementById('img0');
+
+                var mat = new Material();
+                mat.addTexture(Texture.diffuse, texture);
+                mat.removeTexture(Texture.diffuse, texture);
+
+                return mat.diffuse[0];
+            }, undefined
+    );
+</script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL Test Suite - Primitive.js</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <link rel="stylesheet" type="text/css" href="css.css"/>
+    <style>
+        html, body {
+            margin: 0px;
+            padding: 0px;
+            overflow: hidden;
+        }
+    </style>
+    <script src="../showcase/dat.gui.min.js"></script>
+</head>
+<body>
+<div id="stage"></div>
+<div id="result"></div>
+<div id="test"></div>
+
+<script src="lib/mogl.min.js"></script>
+<script src="http://js.bsapi.co/test/"></script>
+<script>
+</script>
+<canvas id='geodesic'></canvas>
+<script>
+    MoGL.globalization();
+    var world = new World('geodesic')
+    var scene = new Scene()
+    var camera = new Camera()
+    var testMat = new Material('#ffffff');
+
+    world.addScene('scene', scene);
+    scene.addChild('camera', camera);
+    world.addRender('scene', 'camera');
+    scene.addTexture('texture', 'primitive/geodesicTest.jpg');
+    testMat.addTexture(Texture.diffuse, 'texture')
+
+    var geodesic = Primitive.geodesic()
+    var geodesicMesh = new Mesh(geodesic, testMat);
+    scene.addChild('geodesicMesh', geodesicMesh);
+    geodesicMesh.z = -5;
+
+    setInterval(function () {
+        geodesicMesh.rotateY += 0.01
+        world.render();
+    }, 1000 / 60);
+
+
+    /////////////////////////////////////////////
+    // UI
+    /////////////////////////////////////////////
+    var shadingParams = {
+        WireFrame : false,
+        color: function () {
+            testMat.removeTexture('texture');
+            testMat.setShading(Shading.none)
+        },
+        toon: function () {
+            testMat.removeTexture('texture');
+            testMat.setShading(Shading.toon)
+        },
+        PhongColor: function () {
+            testMat.removeTexture('texture');
+            testMat.setShading(Shading.phong)
+        },
+        GouraudColor: function () {
+            testMat.removeTexture('texture');
+            testMat.setShading(Shading.gouraud)
+        },
+        GouraudTextrue: function () {
+            testMat.removeTexture('texture');
+            testMat.addTexture(Texture.diffuse, 'texture');
+            testMat.setShading(Shading.gouraud)
+        },
+        PhongTextrue: function () {
+            testMat.removeTexture('texture');
+            testMat.addTexture(Texture.diffuse, 'texture');
+            testMat.setShading(Shading.phong)
+        }
+    };
+    var gui = new dat.GUI();
+    var shading = gui.addFolder('Shading');
+    shading.add(shadingParams, 'color');
+    shading.add(shadingParams, 'toon');
+    shading.add(shadingParams, 'GouraudColor');
+    shading.add(shadingParams, 'PhongColor');
+    shading.add(shadingParams, 'GouraudTextrue');
+    shading.add(shadingParams, 'PhongTextrue');
+    shading.add(shadingParams, 'WireFrame').onChange(function(){
+        testMat.setWireFrame(shadingParams.WireFrame)
+    });
+</script>
+<hr/>
+
+
+</body>
+</html>
+

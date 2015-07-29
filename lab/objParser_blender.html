@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>Monkey</title>
+    <meta charset="utf-8"/>
+    <meta property="og:image" content="http://shallaa.github.io/SoftEngine/og/1.jpg"/>
+    <meta property="og:title" content="Monkey"/>
+    <meta property="og:description" content="MoGL.js version"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .FPS {
+            color: #FFF;
+            left: 0px;
+            top: 0px;
+            position: absolute
+        }
+    </style>
+    <script src="../src/$.js"></script>
+    <script src="../src/make.js"></script>
+    <script src="../src/MoGL.js"></script>
+    <script src="../src/BlendMode.js"></script>
+    <script src="../src/Filter.js"></script>
+    <script src="../src/Primitive.js"></script>
+    <script src="../src/Vertex.js"></script>
+    <script src="../src/Shading.js"></script>
+    <script src="../src/VertexShaderFunctions.js"></script>
+    <script src="../src/Shader.js"></script>
+    <script src="../src/Matrix.js"></script>
+    <script src="../src/Texture.js"></script>
+    <script src="../src/Geometry.js"></script>
+    <script src="../src/Material.js"></script>
+    <script src="../src/Mesh.js"></script>
+    <script src="../src/Group.js"></script>
+    <script src="../src/Camera.js"></script>
+    <script src="../src/Scene.js"></script>
+    <script src="../src/World.js"></script>
+</head>
+<body>
+<img src="test/test.png" id="testIMG1" style="position: absolute;top:0px;" width="128" height="128">
+<img src="woman/woman.png" id="testIMG2" style="position: absolute;top:0px;" width="128" height="128">
+<canvas id="canvas"></canvas>
+<script>
+    /////////////////////////////////////////////////////////////////
+    /*
+     목표는
+     1. 메쉬단위별로 전부 파싱하고... - 완료
+     2. 재질 특성 즉 mtl값을 반영하게 하고..
+     3. 따라서 암비안트, 디퓨즈, 스페큘라 값도 읽어온다.
+     3. 그룹이 완성되면 그룹으로도 파싱하도록.
+     */
+    // 음 맥스랑 블렌더 포멧이 너무다르군..?
+    /////////////////////////////////////////////////////////////////
+    'use strict';
+    var world = new World('canvas');
+    var scene = new Scene();
+    world.addScene(scene);
+    scene.addChild(new Camera().setId('camera'));
+    scene.addMaterial(new Material(1, 1, 1, 1).setId('material1'));
+    scene.addMaterial(new Material(1, 1, 1, 1).setId('material2'));
+    var texture1 = new Texture
+    var texture2 = new Texture
+    texture1.img = document.getElementById('testIMG1')
+    texture2.img = document.getElementById('testIMG2')
+    scene.getMaterial('material1').addTexture(Texture.diffuse, texture1).shading = Shading.phong
+    scene.getMaterial('material2').addTexture(Texture.diffuse, texture2).shading = Shading.phong
+
+    world.start()
+    world.setAutoSize(1)
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('GET', 'test/test.obj', true);
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+            start(xmlhttp.responseText);
+        }
+    };
+    xmlhttp.send(null);
+    function start(data) {
+        var pardedData1 = parseObj(data)
+        var result = {}
+        for (var k in pardedData1) {
+            var geo = new Geometry(pardedData1[k].vertexData, pardedData1[k].indexData, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v])
+            scene.addGeometry( geo);
+
+            var mesh = new Mesh(geo ,scene.getMaterial('material1'))
+            scene.addChild(mesh)
+            scene.getChild('camera').z = 150
+            scene.getChild('camera').lookAt(mesh.x, mesh.y, mesh.z);
+            result[k] = mesh
+            mesh.x -= 50
+            console.log('생성했다!', mesh)
+        }
+        world.addEventListener(World.renderBefore, function () {
+            for (var k in result) {
+                result[k].rotateX += 0.01
+                result[k].rotateY += 0.01
+            }
+        })
+    }
+    var xmlhttp2 = new XMLHttpRequest();
+    xmlhttp2.open('GET', 'woman/woman.obj', true);
+    xmlhttp2.onreadystatechange = function () {
+        if (xmlhttp2.readyState === 4 && xmlhttp2.status === 200) {
+            start2(xmlhttp2.responseText);
+        }
+    };
+    xmlhttp2.send(null);
+    function start2(data) {
+        var pardedData1 = parseObj(data)
+        var result = {}
+        for (var k in pardedData1) {
+            var geo = new Geometry(pardedData1[k].vertexData, pardedData1[k].indexData, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v])
+            scene.addGeometry( geo);
+
+            var mesh = new Mesh(geo, scene.getMaterial('material2'))
+            scene.addChild(mesh)
+            scene.getChild('camera').z = 150
+            scene.getChild('camera').lookAt(mesh.x, mesh.y, mesh.z);
+            result[k] = mesh
+            console.log('생성했다!', mesh)
+
+            mesh.x += 50
+        }
+        world.addEventListener(World.renderBefore, function () {
+            for (var k in result) {
+//                result[k].rotateX += 0.01
+                result[k].rotateY += 0.01
+            }
+        })
+    }
+
+    var parseObj = function parseObj(data) {
+        var data = data.split('\n'), format
+        if (data[0].indexOf('Blender') > -1) {
+            format = 'BLENDER'
+        } else {
+            format = '3DMAX'
+        }
+        var table = {}, rawData, t, id, tData
+        for (var i = 0, len = data.length; i < len; i++) {
+            rawData = data[i]
+            id = rawData.substr(0, 2)
+            if (format == 'BLENDER') {
+                if (rawData.charAt(0) == 'o') {
+                    t = table[rawData.substr(2).trim()] = {
+                        vertexData: [],
+                        uvData: [],
+                        nvData: [],
+                        faceV: [],
+                        faceUV: [],
+                        faceNV: []
+                    }
+                }
+                switch (id) {
+                    case 'v ' :
+                        tData = rawData.substr(2).split(' ');
+                        t.vertexData.push(tData[0], tData[1], tData[2])
+                        break
+                    case 'f ' :
+                        tData = rawData.substr(2).replace(/ /g, '/')
+                        tData = tData.split('/');
+                        if (tData.length == 6) {
+                            t.faceV.push(tData[0] - 1, tData[2] - 1, tData[4] - 1)
+                            t.faceUV.push(tData[1] - 1, tData[3] - 1, tData[5] - 1)
+                        }
+                        else if (tData.length == 9) {
+                            t.faceV.push(tData[0] - 1, tData[3] - 1, tData[6] - 1)
+                            t.faceUV.push(tData[1] - 1, tData[4] - 1, tData[7] - 1)
+                            t.faceNV.push(tData[2] - 1, tData[5] - 1, tData[8] - 1)
+                        }
+                        break
+                    case 'vn' :
+                        tData = rawData.substr(3).split(' ');
+                        t.nvData.push(tData[0], tData[1], tData[2])
+                        break
+                    case 'vt' :
+                        tData = rawData.substr(3).split(' ');
+                        t.uvData.push(tData[0], tData[1])
+                        break
+                }
+            } else {
+
+                switch (id) {
+                    case 'v  ' :
+                        tData = rawData.substr(3).split('  ');
+                        t.vertexData.push(tData[0], tData[1], tData[2])
+                        break
+                    case 'f ' :
+                        tData = rawData.substr(2).replace(/ /g, '/')
+                        tData = tData.split('/');
+                        if (tData.length == 6) {
+                            t.faceV.push(tData[0] - 1, tData[2] - 1, tData[4] - 1)
+                            t.faceUV.push(tData[1] - 1, tData[3] - 1, tData[5] - 1)
+                        }
+                        else if (tData.length == 9) {
+                            t.faceV.push(tData[0] - 1, tData[3] - 1, tData[6] - 1)
+                            t.faceUV.push(tData[1] - 1, tData[4] - 1, tData[7] - 1)
+                            t.faceNV.push(tData[2] - 1, tData[5] - 1, tData[8] - 1)
+                        }
+                        break
+                    case 'vn' :
+                        tData = rawData.substr(3).split(' ');
+                        t.nvData.push(tData[0], tData[1], tData[2])
+                        break
+                    case 'vt' :
+                        tData = rawData.substr(3).split(' ');
+                        t.uvData.push(tData[0], tData[1])
+                        break
+                }
+            }
+
+
+        }
+        var realData = {}
+        var first = 1, idx
+        var faceV, faceUV, faceNV, tFace, tFaceUV, tFaceNV, tGap
+        var newData, tV, tUV, tNV
+        if (format == 'BLENDER') {
+            for (var k in table) {
+                realData[k] = {
+                    vertexData: [], indexData: []
+                }
+                faceV = table[k].faceV
+                faceUV = table[k].faceUV
+                faceNV = table[k].faceNV
+                tV = table[k].vertexData
+                tUV = table[k].uvData
+                tNV = table[k].nvData
+                var mul = 5
+                for (var i = 0, len = faceV.length; i < len; i++) {
+                    if (first) {
+                        tFace = faceV[i]
+                        tFaceUV = faceUV[i]
+                        tFaceNV = faceNV[i]
+                    } else {
+                        tFace = faceV[i] - faceV[0]
+                        tFaceUV = faceUV[i] - faceUV[0]
+                        tFaceNV = faceNV[i] - faceNV[0]
+                    }
+
+                    tGap = tFace * mul
+                    newData = realData[k].vertexData
+                    idx = tFace * 3
+                    newData[tGap + 0] = tV[idx]
+                    newData[tGap + 1] = tV[idx + 1]
+                    newData[tGap + 2] = tV[idx + 2]
+                    idx = tFaceUV * 2
+                    newData[tGap + 3] = tUV[idx]
+                    newData[tGap + 4] = 1 - tUV[idx + 1]
+                    if (mul == 8) {
+                        // 노말은 걍 해석안함..
+//                    newData[tGap + 5] = tNV[tFaceNV * 3]
+//                    newData[tGap + 6] = tNV[tFaceNV * 3 + 1]
+//                    newData[tGap + 7] = tNV[tFaceNV * 3 + 2]
+                    }
+                    realData[k].indexData.push(tFace)
+                }
+                first = 0
+            }
+        }
+
+        return realData
+    }
+</script>
+</body>
+</html>

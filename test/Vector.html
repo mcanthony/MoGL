@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL Test Suite - Vector.js</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <link rel="stylesheet" type="text/css" href="css.css"/>
+</head>
+<body>
+<img src="../src/ohno.png"/>
+
+<div id="stage"></div>
+<div id="result"></div>
+<div id="test"></div>
+<script src="../src/$.js"></script>
+<script src="../src/make.js"></script>
+<script src="../src/MoGL.js"></script>
+<script src="../src/Vector.js"></script>
+<script src="../src/Filter.js"></script>
+<script src="../src/Vertex.js"></script>
+<script src="../src/BlendMode.js"></script>
+<script src="../src/Primitive.js"></script>
+<script src="../src/Shading.js"></script>
+<script src="../src/VertexShaderFunctions.js"></script>
+<script src="../src/Shader.js"></script>
+<script src="../src/Matrix.js"></script>
+<script src="../src/Texture.js"></script>
+<script src="../src/Geometry.js"></script>
+<script src="../src/Material.js"></script>
+<script src="../src/Mesh.js"></script>
+<script src="../src/Group.js"></script>
+<script src="../src/Camera.js"></script>
+<script src="../src/Scene.js"></script>
+<script src="../src/World.js"></script>
+<script src="http://js.bsapi.co/test/"></script>
+<script>
+    var vector;
+    bsTest('new',
+            function () {
+                vector = new Vector(new Float32Array([1, 2, 3]));
+                console.log(vector)
+                return vector.x === 1 && vector.y === 2 && vector.z === 3;
+            }, true,
+            function () {
+                vector = new Vector([1, 2, 3]);
+                return vector.x === 1 && vector.y === 2 && vector.z === 3;
+            }, true,
+            function () {
+                vector = new Vector(1, 2, 3);
+                return vector.x === 1 && vector.y === 2 && vector.z === 3;
+            }, true,
+            function () {
+                vector = new Vector();
+                return vector.x === 0 && vector.y === 0 && vector.z === 0;
+            }, true
+    );
+    bsTest('add, addXYZ, subtract, subtractXYZ',
+            function () {
+                var v = Vector(1, 2, 3);
+                vector.add(v);
+                return vector.x === 1 && vector.y === 2 && vector.z === 3;
+            }, true,
+            function () {
+                var v = Vector(1, 2, 3);
+                vector.subtract(v);
+                return vector.x === 0 && vector.y === 0 && vector.z === 0;
+            }, true,
+            function () {
+                vector.addXYZ(1, 2, 3);
+                return vector.x === 1 && vector.y === 2 && vector.z === 3;
+            }, true,
+            function () {
+                vector.subtractXYZ(1, 2, 3);
+                return vector.x === 0 && vector.y === 0 && vector.z === 0;
+            }, true
+    );
+    bsTest('scaleBy, distance, negate, normalize, dot, cross',
+            function () {
+                vector = Vector(1, 2, 3);
+                vector.scaleBy(2);
+                return vector.x === 2 && vector.y === 4 && vector.z === 6;
+            }, true,
+            function () {
+                var v = new Vector(1, 2, 3);
+                var d = vector.distance(v);
+                return d;
+            }, 3.7416573867739413,
+            function () {
+                vector.negate();
+                return vector.x === -2 && vector.y === -4 && vector.z === -6;
+            }, true,
+            function () {
+                vector = Vector(1, 2, 3); // vector.negate();
+
+                console.log(vector.normalize())
+                return vector.x === 0.2672612419124244 && vector.y === 0.5345224838248488 && vector.z === 0.8017837257372732;
+            }, true,
+            function () {
+                vector = Vector(1, 2, 3);
+                var v = Vector(3, 2, 1);
+                var d = vector.dot(v);
+                return d;
+            }, 10,
+            function () {
+                vector = Vector(1, 2, 3);
+                var v = Vector(3, 2, 1);
+                var r = vector.cross(v);
+                return r.x === -4 && r.y === 8 && r.z === -4;
+            }, true
+    );
+</script>
+</body>
+</html>

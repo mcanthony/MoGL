@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL Showcase - multiCamera</title>
+    <meta charset="utf-8"/>
+    <meta property="og:title" content="Monkey"/>
+    <meta property="og:description" content="MoGL.js version"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .FPS {
+            color: #FFF;
+            left: 0px;
+            top: 0px;
+            position: absolute
+        }
+    </style>
+    <script src="../src/$.js"></script>
+    <script src="../src/make.js"></script>
+    <script src="../src/MoGL.js"></script>
+    <script src="../src/BlendMode.js"></script>
+    <script src="../src/Filter.js"></script>
+    <script src="../src/Primitive.js"></script>
+    <script src="../src/Vertex.js"></script>
+    <script src="../src/Shading.js"></script>
+    <script src="../src/VertexShaderFunctions.js"></script>
+    <script src="../src/Shader.js"></script>
+    <script src="../src/Matrix.js"></script>
+    <script src="../src/Texture.js"></script>
+    <script src="../src/Geometry.js"></script>
+    <script src="../src/Material.js"></script>
+    <script src="../src/Mesh.js"></script>
+    <script src="../src/Group.js"></script>
+    <script src="../src/Camera.js"></script>
+    <script src="../src/Scene.js"></script>
+    <script src="../src/World.js"></script>
+</head>
+<body>
+<img src="monkey/Suzanne.jpg" id="testIMG2" style="position: absolute;top:0px; display:none" width="256" height="256">
+<canvas id="canvas"></canvas>
+<div class="FPS">
+    Current FPS: <span id="currentFPS"></span>
+    Average FPS: <span id="averageFPS"></span>
+</div>
+
+<script>
+    'use strict';
+    // basic settings
+    var divCurrentFPS, divAverageFPS, prevTime;
+    var world, scene;
+
+    divCurrentFPS = document.getElementById('currentFPS')
+    divAverageFPS = document.getElementById('averageFPS')
+    prevTime = 0
+
+    world = new World('canvas')
+    scene = new Scene()
+    world.addScene(scene)
+
+    scene.addChild(new Camera().setId('camera1'));
+    scene.addChild(new Camera().setId('camera2'));
+    scene.addChild(new Camera().setId('camera3'));
+
+    world.setAutoSize(1)
+    world.start()
+
+    ////////////////////////////////////////////////////////////////////////////
+    scene.addGeometry(new Geometry([-1, 0, 0, 1, 0, 0, 0, 1, 0], [0, 1, 2]).setId('tri'));
+    scene.addGeometry(new Geometry([
+        0.5, 0.5, 0.0, 0.0, 0.0,
+        -0.5, 0.5, 0.0, 1.0, 0.0,
+        0.5, -0.5, 0.0, 0.0, 1.0,
+        -0.5, -0.5, 0.0, 1.0, 1.0
+    ], [0, 1, 2, 1, 2, 3], [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]).setId('rect'));
+
+    var list = [], i, temp
+    for (i = 0; i < 100; i++) {
+        scene.addChild(new Mesh(scene.getGeometry('tri'), new Material(Math.random(), Math.random(), Math.random(), 1)).setId('tri' + i));
+        temp = scene.getChild('tri' + i)
+        temp.position = [Math.random() * 50 - 25, Math.random() * 50 - 25, Math.random() * 50 - 25]
+        temp.rotate = [Math.random(), Math.random(), Math.random()]
+        list.push(temp)
+
+    }
+    for (i = 0; i < 100; i++) {
+        scene.addChild(new Mesh(scene.getGeometry('rect'), new Material(Math.random(), Math.random(), Math.random(), 1)).setId('rect' + i))
+        temp = scene.getChild('rect' + i)
+        temp.position = [Math.random() * 50 - 25, Math.random() * 50 - 25, Math.random() * 50 - 25]
+        temp.rotate = [Math.random(), Math.random(), Math.random()]
+        list.push(temp)
+    }
+
+    scene.getChild('camera1').backgroundColor = '#333333'
+    scene.getChild('camera2').backgroundColor = '#55dd33'
+    scene.getChild('camera3').backgroundColor = '#aaee33'
+    scene.getChild('camera2').renderArea = [512 - 128 - 10, 10, 256, 256]
+    scene.getChild('camera3').renderArea = [30, 30, 128, 128]
+
+    var currentFPS, prevTime = 0, count = 0, sum = 0
+    world.addEventListener(World.renderAfter, function (currTime) {
+        var currentFPS = 1000 / ( currTime - prevTime );
+        prevTime = currTime;
+        count++
+        divCurrentFPS.textContent = currentFPS.toFixed(2);
+        divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
+        for (var i = 0; i < list.length; i++) {
+            var temp = list[i]
+            temp.rotateX += 0.01
+            temp.rotateY += 0.02
+            temp.rotateZ += 0.03
+        }
+    })
+</script>
+</body>
+</html>

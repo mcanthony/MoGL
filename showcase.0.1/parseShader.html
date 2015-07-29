@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>MoGL Test Suite - drawTriangle By ParserShader</title>
+    <script src="lib/mogl.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+</head>
+<body>
+<canvas id="firstTest" width="1024" height="1024"></canvas>
+
+<script>
+    // 모글에 전역적인 루프 시스템이 있것고..
+
+    var w = new World('firstTest');
+    w.addScene('s0', new Scene());
+
+
+    w.getScene('s0').addGeometry('tri', new Geometry([-1, 0, 0, 1, 0, 0, 0, 1, 0], [0, 1, 2]));
+    w.getScene('s0').addGeometry('rect', new Geometry([
+        1.0, 1.0, 0.0, 0.0, 0.0,
+        -1.0, 1.0, 0.0, 1.0, 0.0,
+        1.0, -1.0, 0.0, 0.0, 1.0,
+        -1.0, -1.0, 0.0, 1.0, 1.0
+    ], [0, 1, 2, 1, 2, 3], [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]));
+    w.getScene('s0').addMaterial('white', new Material('#fff'));
+    w.getScene('s0').addChild('tri', new Mesh('tri', new Material('#ff2244')));
+
+    var bitmapMaterial = new Material(Math.random(), Math.random(), Math.random())
+    w.getScene('s0').addTexture('bitmapTextureTest', '../src/ohno.png')
+    bitmapMaterial.addTexture(Texture.diffuse,'bitmapTextureTest')
+    w.getScene('s0').addMaterial('bitmapMaterial', bitmapMaterial)
+
+    var list=  []
+    for (var i = 0; i < 100; i++) {
+        w.getScene('s0').addChild('tri' + i, new Mesh('tri', new Material(Math.random(), Math.random(), Math.random())));
+        var a = w.getScene('s0').getChild('tri' + i)
+        a.x = Math.random()*50 - 25
+        a.y = Math.random()*50 - 25
+        a.z = Math.random()*50 - 25
+        a.rotateX = Math.random()
+        a.rotateY = Math.random()
+        a.rotateZ = Math.random()
+
+        list.push(a)
+
+    }
+    for (var i = 0; i < 100; i++) {
+        w.getScene('s0').addChild('rect' + i, new Mesh('rect', 'bitmapMaterial'));
+        var a = w.getScene('s0').getChild('rect' + i)
+        a.x = Math.random()*50 - 25
+        a.y = Math.random()*50 - 25
+        a.z = Math.random()*50 - 25
+        a.rotateX = Math.random()
+        a.rotateY = Math.random()
+        a.rotateZ = Math.random()
+
+        list.push(a)
+    }
+
+    w.getScene('s0').addChild('rect', new Mesh('rect', 'bitmapMaterial'));
+    w.getScene('s0').addChild('camera1', new Camera());
+    w.getScene('s0').addChild('camera2', new Camera());
+    w.getScene('s0').addChild('camera3', new Camera());
+    w.getScene('s0')._update = 1
+    //    w.getScene('s0').addChild('camera2', new Camera());
+    w.addRender('s0', 'camera1');
+    w.addRender('s0', 'camera2');
+    w.addRender('s0', 'camera3');
+    //    w.addRender('s0', 'camera2');
+    //
+
+    console.log(w.getScene('s0')._children)
+    console.log(w.getScene('s0')._cameras)
+    console.log(w)
+
+
+    w.getScene('s0').getChild('camera2').setRenderArea(512-128-10,10,128,128)
+    w.getScene('s0').getChild('camera3').setRenderArea(10,10,128,128)
+    setInterval(function () {
+        w.render();
+    }, 1000 / 60)
+
+
+
+    w.getScene('s0').getChild('camera1').setBackgroundColor('#333333')
+    w.getScene('s0').getChild('camera2').setBackgroundColor('#55dd33')
+    w.getScene('s0').getChild('camera3').setBackgroundColor('#aaee33')
+    //    w.getScene('s0').getChild('camera3').setVisible(false)
+
+
+    var c2 = w.getScene('s0').getChild('camera2')
+    console.log(c2)
+    c2.rotateX=10
+    c2.rotateY=20
+    c2.z = 1
+
+
+
+    var t=0
+    var t2=0
+    w.LOOP['test '] = function () {
+        w.getScene('s0').getChild('rect').rotateZ += 0.01
+        w.getScene('s0').getChild('rect').setScale(0.1, 0.1, 0.1)
+        w.getScene('s0').getChild('tri').rotateX += 0.01
+        w.getScene('s0').getChild('tri').rotateY += 0.01
+        w.getScene('s0').getChild('tri').rotateZ += 0.01
+        w.getScene('s0').getChild('tri').scaleX = w.getScene('s0').getChild('tri').scaleY = w.getScene('s0').getChild('tri').scaleZ = Math.sin(w.getScene('s0').getChild('tri').rotateZ) / 2 + 0.5
+        w.getScene('s0').getChild('tri').x = Math.sin(w.getScene('s0').getChild('tri').rotateZ) / 2
+        w.getScene('s0').getChild('tri').y = Math.cos(w.getScene('s0').getChild('tri').rotateZ) / 2
+        t+=0.01
+        t2+=0.02
+        var c1 = w.getScene('s0').getChild('camera1')
+        c1.z = Math.cos(t)
+        c1.rotateZ = t2
+        c1.rotateY = t2
+
+        for (var i = 0; i < list.length; i++) {
+            var a = list[i]
+            a.rotateX += 0.01
+            a.rotateY += 0.02
+            a.rotateZ += 0.03
+        }
+    }
+
+
+</script>
+</body>
+</html>

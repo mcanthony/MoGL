@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL Showcase - Primitive_polygon</title>
+    <meta charset="utf-8"/>
+    <meta property="og:title" content="Monkey"/>
+    <meta property="og:description" content="MoGL.js version"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+        }
+
+    </style>
+</head>
+<body>
+<img src="primitive/honey1.png" id="testIMG2" style="position: absolute;top:0px; display:none" width="256">
+<canvas id="canvas"></canvas>
+<script src="lib/mogl.min.js"></script>
+<script src="../showcase/dat.gui.min.js"></script>
+<script src="http://js.bsapi.co/test/"></script>
+<script>
+    'use strict';
+    MoGL.classes(window);
+    // basic settings
+    var world, scene, camera;
+    var texture, mat
+
+    world = new World('canvas')
+    scene = new Scene()
+    camera = new Camera()
+
+    world.setAutoSize(1)
+    world.start()
+
+    world.addScene(scene)
+    scene.addChild(camera)
+
+    texture = new Texture()
+    texture.img = document.getElementById('testIMG2')
+    mat = new Material('#FFF')
+    mat.addTexture(Texture.diffuse, texture).wireFrame = 1
+
+    ////////////////////////////////////////////////////////////////
+    var newMesh;
+    var prevN, start, end, intervalId;
+    prevN = 3, start = 3, end = 30
+    newMesh = new Mesh(Primitive.polygon(3), mat)
+    scene.addChild(newMesh);
+    newMesh.z = -5
+    function setMesh(n) {
+        newMesh.geometry = Primitive.polygon(n)
+        prevN = n
+    }
+
+    setMesh(start++);
+    setInterval(function () {
+        if (start > end) start = 3
+        setMesh(start++);
+    }, 32);
+</script>
+</body>
+</html>

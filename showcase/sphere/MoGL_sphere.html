@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>earth</title>
+    <meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .FPS {
+            color: #FFF;
+            left: 0px;
+            top: 0px;
+            position: absolute
+        }
+    </style>
+    <script src="../../src/MoGL.js"></script>
+    <script src="../../src/BlendMode.js"></script>
+    <script src="../../src/Filter.js"></script>
+    <script src="../../src/Vertex.js"></script>
+	<script src="../../src/Shading.js"></script>
+    <script src="../../src/VertexShaderFunctions.js"></script>
+    <script src="../../src/Matrix.js"></script>
+    <script src="../../src/Geometry.js"></script>
+    <script src="../../src/Material.js"></script>
+    <script src="../../src/Texture.js"></script>
+    <script src="../../src/Mesh.js"></script>
+    <script src="../../src/Group.js"></script>
+    <script src="../../src/Camera.js"></script>
+    <script src="../../src/Scene.js"></script>
+    <script src="../../src/make.js"></script>
+    <script src="../../src/World.js"></script>
+
+</head>
+<body>
+<canvas id="glcontents"></canvas>
+<div class="FPS">
+	Current FPS: <span id="currentFPS"></span>
+	Average FPS: <span id="averageFPS"></span>
+</div>
+<script>
+	(function(_win){
+		var divCurrentFPS = document.getElementById( 'currentFPS' );
+		var divAverageFPS = document.getElementById( 'averageFPS' );
+		var prevTime = 0;
+		
+		glcontents.width = _win.innerWidth;
+		glcontents.height = _win.innerHeight;
+		
+		var world = new World("glcontents");
+		var scene = new Scene().setId("scene1");
+		var camera = new Camera();
+        world.addScene(scene);
+
+		scene.addChild("camera1", camera);
+		
+		scene.addMaterial("m_sphere", new Material());
+        scene.addTexture('earth', 'earth.jpg');
+		
+		scene.getMaterial("m_sphere").addTexture(Texture.diffuse, "earth");
+		scene.getMaterial("m_sphere").setShading(Shading.phong)
+
+
+		
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.open("get", "sphere100_20_20.txt", true);
+		xmlhttp.onreadystatechange = function(){
+			if(xmlhttp.readyState == 4 && xmlhttp.status == 200){
+				make_mesh(JSON.parse(xmlhttp.responseText));
+			}
+		};
+		xmlhttp.send(null);
+
+		function make_mesh(obj) {
+
+			scene.addGeometry('geometry', new Geometry(obj.vertices, obj.indices, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]));
+
+			var mesh = new Mesh('geometry', 'm_sphere');
+
+			mesh.scaleX = 0.03;
+			mesh.scaleY = 0.03;
+			mesh.scaleZ = 0.03;
+
+
+			scene.addChild('earth', mesh);
+
+
+			var sum = 0, count = 1;
+			prevTime = +(new Date);
+			function render(currTime) {
+				var currTime = +(new Date);
+				var currentFPS = 1000 / ( currTime - prevTime );
+				prevTime = currTime;
+
+				divCurrentFPS.textContent = currentFPS.toFixed( 2 );
+				divAverageFPS.textContent = ( ( sum += currentFPS ) / count++ ).toFixed( 2 );
+
+				mesh.rotateY += 0.005;
+
+			}
+			world.addEventListener(World.renderAfter, render);
+			world.start();
+		}
+	})(window);
+
+</script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL Test Suite - Camera.js</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <link rel="stylesheet" type="text/css" href="css.css"/>
+</head>
+<body>
+<img src="../src/ohno.png">
+<canvas id="world" width="600" height="10"></canvas>
+<div>TODO</div>
+<div>setProjectionMatrix 이후 far,near,fov값 추출 정상작동하는지 확인</div>
+<div id="stage"></div>
+<div id="result"></div>
+<div id="test"></div>
+<script src="lib/mogl.min.js"></script>
+<script src="http://js.bsapi.co/test/"></script>
+<script>
+    var w = World('world')
+    var scene1 = Scene()
+    var camera = new Camera()
+
+    w.addScene('scene1', scene1)
+    scene1.addChild('camera1', camera)
+    scene1._update = 1
+    scene1.update()
+    console.log(scene1.getChild('camera1'))
+
+    w.addRender('scene1', 'camera1', scene1)
+
+    bsTest('antialias', function () {
+                // 기본값은 false
+                return scene1.getChild('camera1').getAntialias()
+            }, false,
+            function () {
+                // antialias 설정
+                // 숫자로 넣어도 불린값으로 변경
+                scene1.getChild('camera1').setAntialias(1)
+                return scene1.getChild('camera1').getAntialias()
+            }, true,
+            function () {
+                // antialias 설정
+                // 숫자로 넣어도 불린값으로 변경
+                scene1.getChild('camera1').setAntialias(false)
+                return scene1.getChild('camera1').getAntialias()
+            }, false
+    )
+    bsTest('visible', function () {
+                // 기본값은 true
+                return scene1.getChild('camera1').getVisible()
+            }, true,
+            function () {
+                // visible 설정
+                // 숫자로 넣어도 불린값으로 변경
+                scene1.getChild('camera1').setVisible(1)
+                return scene1.getChild('camera1').getVisible()
+            }, true,
+            function () {
+                // visible 설정
+                // 숫자로 넣어도 불린값으로 변경
+                scene1.getChild('camera1').setVisible(false)
+                return scene1.getChild('camera1').getVisible()
+            }, false
+    )
+    bsTest('backgroundColor', function () {
+                // 기본값은 [0,0,0,1]
+                return scene1.getChild('camera1').getBackgroundColor().toString()
+            }, [0, 0, 0, 1].toString(),
+            function () {
+                // #fff
+                scene1.getChild('camera1').setBackgroundColor('#fff')
+                return scene1.getChild('camera1').getBackgroundColor().toString()
+            }, [1, 1, 1, 1].toString(),
+            function () {
+                // #ffffff
+                scene1.getChild('camera1').setBackgroundColor('#ffffff')
+                return scene1.getChild('camera1').getBackgroundColor().toString()
+            }, [1, 1, 1, 1].toString(),
+            function () {
+                // #ffffff0.7
+                scene1.getChild('camera1').setBackgroundColor('#ffffff0.7')
+                return scene1.getChild('camera1').getBackgroundColor().toString()
+            }, [1, 1, 1, 0.7].toString()
+    )
+    bsTest('clipPlane', function () {
+                //기본값
+                //near = 0.1
+                //far = 100000
+                return scene1.getChild('camera1').getClipPlane().toString()
+            }, [scene1.getChild('camera1')._near, scene1.getChild('camera1')._far].toString(),
+            function () {
+                // #fff
+                scene1.getChild('camera1').setClipPlane(100, 300)
+                return scene1.getChild('camera1').getClipPlane().toString()
+            }, [100, 300].toString()
+    )
+    bsTest('fov', function () {
+                scene1.getChild('camera1').setFOV(45)
+                return scene1.getChild('camera1').getFOV()
+            }, 45,
+            function () {
+                scene1.getChild('camera1').setFOV(1280, 760, 90)
+                return scene1.getChild('camera1').getFOV()
+            }, 62,
+            function () {
+                scene1.getChild('camera1').setFOV(1920, 760, 60)
+                return scene1.getChild('camera1').getFOV()
+            }, 26,
+            function () {
+                return scene1.getChild('camera1')._fov
+            }, 26
+    )
+    bsTest('renderArea', function () {
+                return scene1.getChild('camera1').getRenderArea().toString()
+            }, [0, 0, 600, 10].toString(),
+            function () {
+                scene1.getChild('camera1').setRenderArea(100, 200, 300, 300)
+                return scene1.getChild('camera1').getRenderArea().toString()
+            }, [100, 200, 300, 300].toString()
+    )
+    bsTest('filter', function () {
+                scene1.getChild('camera1').setFilter(Filter.anaglyph)
+                scene1.getChild('camera1').setFilter(Filter.bloom)
+                scene1.getChild('camera1').setFilter(Filter.colorMatrix)
+                scene1.getChild('camera1').removeFilter(Filter.bloom)
+                return scene1.getChild('camera1').getFilters().toString()
+            }, [Filter.anaglyph, Filter.colorMatrix].toString(),
+            function () {
+                scene1.getChild('camera1').removeFilter(Filter.anaglyph)
+                scene1.getChild('camera1').removeFilter(Filter.colorMatrix)
+                scene1.getChild('camera1').setFilter(Filter.displacementMap)
+                console.log(scene1.getChild('camera1')._filters[Filter.displacementMap])
+                var baseValue = {
+                    mapTextureID: null,
+                    mapPoint: null,
+                    componentX: 0,
+                    componentY: 0,
+                    scaleX: 0.0,
+                    scaleY: 0.0,
+                    mode: "wrap",
+                    color: 0,
+                    alpha: 0.0
+                }
+                var result = true
+                for (var k in scene1.getChild('camera1')._filters[Filter.displacementMap]) {
+                    console.log(k, baseValue[k], scene1.getChild('camera1')._filters[Filter.displacementMap][k])
+                    if (baseValue[k] != scene1.getChild('camera1')._filters[Filter.displacementMap][k]) result = false
+                }
+                return result
+            }, true
+    )
+    bsTest('fog', function () {
+                scene1.getChild('camera1').setFog('#eefe00', 10, 100)
+                return scene1.getChild('camera1').getFog()
+            }, true,
+            function () {
+                scene1.getChild('camera1').setFog(false)
+                return scene1.getChild('camera1').getFog()
+            }, false,
+            function () {
+                scene1.getChild('camera1').setFog('#fff', 10, 100)
+                var t = scene1.getChild('camera1')._fog
+                return t.r == 1 && t.g == 1 && t.b == 1 && t.a == 1 && t.near == 10 && t.far == 100
+            }, true
+    )
+
+
+</script>
+<div></div>
+</body>
+</html>

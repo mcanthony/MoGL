@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>earth</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .FPS {
+            color: #FFF;
+            left: 0px;
+            top: 0px;
+            position: absolute
+        }
+    </style>
+    <script src="../lib/mogl.min.js"></script>
+</head>
+<body>
+<canvas id="glcontents"></canvas>
+<div class="FPS">
+    Current FPS: <span id="currentFPS"></span>
+    Average FPS: <span id="averageFPS"></span>
+</div>
+<script>
+    MoGL.globalization();
+    (function (_win, meshCount) {
+        var divCurrentFPS = document.getElementById('currentFPS');
+        var divAverageFPS = document.getElementById('averageFPS');
+        var prevTime = 0;
+
+        glcontents.width = _win.innerWidth;
+        glcontents.height = _win.innerHeight;
+
+        var world = new World("glcontents");
+        var scene = new Scene();
+        var camera = new Camera();
+        world.addScene('scene1', scene);
+
+        scene.addChild("camera1", camera);
+
+        scene.addMaterial("m_sphere", new Material());
+        scene.addTexture('earth', 'earth.jpg');
+
+        scene.getMaterial("m_sphere").addTexture(Texture.diffuse, "earth");
+
+        world.addRender("scene1", "camera1");
+
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("get", "sphere100_20_20.txt", true);
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                make_mesh(JSON.parse(xmlhttp.responseText));
+            }
+        };
+        xmlhttp.send(null);
+
+        var meshes = [];
+
+        function make_mesh(obj) {
+
+            scene.addGeometry("g_sphere", new Geometry(obj.vertices, obj.indices, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]));
+            for (var i = 0; i < meshCount; i++) {
+                var earth = new Mesh("g_sphere", "m_sphere");
+                earth.x = Math.random() * 50 - 25;
+                earth.y = Math.random() * 50 - 25;
+                earth.z =  Math.random() * 50 -25
+                earth.setScale(0.01,0.01,0.01)
+                earth.rotateX = Math.random();
+                earth.rotateY = Math.random();
+                earth.rotateZ = Math.random();
+                meshes.push(earth);
+                scene.addChild("earth" + i, earth);
+            }
+
+            // FPS
+            var sum = 0, count = 1;
+
+            function render(currTime) {
+                var currentFPS = 1000 / ( currTime - prevTime );
+                prevTime = currTime;
+                divCurrentFPS.textContent = currentFPS.toFixed(2);
+                divAverageFPS.textContent = ( ( sum += currentFPS ) / count++ ).toFixed(2);
+
+
+                for (var i = 0; i < meshCount; i++) {
+                    var earth = meshes[i];
+                    earth.rotateX += 0.02;
+                    earth.rotateY += 0.02;
+                    earth.rotateZ += 0.02;
+                }
+
+                scene.getChild('camera1').x = Math.sin(count / 100) * 50
+                scene.getChild('camera1').y = Math.cos(count / 50) * 50
+                scene.getChild('camera1').z = Math.cos(count / 100) * 50+Math.sin(count / 100) * 50
+
+                scene.getChild('camera1').lookAt(0, 0, 0);
+
+                world.render();
+                requestAnimationFrame(render);
+            }
+
+            requestAnimationFrame(render);
+        }
+    })(window, 500);
+
+</script>
+</body>
+</html>

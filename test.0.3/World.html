@@ -18,28 +18,10 @@
 <div id="stage"></div>
 <div id="result"></div>
 <div id="test"></div>
-<script src="../src/$.js"></script>
-<script src="../src/make.js"></script>
-<script src="../src/MoGL.js"></script>
-<script src="../src/Vector.js"></script>
-<script src="../src/Filter.js"></script>
-<script src="../src/Vertex.js"></script>
-<script src="../src/BlendMode.js"></script>
-<script src="../src/Primitive.js"></script>
-<script src="../src/Shading.js"></script>
-<script src="../src/VertexShaderFunctions.js"></script>
-<script src="../src/Shader.js"></script>
-<script src="../src/Matrix.js"></script>
-<script src="../src/Texture.js"></script>
-<script src="../src/Geometry.js"></script>
-<script src="../src/Material.js"></script>
-<script src="../src/Mesh.js"></script>
-<script src="../src/Group.js"></script>
-<script src="../src/Camera.js"></script>
-<script src="../src/Scene.js"></script>
-<script src="../src/World.js"></script>
+<script src="lib/mogl.min.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
 <script>
+    MoGL.classes(window);
     var world = new World('canvasTest');
     var world2 = World('canvasTest2');
     var camera = new Camera(new Geometry([], []), new Material());
@@ -55,78 +37,75 @@
             function () {
                 return world2.isAlive;
             }, true,
-            function(){
-                try{
+            function () {
+                var test = '';
+                try {
                     new World();
-                }catch(e){
-                    return e.toString().indexOf('World.constructor:0') > -1;
+                } catch (e) {
+                    test = e.toString();
                 }
-            }, true,
-            function(){
-                try{
+                return test == '';
+            }, false,
+            function () {
+                var test = '';
+                try {
                     new World('empty');
-                }catch(e){
-                    return e.toString().indexOf('World.constructor:1') > -1;
+                } catch (e) {
+                    test = e.toString();
                 }
-            }, true
+                return test == '';
+            }, false
     );
 
-    bsTest('addScene/getScene/removeScene',
+    bsTest('add/get/remove ',
             function () {
-                world.addScene(sceneTest1.setId('lobby'));
+                world.addScene(sceneTest1.setId('lobby'))
                 return world.getScene('lobby');
             }, sceneTest1,
             function () {
+                // 씬추가
                 world.addScene(sceneTest2.setId('room'));
                 return world.getScene('room');
             }, sceneTest2,
-            function(){
-                try{
-                    world.addScene(sceneTest1);
-                }catch(e){
-                    return e.toString().indexOf('World.addScene:0') > -1;
-                }
-            }, true,
             function () {
+                var test = '';
                 try {
-                    world.addScene({});
+                    // 이상한 타입 입력
+                    world.addScene('wantNull', {});
                 } catch (e) {
-                    return e.toString().indexOf('World.addScene:1') > -1;
+                    test = e.toString();
                 }
-            }, true,
-            function(){
-                return world.getScene('empty');
-            }, null,
+                return test;
+            }, 'Error: World.addScene:1',
             function () {
+                // 씬삭제
                 world.removeScene('room');
                 return world.getScene('room');
-            }, null,
-            function(){
-                try{
-                    world.removeScene('empty');
-                }catch(e){
-                    return e.toString().indexOf('World.removeScene:0') > -1;
-                }
-            }, true
+            }, null
     );
-
+    //
+    world.destroy();
+    world2.destroy();
+    //
     bsTest('destroy',
             function () {
-                world.destroy();
                 return world.isAlive;
             }, false,
             function () {
-                world2.destroy();
-                return world2.isAlive;
-            }, false,
-            function () {
+                var test = 1;
                 try {
+                    // 파괴된 객체 매서드 실행
                     world.addScene(sceneTest3);
                 } catch (e) {
-                    return e.toString().indexOf('Error: Destroyed Object') > -1;
+                    test = 0
                 }
-            }, true
+                return test;
+            }, 0,
+            function () {
+                return world2.isAlive;
+            }, false
     );
+    //
 
     bsTest('scene',
             function () {

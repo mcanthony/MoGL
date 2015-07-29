@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<title>MoGL Test Suite - Primitive.js</title>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<meta name="format-detection" content="telephone=no"/>
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+	<link rel="stylesheet" type="text/css" href="css.css"/>
+
+</head>
+<body>
+<div id="stage"></div>
+<div id="result"></div>
+<div id="test"></div>
+
+<script src="lib/mogl.min.js"></script>
+<script src="http://js.bsapi.co/test/"></script>
+<script>
+//var polygon, xyz = 3, xyzuv = 5;
+//bsTest('polygon',
+//			function () {
+//				// 사각형이면 vs.length == 4
+//				polygon = Primitive.polygon(4, 1);
+//				return polygon.getVertexCount();
+//			}, 11,
+//			function () {
+//				// 사각형이면 is.length == 2
+//				polygon = Primitive.polygon(4, 1);
+//				return polygon.getTriangleCount();
+//			}, 8,
+//			function () {
+//				// 오각형이면 vs.length == 5
+//				polygon = Primitive.polygon(5, 1);
+//				return polygon.getVertexCount();
+//			}, 5,
+//			function () {
+//				// 사각형이면 is.length == 3
+//				polygon = Primitive.polygon(5, 1);
+//				return polygon.getTriangleCount();
+//			}, 3,
+//			function () {
+//				// 홀수각형이면
+//				// n / 2 미만 번째 점의 x좌표 < 0
+//				// n / 2 이상 번째 점의 x좌표 > 0
+//				var vArr, checkPosNeg = true,
+//					n = 17, i;
+//				polygon = Primitive.polygon(n, 1);
+//				vArr = polygon._position;
+//				for (i = 1 ; i < n ; i++) {
+//					if (i < (n / 2))
+//						checkPosNeg = checkPosNeg && (vArr[i *= xyz] < 0);
+//					else
+//						checkPosNeg = checkPosNeg && (vArr[i *= xyz] > 0);
+//				}
+//
+//				return checkPosNeg;
+//			}, true,
+//			function () {
+//				// 짝수각형이면
+//				// n / 2 미만 번째 점의 x좌표 < 0
+//				// n / 2 번째 점의 x 좌표 == 0
+//				// n / 2 초과 번째 점의 x좌표 > 0
+//				var vArr, checkPosNeg = true,
+//					n = 8, i;
+//				polygon = Primitive.polygon(n, 1);
+//				vArr = polygon._position;
+//
+//				for (i = 1 ; i < n ; i++) {
+//					if (i < (n / 2))
+//						checkPosNeg = checkPosNeg && (vArr[i *= xyz] < 0);
+//					else if ( i == (n / 2))
+//						checkPosNeg = checkPosNeg && (Math.round(vArr[i *= xyz]) == 0);
+//					else
+//						checkPosNeg = checkPosNeg && (vArr[i *= xyz] > 0);
+//				}
+//
+//				return checkPosNeg;
+//			}, true
+//);
+</script>
+<canvas id='polygon' width=500 height=500></canvas>
+<script>
+MoGL.globalization();
+(function() {
+	var world = new World('polygon'),
+	scene = new Scene(),
+	camera = new Camera(),
+	solidWhite = new Material('#ffffff');
+
+	world.addScene('scene', scene);
+	scene.addChild('camera', camera);
+	world.addRender('scene', 'camera');
+	// scene.addMaterial('bitmapMat', new Material());
+	scene.addTexture('texture1', 'primitive/honey1.png');
+	// scene.getMaterial('bitmapMat').addTexture(Texture.diffuse, 'texture1');
+
+	var setMesh = function(n) {
+		var polygon = Primitive.polygon(n, 2),
+			// newMesh = new Mesh(polygon, solidWhite);
+			newMesh = new Mesh(polygon, new Material().addTexture(Texture.diffuse, 'texture1'));
+		scene.removeChild('polygon' + Math.max(3, n - 1));
+		scene.addChild('polygon' + n, newMesh);
+		newMesh.z = -5;
+	};
+
+	var start = 3, end = 15,
+		intervalId;
+	setMesh(start++);
+	world.render();
+	intervalId = setInterval( function() {
+		if (start < end) {
+			setMesh(start++);
+			world.render();
+		}
+	}, 300);
+	if (start == end)
+		clearInterval(intervalId);
+}());
+</script>
+<hr/>
+
+
+</body>
+</html>

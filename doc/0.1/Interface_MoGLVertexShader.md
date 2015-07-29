@@ -1,1 +1,0 @@
-# MoGL Vertex Shader Interface

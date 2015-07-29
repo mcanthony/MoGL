@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL Test Suite - World.js</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <link rel="stylesheet" type="text/css" href="css.css"/>
+    <style>
+    html,body{height:100%;padding:0;margin:0;width:100%}
+    </style>
+</head>
+<body>
+<div id="s"></div>
+<div id="render" style="position:absolute;width:100%;background:#fff;padding:10px;border:5px solid #006;display:none"></div>
+<textarea id="doc" style="display:block;width:100%;height:100%"></textarea>
+<script src="markdown.js"></script>
+<script src="../src/$.js"></script>
+<script src="../src/make.js"></script>
+<script src="../src/MoGL.js"></script>
+<script src="../src/Vector.js"></script>
+<script src="../src/Filter.js"></script>
+<script src="../src/Vertex.js"></script>
+<script src="../src/BlendMode.js"></script>
+<script src="../src/Primitive.js"></script>
+<script src="../src/Shading.js"></script>
+<script src="../src/VertexShaderFunctions.js"></script>
+<script src="../src/Shader.js"></script>
+<script src="../src/Matrix.js"></script>
+<script src="../src/Texture.js"></script>
+<script src="../src/Geometry.js"></script>
+<script src="../src/Material.js"></script>
+<script src="../src/Mesh.js"></script>
+<script src="../src/Group.js"></script>
+<script src="../src/Camera.js"></script>
+<script src="../src/Scene.js"></script>
+<script src="../src/World.js"></script>
+<script src="http://js.bsapi.co/test/"></script>
+<script>
+var k, str;
+str = '<select id="target" style="font-size:18px">';
+for(k in MoGL.classes()){
+    str += '<option value="'+k+'">'+k+'</option>';
+}
+document.getElementById('s').innerHTML = str + '</select>';
+document.getElementById('target').onchange = function(){
+    var v = window[this.value].getMD();
+    document.getElementById('doc').value = v;
+    document.getElementById('render').innerHTML = marked(v);
+    document.getElementById('render').style.display = 'block';
+};
+document.getElementById('doc').value = window.MoGL.getMD();
+document.getElementById('render').onclick = function(){
+    this.style.display = 'none';
+};
+
+</script>
+
+</body>
+</html>

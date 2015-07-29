@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL Test Suite - Geometry.js</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <link rel="stylesheet" type="text/css" href="css.css"/>
+</head>
+<body>
+<img src="../src/ohno.png">
+<canvas id="canvas" height="10" style="position: absolute"></canvas>
+<div id="stage"></div>
+<div id="result"></div>
+<div id="test"></div>
+<script src="../src/$.js"></script>
+<script src="../src/make.js"></script>
+<script src="../src/MoGL.js"></script>
+<script src="../src/Vector.js"></script>
+<script src="../src/Filter.js"></script>
+<script src="../src/Vertex.js"></script>
+<script src="../src/BlendMode.js"></script>
+<script src="../src/Primitive.js"></script>
+<script src="../src/Shading.js"></script>
+<script src="../src/VertexShaderFunctions.js"></script>
+<script src="../src/Shader.js"></script>
+<script src="../src/Matrix.js"></script>
+<script src="../src/Texture.js"></script>
+<script src="../src/Geometry.js"></script>
+<script src="../src/Material.js"></script>
+<script src="../src/Mesh.js"></script>
+<script src="../src/Group.js"></script>
+<script src="../src/Camera.js"></script>
+<script src="../src/Scene.js"></script>
+<script src="../src/World.js"></script>
+<script src="http://js.bsapi.co/test/"></script>
+<script>
+    var vData, iData;
+    //vertexBuffer
+    vData = [
+        // Front face
+        -1.0, -1.0, 1.0,
+        1.0, -1.0, 1.0,
+        1.0, 1.0, 1.0,
+        -1.0, 1.0, 1.0,
+
+        // Back face
+        -1.0, -1.0, -1.0,
+        -1.0, 1.0, -1.0,
+        1.0, 1.0, -1.0,
+        1.0, -1.0, -1.0,
+
+        // Top face
+        -1.0, 1.0, -1.0,
+        -1.0, 1.0, 1.0,
+        1.0, 1.0, 1.0,
+        1.0, 1.0, -1.0,
+
+        // Bottom face
+        -1.0, -1.0, -1.0,
+        1.0, -1.0, -1.0,
+        1.0, -1.0, 1.0,
+        -1.0, -1.0, 1.0,
+
+        // Right face
+        1.0, -1.0, -1.0,
+        1.0, 1.0, -1.0,
+        1.0, 1.0, 1.0,
+        1.0, -1.0, 1.0,
+
+        // Left face
+        -1.0, -1.0, -1.0,
+        -1.0, -1.0, 1.0,
+        -1.0, 1.0, 1.0,
+        -1.0, 1.0, -1.0,
+    ]
+    //indexBuffer
+    iData = [
+        0, 1, 2, 0, 2, 3,    // Front face
+        4, 5, 6, 4, 6, 7,    // Back face
+        8, 9, 10, 8, 10, 11,  // Top face
+        12, 13, 14, 12, 14, 15, // Bottom face
+        16, 17, 18, 16, 18, 19, // Right face
+        20, 21, 22, 20, 22, 23  // Left face
+    ]
+    var cube1 = new Geometry(vData, iData, [Vertex.x, Vertex.y, Vertex.z]);
+    //팩토리함수로도 작동함.
+    var cube2 = Geometry(vData, iData);
+    var cube3;
+    var cube4;
+    var testResult
+    bsTest('new',
+            // 잘생성이되었나
+            function () {
+                return cube1.isAlive;
+            }, true,
+            // 잘생성이되었나
+            function () {
+                return cube2.isAlive;
+            }, true,
+            function () {
+                testResult = 1
+                try {
+                    // 이상한 타입 입력
+                    cube3 = Geometry({}, iData)
+                } catch (e) {
+                    testResult = e.toString();
+                }
+                return testResult;
+            }, 'Error: Geometry.constructor:0',
+            function () {
+                testResult = 1
+                try {
+                    // 이상한 타입 입력
+                    cube3 = Geometry(vData, {})
+                } catch (e) {
+                    testResult = e.toString();
+                }
+                return testResult;
+            }, 'Error: Geometry.constructor:1',
+            function () {
+                testResult = 1
+                try {
+                    // Uint16 입력테스트
+                    cube3 = Geometry(new Float32Array([]), new Uint16Array([]))
+                } catch (e) {
+                    testResult = e.toString();
+                }
+                return testResult;
+            }, 'Error: Geometry.constructor:1',
+            function () {
+                testResult = 1
+                try {
+                    // 잘못된 인덱스 입력테스트
+                    cube3 = Geometry(new Float32Array([]), new Float32Array([]))
+                } catch (e) {
+                    testResult = e.toString();
+                }
+                return testResult;
+            }, 'Error: Geometry.constructor:1',
+            function () {
+                cube4 = new Geometry([
+                    0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0
+                ], [0, 1, 2], [Vertex.x, Vertex.y, Vertex.z, Vertex.normalX, Vertex.normalY, Vertex.normalZ])
+                return cube4.vertexCount;
+            }, 3
+    );
+    bsTest('vertexCount',
+            function () {
+                return cube1.vertexCount;
+            }, 24,
+            function () {
+                return cube2.vertexCount;
+            }, 24
+    );
+    bsTest('triangleCount',
+            function () {
+                return cube1.triangleCount;
+            }, 12,
+            function () {
+                return cube2.triangleCount;
+            }, 12
+    );
+    var t
+    bsTest('volume',
+            function () {
+                t = cube1.volume
+                return t[0] == 2 && t[1] == 2 && t[2] == 2;
+            }, true,
+            function () {
+                t = cube2.volume
+                return t[0] == 2 && t[1] == 2 && t[2] == 2;
+            }, true
+    );
+    var testSeperator = new Geometry([
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, // x,y,z, u,v, normalX,normalY,normalZ, r,g,b,a,
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+    ], [0, 1, 2], [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v, Vertex.normalX, Vertex.normalY, Vertex.normalZ, Vertex.r, Vertex.g, Vertex.b, Vertex.a])
+    bsTest('seperator',
+            function () {
+                var testValue = [1, 2, 3, 1, 2, 3, 1, 2, 3], result = true
+                for (var i = 0, len = testValue.length; i < len; i++) {
+                    if (testSeperator.position[i] != testValue[i]) result = false
+                }
+                console.log('testSeperator._position', testSeperator.position)
+                console.log('testSeperator._uv', testSeperator.uv)
+                console.log('testSeperator._color', testSeperator.color)
+                console.log('testSeperator._normal', testSeperator.normal)
+                return result
+            }, true
+    )
+    var testSeperator2 = new Geometry([
+        1, 2, 3, 4, 5, 6, 7, 8, // x,y,z, u,v, normalX,normalY,normalZ,
+        1, 2, 3, 4, 5, 6, 7, 8,
+        1, 2, 3, 4, 5, 6, 7, 8
+    ], [0, 1, 2], [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v, Vertex.normalX, Vertex.normalY, Vertex.normalZ])
+    bsTest('seperator2',
+            function () {
+                return testSeperator2.color.length
+            }, 0
+    );
+
+
+    bsTest('constructor',
+            function () {
+                var geo, error;
+                try {
+                    geo = new Geometry();
+                } catch (e) {
+                    error = e.toString();
+                }
+                return error;
+            }, 'Error: Geometry.constructor:0',
+            function () {
+                var geo, error;
+                try {
+                    geo = new Geometry(
+                            [1, 0, 0, 0, 0, 1, 0, 1, 1,
+                                1, 0, 0, 0, 0, 1, 0, 1, 1,
+                                1, 0, 0, 0, 0, 1, 0, 1, 1]);
+                } catch (e) {
+                    error = e.toString();
+                }
+                return error;
+            }, 'Error: Geometry.constructor:1',
+            function () {
+                var geo, error;
+                try {
+                    geo = new Geometry(
+                            [1, 0, 0, 0, 0, 1, 0, 1, 1,
+                                1, 0, 0, 0, 0, 1, 0, 1, 1,
+                                1, 0, 0, 0, 0, 1, 0, 1, 1],
+                            [0, 1, 2, 2, 3, 4, 4, 5, 6],
+                            [Vertex.x, Vertex.y]
+                    );
+                } catch (e) {
+                    error = e.toString();
+                }
+                return error;
+            }, 'Error: Geometry.constructor:2',
+            function () {
+                var cube, error;
+                try {
+                    cube = new Geometry(
+                            [1, 0, 0, 0, 0, 1, 0, 1, 1,
+                                1, 0, 0, 0, 0, 1, 0, 1, 1,
+                                1, 0, 0, 0, 0, 1, 0, 1, 1],
+
+                            [0, 1, 2, 2, 3, 4, 4, 5, 6],
+
+                            Vertex
+                    );
+                } catch (e) {
+                    error = e.toString();
+                }
+
+                return error;
+            }, 'Error: Geometry.constructor:3',
+            function () {
+                var cube, error;
+                try {
+                    cube = new Geometry(
+                            [1, 0, 0, 0, 0, 1, 0, 1, 1,
+                                1, 0, 0, 0, 0, 1, 0, 1, 1,
+                                1, 0, 0, 0, 0, 1, 0, 1, 1],
+
+                            [0, 1, 2, 2, 3, 4, 4, 5, 6],
+
+                            [Geometry.x, Geometry.y, Geometry.z]
+                    );
+                } catch (e) {
+                    error = e.toString();
+                }
+
+                return error;
+            }, 'Error: Geometry.constructor:4'
+    );
+
+    bsTest('position',
+            function () {
+                return Array.prototype.slice.call(cube1.position).toString();
+            }, vData.toString()
+    );
+
+    bsTest('normal',
+            function () {
+                var geometry;
+
+                geometry = new Geometry([
+                    1, 2, 3, 4, 5, 6, 7, 8, // x,y,z, u,v, normalX,normalY,normalZ,
+                    1, 2, 3, 4, 5, 6, 7, 8,
+                    1, 2, 3, 4, 5, 6, 7, 8
+                ], [0, 1, 2], [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v, Vertex.normalX, Vertex.normalY, Vertex.normalZ])
+                return Array.prototype.slice.call(geometry.normal).toString();
+            }, '6,7,8,6,7,8,6,7,8'
+    );
+
+    bsTest('uv',
+            function () {
+                var geometry;
+
+                geometry = new Geometry([
+                    1, 2, 3, 4, 5, 6, 7, 8, // x,y,z, u,v, normalX,normalY,normalZ,
+                    1, 2, 3, 4, 5, 6, 7, 8,
+                    1, 2, 3, 4, 5, 6, 7, 8
+                ], [0, 1, 2], [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v, Vertex.normalX, Vertex.normalY, Vertex.normalZ])
+                return Array.prototype.slice.call(geometry.uv).toString();
+            }, '4,5,4,5,4,5'
+    );
+
+    bsTest('color',
+            function(){
+                var geometry;
+
+                geometry = new Geometry([
+                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, // x,y,z, u,v, normalX,normalY,normalZ, r,g,b,a,
+                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+                ], [0, 1, 2], [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v, Vertex.normalX, Vertex.normalY, Vertex.normalZ, Vertex.r, Vertex.g, Vertex.b, Vertex.a])
+
+                return Array.prototype.slice.call(geometry.color).toString();
+            }, '9,10,11,12,9,10,11,12,9,10,11,12'
+    );
+
+    bsTest('index',
+            function () {
+                var geometry;
+
+                geometry = new Geometry([
+                    1, 2, 3, 4, 5, 6, 7, 8, // x,y,z, u,v, normalX,normalY,normalZ,
+                    1, 2, 3, 4, 5, 6, 7, 8,
+                    1, 2, 3, 4, 5, 6, 7, 8
+                ], [0, 1, 2], [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v, Vertex.normalX, Vertex.normalY, Vertex.normalZ])
+                return Array.prototype.slice.call(geometry.index).toString();
+            }, '0,1,2'
+    );
+
+
+</script>
+<div></div>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL Test Suite - matrix.matjs</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <link rel="stylesheet" type="text/css" href="css.css"/>
+</head>
+<body>
+<img src="../src/ohno.png"/>
+
+<div id="stage"></div>
+<div id="result"></div>
+<div id="test"></div>
+<script src="lib/mogl.min.js"></script>
+<script src="http://js.bsapi.co/test/"></script>
+<script>
+    MoGL.classes(window);
+    var matrix = Matrix();
+    bsTest('create, scale, rotateX, rotateY, rotateZ, rotate',
+            function () {
+                matrix = Matrix()
+                return matrix.matStr();
+            }, 'Matrix(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)',
+            function () {
+                matrix = Matrix();
+                matrix.matScale(1.5, 1.5, 1.5)
+                return matrix.matStr();
+            }, 'Matrix(1.5, 0, 0, 0, 0, 1.5, 0, 0, 0, 0, 1.5, 0, 0, 0, 0, 1)',
+            function () {
+                matrix = Matrix();
+                matrix.matRotateX(0.01)
+                return matrix.matStr();
+            }, 'Matrix(1, 0, 0, 0, 0, 0.9999499917030334, 0.009999833069741726, 0, 0, -0.009999833069741726, 0.9999499917030334, 0, 0, 0, 0, 1)',
+            function () {
+                matrix = Matrix();
+                matrix.matRotateY(0.01)
+                return matrix.matStr();
+            }, 'Matrix(0.9999499917030334, 0, -0.009999833069741726, 0, 0, 1, 0, 0, 0.009999833069741726, 0, 0.9999499917030334, 0, 0, 0, 0, 1)',
+            function () {
+                matrix = Matrix();
+                matrix.matRotateZ(0.01)
+                return matrix.matStr();
+            }, 'Matrix(0.9999499917030334, 0.009999833069741726, 0, 0, -0.009999833069741726, 0.9999499917030334, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)',
+            function () {
+                matrix = Matrix();
+                matrix.matRotate(0.01, [1, 1, 1])
+                return matrix.matStr();
+            }, 'Matrix(0.9999666810035706, 0.005790072958916426, -0.005756739992648363, 0, -0.005756739992648363, 0.9999666810035706, 0.005790072958916426, 0, 0.005790072958916426, -0.005756739992648363, 0.9999666810035706, 0, 0, 0, 0, 1)'
+    );
+
+    var matrix2 = Matrix()
+
+    bsTest('clone, copy, invert, translate, multiply, perspective, lookAt',
+            function () {
+                matrix2 = matrix.matCopy(matrix)
+                return matrix2.matStr();
+            }, matrix.matStr(),
+            function () {
+                matrix.matIdentity()
+                matrix.matTranslate(0.01, 0.01, 0.01)
+                console.log(matrix.matStr())
+                return matrix.matStr();
+            }, 'Matrix(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.009999999776482582, 0.009999999776482582, 0.009999999776482582, 1)',
+            function () {
+                matrix.matIdentity()
+                matrix2.matIdentity()
+                matrix.matMultiply(matrix2)
+                return matrix.matStr();
+            }, 'Matrix(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)',
+            function () {
+                matrix.matIdentity()
+                matrix.matPerspective(45, 1024 / 768, 0.1, 1000)
+                return matrix.matStr();
+            }, 'Matrix(1.8106601238250732, 0, 0, 0, 0, 2.4142136573791504, 0, 0, 0, 0, -1.0002000331878662, -1, 0, 0, -0.20002000033855438, 0)'
+
+    );
+</script>
+</body>
+</html>

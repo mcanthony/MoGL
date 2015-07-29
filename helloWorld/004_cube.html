@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL HelloWorld - </title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <link rel="stylesheet" type="text/css" href="css.css"/>
+    <script src="../src/$.js"></script>
+    <script src="../src/make.js"></script>
+    <script src="../src/MoGL.js"></script>
+    <script src="../src/BlendMode.js"></script>
+    <script src="../src/Filter.js"></script>
+    <script src="../src/Primitive.js"></script>
+    <script src="../src/Vertex.js"></script>
+    <script src="../src/Shading.js"></script>
+    <script src="../src/VertexShaderFunctions.js"></script>
+    <script src="../src/Shader.js"></script>
+    <script src="../src/Matrix.js"></script>
+    <script src="../src/Texture.js"></script>
+    <script src="../src/Geometry.js"></script>
+    <script src="../src/Material.js"></script>
+    <script src="../src/Mesh.js"></script>
+    <script src="../src/Group.js"></script>
+    <script src="../src/Camera.js"></script>
+    <script src="../src/Scene.js"></script>
+    <script src="../src/World.js"></script>
+</head>
+<body>
+<canvas id="firstWorld"></canvas>
+<script>
+    var world = new World('firstWorld')
+    world.setAutoSize(1)
+    // 씬 생성
+    var scene = new Scene()
+    world.addScene(scene)
+    // 카메라 생성
+    var camera = new Camera();
+    camera.id = 'camera';
+    scene.addChild(camera);
+    // 씬에 지오메트리, 재질, 매쉬 등록
+    var geometry = new Geometry([
+                // Front face
+                -1.0, -1.0, 1.0, 0.0, 0.0,
+                1.0, -1.0, 1.0, 1.0, 0.0,
+                1.0, 1.0, 1.0, 1.0, 1.0,
+                -1.0, 1.0, 1.0, 0.0, 1.0,
+
+                // Back face
+                -1.0, -1.0, -1.0, 1.0, 0.0,
+                -1.0, 1.0, -1.0, 1.0, 1.0,
+                1.0, 1.0, -1.0, 0.0, 1.0,
+                1.0, -1.0, -1.0, 0.0, 0.0,
+
+                // Top face
+                -1.0, 1.0, -1.0, 0.0, 1.0,
+                -1.0, 1.0, 1.0, 0.0, 0.0,
+                1.0, 1.0, 1.0, 1.0, 0.0,
+                1.0, 1.0, -1.0, 1.0, 1.0,
+
+                // Bottom face
+                -1.0, -1.0, -1.0, 1.0, 1.0,
+                1.0, -1.0, -1.0, 0.0, 1.0,
+                1.0, -1.0, 1.0, 0.0, 0.0,
+                -1.0, -1.0, 1.0, 1.0, 0.0,
+
+                // Right face
+                1.0, -1.0, -1.0, 1.0, 0.0,
+                1.0, 1.0, -1.0, 1.0, 1.0,
+                1.0, 1.0, 1.0, 0.0, 1.0,
+                1.0, -1.0, 1.0, 0.0, 0.0,
+
+                // Left face
+                -1.0, -1.0, -1.0, 0.0, 0.0,
+                -1.0, -1.0, 1.0, 1.0, 0.0,
+                -1.0, 1.0, 1.0, 1.0, 1.0,
+                -1.0, 1.0, -1.0, 0.0, 1.0,
+            ], [
+                0, 1, 2, 0, 2, 3,    // Front face
+                4, 5, 6, 4, 6, 7,    // Back face
+                8, 9, 10, 8, 10, 11,  // Top face
+                12, 13, 14, 12, 14, 15, // Bottom face
+                16, 17, 18, 16, 18, 19, // Right face
+                20, 21, 22, 20, 22, 23  // Left face
+            ], [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]
+    );
+    geometry.id = 'cube'
+    scene.addGeometry(geometry);
+    var material = new Material();
+    material.id = 'bitmapMat';
+    var texture = new Texture();
+    texture.id = 'texture1';
+    var imgTag = document.createElement('img');
+    imgTag.src = '../src/ohno.png';
+    texture.img = imgTag;
+    scene.addMaterial(material);
+    scene.addTexture(texture);
+    scene.getMaterial('bitmapMat').addTexture(Texture.diffuse, scene.getTexture('texture1'));
+    var cubeMesh1 = new Mesh(scene.getGeometry('cube'), scene.getMaterial('bitmapMat'));
+    var cubeMesh2 = new Mesh(scene.getGeometry('cube'), scene.getMaterial('bitmapMat'));
+    scene.addChild(cubeMesh1);
+    scene.addChild(cubeMesh2);
+    scene.getChild('camera').z = 20;
+    scene.getChild('camera').y = 20;
+    scene.getChild('camera').lookAt(0, 0, 0);
+
+    world.start();
+    world.addEventListener(World.renderAfter, function (currentTime) {
+        cubeMesh2.x = Math.sin(currentTime / 1000) * 4;
+        cubeMesh2.z = Math.cos(currentTime / 1000) * 4;
+        cubeMesh2.lookAt(cubeMesh1.x, cubeMesh1.y, cubeMesh1.z)
+    })
+
+
+</script>
+<div style="position: absolute; top: 0px; background: #fff; padding: 5px">GitHub - <a
+        href="https://github.com/projectBS/MoGL">https://github.com/projectBS/MoGL</a></div>
+<div style="position: absolute; top: 25px; background: #fff; padding: 5px">Facebook - <a
+        href="https://www.facebook.com/groups/MObilewebGL/">https://www.facebook.com/groups/MObilewebGL/</a></div>
+</div>
+</body>
+</html>

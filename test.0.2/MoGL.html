@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<title>MoGL Test Suite - MoGL.js</title>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+	<link rel="stylesheet" type="text/css" href="css.css" />
+</head>
+<body>
+<div id="stage"></div>
+<div id="result"></div>
+<div id="test"></div>
+<script src="lib/mogl.min.js"></script>
+<script src="http://js.bsapi.co/test/"></script>
+<script>
+	var parent = function( a, b ){
+		this.a = a;
+		this.b = b;
+	};
+	parent.prototype.printA = function(){
+		return this.a;
+	};
+	parent.prototype.printB = function(){
+		return this.b;
+	};
+	parent = MoGL.ext( parent, MoGL );
+
+	var child = function( a, b, c ){
+		this.c = c;
+	};
+	child.prototype.printC = function(){
+		return this.c;
+	};
+	child = MoGL.ext( child, parent );
+
+	var instance1 = new child( 1, 2, 3 );
+
+	bsTest( 'new',
+			function(){
+				return instance1.uuid;
+			}, 9,
+			function(){
+				return instance1.isAlive;
+			}, true,
+			function(){
+				return instance1.printA();
+			}, 1,
+			function(){
+				return instance1.printB();
+			}, 2,
+			function(){
+				return instance1.printC();
+			}, 3
+	);
+
+	var instance2 = child( 4, 5, 6 );
+
+	bsTest( 'factory',
+			function(){
+				return instance2.uuid;
+			}, 10,
+			function(){
+				return instance2.isAlive;
+			}, true,
+			function(){
+				return instance2.printA();
+			}, 4,
+			function(){
+				return instance2.printB();
+			}, 5,
+			function(){
+				return instance2.printC();
+			}, 6
+	);
+
+	bsTest( 'count',
+			function(){
+				return MoGL.count();
+			}, 2,
+			function(){
+				return MoGL.count(child);
+			}, 2
+	);
+
+	bsTest( 'destroy',
+			function(){
+				instance1.destroy();
+				return instance1.isAlive;
+			}, false,
+			function(){
+				instance2.destroy();
+				return instance2.isAlive;
+			}, false
+	);
+
+	bsTest( 'error',
+			function(){
+				var test = '';
+				try{
+					MoGL.error( 'test', 'method', 3 )
+				}catch(e){
+					test = e.toString();
+				}
+				return test;
+			}, 'Error: test.method:3'
+	);
+
+	var instance3 = child(7, 8, 9);
+
+	bsTest( 'id',
+			function(){
+				return instance3.id;
+			}, null,
+			function(){
+				instance3.setId(1);
+				return instance3.id;
+			}, 1,
+			function(){
+				instance3.id = 2;
+				return instance3.id;
+			}, 2
+	);
+
+	bsTest( 'ext',
+			function(){
+				var parent1 = function(){}, child1 = function(){}, test = '';
+
+				try{
+					MoGL.ext( child1, parent1 );
+				}catch(e){
+					test = e.toString();
+				}
+				return test;
+			}, 'Error: MoGL.ext:0',
+			function(){
+				var Parent = function(){}, Child = function(){}, parent, child;
+
+				Parent = MoGL.ext( Parent, MoGL );
+				Child = MoGL.ext( Child, Parent );
+
+				parent = new Parent();
+				child = new Child();
+
+				return parent.constructor === MoGL && child.constructor === MoGL;
+			}, true
+	);
+
+    bsTest( 'isAlive',
+            function(){
+                var lobby = new Scene(), test;
+                lobby.destroy();
+                try{
+                    MoGL.isAlive( lobby );
+                }catch(e){
+                    test = e.toString();
+                }
+                return test;
+            }, 'Error: Destroyed Object:[object Object]'
+    );
+
+</script>
+</body>
+</html>

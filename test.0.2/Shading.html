@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL Test Suite - Shading.js</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <link rel="stylesheet" type="text/css" href="css.css" />
+</head>
+<body>
+<img src="../src/ohno.png"/>
+<div id="stage"></div>
+<div id="result"></div>
+<div id="test"></div>
+<script src="lib/mogl.min.js"></script>
+<script src="http://js.bsapi.co/test/"></script>
+<script>
+    var material = new Material();
+    bsTest('type',
+            function () {
+                material.setShading(Shading.none);
+                return material._shading.type;
+            }, 'none',
+            function() {
+                material.setShading(Shading.gouraud);
+                return material._shading.type;
+            }, 'gouraud',
+            function() {
+                material.setShading(Shading.phong);
+                return material._shading.type;
+            }, 'phong',
+            function() {
+                material.setShading(Shading.blinn);
+                return material._shading.type;
+            }, 'blinn',
+            function() {
+                material.setShading(Shading.flat);
+                return material._shading.type;
+            }, 'flat',
+            function() {
+                material.setShading(Shading.toon);
+                return material._shading.type;
+            }, 'toon'
+    );
+</script>
+</body>
+</html>

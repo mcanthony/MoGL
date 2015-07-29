@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<head>
+    <title>MoGL Showcase - TextureOption</title>
+    <meta charset="utf-8"/>
+    <meta property="og:title" content="Monkey"/>
+    <meta property="og:description" content="MoGL.js version"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<img src="monkey/Suzanne.jpg" id="testIMG" style="position: absolute;top:0px;display: none;">
+<canvas id="canvas"></canvas>
+<script src="lib/mogl.min.js"></script>
+<script src="../showcase/dat.gui.min.js"></script>
+<script src="http://js.bsapi.co/test/"></script>
+<script>
+    'use strict';
+    MoGL.classes(window);
+    // basic settings
+    var world, scene, camera;
+
+    world = new World('canvas')
+    scene = new Scene()
+    camera = new Camera()
+
+    world.setAutoSize(1)
+    world.start()
+
+    world.addScene(scene)
+    scene.addChild(camera)
+    ////////////////////////////////////////////////////////////////
+    // 씬에 재질을 등록
+    scene.addMaterial(new Material().setId('material'));
+    scene.addMaterial(new Material().setId('materialZoomout'));
+    scene.addMaterial(new Material().setId('materialZoomIn'));
+    scene.addMaterial(new Material().setId('materialCrop'));
+    scene.addMaterial(new Material().setId('materialAddSpace'));
+    // 텍스쳐 생성
+    var t1 = new Texture()
+    var t2 = new Texture()
+    var t3 = new Texture()
+    var t4 = new Texture()
+    var t5 = new Texture()
+    // 리사이즈 타입 설정
+    t1.resizeType = Texture.zoomOut
+    t2.resizeType = Texture.zoomIn
+    t3.resizeType = Texture.crop
+    t4.resizeType = Texture.addSpace
+    // 이미지 설정, 같은 이미지를 다중 텍스쳐베이스 이미지로 사용가능!
+    t1.img = document.getElementById('testIMG')
+    t2.img = document.getElementById('testIMG')
+    t3.img = document.getElementById('testIMG')
+    t4.img = document.getElementById('testIMG')
+    t5.img = document.getElementById('testIMG')
+    // 씬에 텍스쳐 등록
+    scene.addTexture(t1);
+    scene.addTexture(t2);
+    scene.addTexture(t3);
+    scene.addTexture(t4);
+    scene.addTexture(t5);
+    // 재질에 텍스쳐 적용
+    scene.getMaterial('materialZoomout').addTexture(Texture.diffuse, t1);
+    scene.getMaterial('materialZoomIn').addTexture(Texture.diffuse, t2);
+    scene.getMaterial('materialCrop').addTexture(Texture.diffuse, t3);
+    scene.getMaterial('materialAddSpace').addTexture(Texture.diffuse, t4);
+    scene.getMaterial('material').addTexture(Texture.diffuse, t5);
+    // 테스트 메쉬 생성
+    var meshZoomout = new Mesh(Primitive.plane(), scene.getMaterial('materialZoomout'))
+    var meshZoomIn = new Mesh(Primitive.plane(), scene.getMaterial('materialZoomIn'))
+    var meshCrop = new Mesh(Primitive.plane(), scene.getMaterial('materialCrop'))
+    var meshAddSpace = new Mesh(Primitive.plane(), scene.getMaterial('materialAddSpace'))
+    var mesh = new Mesh(Primitive.plane(), scene.getMaterial('material'))
+    // 플랜이니까 90도 회전시켜줌
+    meshZoomout.rotateX = Math.PI / 2
+    meshZoomIn.rotateX = Math.PI / 2
+    meshCrop.rotateX = Math.PI / 2
+    meshAddSpace.rotateX = Math.PI / 2
+    mesh.rotateX = Math.PI / 2
+    // 씬에 등록
+    scene.addChild(meshZoomout)
+    scene.addChild(meshZoomIn)
+    scene.addChild(mesh)
+    scene.addChild(meshCrop)
+    scene.addChild(meshAddSpace)
+    // 메쉬 위치 설정
+    meshZoomout.x = -2.2
+    meshZoomIn.x = -1.1
+    mesh.x = 0
+    meshCrop.x = 1.1
+    meshAddSpace.x = 2.2
+    // 렌더
+    world.start()
+</script>
+</body>
+</html>

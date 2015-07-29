@@ -641,8 +641,8 @@ var MoGL = (function() {
                             loopstart = true,
                             MoGL.addInterval(loop);
                         }
-                    } else {
-                        delete target[this];
+					} else {
+						delete target[this];
                         for (k in v) this[k] = v[k];
                         this.dispatch(MoGL.propertyChanged);
                     }

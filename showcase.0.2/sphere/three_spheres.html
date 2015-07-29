@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>earth</title>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+	<style>
+		body {
+			color: #808080;
+			font-family:Monospace;
+			font-size:13px;
+			text-align:center;
+
+			background-color: #ffffff;
+			margin: 0px;
+			overflow: hidden;
+		}
+
+		a {
+
+			color: #0080ff;
+		}
+		.FPS {
+			color: #FFF;
+			left: 0px;
+			top: 0px;
+			position: absolute
+		}
+	</style>
+</head>
+<body>
+
+<div id="container"></div>
+<div class="FPS">
+	Current FPS: <span id="currentFPS"></span>
+	Average FPS: <span id="averageFPS"></span>
+</div>
+
+<script src="three.min.js"></script>
+
+<script src="Projector.js"></script>
+<script src="CanvasRenderer.js"></script>
+
+<script>
+	var divCurrentFPS = document.getElementById( 'currentFPS' );
+	var divAverageFPS = document.getElementById( 'averageFPS' );
+	var prevTime = 0;
+
+	var container;
+	var camera, scene, renderer;
+	//	var group;
+	var mesh, meshes = [];
+	var mouseX = 0, mouseY = 0;
+
+	var windowHalfX = window.innerWidth / 2;
+	var windowHalfY = window.innerHeight / 2;
+
+	init();
+	animate(0);
+
+	function init() {
+
+
+		container = document.getElementById( 'container' );
+
+		camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 2000 );
+		camera.position.z = 800;
+
+		scene = new THREE.Scene();
+
+		// earth
+
+		var loader = new THREE.TextureLoader();
+		loader.load( 'earth.jpg', function ( texture ) {
+
+			// 좌표 계산하는 로직때문에 더 무거울수 있음
+			var geometry = new THREE.SphereGeometry( 50, 20, 20 );
+			var material = new THREE.MeshBasicMaterial( { map: texture, overdraw: 0.5 } );
+			for(var i = 0; i < 5; i++){
+				var mesh = new THREE.Mesh( geometry, material );
+				mesh.position.x = (Math.random()*2-1)*windowHalfX;
+				mesh.position.y = (Math.random()*2-1)*windowHalfY;
+				meshes.push(mesh);
+				scene.add( mesh );
+			}
+
+		} );
+
+
+		renderer = new THREE.CanvasRenderer();
+		renderer.setClearColor( 0x000000 );
+		renderer.setPixelRatio( window.devicePixelRatio );
+		renderer.setSize( window.innerWidth, window.innerHeight );
+		container.appendChild( renderer.domElement );
+
+
+	}
+
+	//
+	var sum = 0, count = 1;
+	function animate(currTime) {
+		var currentFPS = 1000 / ( currTime - prevTime );
+		prevTime = currTime;
+		divCurrentFPS.textContent = currentFPS.toFixed( 2 );
+		divAverageFPS.textContent = ( ( sum += currentFPS ) / count++ ).toFixed( 2 );
+
+		requestAnimationFrame( animate );
+
+		render();
+	}
+
+
+	function render() {
+		var len = meshes.length;
+		for(var i = 0; i < len; i++){
+			meshes[i].rotation.y -= 0.05;
+		}
+		renderer.render( scene, camera );
+	}
+
+
+</script>
+
+</body>
+</html>

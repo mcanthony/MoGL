@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL Test Suite - Scene.js</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <link rel="stylesheet" type="text/css" href="css.css"/>
+</head>
+<body>
+<img src="../src/ohno.png" id="img1">
+<canvas id="cvsDataURL" width="578" style="position: absolute;"></canvas>
+<canvas id="canvas" style="position: absolute"></canvas>
+<canvas id="cvsImageData" style="position: absolute"></canvas>
+<canvas id="world" style="position: absolute"></canvas>
+<video id="video1" width="100" height="50" style="position: absolute" controls autoplay>
+    <source src="http://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+    <source src="http://www.w3schools.com/html/mov_bbb.ogg" type="video/ogg">
+</video>
+
+<div id="stage"></div>
+<div id="result"></div>
+<div id="test"></div>
+<script src="lib/mogl.min.js"></script>
+<script src="http://js.bsapi.co/test/"></script>
+<script id="fshader" type="text/shader">
+precision mediump float;
+uniform sampler2D uSampler;
+varying vec2 vUV;
+void main(void) {
+     gl_FragColor =  texture2D(uSampler, vec2(vUV.s, vUV.t));
+}
+</script>
+<script>
+    MoGL.classes(window);
+    var testTexture_IMG = document.getElementById('img1')
+    var testTexture_VIDEO = document.getElementById('video1')
+    /////////////////////////////////////////////////////////////////
+    var c = document.getElementById("cvsImageData");
+    var ctx = c.getContext("2d");
+    ctx.fillStyle = "red";
+    ctx.fillRect(10, 10, 50, 50);
+    var testTexture_imgData = ctx.getImageData(10, 10, 50, 50)
+    //////////////////////////////////////////////////////////////
+    c = document.getElementById("canvas");
+    ctx = c.getContext("2d");
+    ctx.fillStyle = "blue";
+    ctx.fillRect(10, 10, 50, 50);
+    var testTexture_canvas = c
+    //////////////////////////////////////////////////////////////
+    c = document.getElementById('cvsDataURL'), ctx = c.getContext('2d');
+    ctx.beginPath();
+    ctx.moveTo(170 - 130, 80 - 50);
+    ctx.bezierCurveTo(130 - 130, 100 - 50, 130 - 130, 150 - 50, 230 - 130, 150 - 50);
+    ctx.bezierCurveTo(250 - 130, 180 - 50, 320 - 130, 180 - 50, 340 - 130, 150 - 100);
+    ctx.bezierCurveTo(420 - 130, 150 - 50, 420 - 130, 120 - 50, 390 - 130, 100 - 100);
+    ctx.bezierCurveTo(430 - 130, 40 - 50, 370 - 130, 30 - 50, 340 - 130, 50 - 50);
+    ctx.bezierCurveTo(320 - 130, 5 - 50, 250 - 130, 20 - 50, 250 - 130, 50 - 50);
+    ctx.bezierCurveTo(200 - 130, 5 - 50, 150 - 130, 20 - 50, 170 - 130, 80 - 50);
+    ctx.closePath();
+    ctx.lineWidth = 5;
+    ctx.fillStyle = '#8ED6FF';
+    ctx.fill();
+    ctx.strokeStyle = '#0000ff';
+    ctx.stroke();
+    var testTexture_dataURL = c.toDataURL();
+    //////////////////////////////////////////////////////////////
+    var world = World('world')
+    var scene1
+    var scene2
+    var testGeometry1 = Geometry([], [])
+    var testMaterial1 = Material('#fff')
+    var testMesh1 = new Mesh(testGeometry1, testMaterial1)
+    //    var testMesh2 = new Mesh(testGeometry1, testMaterial1)
+    var testResult
+    bsTest('new',
+            function () {
+                scene1 = new Scene(); //일반적은 new방식
+                world.addScene(scene1)
+                return scene1.isAlive;
+            }, true,
+            function () {
+                scene2 = Scene(); //factory함수로도 작동
+                world.addScene(scene2)
+                return scene2.isAlive;
+            }, true
+    );
+    bsTest('child',
+            function () {
+                // 추가가 잘되었나
+                scene1.addChild(testMesh1.setId('meshKey1'))
+                return scene1.getChild('meshKey1');
+            }, testMesh1,
+            function () {
+                // 지정한 키로 잘찾아지나
+                return scene1.getChild('meshKey1')
+            }, testMesh1,
+            function () {
+                // 같은걸 등록하는걸 잘 체크하나..
+                testResult = 1
+                try {
+                    scene1.addChild(testMesh1)
+                } catch (e) {
+                    console.log(e)
+                    testResult = 0
+                }
+                return testResult
+            }, 0,
+            function () {
+                // 같은 값으로 등록하는걸 잘 체크하나..
+                testResult = 1
+                try {
+                    scene1.addChild(testMesh2)
+                } catch (e) {
+                    console.log(e)
+                    testResult = 0
+                }
+                return scene1.getChild('meshKey1')
+            }, testMesh1,
+            function () {
+                // Mesh가 아닌객체를 잘 걸러내나
+                testResult = 1
+                try {
+                    scene1.addChild({})
+                } catch (e) {
+                    console.log(e)
+                    testResult = 0
+                }
+                return testResult
+            }, 0,
+            function () {
+                // Mesh가 아닌객체를 등록하고 나서 혹시나 키가 들어가있나..
+                return scene1.getChild('wantError')
+            }, null,
+            function () {
+                // 삭제는 잘되나..
+                scene1.removeChild('meshKey1')
+                return scene1.getChild('meshkey1')
+            }, null
+    );
+    bsTest('Geometry',
+            function () {
+                // 없는걸 찾으면 null이 나와야함
+                return scene1.getGeometry(testGeometry1)
+            }, null,
+            function () {
+                // 지오메트리를 등록하고 잘 찾아지나 테스트
+                scene1.addGeometry(testGeometry1.setId('addGeoTest1'))
+                return scene1.getGeometry('addGeoTest1')
+            }, testGeometry1,
+            function () {
+                // 지오메트리가 아닌녀석을 등록시도할때
+                testResult = 1
+                try {
+                    scene1.addGeometry({})
+                } catch (e) {
+                    console.log(e)
+                    testResult = 0
+                }
+                return testResult
+            }, 0,
+            function () {
+                // 중복 추가
+                testResult = 1
+                try {
+                    scene1.addGeometry(testGeometry1)
+                } catch (e) {
+                    console.log(e)
+                    testResult = 0
+                }
+                return testResult
+            }, 0,
+            function () {
+                // 찾아진놈이 지오메트리의 인스턴스인가!
+                return scene1.getGeometry('addGeoTest1') instanceof Geometry
+            }, true
+    )
+    bsTest('Material',
+            function () {
+                // 없는걸 찾으면 null이 나와야함
+                return scene1.getMaterial('addMaterialTest1')
+            }, null,
+            function () {
+                // Material을 등록하고 잘 찾아지나 테스트
+                scene1.addMaterial(testMaterial1.setId('addMaterialTest1'))
+                return scene1.getMaterial('addMaterialTest1')
+            }, testMaterial1,
+            function () {
+                // Material가 아닌녀석을 등록시도할때
+                testResult = 1
+                try {
+                    scene1.addMaterial({})
+                } catch (e) {
+                    console.log(e)
+                    testResult = 0
+                }
+                return testResult
+            }, 0,
+            function () {
+                // 중복 ID 추가
+                testResult = 1
+                try {
+                    scene1.addMaterial(testMaterial1)
+                } catch (e) {
+                    console.log(e)
+                    testResult = 0
+                }
+                return testResult
+            }, 0,
+            function () {
+                // 찾아진놈이 Material 인스턴스인가!
+                return scene1.getMaterial('addMaterialTest1') instanceof Material
+            }, true
+    )
+
+    var textureTest = new Texture()
+    textureTest.img = document.getElementById('img1')
+    bsTest('Texture',
+            function () {
+                // 없는 키값을 조회할때
+                return scene1.getTexture('wantNull')
+            }, null,
+            function () {
+                // 텍스쳐 추가
+                scene1.addTexture(textureTest.setId('addTextureTest1'))
+                return scene1.getTexture('addTextureTest1')
+            }, textureTest,
+            function () {
+                // 중복 ID 추가
+                testResult = 1
+                try {
+                    scene1.addTexture(textureTest)
+                } catch (e) {
+                    console.log(e)
+                    testResult = 0
+                }
+                return testResult
+            }, 0,
+            function () {
+                // 텍스쳐가 아닌놈 테스트
+                testResult = 1
+                try {
+                    scene1.addTexture({})
+                } catch (e) {
+                    console.log(e)
+                    testResult = 0
+                }
+                return testResult
+            }, 0
+    )
+    //    bsTest('FragmentShader',
+    //            function () {
+    //                // TODO 구현
+    //                return true
+    //            }, true
+    //    )
+    //    bsTest('VertexShader',
+    //            function () {
+    //                // TODO 구현
+    //                return true
+    //            }, true
+    //    )
+
+
+</script>
+
+</body>
+</html>

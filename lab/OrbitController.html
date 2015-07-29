@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL Test Suite - OrbitController.js</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <link rel="stylesheet" type="text/css" href="../test/css.css"/>
+    <style>
+        html, body {
+            margin: 0px;
+            padding: 0px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="world"></canvas>
+<script src="../src/$.js"></script>
+<script src="../src/make.js"></script>
+<script src="../src/MoGL.js"></script>
+<script src="../src/BlendMode.js"></script>
+<script src="../src/Filter.js"></script>
+<script src="../src/Primitive.js"></script>
+<script src="../src/Vertex.js"></script>
+<script src="../src/Shading.js"></script>
+<script src="../src/VertexShaderFunctions.js"></script>
+<script src="../src/Shader.js"></script>
+<script src="../src/Matrix.js"></script>
+<script src="../src/Texture.js"></script>
+<script src="../src/Geometry.js"></script>
+<script src="../src/Material.js"></script>
+<script src="../src/Mesh.js"></script>
+<script src="../src/Group.js"></script>
+<script src="../src/Camera.js"></script>
+<script src="../src/Scene.js"></script>
+<script src="../src/World.js"></script>
+<script src="../src/OrbitController.js"></script>
+
+<script>
+    var camera = new Camera()
+    var world = new World('world')
+    var scene = new Scene()
+    var controller = new OrbitController(camera)
+    console.log(camera)
+
+    world.addScene(scene)
+    scene.addChild(camera)
+
+    var material = new Material('#fff')
+    //    material.setShading(Shading.phong)
+
+    for (var i = 0; i < 250; i++) {
+        var a = new Mesh(Primitive.geodesic(32), material)
+        scene.addChild(a.setId('test' + i))
+        a.x = Math.random() * 50 - 25
+        a.y = Math.random() * 50 - 25
+        a.z = Math.random() * 50 - 25
+    }
+
+    var controller = new OrbitController(camera)
+    world.setAutoSize(1)
+    world.addEventListener(World.renderBefore, function () {
+        controller.update()
+    })
+    world.start()
+
+</script>
+<div></div>
+</body>
+</html>

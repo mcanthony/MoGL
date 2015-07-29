@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL Showcase - MonkeyXYZ</title>
+    <meta charset="utf-8"/>
+    <meta property="og:title" content="Monkey"/>
+    <meta property="og:description" content="MoGL.js version"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .FPS {
+            color: #FFF;
+            left: 0px;
+            top: 0px;
+            position: absolute
+        }
+    </style>
+    <script src="../src/$.js"></script>
+    <script src="../src/make.js"></script>
+    <script src="../src/MoGL.js"></script>
+    <script src="../src/BlendMode.js"></script>
+    <script src="../src/Filter.js"></script>
+    <script src="../src/Primitive.js"></script>
+    <script src="../src/Vertex.js"></script>
+    <script src="../src/Shading.js"></script>
+    <script src="../src/VertexShaderFunctions.js"></script>
+    <script src="../src/Shader.js"></script>
+    <script src="../src/Matrix.js"></script>
+    <script src="../src/Texture.js"></script>
+    <script src="../src/Geometry.js"></script>
+    <script src="../src/Material.js"></script>
+    <script src="../src/Mesh.js"></script>
+    <script src="../src/Group.js"></script>
+    <script src="../src/Camera.js"></script>
+    <script src="../src/Scene.js"></script>
+    <script src="../src/World.js"></script>
+    <script src="../showcase/dat.gui.min.js"></script>
+</head>
+<body>
+<img src="monkey/Suzanne.jpg" id="testIMG2" style="position: absolute;top:0px; display:none" width="256" height="256">
+<canvas id="canvas"></canvas>
+<div class="FPS">
+    Current FPS: <span id="currentFPS"></span>
+    Average FPS: <span id="averageFPS"></span>
+</div>
+
+<script>
+    'use strict';
+    // basic settings
+    var divCurrentFPS, divAverageFPS, prevTime;
+    var world, scene, camera;
+    var testMat
+    var testItem
+    divCurrentFPS = document.getElementById('currentFPS')
+    divAverageFPS = document.getElementById('averageFPS')
+    prevTime = 0
+
+    world = new World('canvas')
+    scene = new Scene()
+    camera = new Camera()
+    testMat = new Material()
+    testMat.shading = Shading.phong
+
+    world.addScene(scene)
+    scene.addChild(camera)
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('GET', 'monkey/monkey.json', true);
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+            var geo = getGeometry(JSON.parse(xmlhttp.responseText));
+            makeItems(geo)
+            world.setAutoSize(1)
+            world.start()
+            setUI()
+        }
+    };
+    xmlhttp.send(null);
+    ////////////////////////////////////////////////////////////////////////////
+    function makeItems(geo) {
+        testItem = new Mesh(geo, testMat);
+        scene.addChild(testItem);
+        testItem.rotateY = Math.PI
+
+        var currentFPS, prevTime = 0, count = 0, sum = 0
+        world.addEventListener(World.renderAfter, function (currTime) {
+            var currentFPS = 1000 / ( currTime - prevTime );
+            prevTime = currTime;
+            count++
+            divCurrentFPS.textContent = currentFPS.toFixed(2);
+            divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
+
+        })
+    }
+    function getGeometry(json) {
+        var tMesh, tVertices, tIndices;
+        var uvCount, verticesStep, verticesCount, facesCount;
+        var i, j;
+        var vertex, index;
+        tMesh = json.meshes[0]
+        tVertices = tMesh.vertices
+        tIndices = tMesh.indices
+        uvCount = tMesh.uvCount
+        verticesStep = 1;
+        switch (uvCount) {
+            case 0:
+                verticesStep = 6;
+                break;
+            case 1:
+                verticesStep = 8;
+                break;
+            case 2:
+                verticesStep = 10;
+                break;
+        }
+        verticesCount = tVertices.length / verticesStep;
+        facesCount = tIndices.length / 3;
+        vertex = [], index = [];
+        for (i = 0; i < verticesCount; i++) {
+            j = i * verticesStep;
+            vertex.push(
+                    tVertices[j], tVertices[j + 1], tVertices[j + 2],
+                    tVertices[j + 3], tVertices[j + 4], tVertices[j + 5]
+            );
+            if (uvCount > 0) {
+                vertex.push(tVertices[j + 6], tVertices[j + 7]);
+            }
+            else {
+                vertex.push(0, 0);
+            }
+        }
+        for (i = 0; i < facesCount; i++) {
+            j = i * 3;
+            index.push(tIndices[j], tIndices[j + 1], tIndices[j + 2]);
+        }
+        return new Geometry(vertex, index, [Vertex.x, Vertex.y, Vertex.z, Vertex.normalX, Vertex.normalY, Vertex.normalZ, Vertex.u, Vertex.v])
+    }
+    function setUI() {
+        var controllerParams = {
+            x: 0,
+            y: 0,
+            z: 0,
+            rotateX: 0,
+            rotateY: Math.PI,
+            rotateZ: 0,
+            scaleX: 1,
+            scaleY: 1,
+            scaleZ: 1
+        };
+
+        var gui = new dat.GUI();
+        var panel = gui.addFolder('position');
+        panel.add(controllerParams, 'x', -5, 5).onChange(function (value) {
+            testItem.x = value
+        })
+        panel.add(controllerParams, 'y', -5, 5).onChange(function (value) {
+            testItem.y = value
+        })
+        panel.add(controllerParams, 'z', -5, 5).onChange(function (value) {
+            testItem.z = value
+        })
+        panel.add(controllerParams, 'rotateX', -Math.PI, Math.PI).onChange(function (value) {
+            testItem.rotateX = value
+        })
+        panel.add(controllerParams, 'rotateY', -Math.PI, Math.PI).onChange(function (value) {
+            testItem.rotateY = value
+        })
+        panel.add(controllerParams, 'rotateZ', -Math.PI, Math.PI).onChange(function (value) {
+            testItem.rotateZ = value
+        })
+        panel.add(controllerParams, 'scaleX', 0.1, 5).onChange(function (value) {
+            testItem.scaleX = value
+        })
+        panel.add(controllerParams, 'scaleY', 0.1, 5).onChange(function (value) {
+            testItem.scaleY = value
+        })
+        panel.add(controllerParams, 'scaleZ', 0.1, 5).onChange(function (value) {
+            testItem.scaleZ = value
+        })
+        panel.open()
+
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL Showcase - smithHead</title>
+    <meta charset="utf-8"/>
+    <meta property="og:title" content="Monkey"/>
+    <meta property="og:description" content="MoGL.js version"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .FPS {
+            color: #FFF;
+            left: 0px;
+            top: 0px;
+            position: absolute
+        }
+    </style>
+    <script src="lib/mogl.min.js"></script>
+</head>
+<body>
+<img src="smithHead/Map-COL.jpg" id="testIMG" style="position: absolute;top:0px;display:none" width="128" height="128">
+<img src="monkey/Suzanne.jpg" id="testIMG2" style="position: absolute;top:0px;;display:none" width="128" height="128">
+<canvas id="canvas"></canvas>
+<button style="position:absolute;top:0px; margin-top:20px" id='fxaa'>FXAA ON</button>
+<div class="FPS">
+    Current FPS: <span id="currentFPS"></span>
+    Average FPS: <span id="averageFPS"></span>
+</div>
+
+<script>
+    'use strict';
+    MoGL.classes(window);
+    var btFXAA = document.getElementById('fxaa')
+    btFXAA.addEventListener('mousedown', function () {
+        var t = btFXAA.innerHTML
+        t = t == 'FXAA ON' ? 1 : 0
+        camera1.antialias = t
+        camera2.antialias = t
+        camera3.antialias = t
+        btFXAA.innerHTML = t == 1 ? 'FXAA OFF' : 'FXAA ON'
+    })
+
+    // basic settings
+    var divCurrentFPS, divAverageFPS, prevTime;
+    var world, scene, camera1, camera2, camera3;
+
+    divCurrentFPS = document.getElementById('currentFPS')
+    divAverageFPS = document.getElementById('averageFPS')
+    prevTime = 0
+
+    world = new World('canvas')
+    scene = new Scene()
+    camera1 = new Camera()
+    camera2 = new Camera()
+    camera3 = new Camera()
+
+    world.addScene(scene)
+    scene.addChild(camera1)
+    scene.addChild(camera2)
+    scene.addChild(camera3)
+
+    world.setAutoSize(1)
+    ////////////////////////////////////////////////////////////////////////////
+    var material = new Material()
+    var texture = new Texture()
+    texture.img = document.getElementById('testIMG')
+    material.addTexture(Texture.diffuse, texture)
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('GET', 'smithHead/smith_head.json', true);
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+            var geo = getGeometryFromJSON(JSON.parse(xmlhttp.responseText));
+            makeItems(geo)
+            world.start()
+        }
+    };
+    xmlhttp.send(null);
+    function makeItems(geo) {
+        var mesh = new Mesh(geo, material);
+        mesh.scale = [10, 10, 10]
+        mesh.material.shading = Shading.phong
+        scene.addChild(mesh);
+
+        scene.baseLightRotate = [0,1,1]
+
+        var mesh2 = new Mesh(geo, material);
+        mesh2.scale = [10, 10, 10]
+        scene.addChild(mesh2);
+
+        mesh.x = -3
+        mesh2.x = 3
+
+        camera2.z = 10
+        camera2.renderArea = [100, 30, 128, 128]
+        camera3.renderArea = [10, 200, 300, 300]
+        camera2.backgroundColor = [Math.random(), Math.random(), Math.random(), 1]
+        camera3.backgroundColor = [Math.random(), Math.random(), Math.random(), 1]
+
+        var currentFPS, prevTime = 0, count = 0, sum = 0
+        world.addEventListener(World.renderBefore, function (currTime) {
+            currentFPS = 1000 / ( currTime - prevTime );
+            prevTime = currTime;
+            count++
+            divCurrentFPS.textContent = currentFPS.toFixed(2);
+            divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
+
+            mesh.rotateY -= 0.01;
+            mesh2.rotateY -= 0.01;
+
+            camera3.x = Math.sin(currTime / 1000) * 10
+            camera3.y = Math.cos(currTime / 1000) * 10
+            camera3.z = Math.cos(currTime / 1000) * 10 + Math.sin(currTime / 1000) * 10
+            camera3.lookAt(0, 0, 0)
+
+            scene.baseLightRotate = [Math.sin(currTime / 1000) / Math.PI, Math.cos(currTime / 1000) / Math.PI, Math.cos(currTime / 1000)  / Math.PI + Math.sin(currTime / 1000)  / Math.PI]
+        })
+
+    }
+    function getGeometryFromJSON(json) {
+        var vertices = json.vertices, faces = json.faces, uvs = json.uv;
+        var vertexBuffer = [], indexBuffer = [], uvArray = [], i, j, fv = 0, uvSize = uvs.length;
+        faces.forEach(function (v) {
+            v.forEach(function (vv) {
+                if (fv < uvSize)
+                    uvArray[vv] = uvs[fv];
+                fv++;
+            })
+        });
+        for (i = 0, j = vertices.length; i < j; i++) {
+            vertexBuffer.push(
+                    vertices[i][0], vertices[i][1], vertices[i][2],
+                    uvArray[i][0], 1.0 - uvArray[i][1]
+            );
+        }
+        for (i = 0, j = faces.length; i < j; i++) {
+            indexBuffer.push(faces[i][0], faces[i][1], faces[i][2]);
+            indexBuffer.push(faces[i][0], faces[i][2], faces[i][3]);
+        }
+        return new Geometry(vertexBuffer, indexBuffer, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v])
+    }
+</script>
+</body>
+</html>
