@@ -639,8 +639,8 @@ var Shader = (function () {
                             function: [],
                             main: [
 
-                                //'if( uFS[9] == 0.0 || isDiscard >0.0  ) discard;\n' +
-                                'if( uFS[9] == 0.0 || isDiscard >0.0  ) gl_FragColor = vec4(0.1,0.5,0.2,1.0);\n' +
+                                'if( uFS[9] == 0.0 || isDiscard >0.0  ) discard;\n' +
+                                //'if( uFS[9] == 0.0 || isDiscard >0.0  ) gl_FragColor = vec4(0.1,0.5,0.2,1.0);\n' +
                                 //'else if( gl_Position.x < -uFS[20]*0.65 || vPosition.x > uFS[20]*0.65) {\n' +
                                 //    'if( vPosition.y < -uFS[21]*0.65 || vPosition.y > uFS[21]*0.65) {\n' +
                                 //        'discard;\n' +
