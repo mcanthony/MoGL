@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>Ahri</title>
+    <meta charset="utf-8"/>
+    <meta property="og:image" content="http://shallaa.github.io/SoftEngine/og/1.jpg"/>
+    <meta property="og:title" content="Monkey"/>
+    <meta property="og:description" content="MoGL.js version"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .FPS {
+            color: #FFF;
+            left: 0px;
+            top: 0px;
+            position: absolute
+        }
+    </style>
+    <script src="../src/$.js"></script>
+    <script src="../src/make.js"></script>
+    <script src="../src/MoGL.js"></script>
+    <script src="../src/BlendMode.js"></script>
+    <script src="../src/Filter.js"></script>
+    <script src="../src/Primitive.js"></script>
+    <script src="../src/Vertex.js"></script>
+    <script src="../src/Shading.js"></script>
+    <script src="../src/VertexShaderFunctions.js"></script>
+    <script src="../src/Shader.js"></script>
+    <script src="../src/Matrix.js"></script>
+    <script src="../src/Texture.js"></script>
+    <script src="../src/Geometry.js"></script>
+    <script src="../src/Material.js"></script>
+    <script src="../src/Point.js"></script>
+    <script src="../src/Mesh.js"></script>
+    <script src="../src/Group.js"></script>
+    <script src="../src/Camera.js"></script>
+    <script src="../src/Scene.js"></script>
+    <script src="../src/World.js"></script>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<div class="FPS">
+    Current FPS: <span id="currentFPS"></span>
+    Average FPS: <span id="averageFPS"></span>
+</div>
+<script>
+    (function (W) {
+        'use strict';
+
+        var world = new World('canvas');
+        var scene = new Scene();
+        var canvas = document.getElementById('canvas');
+
+        var divCurrentFPS = document.getElementById('currentFPS');
+        var divAverageFPS = document.getElementById('averageFPS');
+        var prevTime = 0;
+
+
+        world.addScene(scene);
+        var camera = new Camera();
+        scene.addChild(camera);
+
+        world.setAutoSize(1).start();
+
+        var imgTag = document.createElement('img');
+        imgTag.src = 'lol/ahri_base_tx_cm.png';
+        var imgsTag = document.createElement('img');
+        imgsTag.src = 'lol/specularMap.png';
+
+        var imgNTag = document.createElement('img');
+        imgNTag.src = 'lol/normalMap.png';
+
+        var mat = new Material();
+        var texture = new Texture(imgTag);
+        mat.addTexture(Texture.diffuse, texture);
+        mat.addTexture(Texture.specular, Texture(imgsTag));
+        mat.addTexture(Texture.normal, Texture(imgNTag));
+        mat.specularColor[3] = 0.1
+        mat.specularPower = 10
+        mat.specularMapPower = 1
+        mat.normalPower = -0.5
+
+        // mat.shading = Shading.gouraud;
+        mat.shading = Shading.phong;
+        // mat.shading = Shading.toon;
+
+
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open('GET', 'lol/lol_test.json', true);
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+                start(JSON.parse(xmlhttp.responseText));
+            }
+        };
+        xmlhttp.send(null);
+
+        function start(json) {
+            var vertices = json.vertices;
+            var indices = json.indices;
+
+            var geo = new Geometry(vertices, indices, [Vertex.x, Vertex.y, Vertex.z, Vertex.normalX, Vertex.normalY, Vertex.normalZ, Vertex.u, Vertex.v]);
+
+            var mesh
+            for(var i =0; i<100; i++){
+                mesh = new Mesh(geo, mat);
+                mesh.x = Math.random()*3000 - 1500
+                mesh.z = Math.random()*3000 - 1500
+                mesh.rotateY = Math.random()*Math.PI*2
+                scene.addChild(mesh);
+            }
+
+
+
+
+
+            var count = 0, sum = 0, speed = 1000
+            world.addEventListener(World.renderBefore, function (fps, time, totalVertex) {
+            var currentFPS = fps;
+            count++
+            divCurrentFPS.textContent = currentFPS.toFixed(2);
+            divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2) + ' / totalVertex : ' + totalVertex;
+
+            scene.baseLightRotate = [Math.sin(time / 500) / Math.PI, Math.cos(time / 500) / Math.PI, Math.cos(time / 500)  / Math.PI + Math.sin(time / 500)  / Math.PI]
+
+            camera.x = Math.sin(time / speed) * 500,
+            camera.y = Math.cos(time / speed) * 250-150,
+//                camera.y = -1000
+            camera.z = Math.cos(time / speed) * 500
+            camera.lookAt(0, -80, 0);
+            })
+
+
+        }
+    })(this);
+</script>
+</body>
+</html>

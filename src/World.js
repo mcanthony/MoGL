@@ -119,14 +119,17 @@ var World = (function (makeUtil) {
             "* 'World.constructor:2' - WebGLRenderingContext 생성 실패"
         ],
         value:(function () {
+            // tXXX 현재 대상
+            // pXXX 직전 렌더의 대상 - 캐싱을 확인하기 위해 사용
+            // gXXX 글로벌 private
+
             var cameraLength = 0;
             var prevWidth, prevHeight
             var f9 = new Float32Array(9), f3 = new Float32Array(3);
             var tGPU, tGL, tScene, tSceneList, tCameraList, tCamera, tChild, tChildArray, tRenderList;
-
             var tCvs, tCvsW, tCvsH;
-            var tItem, tMaterial, pUUID_mat;
-            var tID, tUID_camera, tUID_Item, tUID_mat, tUID_Scene;
+            var tMesh, tMaterial;
+            var tUID, tUID_camera, tUID_Item, tUID_mat, pUUID_mat, tUID_Scene;
             var tGeo, tBgColor, tColor2, tDiffuseMaps, tNormalMaps, tSpecularMaps;
             var tCull, tVBO, tVNBO, tUVBO, tIBO, tDiffuse, tNormal, tSpecular, tShading, tFrameBuffer, tProgram;
             var pCull, pDiffuse, pNormal, pSpecular, pShading;
@@ -163,7 +166,7 @@ var World = (function (makeUtil) {
             var tMouse;
 
             // 묶음 정보들
-            var vs = new Float32Array(20), fs = new Float32Array(20);
+            var vs = new Float32Array(20), fs = new Float32Array(22);
 
             gListener = $getPrivate('MoGL', 'listener'),
             gCameraProperty = $getPrivate('Camera', 'property'),
@@ -197,17 +200,17 @@ var World = (function (makeUtil) {
 
             var render = function render() {
                 var sheetInfo, i, i2, j, k, k2, sortGeo, sortGeoList, sortShading, sortList, list, curr;
-                tID = this.uuid,
+                tUID = this.uuid,
                 pCull = null,
-                tCvs = cvsList[tID], tSceneList = sceneList[tID],
-                tGPU = gpu[tID], tGL = tGPU.gl,
+                tCvs = cvsList[tUID], tSceneList = sceneList[tUID],
+                tGPU = gpu[tUID], tGL = tGPU.gl,
                 tTextures = tGPU.textures,
                 tCvsW = tCvs.width, tCvsH = tCvs.height,
                 tDiffuseMaps = tNormalMaps = pShading = null,
                 totalVertex = 0,
                 totalObject = 0,
                 i = tSceneList.length,
-                tListener = gListener[tID],
+                tListener = gListener[tUID],
                 tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS),
                 tGL.disable(tGL.BLEND);
 
@@ -230,9 +233,9 @@ var World = (function (makeUtil) {
                             if (gTextureIsLoaded[curr.uuid]) makeTexture(tGPU, curr), list.shift();
                         }
                     }
-                    if (tScene.updateList.camera.length) cameraRenderAreaUpdate(tID);
+                    if (tScene.updateList.camera.length) cameraRenderAreaUpdate(tUID);
                     tScene.updateList.camera.length = 0,
-                        //////////////////////////////////////////////////////////////////////////////////////////////////////
+                    //////////////////////////////////////////////////////////////////////////////////////////////////////
                     tCameraList = tScene.cameras,
                     baseLightRotate = tScene.baseLightRotate;
                     //TODO for k로 돌리니 먼가 쌓이는듯한데?
@@ -247,6 +250,8 @@ var World = (function (makeUtil) {
                             tGL.uniformMatrix4fv(tProgram.uPixelMatrix, false, tProjectionMtx),
                             tGL.uniformMatrix4fv(tProgram.uCameraMatrix, false, tCameraMtx);
                             if (tProgram['uDLite']) tGL.uniform3fv(tProgram.uDLite, baseLightRotate);
+                            vs[14] = tCvsW
+                            vs[15] = tCvsH
                         }
                         // mouse Start
                         tProgram = tGPU.programs['mouse'],
@@ -263,8 +268,8 @@ var World = (function (makeUtil) {
                             prevWidth = tFrameBuffer.width , prevHeight = tFrameBuffer.height
                             for (k2 in gPickMeshs) {
                                 mousePickLength++,
-                                tItem = gPickMeshs[k2].mesh,
-                                tUID_Item = tItem.uuid,
+                                tMesh = gPickMeshs[k2].mesh,
+                                tUID_Item = tMesh.uuid,
                                 tGeo = gGeo[tUID_Item].uuid,
                                 tVBO = tGPU.vbo[tGeo],
                                 tIBO = tGPU.ibo[tGeo],
@@ -277,16 +282,16 @@ var World = (function (makeUtil) {
                                 tGL.uniform4fv(tProgram.uColor, gPickColors[tUID_Item]),
                                 tGL.uniform3fv(tProgram.uAffine,
                                     (
-                                        f9[0] = tItem.x, f9[1] = tItem.y, f9[2] = tItem.z,
-                                        f9[3] = tItem.rotateX, f9[4] = tItem.rotateY, f9[5] = tItem.rotateZ,
-                                        f9[6] = tItem.scaleX, f9[7] = tItem.scaleY, f9[8] = tItem.scaleZ,
+                                        f9[0] = tMesh.x, f9[1] = tMesh.y, f9[2] = tMesh.z,
+                                        f9[3] = tMesh.rotateX, f9[4] = tMesh.rotateY, f9[5] = tMesh.rotateZ,
+                                        f9[6] = tMesh.scaleX, f9[7] = tMesh.scaleY, f9[8] = tMesh.scaleZ,
                                         f9
                                     )
                                 ),
                                 tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0),
                                 pVBO = tVBO
                             }
-                            if (mousePickLength && (tMouse = mouse[tID]) && tMouse.x) {
+                            if (mousePickLength && (tMouse = mouse[tUID]) && tMouse.x) {
                                 tGL.readPixels(tMouse.x, tMouse.y, 1, 1, tGL.RGBA, tGL.UNSIGNED_BYTE, mouseCurrent),
                                 mouseCurrItem = gPickMeshs['' + mouseCurrent[0] + mouseCurrent[1] + mouseCurrent[2] + '255'],
                                 mouseObj.x = tMouse.x,
@@ -346,7 +351,8 @@ var World = (function (makeUtil) {
                             // 지오가 바뀌는 시점
                             for (sortShading in sortGeoList) {
                                 if (sortShading == 'geo') continue;
-                                pDiffuse = pNormal = pSpecular = pShading = pUUID_mat = tProgram = null,
+                                //pDiffuse = pNormal = pSpecular = pShading = pUUID_mat = tProgram = null,
+                                pShading = pUUID_mat = tProgram = null,
                                 sortList = sortGeoList[sortShading],
                                 i2 = sortList.length;
                                 if (!i2) continue
@@ -388,8 +394,8 @@ var World = (function (makeUtil) {
                                 tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO);
 
                                 while (i2--) {
-                                    tItem = sortList[i2],
-                                    tUID_Item = tItem.uuid;
+                                    tMesh = sortList[i2],
+                                    tUID_Item = tMesh.uuid;
                                     if (!gVisible[tUID_Item]) continue;
                                     tCull = gCull[tUID_Item],
                                     tMaterial = gMat[tUID_Item],
@@ -403,11 +409,11 @@ var World = (function (makeUtil) {
                                     ///////////////////////////////////////////////////////////////
                                     //아핀관련정보 입력
                                     if (gBillboard[tUID_Item]) {
-                                        tItem.lookAt(tCamera.x, tCamera.y, -tCamera.z).rotateX = propLookAt.rotateX;
+                                        tMesh.lookAt(tCamera.x, tCamera.y, -tCamera.z).rotateX = propLookAt.rotateX;
                                     }
-                                    vs[0] = tItem.x, vs[1] = tItem.y, vs[2] = tItem.z,
-                                    vs[3] = tItem.rotateX, vs[4] = tItem.rotateY, vs[5] = tItem.rotateZ,
-                                    vs[6] = tItem.scaleX, vs[7] = tItem.scaleY, vs[8] = tItem.scaleZ,
+                                    vs[0] = tMesh.x, vs[1] = tMesh.y, vs[2] = tMesh.z,
+                                    vs[3] = tMesh.rotateX, vs[4] = tMesh.rotateY, vs[5] = tMesh.rotateZ,
+                                    vs[6] = tMesh.scaleX, vs[7] = tMesh.scaleY, vs[8] = tMesh.scaleZ,
                                     ///////////////////////////////////////////////////////////////
                                     //총정점수계산
                                     // TODO 컬링 별로도 리스트를 나눠줘야하는군
@@ -586,7 +592,7 @@ var World = (function (makeUtil) {
                 //
                 //}
                 //if(tListener && tListener['WORLD_RENDER_AFTER']) tListener['WORLD_RENDER_AFTER'][0].f(currentTime,totalVertex)
-                //tGL.flush()
+
             };
             var mouseEvent = ['mousemove', 'mousedown', 'mouseup'];
             var mouseListener = function (e) {
@@ -862,3 +868,4 @@ var World = (function (makeUtil) {
     })
     .build();
 })(makeUtil);
+

@@ -71,7 +71,7 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'colorMergeFShader',
-                            precision: 'mediump float',
+                            precision: 'lowp float',
                             uniforms: [
                                 'sampler2D uSampler0', 'sampler2D uSampler1', 'sampler2D uSampler2', 'sampler2D uSampler3', 'sampler2D uSampler4', 'sampler2D uSampler5', 'sampler2D uSampler6', 'sampler2D uSampler7', 'sampler2D uSampler8',
                                 'vec3 uDLite'],
@@ -173,7 +173,7 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'mouseFragmentShader',
-                            precision: 'mediump float',
+                            precision: 'lowp float',
                             uniforms: [],
                             varyings: ['vec4 vColor'],
                             function: [],
@@ -216,7 +216,7 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'colorFragmentShader',
-                            precision: 'mediump float',
+                            precision: 'lowp float',
                             uniforms: [],
                             varyings: ['vec4 vColor'],
                             function: [],
@@ -259,7 +259,7 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'wireFrameFragmentShader',
-                            precision: 'mediump float',
+                            precision: 'lowp float',
                             uniforms: [],
                             varyings: ['vec4 vColor'],
                             function: [],
@@ -305,7 +305,7 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'bitmapFragmentShader',
-                            precision: 'mediump float',
+                            precision: 'lowp float',
                             uniforms: ['sampler2D uSampler'],
                             varyings: ['vec2 vUV'],
                             function: [],
@@ -352,7 +352,7 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'colorFragmentShaderGouraud',
-                            precision: 'mediump float',
+                            precision: 'lowp float',
                             uniforms: ['sampler2D uSampler'],
                             varyings: ['vec4 vColor'],
                             function: [],
@@ -400,7 +400,7 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'bitmapFragmentShaderGouraud',
-                            precision: 'mediump float',
+                            precision: 'lowp float',
                             uniforms: ['sampler2D uSampler'],
                             varyings: ['vec2 vUV', 'vec4 vLight'],
                             function: [],
@@ -448,10 +448,10 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'colorFragmentShaderPhong',
-                            precision: 'mediump float',
+                            precision: 'lowp float',
                             uniforms: [
                                 'vec3 uDLite',
-                                'float uFS[20]'
+                                'float uFS[22]'
                             ],
                             varyings: ['vec3 vNormal', 'vec3 vPosition'],
                             function: [],
@@ -515,7 +515,7 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'toonFragmentShaderPhong',
-                            precision: 'mediump float',
+                            precision: 'lowp float',
                             uniforms: ['float uLambert', 'vec3 uDLite'],
                             varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec4 vColor'],
                             function: [],
@@ -561,7 +561,7 @@ var Shader = (function () {
                                 'float uVS[20]'
                             ],
                             varyings: [
-                                'vec2 vUV', 'vec3 vNormal', 'vec3 vPosition',
+                                'vec2 vUV', 'vec3 vNormal', 'vec3 vPosition','float isDiscard'
 
                             ],
                             function: [VertexShader.baseFunction],
@@ -570,6 +570,14 @@ var Shader = (function () {
                                 'vec4 position = mv * vec4(aVertexPosition, 1.0);\n' +
                                 'gl_Position = uPixelMatrix*position;\n' +
                                 'vPosition = position.xyz;\n' +
+                                'isDiscard = 0.0;\n' +
+                                'if( gl_Position.x < -uVS[14] * 1.0 || gl_Position.x > uVS[14] * 1.0) {\n' +
+                                        'isDiscard = 1.0;\n' +
+                                '}\n' +
+                                'else if( vPosition.y < -uVS[15] * 1.0  || vPosition.y > uVS[15] * 1.0) {\n' +
+                                     'isDiscard = 1.0;\n' +
+                                '};\n' +
+
                                 'vNormal = (mv * vec4(-aVertexNormal, 0.0)).xyz;\n' +
                                 'if( uVS[9] == 1.0 ) {' +
                                 '   vUV = vec2(aUV.x*uVS[10]+uVS[10]*uVS[12], aUV.y*uVS[11]+uVS[11]*uVS[13]);' +
@@ -619,53 +627,63 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'bitmapFragmentShaderPhong',
-                            precision: 'mediump float',
+                            precision: 'lowp float',
                             uniforms: [
                                 'sampler2D uSampler',
                                 'sampler2D uNormalSampler',
                                 'sampler2D uSpecularSampler',
                                 'vec3 uDLite',
-                                'float uFS[20]'
+                                'float uFS[22]'
                             ],
-                            varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition'],
+                            varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition' ,'float isDiscard'],
                             function: [],
                             main: [
-                                'if( uFS[4] == 1.0 ){\n' +
-                                    'gl_FragColor = vec4(uFS[5],uFS[6],uFS[7],uFS[8])*uFS[9];\n' +
-                                '}else{\n' +
-                                    'vec4 diffuse = texture2D( uSampler, vUV );\n' + // 디퓨즈를 계산함
-                                    'float alpha = diffuse[3];\n' + // 디퓨즈를 계산함
-                                    'if(alpha==0.0) discard;\n'+
-                                    'else {\n'+
-                                        'vec4 ambientColor = vec4(1.0, 1.0, 1.0, 1.0);\n' +
-                                        'vec4 specColor = vec4(uFS[12],uFS[13],uFS[14],uFS[15]);\n' +
 
-                                        'vec3 position = normalize(vPosition);\n' +
-                                        'vec3 normal = normalize(vNormal);\n' +
-                                        'vec3 lightDir = normalize(uDLite);\n' +
-                                        'vec3 reflectDir = reflect(-lightDir, normal);\n' +
-                                        'float light = max( 0.05, dot(normal,lightDir) * uFS[10]);\n' + // 라이트강도 구하고
+                                'if( uFS[9] == 0.0 || isDiscard >0.0  ) discard;\n' +
+                                //'if( uFS[9] == 0.0 || isDiscard >0.0  ) gl_FragColor = vec4(0.1,0.5,0.2,1.0);\n' +
+                                //'else if( gl_Position.x < -uFS[20]*0.65 || vPosition.x > uFS[20]*0.65) {\n' +
+                                //    'if( vPosition.y < -uFS[21]*0.65 || vPosition.y > uFS[21]*0.65) {\n' +
+                                //        'discard;\n' +
+                                //    '};\n' +
+                                //'}\n' +
+                                'else {\n'+
+                                    'if( uFS[4] == 1.0 ){\n' +
+                                        'gl_FragColor = vec4(uFS[5],uFS[6],uFS[7],uFS[8])*uFS[9];\n' +
+                                    '}else{\n' +
+                                        'vec4 diffuse = texture2D( uSampler, vUV );\n' + // 디퓨즈를 계산함
+                                        'float alpha = diffuse[3];\n' + // 디퓨즈를 계산함
+                                        'if(alpha==0.0) discard;\n'+
+                                        'else {\n'+
+                                            'vec4 ambientColor = vec4(1.0, 1.0, 1.0, 1.0);\n' +
+                                            'vec4 specColor = vec4(uFS[12],uFS[13],uFS[14],uFS[15]);\n' +
 
-                                        'float specular\n;' +
-                                        'if( uFS[16] == 1.0 ){\n' +
-                                        '   vec4 bump = texture2D( uNormalSampler, vUV );\n' +
-                                        '   bump.rgb= bump.rgb*2.0-1.0 ;\n' + // 범프값을 -1~1로 교정
-                                        '   float normalSpecular = max( dot(reflectDir, position-bump.g), 0.5 );\n' + // 맵에서 얻어낸 노말 스페큘라
-                                        '   specular = pow(normalSpecular,uFS[11])*specColor[3];\n' + // 스페큘라
-                                        '   gl_FragColor = ( diffuse *light * ambientColor * ambientColor[3] + specular * specColor ) + normalSpecular * bump.g * uFS[17]  ;\n' +
-                                        '}else{' +
-                                        '   specular = max( dot(reflectDir, position), 0.5 );\n' +
-                                        '   specular = pow(specular,uFS[11])*specColor[3];\n' +
-                                        '   gl_FragColor = diffuse *light * ambientColor * ambientColor[3] + specular * specColor ;\n' +
-                                        '}\n' +
-                                        'if( uFS[18] == 1.0 ){\n' +
-                                        '   specular = max( dot(reflectDir, position), 0.5 );\n' +
-                                        '   specular = pow(specular,texture2D( uSpecularSampler, vUV ).a);\n' +
-                                        '   gl_FragColor = gl_FragColor + gl_FragColor * specColor * specular * texture2D( uSpecularSampler, vUV ) * uFS[19];\n' +
-                                        '}\n' +
-                                        'gl_FragColor.a = alpha*uFS[9];\n'+
-                                    '}\n'+
-                                '};'
+                                            'vec3 position = normalize(vPosition);\n' +
+                                            'vec3 normal = normalize(vNormal);\n' +
+                                            'vec3 lightDir = normalize(uDLite);\n' +
+                                            'vec3 reflectDir = reflect(-lightDir, normal);\n' +
+                                            'float light = max( 0.05, dot(normal,lightDir) * uFS[10]);\n' + // 라이트강도 구하고
+
+                                            'float specular\n;' +
+                                            'if( uFS[16] == 1.0 ){\n' +
+                                            '   vec4 bump = texture2D( uNormalSampler, vUV );\n' +
+                                            '   bump.rgb= bump.rgb*2.0-1.0 ;\n' + // 범프값을 -1~1로 교정
+                                            '   float normalSpecular = max( dot(reflectDir, normalize(position-bump.rgb)), 0.3 );\n' + // 맵에서 얻어낸 노말 스페큘라
+                                            '   specular = pow(normalSpecular,uFS[11])*specColor[3];\n' + // 스페큘라
+                                            '   gl_FragColor = ( diffuse *light * ambientColor * ambientColor[3] + specular * specColor ) + normalSpecular * bump.g * uFS[17]  ;\n' +
+                                            '}else{' +
+                                            '   specular = max( dot(reflectDir, position), 0.5 );\n' +
+                                            '   specular = pow(specular,uFS[11])*specColor[3];\n' +
+                                            '   gl_FragColor = diffuse *light * ambientColor * ambientColor[3] + specular * specColor ;\n' +
+                                            '}\n' +
+                                            'if( uFS[18] == 1.0 ){\n' +
+                                            '   specular = max( dot(reflectDir, position), 0.5 );\n' +
+                                            '   specular = pow(specular,texture2D( uSpecularSampler, vUV ).a);\n' +
+                                            '   gl_FragColor = gl_FragColor + gl_FragColor * specColor * specular * texture2D( uSpecularSampler, vUV ) * uFS[19];\n' +
+                                            '}\n' +
+                                            'gl_FragColor.a = alpha*uFS[9];\n'+
+                                        '}\n'+
+                                    '};\n'+
+                                '};\n'
 
                             ]
                         }))
@@ -707,7 +725,7 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'bitmapFragmentShaderBlinn',
-                            precision: 'mediump float',
+                            precision: 'lowp float',
                             uniforms: ['sampler2D uSampler', 'float uLambert', 'vec3 uDLite'],
                             varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition'],
                             function: [],
@@ -768,7 +786,7 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader({
                             id: 'postBaseFragmentShader',
-                            precision: 'mediump float',
+                            precision: 'lowp float',
                             uniforms: ['sampler2D uSampler', 'vec2 uTexelSize', 'int uFXAA'],
                             varyings: ['vec2 vUV'],
                             function: [],
