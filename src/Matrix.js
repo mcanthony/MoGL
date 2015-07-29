@@ -1,14 +1,13 @@
 var Matrix = (function () {
     'use strict';
-    var temp, setter, getter,
+    var temp, setter, getter, rawInit,
         raw;
     //private
     raw = {},
     $setPrivate('Matrix', {
-        raw : raw
+        raw:raw
     });
     //lib
-
     temp = new Float32Array(16),
     setter = function(x, y, z){
         return function(v) {
@@ -29,9 +28,16 @@ var Matrix = (function () {
            result[0] = this[x], result[1] = this[y], result[2] = this[z];
            return result;
         };
+    },
+    rawInit = function rawInit(mat, isCurrent){
+        if (isCurrent) mat.matrix;
+        return raw[mat.uuid] || (raw[mat.uuid] = new Float32Array(16));
     };
     return MoGL.extend('Matrix',{
-        description:'매트릭스 객체로서 사용되며,\n- position(x, y, z),\n- scale(scaleX, scaleY, scaleZ),\n- rotate(rotateX, rotateY, rotateZ)\n-  관련된 속성도 포함한다. ',
+        description:[
+            '매트릭스 객체로서 사용되며,\n- position(x, y, z),\n- scale(scaleX, scaleY, scaleZ),\n- rotate(rotateX, rotateY, rotateZ)',
+            '*  관련된 속성도 포함한다. '
+        ],
         sample:[
             'var mtx = new Matrix();',
             'console.log(mtx.x);',
@@ -42,60 +48,30 @@ var Matrix = (function () {
             this.scaleX = this.scaleY = this.scaleZ = 1;
         }
     })
-    .field('position', {
-        description: 'x,y,z값을 배열로 반환하거나 입력',
-        sample:[
-            'var mtx = new Matrix();',
-            'mtx.position = [10,20,30];',
-            'console.log(mtx.position); // [10,20,30]'
-        ],
-        set:setter('x', 'y', 'z'),
-        get:getter('x', 'y', 'z')
-    })
-    .field('scale', {
-        description: 'scale값을 배열로 반환하거나 입력',
-        sample:[
-            'var mtx = new Matrix();',
-            'mtx.scale = [10,20,30];',
-            'console.log(mtx.scale); // [10,20,30]'
-        ],
-        set:setter('scaleX', 'scaleY', 'scaleZ'),
-        get:getter('scaleX', 'scaleY', 'scaleZ')
-    })
-    .field('rotate', {
-        description: 'rotate값을 배열로 반환하거나 입력',
-        sample:[
-            'var mtx = new Matrix();',
-            'mtx.rotate = [10,20,30];',
-            'console.log(mtx.rotate); // [10,20,30]'
-        ],
-        set:setter('rotateX', 'rotateY', 'rotateZ'),
-        get:getter('rotateX', 'rotateY', 'rotateZ')
-    })
     .field('matrix', {
-        description: '현재 객체내의 position,rotate,scale을 반영한 후 자신을 반환',
+        description:'현재 position,rotate,scale을 반영한 4x4행렬을 설정한 뒤 자신을 반환',
         sample:[
             'var mtx = new Matrix();',
             'console.log(mtx.matrix);'
         ],
         get:function matrixGet() {
-            if (!raw[this]) raw[this] = new Float32Array(16);
+            rawInit(this),
             this.matIdentity().matScale(this.scaleX,this.scaleY,this.scaleZ).matRotateX(this.rotateX).matRotateY(this.rotateY).matRotateZ(this.rotateZ).matTranslate(this.x, this.y, this.z);
             return this;
         }
     })
     .field('raw', {
-        description: '현재 매트릭스 객체의 rawData를 Float32Array 형식으로 반환',
+        description:'현재 매트릭스 객체의 rawData를 Float32Array 형식으로 반환(행렬로 사용한 적이 없으면 null)',
         sample:[
             'var mtx = new Matrix();',
             'console.log(mtx.raw);'
         ],
         get:function rawGet(){
-            return raw[this];
+            return raw[this] || null;
         }
     })
     .method('lookAt', {
-        description: '현재매트릭스를 대상지점을 바라보도록 변경\n- 현재 매트릭스의 rotateX,rotateY,rotateZ, 속성을 자동으로 변경',
+        description:'현재매트릭스를 대상지점을 바라보도록 변경\n- 현재 매트릭스의 rotateX,rotateY,rotateZ, 속성을 자동으로 변경',
         param:[
             'x:number - 바라볼 x위치',
             'y:number - 바라볼 y위치',
@@ -105,18 +81,15 @@ var Matrix = (function () {
             'var mtx = new Matrix();',
             'mtx.lookAt(0,0,0); // 현재위치에서 0,0,0을 바라보는 상태로 rotateX, rotateY, rotateZ가 변경됨'
         ],
-        ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
+        ret:'this',
         value:(function(){
-            var A = new Float32Array(3), B = new Float32Array(3);
+            var A = new Float32Array(3), B = new Float32Array(3), axis = [0, 1, 0];
             return function lookAt(x, y, z) {
                 var d, d11, d12, d13, d21, d22, d23, d31, d32, d33, md31,
                     radianX, radianY, radianZ, cosY;
-                if (!raw[this]) raw[this] = new Float32Array(16);
-                this.matIdentity(),
                 A[0] = this.x, A[1] = this.y, A[2] = -this.z,
                 B[0] = x, B[1] = y, B[2] = z,
-                this.matLookAt(A, B, [0, 1, 0]),
-                //this.matTranslate(F3);
+                this.matLookAt(A, B, axis),
                 d = raw[this],
                 d11 = d[0], d12 = d[1], d13 = d[2],
                 d21 = d[4], d22 = d[5], d23 = d[6],
@@ -150,9 +123,7 @@ var Matrix = (function () {
         ],
         ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
         value:function matIdentity() {
-            var a;
-            if (!raw[this]) raw[this] = new Float32Array(16), this.matrix();
-            a = raw[this];
+            var a = rawInit(this);
             a[0] = 1, a[1] = 0, a[2] = 0, a[3] = 0, a[4] = 0, a[5] = 1, a[6] = 0, a[7] = 0, a[8] = 0, a[9] = 0, a[10] = 1, a[11] = 0, a[12] = 0, a[13] = 0, a[14] = 0, a[15] = 1;
             return this;
         }
@@ -164,13 +135,14 @@ var Matrix = (function () {
             'mtx.matClone();'
         ],
         ret: ['Matrix - 복제한 매트릭스를 반환.'],
-        value:function matClone() {
-            var a, b, out;
-            if (!raw[this]) raw[this] = new Float32Array(16), this.matrix();
-            a = raw[this], out = Matrix(), b = raw[out],
-            b[0] = a[0], b[1] = a[1], b[2] = a[2], b[3] = a[3], b[4] = a[4], b[5] = a[5], b[6] = a[6], b[7] = a[7], b[8] = a[8], b[9] = a[9], b[10] = a[10], b[11] = a[11], b[12] = a[12], b[13] = a[13], b[14] = a[14], b[15] = a[15];
-            return out;
-        }
+        value:(function(){
+            var out = Matrix(), b = rawInit(out);
+            return function matClone() {
+                var a = rawInit(this, 1);
+                b[0] = a[0], b[1] = a[1], b[2] = a[2], b[3] = a[3], b[4] = a[4], b[5] = a[5], b[6] = a[6], b[7] = a[7], b[8] = a[8], b[9] = a[9], b[10] = a[10], b[11] = a[11], b[12] = a[12], b[13] = a[13], b[14] = a[14], b[15] = a[15];
+                return out;
+            };
+        })()
     })
     .method('matCopy', {
         description:'대상 매트릭스에 현재 매트릭스의 상태를 복사',
@@ -185,7 +157,7 @@ var Matrix = (function () {
         ],
         value:function matCopy(t) {
             var a;
-            if (!raw[this]) raw[this] = new Float32Array(16), this.matrix();
+            if (!raw[this]) raw[this] = new Float32Array(16), this.matrix;
             if (!raw[t]) raw[t] = new Float32Array(16);
             a = raw[this], t = raw[t],
             t[0] = a[0], t[1] = a[1], t[2] = a[2], t[3] = a[3], t[4] = a[4], t[5] = a[5], t[6] = a[6], t[7] = a[7], t[8] = a[8], t[9] = a[9], t[10] = a[10], t[11] = a[11], t[12] = a[12], t[13] = a[13], t[14] = a[14], t[15] = a[15];
@@ -193,11 +165,8 @@ var Matrix = (function () {
         }
     })
     .method('matInvert', function matInvert(out) {
-        var a, t;
-        if (!raw[this]) raw[this] = new Float32Array(16), this.matIdentity();
-        if (!out) out = Matrix();
-        a  = raw[this], t = raw[out];
-        var a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
+        var a = rawInit(this), t = rawInit(out),
+            a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
             a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7],
             a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11],
             a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15],
@@ -213,8 +182,7 @@ var Matrix = (function () {
             b09 = a21 * a32 - a22 * a31,
             b10 = a21 * a33 - a23 * a31,
             b11 = a22 * a33 - a23 * a32,
-        // Calculate the determinant
-            det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;
+            det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06; //Calculate the determinant
         if (!det) return null;
         det = 1.0 / det;
         t[0] = (a11 * b11 - a12 * b10 + a13 * b09) * det;
@@ -248,7 +216,7 @@ var Matrix = (function () {
         ],
         value:function matMultiply(t) {
             var a;
-            if (!raw[this]) raw[this] = new Float32Array(16), this.matIdentity();
+            if (!raw[this]) raw[this] = new Float32Array(16), this.matrix;
             a = raw[this], t = raw[t];
             var a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3], a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7], a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11], a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15],
                 b0 = t[0], b1 = t[1], b2 = t[2], b3 = t[3];
