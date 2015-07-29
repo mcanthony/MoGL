@@ -56,7 +56,7 @@ var Matrix = (function () {
         ],
         get:function matrixGet() {
             rawInit(this),
-            this.matIdentity().matScale(this.scaleX,this.scaleY,this.scaleZ).matRotateX(this.rotateX).matRotateY(this.rotateY).matRotateZ(this.rotateZ).matTranslate(this.x, this.y, this.z);
+            this.matIdentity().matScale(this.scaleX,this.scaleY,this.scaleZ).matQuaternionXYZRotate(this.rotateX, this.rotateY, this.rotateZ).matTranslate(this.x, this.y, this.z);
             return this;
         }
     })
@@ -116,7 +116,7 @@ var Matrix = (function () {
         })()
     })
     .method('matIdentity', {
-        description:'현재 매트릭스를 초기화한다.',
+        description:'현재 매트릭스를 단위 매트릭스로 초기화한다.',
         sample:[
             'var mtx = new Matrix();',
             'mtx.matIdentity();'
@@ -129,12 +129,12 @@ var Matrix = (function () {
         }
     })
     .method('matClone', {
-        description: '현재 매트릭스를 복제',
+        description: '현재 매트릭스를 복제해서 새로 생성된 매트릭스를 반환한다.',
         sample: [
             'var mtx = new Matrix();',
             'mtx.matClone();'
         ],
-        ret: ['Matrix - 복제한 매트릭스를 반환.'],
+        ret: ['Matrix - 복제해서 새로 생성한 매트릭스를 반환.'],
         value:(function(){
             var out = Matrix(), b = rawInit(out);
             return function matClone() {
@@ -145,11 +145,11 @@ var Matrix = (function () {
         })()
     })
     .method('matCopy', {
-        description:'대상 매트릭스에 현재 매트릭스의 상태를 복사',
+        description:'현재 매트릭스의 값을 대상 매트릭스에 복사하여 덮어쓴다.',
         sample: [
-            'var mtx = new Matrix();',
-            'var mtx2 = new Matrix();',
-            'mtx.matCopy(mtx2);  // mtx2에 mtx의 속성이 복사됨.'
+            'var source = new Matrix();',
+            'var target = new Matrix();',
+            'source.matCopy(target);  // source의 속성을 target에 복사'
         ],
         ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
         param:[
@@ -164,44 +164,52 @@ var Matrix = (function () {
             return this;
         }
     })
-    .method('matInvert', function matInvert(out) {
-        var a = rawInit(this), t = rawInit(out),
-            a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
-            a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7],
-            a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11],
-            a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15],
-            b00 = a00 * a11 - a01 * a10,
-            b01 = a00 * a12 - a02 * a10,
-            b02 = a00 * a13 - a03 * a10,
-            b03 = a01 * a12 - a02 * a11,
-            b04 = a01 * a13 - a03 * a11,
-            b05 = a02 * a13 - a03 * a12,
-            b06 = a20 * a31 - a21 * a30,
-            b07 = a20 * a32 - a22 * a30,
-            b08 = a20 * a33 - a23 * a30,
-            b09 = a21 * a32 - a22 * a31,
-            b10 = a21 * a33 - a23 * a31,
-            b11 = a22 * a33 - a23 * a32,
-            det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06; //Calculate the determinant
-        if (!det) return null;
-        det = 1.0 / det;
-        t[0] = (a11 * b11 - a12 * b10 + a13 * b09) * det;
-        t[1] = (a02 * b10 - a01 * b11 - a03 * b09) * det;
-        t[2] = (a31 * b05 - a32 * b04 + a33 * b03) * det;
-        t[3] = (a22 * b04 - a21 * b05 - a23 * b03) * det;
-        t[4] = (a12 * b08 - a10 * b11 - a13 * b07) * det;
-        t[5] = (a00 * b11 - a02 * b08 + a03 * b07) * det;
-        t[6] = (a32 * b02 - a30 * b05 - a33 * b01) * det;
-        t[7] = (a20 * b05 - a22 * b02 + a23 * b01) * det;
-        t[8] = (a10 * b10 - a11 * b08 + a13 * b06) * det;
-        t[9] = (a01 * b08 - a00 * b10 - a03 * b06) * det;
-        t[10] = (a30 * b04 - a31 * b02 + a33 * b00) * det;
-        t[11] = (a21 * b02 - a20 * b04 - a23 * b00) * det;
-        t[12] = (a11 * b07 - a10 * b09 - a12 * b06) * det;
-        t[13] = (a00 * b09 - a01 * b07 + a02 * b06) * det;
-        t[14] = (a31 * b01 - a30 * b03 - a32 * b00) * det;
-        t[15] = (a20 * b03 - a21 * b01 + a22 * b00) * det;
-        return out;
+    .method('matInvert', {
+        description:'현재 매트릭스의 역행렬을 새로 생성해서 반환한다.',
+        sample: [
+            'var source = new Matrix();',
+            'var inverted = source.matInvert();',
+        ],
+        ret: ['invertedMatrix - 새로 생성된 역행렬'],
+        value:function matInvert() {
+            var a = rawInit(this), out = Matrix(), t = rawInit(out),
+                a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
+                a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7],
+                a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11],
+                a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15],
+                b00 = a00 * a11 - a01 * a10,
+                b01 = a00 * a12 - a02 * a10,
+                b02 = a00 * a13 - a03 * a10,
+                b03 = a01 * a12 - a02 * a11,
+                b04 = a01 * a13 - a03 * a11,
+                b05 = a02 * a13 - a03 * a12,
+                b06 = a20 * a31 - a21 * a30,
+                b07 = a20 * a32 - a22 * a30,
+                b08 = a20 * a33 - a23 * a30,
+                b09 = a21 * a32 - a22 * a31,
+                b10 = a21 * a33 - a23 * a31,
+                b11 = a22 * a33 - a23 * a32,
+                det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06; //Calculate the determinant
+            if (!det) return null;
+            det = 1.0 / det;
+            t[0] = (a11 * b11 - a12 * b10 + a13 * b09) * det;
+            t[1] = (a02 * b10 - a01 * b11 - a03 * b09) * det;
+            t[2] = (a31 * b05 - a32 * b04 + a33 * b03) * det;
+            t[3] = (a22 * b04 - a21 * b05 - a23 * b03) * det;
+            t[4] = (a12 * b08 - a10 * b11 - a13 * b07) * det;
+            t[5] = (a00 * b11 - a02 * b08 + a03 * b07) * det;
+            t[6] = (a32 * b02 - a30 * b05 - a33 * b01) * det;
+            t[7] = (a20 * b05 - a22 * b02 + a23 * b01) * det;
+            t[8] = (a10 * b10 - a11 * b08 + a13 * b06) * det;
+            t[9] = (a01 * b08 - a00 * b10 - a03 * b06) * det;
+            t[10] = (a30 * b04 - a31 * b02 + a33 * b00) * det;
+            t[11] = (a21 * b02 - a20 * b04 - a23 * b00) * det;
+            t[12] = (a11 * b07 - a10 * b09 - a12 * b06) * det;
+            t[13] = (a00 * b09 - a01 * b07 + a02 * b06) * det;
+            t[14] = (a31 * b01 - a30 * b03 - a32 * b00) * det;
+            t[15] = (a20 * b03 - a21 * b01 + a22 * b00) * det;
+            return out;
+        }
     })
     .method('matMultiply', {
         description:'현재매트릭스에 대상 매트릭스를 곱한다. ',
@@ -353,6 +361,41 @@ var Matrix = (function () {
                 b00 = x * x * t + c, b01 = y * x * t + z * s, b02 = z * x * t - y * s, b10 = x * y * t - z * s, b11 = y * y * t + c, b12 = z * y * t + x * s, b20 = x * z * t + y * s, b21 = y * z * t - x * s, b22 = z * z * t + c,
                 a[0] = a00 * b00 + a10 * b01 + a20 * b02, a[1] = a01 * b00 + a11 * b01 + a21 * b02, a[2] = a02 * b00 + a12 * b01 + a22 * b02, a[3] = a03 * b00 + a13 * b01 + a23 * b02, a[4] = a00 * b10 + a10 * b11 + a20 * b12, a[5] = a01 * b10 + a11 * b11 + a21 * b12, a[6] = a02 * b10 + a12 * b11 + a22 * b12, a[7] = a03 * b10 + a13 * b11 + a23 * b12, a[8] = a00 * b20 + a10 * b21 + a20 * b22, a[9] = a01 * b20 + a11 * b21 + a21 * b22, a[10] = a02 * b20 + a12 * b21 + a22 * b22, a[11] = a03 * b20 + a13 * b21 + a23 * b22;
             if (a !== a) a[12] = a[12], a[13] = a[13], a[14] = a[14], a[15] = a[15];
+            return this;
+        }
+    })
+    .method('matQuaternionXYZRotate', {
+        description:'X, Y, Z축 순서 기준의 4원수 회전 매트릭스를 반환한다.',
+        sample: [
+            'var mtx = new Matrix();',
+            'var mtxQuaternionRotate = mtx.matQuaternionXYZRotate(2, 1, 4);'
+        ],
+        ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
+        param:[
+            'rx:number - x축 기준 회전 값, radian단위',
+            'ry:number - y축 기준 회전 값, radian단위',
+            'rz:number - z축 기준 회전 값, radian단위'
+        ],
+        value:function matQuaternionXYZRotate(rx, ry, rz) {
+            var a;
+            if (!raw[this]) raw[this] = new Float32Array(16), this.matIdentity();
+            a = raw[this];
+
+            var c0, c1, c2, s0, s1, s2;
+            c0 = COS(rx), c1 = COS(ry), c2 = COS(rz),
+            s0 = SIN(rx), s1 = SIN(ry), s2 = SIN(rz);
+
+            var x, y, z, w;
+            x = c2*c1*s0 + s2*s1*c0,
+            y = c2*s1*c0 - s2*c1*s0,
+            z = s2*c1*c0 + c2*s1*s0,
+            w = c2*c1*c0 - s2*s1*s0;
+
+            a[0] = w*w + x*x - y*y -z*z, a[1] = 2*(x*y - w*z), a[2] = 2*(x*z + w*y), a[3] = 0,
+            a[4] = 2*(x*y + w*z), a[5] = w*w - x*x + y*y - z*z, a[6] = 2*(y*z - w*x), a[7] = 0,
+            a[8] = 2*(x*z - w*y), a[9] = 2*(y*z - w*x), a[10] = w*w - x*x - y*y + z*z, a[11] = 0,
+            a[12] = 0, a[13] = 0, a[14] = 0, a[15] = 1;
+
             return this;
         }
     })
