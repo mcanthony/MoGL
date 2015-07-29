@@ -76,9 +76,22 @@
 
         var imgTag = document.createElement('img');
         imgTag.src = 'lol/ahri_base_tx_cm.png';
+        var imgsTag = document.createElement('img');
+        imgsTag.src = 'lol/specularMap.png';
+
+        var imgNTag = document.createElement('img');
+        imgNTag.src = 'lol/normalMap.png';
+
         var mat = new Material();
         var texture = new Texture(imgTag);
         mat.addTexture(Texture.diffuse, texture);
+        mat.addTexture(Texture.specular, Texture(imgsTag));
+        mat.addTexture(Texture.normal, Texture(imgNTag));
+        mat.specularColor[3] = 0.1
+        mat.specularPower = 10
+        mat.specularMapPower = 1
+        mat.normalPower = -0.5
+
         // mat.shading = Shading.gouraud;
         mat.shading = Shading.phong;
         // mat.shading = Shading.toon;
@@ -99,31 +112,33 @@
 
             var geo = new Geometry(vertices, indices, [Vertex.x, Vertex.y, Vertex.z, Vertex.normalX, Vertex.normalY, Vertex.normalZ, Vertex.u, Vertex.v]);
 
-            var mesh = new Mesh(geo, mat);
-            mesh.y = -80;
-            mesh.z = -200;
+            var mesh
+            for(var i =0; i<100; i++){
+                mesh = new Mesh(geo, mat);
+                mesh.x = Math.random()*3000 - 1500
+                mesh.z = Math.random()*3000 - 1500
+                mesh.rotateY = Math.random()*Math.PI*2
+                scene.addChild(mesh);
+            }
 
 
-            mesh.addEventListener("over", function () {
-                mat.wireFrame = 1;
-            });
-
-            mesh.addEventListener("out", function () {
-                mat.wireFrame = 0;
-            });
 
 
-            scene.addChild(mesh);
 
-            var count = 0, sum = 0
+            var count = 0, sum = 0, speed = 1000
             world.addEventListener(World.renderBefore, function (fps, time, totalVertex) {
-                var currentFPS = fps;
-                count++
-                divCurrentFPS.textContent = currentFPS.toFixed(2);
-                divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2) + ' / totalVertex : ' + totalVertex;
+            var currentFPS = fps;
+            count++
+            divCurrentFPS.textContent = currentFPS.toFixed(2);
+            divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2) + ' / totalVertex : ' + totalVertex;
 
+            scene.baseLightRotate = [Math.sin(time / 500) / Math.PI, Math.cos(time / 500) / Math.PI, Math.cos(time / 500)  / Math.PI + Math.sin(time / 500)  / Math.PI]
 
-                mesh.rotateY+=0.01
+            camera.x = Math.sin(time / speed) * 500,
+            camera.y = Math.cos(time / speed) * 250-150,
+//                camera.y = -1000
+            camera.z = Math.cos(time / speed) * 500
+            camera.lookAt(0, -80, 0);
             })
 
 

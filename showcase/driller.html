@@ -66,7 +66,7 @@ body {
 <script>
 'use strict';
 var init = function(isLoaded, imgs){
-	var world, scene, camera, toRadian = bs.toradian, bg;
+	var world, scene, camera, toRadian = bs.toradian;
     if (!isLoaded) return;
 	MoGL.classes(window);
     world = World('stage').addScene(
@@ -75,32 +75,27 @@ var init = function(isLoaded, imgs){
             camera = Camera()
             .setProperties({fov:[bs('#stage').S('w'), bs('#stage').S('h'), 45]})
         )
-        .addChild(//background
-            bg = Mesh( 
-                Primitive.sphere(),
-                Material('#ff2233')
-                .setProperties({shading:Shading.none})
-                .addTexture(Texture.diffuse, Texture(imgs[1]))
-            )
-            .setProperties({z: camera.z, scaleX: 50, scaleY: 50, scaleZ: 350})
-        )
     );
     bs('#preloader').S(null);
 	world.setAutoSize(1).start();
 
-    var divCurrentFPS, divAverageFPS;
-    divCurrentFPS = bs('#currentFPS'),
-    divAverageFPS = bs('#averageFPS');
-    var count222 = 0, sum = 0;
+    
+    
+    var mesh1 = Mesh(Primitive.cube(), Material('#f00').setProperties({shading:Shading.phong}));
+    var mesh2 = Mesh(Primitive.cube(), Material('#00f').setProperties({shading:Shading.phong}));
+    var mat1 = Matrix(), mat2 = Matrix();
+    mat1.x = -1, mat2.x = 1;
+    scene.addChild(mesh1).addChild(mesh2);
+    var group = Matrix(), temp = Matrix(), r = 0;
     world.addEventListener(World.renderBefore, function (fps, time, totalVertex, totalObject) {
-        var currentFPS = fps;
-        count222++;
-        divCurrentFPS.S('html', currentFPS.toFixed(2));
-        divAverageFPS.S('html', 
-            ((sum += currentFPS) / count222).toFixed(2) + 
-            ' / totalVertex : ' + 
-            totalVertex + ' / totalObject : ' + totalObject);
+        group.rotateY = r;
+        r += .01;
+        temp.matCopy(group);
+        mesh1.matCopy(temp.matMultiply(mat1));
+        temp.matCopy(group);
+        mesh2.matCopy(temp.matMultiply(mat2));
     });
+    return;
     (function(){
         var r = 0, x, y;
         bs.WIN.on('move', function(e){

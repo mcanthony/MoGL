@@ -166,7 +166,7 @@ var World = (function (makeUtil) {
             var tMouse;
 
             // 묶음 정보들
-            var vs = new Float32Array(20), fs = new Float32Array(20);
+            var vs = new Float32Array(20), fs = new Float32Array(22);
 
             gListener = $getPrivate('MoGL', 'listener'),
             gCameraProperty = $getPrivate('Camera', 'property'),
@@ -250,6 +250,8 @@ var World = (function (makeUtil) {
                             tGL.uniformMatrix4fv(tProgram.uPixelMatrix, false, tProjectionMtx),
                             tGL.uniformMatrix4fv(tProgram.uCameraMatrix, false, tCameraMtx);
                             if (tProgram['uDLite']) tGL.uniform3fv(tProgram.uDLite, baseLightRotate);
+                            vs[14] = tCvsW
+                            vs[15] = tCvsH
                         }
                         // mouse Start
                         tProgram = tGPU.programs['mouse'],
@@ -590,7 +592,7 @@ var World = (function (makeUtil) {
                 //
                 //}
                 //if(tListener && tListener['WORLD_RENDER_AFTER']) tListener['WORLD_RENDER_AFTER'][0].f(currentTime,totalVertex)
-                //tGL.flush()
+
             };
             var mouseEvent = ['mousemove', 'mousedown', 'mouseup'];
             var mouseListener = function (e) {
