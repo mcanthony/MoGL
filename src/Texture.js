@@ -32,21 +32,21 @@ var Texture = (function() {
         canvas.height = th,
         context.clearRect(0, 0, tw, th);
         switch (resizeType) {
-		case Texture.crop:
-			var ratio = v.height / v.width
-			if (v.height < th) {
-				v.height = th
-				v.width = v.height / ratio
-			}
-			context.drawImage(v, 0, 0, v.width, v.height);
-			break;
-		case Texture.addSpace:
-			if (v.width < tw) tw = Math.round(v.width);
-			if (v.height < th) th = Math.round(v.height);
-			context.drawImage(v, 0, 0, tw, th);
-			break;
-		default:
-			context.drawImage(v, 0, 0, tw, th);
+        case Texture.crop:
+            var ratio = v.height / v.width
+            if (v.height < th) {
+                v.height = th
+                v.width = v.height / ratio
+            }
+            context.drawImage(v, 0, 0, v.width, v.height);
+            break;
+        case Texture.addSpace:
+            if (v.width < tw) tw = Math.round(v.width);
+            if (v.height < th) th = Math.round(v.height);
+            context.drawImage(v, 0, 0, tw, th);
+            break;
+        default:
+            context.drawImage(v, 0, 0, tw, th);
         }
         v.src = canvas.toDataURL();
         return v;
@@ -62,20 +62,20 @@ var Texture = (function() {
         description: "텍스쳐 객체 클래스",
         sample: [
             "var texture0 = new Texture();",
-			"var texture1 = new Texture(document.getElementById('txt1'));"
+            "var texture1 = new Texture(document.getElementById('txt1'));"
         ],
         exception:[
             "'Texture:0' - 이미지가 인자로 오지 않은 경우",
             "'Texture:1' - 적절한 이미지객체가 아닌 경우",
             "'Texture:2' - 이미지데이터형식이 잘못된 경우"
         ],
-		param:[
-		    "img:* - texture.img를 초기화할 수 있는 이미지",
-			"resizeType:string - 이미지의 리사이즈타입"
-		],
+        param:[
+            "img:* - texture.img를 초기화할 수 있는 이미지",
+            "resizeType:string - 이미지의 리사이즈타입"
+        ],
         value:function Texture(v, t) {
             var complete, img, w, h;
-			if (!v) this.error(0);
+            if (!v) this.error(0);
             if (t) resize[this] = t;
 
             complete= false,
