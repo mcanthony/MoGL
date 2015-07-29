@@ -95,7 +95,7 @@ var Texture = (function() {
             } else if (typeof v == 'string') {
                 if (v.substring(0, 10) == 'data:image' && v.indexOf('base64') > -1){
                     complete = true;
-                } else if (!imgType[v.substring(-4)]) {
+                } else if (!imgType[v.substr(-4)]) {
                     this.error(2);
                 }
                 img.src = v;
