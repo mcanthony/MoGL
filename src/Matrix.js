@@ -38,8 +38,6 @@ var Matrix = (function () {
             'console.log(mtx.position); // [x,y,z]'
         ],
         value:function Matrix() {
-            raw[this] = new Float32Array(16);
-            this.matIdentity();
             this.x = this.y = this.z = this.rotateX = this.rotateY = this.rotateZ = 0,
             this.scaleX = this.scaleY = this.scaleZ = 1;
         }
@@ -81,6 +79,7 @@ var Matrix = (function () {
             'console.log(mtx.matrix);'
         ],
         get:function matrixGet() {
+            if (!raw[this]) raw[this] = new Float32Array(16);
             this.matIdentity().matScale(this.scaleX,this.scaleY,this.scaleZ).matRotateX(this.rotateX).matRotateY(this.rotateY).matRotateZ(this.rotateZ).matTranslate(this.x, this.y, this.z);
             return this;
         }
@@ -92,7 +91,7 @@ var Matrix = (function () {
             'console.log(mtx.raw);'
         ],
         get:function rawGet(){
-            return raw[this]
+            return raw[this];
         }
     })
     .method('lookAt', {
@@ -112,7 +111,7 @@ var Matrix = (function () {
             return function lookAt(x, y, z) {
                 var d, d11, d12, d13, d21, d22, d23, d31, d32, d33, md31,
                     radianX, radianY, radianZ, cosY;
-
+                if (!raw[this]) raw[this] = new Float32Array(16);
                 this.matIdentity(),
                 A[0] = this.x, A[1] = this.y, A[2] = -this.z,
                 B[0] = x, B[1] = y, B[2] = z,
@@ -131,23 +130,14 @@ var Matrix = (function () {
                     radianY = ASIN(md31);
                 }
                 cosY = COS(radianY);
-                if (cosY <= 0.001){
-                    radianZ = 0,
-                        radianX = ATAN2(-d23, d22);
+                if (cosY <= 0.001) {
+                    radianZ = 0, radianX = ATAN2(-d23, d22);
                 } else {
-                    radianZ = ATAN2(d21, d11),
-                        radianX = ATAN2(d32, d33);
+                    radianZ = ATAN2(d21, d11), radianX = ATAN2(d32, d33);
                 }
                 this.rotateX = radianX,
                 this.rotateY = radianY,
                 this.rotateZ = radianZ;
-
-                //var dx = x - this.x;
-                //var dy = y - this.y;
-                //var dz = z - this.z;
-                //this.rotationX = Math.atan2(dz, Math.sqrt(dx * dx + dy * dy)) - Math.PI / 2;
-                //this.rotationY = 0;
-                //this.rotationZ = -Math.atan2(dx, dy);
                 return this
             };
         })()
@@ -160,12 +150,14 @@ var Matrix = (function () {
         ],
         ret: ['this - 메서드체이닝을 위해 매트릭스 자신을 반환함.'],
         value:function matIdentity() {
-            var a = raw[this];
+            var a;
+            if (!raw[this]) raw[this] = new Float32Array(16), this.matrix();
+            a = raw[this];
             a[0]  = 1,  a[1]  = 0,  a[2]  = 0,  a[3]  = 0,
             a[4]  = 0,  a[5]  = 1,  a[6]  = 0,  a[7]  = 0,
             a[8]  = 0,  a[9]  = 0,  a[10] = 1,  a[11] = 0,
             a[12] = 0,  a[13] = 0,  a[14] = 0,  a[15] = 1;
-            return this;
+            return this;            
         }
     })
     .method('matClone', {
@@ -176,24 +168,18 @@ var Matrix = (function () {
         ],
         ret: ['Matrix - 복제하여 새로 생성한 매트릭스'],
         value:function matClone() {
-            var source, target, clonedMatrix, i;
-            source = raw[this],
-            clonedMatrix = new Matrix(),
-            target = raw[clonedMatrix];
-
-            target[0] = source[0], target[1] = source[1], target[2] = source[2], target[3] = source[3],
-            target[4] = source[4], target[5] = source[5], target[6] = source[6], target[7] = source[7],
-            target[8] = source[8], target[9] = source[9], target[10] = source[10], target[11] = source[11],
-            target[12] = source[12], target[13] = source[13], target[14] = source[14], target[15] = source[15];
-
-            return clonedMatrix;
+            var a, b, out;
+            if (!raw[this]) raw[this] = new Float32Array(16), this.matrix();
+            a = raw[this], out = Matrix(), b = raw[out],
+            b[0] = a[0], b[1] = a[1], b[2] = a[2], b[3] = a[3], b[4] = a[4], b[5] = a[5], b[6] = a[6], b[7] = a[7], b[8] = a[8], b[9] = a[9], b[10] = a[10], b[11] = a[11], b[12] = a[12], b[13] = a[13], b[14] = a[14], b[15] = a[15];
+            return out;
         }
     })
     .method('matCopy', {
         description:'현재 매트릭스의 값을 대상 매트릭스에 복사하여 덮어쓴다.',
         sample: [
-            'var source = new Matrix();',
-            'var target = new Matrix();',
+            'var mtx = new Matrix();',
+            'var mtx2 = new Matrix();',
             'source.matClone(target);  // source의 값을 target에 복사하여 덮어쓴다.'
         ],
         exception:"* 'Matrix.matCopy:0' - Matrix 객체가 아닌 값을 파라미터로 전달하는 경우",
@@ -203,9 +189,10 @@ var Matrix = (function () {
         ],
         value:function matCopy(target) {
             if (!target instanceof Matrix) this.error(0);
-            var source = raw[this],
-                target = raw[target];
-
+            if (!raw[this]) raw[this] = new Float32Array(16), this.matrix();
+            if (!raw[target]) raw[target] = new Float32Array(16);
+            var source = raw[this];
+            target = raw[target];
             target[0] = source[0], target[1] = source[1], target[2] = source[2], target[3] = source[3],
             target[4] = source[4], target[5] = source[5], target[6] = source[6], target[7] = source[7],
             target[8] = source[8], target[9] = source[9], target[10] = source[10], target[11] = source[11],
@@ -223,10 +210,12 @@ var Matrix = (function () {
         param:[
             'matrix:Matrix - 복사 대상 매트릭스'
         ],
-        value:function matInvert() {
-            var a  = raw[this],
-                invertedMatrix = new Matrix(),
-                t = raw[invertedMatrix];
+        value:function matInvert(out) {
+            var a, t;
+            if (!raw[this]) raw[this] = new Float32Array(16), this.matIdentity();
+            if (!out) out = Matrix();
+            a = raw[this],
+            t = raw[out];
 
             var a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
                 a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7],
@@ -271,13 +260,10 @@ var Matrix = (function () {
             t[14] = (a31 * b01 - a30 * b03 - a32 * b00) * det;
             t[15] = (a20 * b03 - a21 * b01 + a22 * b00) * det;
 
-            return invertedMatrix;
+            return out;
         }
     })
 
-    //.method('matTranspose', function matTranspose(t) {
-    //     return this;
-    //};
     .method('matMultiply', {
         description:'현재 매트릭스에 대상 매트릭스를 곱한 값을 가지는 새 매트릭스를 반환한다.',
         sample: [
@@ -292,9 +278,9 @@ var Matrix = (function () {
         ],
         value:function matMultiply(multiplier) {
             if (!multiplier instanceof Matrix) this.error(0);
-            var a = raw[this],
-                m = raw[multiplier],
-                tmp0, tmp1, tmp2, tmp3;
+            var a, m, tmp0, tmp1, tmp2, tmp3;
+            if (!raw[this]) raw[this] = new Float32Array(16), this.matIdentity();
+            a = raw[this], m = raw[multiplier];
 
             var a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
                 a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7],
@@ -341,7 +327,9 @@ var Matrix = (function () {
             'z:number - z축 증분 이동'
         ],
         value:function matTranslate(x, y, z) {
-            var a = raw[this];
+            var a;
+            if (!raw[this]) raw[this] = new Float32Array(16), this.matIdentity();
+            a = raw[this];
             a[12] = a[0] * x + a[4] * y + a[8] * z + a[12];
             a[13] = a[1] * x + a[5] * y + a[9] * z + a[13];
             a[14] = a[2] * x + a[6] * y + a[10] * z + a[14];
@@ -362,7 +350,9 @@ var Matrix = (function () {
             'z:number - z축 증분 확대'
         ],
         value: function matScale(x, y, z) {
-            var a = raw[this];
+            var a;
+            if (!raw[this]) raw[this] = new Float32Array(16), this.matIdentity();
+            a = raw[this];
             a[0] = a[0] * x, a[1] = a[1] * x, a[2] = a[2] * x, a[3] = a[3] * x, a[4] = a[4] * y, a[5] = a[5] * y, a[6] = a[6] * y, a[7] = a[7] * y, a[8] = a[8] * z, a[9] = a[9] * z, a[10] = a[10] * z, a[11] = a[11] * z, a[12] = a[12], a[13] = a[13], a[14] = a[14], a[15] = a[15];
             return this;
         }
@@ -378,7 +368,10 @@ var Matrix = (function () {
             'rad:number - x축 증분 회전 값, radian단위로 입력',
         ],
         value: function matRotateX(rad) {
-            var a = raw[this], s = SIN(rad), c = COS(rad), a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7], a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11];
+            var a;
+            if (!raw[this]) raw[this] = new Float32Array(16), this.matIdentity();
+            a = raw[this];
+            var s = SIN(rad), c = COS(rad), a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7], a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11];
             a[4] = a10 * c + a20 * s, a[5] = a11 * c + a21 * s, a[6] = a12 * c + a22 * s, a[7] = a13 * c + a23 * s, a[8] = a20 * c - a10 * s, a[9] = a21 * c - a11 * s, a[10] = a22 * c - a12 * s, a[11] = a23 * c - a13 * s;
             return this;
         }
@@ -394,7 +387,10 @@ var Matrix = (function () {
             'rad:number - y축 증분 회전 값, radian단위로 입력',
         ],
         value:function matRotateY(rad) {
-            var a = raw[this], s = SIN(rad), c = COS(rad), a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3], a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11];
+            var a;
+            if (!raw[this]) raw[this] = new Float32Array(16), this.matIdentity();
+            a = raw[this];
+            var s = SIN(rad), c = COS(rad), a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3], a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11];
             a[0] = a00 * c - a20 * s, a[1] = a01 * c - a21 * s, a[2] = a02 * c - a22 * s, a[3] = a03 * c - a23 * s, a[8] = a00 * s + a20 * c, a[9] = a01 * s + a21 * c, a[10] = a02 * s + a22 * c, a[11] = a03 * s + a23 * c;
             return this;
         }
@@ -410,7 +406,10 @@ var Matrix = (function () {
             'rad:number - z축 증분 회전 값, radian단위로 입력',
         ],
         value:function matRotateZ(rad) {
-            var a = raw[this], s = SIN(rad), c = COS(rad), a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3], a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7];
+            var a;
+            if (!raw[this]) raw[this] = new Float32Array(16), this.matIdentity();
+            a = raw[this];
+            var s = SIN(rad), c = COS(rad), a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3], a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7];
             a[0] = a00 * c + a10 * s, a[1] = a01 * c + a11 * s, a[2] = a02 * c + a12 * s, a[3] = a03 * c + a13 * s, a[4] = a10 * c - a00 * s, a[5] = a11 * c - a01 * s, a[6] = a12 * c - a02 * s, a[7] = a13 * c - a03 * s;
             return this;
         }
@@ -427,7 +426,9 @@ var Matrix = (function () {
             'axis:Array - 기준 회전축을 입력',
         ],
         value:function matRotate(rad, axis) {
-            var a = raw[this];
+            var a;
+            if (!raw[this]) raw[this] = new Float32Array(16), this.matIdentity();
+            a = raw[this];
             var x = axis[0], y = axis[1], z = axis[2], len = SQRT(x * x + y * y + z * z), s, c, t, a00, a01, a02, a03, a10, a11, a12, a13, a20, a21, a22, a23, b00, b01, b02, b10, b11, b12, b20, b21, b22;
             if (ABS(len) < GLMAT_EPSILON) { return null; }
             len = 1 / len, x *= len, y *= len, z *= len,
@@ -452,7 +453,9 @@ var Matrix = (function () {
             'g:number - 절두체의 최대 z값'
         ],
         value:function frustum(a, b, c, d, e, g) {
-            var f = raw[this];
+            var f;
+            if (!raw[this]) raw[this] = new Float32Array(16), this.matIdentity();
+            f = raw[this];
             var h = b - a, i = d - c, j = g - e;
             f[0] = e * 2 / h, f[1] = 0, f[2] = 0, f[3] = 0, f[4] = 0, f[5] = e * 2 / i, f[6] = 0, f[7] = 0, f[8] = (b + a) / h, f[9] = (d + c) / i, f[10] = -(g + e) / j, f[11] = -1, f[12] = 0, f[13] = 0, f[14] = -(g * e * 2) / j, f[15] = 0;
             return this;
@@ -491,7 +494,9 @@ var Matrix = (function () {
             'up:Array - [x, y, z] 형태의 up 벡터'
         ],
         value:function matLookAt(eye, center, up) {
-            var a = raw[this];
+            var a;
+            if (!raw[this]) raw[this] = new Float32Array(16), this.matIdentity();
+            a = raw[this];
             var x0, x1, x2, y0, y1, y2, z0, z1, z2, len, eyex = eye[0], eyey = eye[1], eyez = eye[2], upx = up[0], upy = up[1], upz = up[2], centerx = center[0], centery = center[1], centerz = center[2];
             if (ABS(eyex - centerx) < GLMAT_EPSILON && ABS(eyey - centery) < GLMAT_EPSILON && ABS(eyez - centerz) < GLMAT_EPSILON) return this.matIdentity();
             z0 = eyex - centerx, z1 = eyey - centery, z2 = eyez - centerz, len = 1 / SQRT(z0 * z0 + z1 * z1 + z2 * z2), z0 *= len, z1 *= len, z2 *= len, x0 = upy * z2 - upz * z1, x1 = upz * z0 - upx * z2, x2 = upx * z1 - upy * z0, len = SQRT(x0 * x0 + x1 * x1 + x2 * x2);
@@ -515,7 +520,9 @@ var Matrix = (function () {
         ],
         ret: ['String - 문자화된 매트릭스 raw를 반환'],
         value:function matStr() {
-            var a = raw[this];
+            var a;
+            if (!raw[this]) raw[this] = new Float32Array(16), this.matIdentity();
+            a = raw[this];
             return 'Matrix(' + a[0] + ', ' + a[1] + ', ' + a[2] + ', ' + a[3] + ', ' +
                 a[4] + ', ' + a[5] + ', ' + a[6] + ', ' + a[7] + ', ' +
                 a[8] + ', ' + a[9] + ', ' + a[10] + ', ' + a[11] + ', ' +
