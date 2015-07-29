@@ -180,13 +180,12 @@ var Matrix = (function () {
             source = raw[this],
             clonedMatrix = new Matrix(),
             target = raw[clonedMatrix];
-            //target[0] = source[0], target[1] = source[1], target[2] = source[2], target[3] = source[3],
-            //target[4] = source[4], target[5] = source[5], target[6] = source[6], target[7] = source[7],
-            //target[8] = source[8], target[9] = source[9], target[10] = source[10], target[11] = source[11],
-            //target[12] = source[12], target[13] = source[13], target[14] = source[14], target[15] = source[15];
-            for (i = 0 ; i < 16 ; i++) {
-                target[i] = source[i];
-            }
+
+            target[0] = source[0], target[1] = source[1], target[2] = source[2], target[3] = source[3],
+            target[4] = source[4], target[5] = source[5], target[6] = source[6], target[7] = source[7],
+            target[8] = source[8], target[9] = source[9], target[10] = source[10], target[11] = source[11],
+            target[12] = source[12], target[13] = source[13], target[14] = source[14], target[15] = source[15];
+
             return clonedMatrix;
         }
     })
@@ -204,8 +203,9 @@ var Matrix = (function () {
         ],
         value:function matCopy(target) {
             if (!target instanceof Matrix) this.error(0);
-            var source = raw[this];
-            target = raw[target];
+            var source = raw[this],
+                target = raw[target];
+
             target[0] = source[0], target[1] = source[1], target[2] = source[2], target[3] = source[3],
             target[4] = source[4], target[5] = source[5], target[6] = source[6], target[7] = source[7],
             target[8] = source[8], target[9] = source[9], target[10] = source[10], target[11] = source[11],
@@ -279,11 +279,11 @@ var Matrix = (function () {
     //     return this;
     //};
     .method('matMultiply', {
-        description:'현재 매트릭스에 대상 매트릭스를 곱한 값을 현재 매트릭스에 덮어쓰고 현재 매트릭스를 반환한다. ',
+        description:'현재 매트릭스에 대상 매트릭스를 곱한 값을 가지는 새 매트릭스를 반환한다.',
         sample: [
             'var mtx = new Matrix();',
-            'var mtx2 = new Matrix();',
-            'mtx.matMultiply(mtx2);  // mtx * mtx2'
+            'var multiplier = new Matrix();',
+            'var result = mtx.matMultiply(multiplier);  // mtx * multiplier'
         ],
         exception:"* 'Matrix.matMultiply:0' - Matrix 객체가 아닌 값을 파라미터로 전달하는 경우",
         ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
@@ -293,20 +293,38 @@ var Matrix = (function () {
         value:function matMultiply(multiplier) {
             if (!multiplier instanceof Matrix) this.error(0);
             var a = raw[this],
-                t = raw[multiplier];
+                m = raw[multiplier],
+                tmp0, tmp1, tmp2, tmp3;
+
             var a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
                 a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7],
                 a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11],
                 a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15];
-            var b0 = t[0], b1 = t[1], b2 = t[2], b3 = t[3];
-            a[0] = a00 * b0 + a10 * b1 + a20 * b2 + a30 * b3,
-                a[1] = a01 * b0 + a11 * b1 + a21 * b2 + a31 * b3, a[2] = a02 * b0 + a12 * b1 + a22 * b2 + a32 * b3, a[3] = a03 * b0 + a13 * b1 + a23 * b2 + a33 * b3,
-                b0 = t[4], b1 = t[5], b2 = t[6], b3 = t[7],
-                a[4] = a00 * b0 + a10 * b1 + a20 * b2 + a30 * b3 , a[5] = a01 * b0 + a11 * b1 + a21 * b2 + a31 * b3, a[6] = a02 * b0 + a12 * b1 + a22 * b2 + a32 * b3, a[7] = a03 * b0 + a13 * b1 + a23 * b2 + a33 * b3,
-                b0 = t[8], b1 = t[9], b2 = t[10], b3 = t[11],
-                a[8] = a00 * b0 + a10 * b1 + a20 * b2 + a30 * b3 , a[9] = a01 * b0 + a11 * b1 + a21 * b2 + a31 * b3 , a[10] = a02 * b0 + a12 * b1 + a22 * b2 + a32 * b3 , a[11] = a03 * b0 + a13 * b1 + a23 * b2 + a33 * b3,
-                b0 = t[12], b1 = t[13], b2 = t[14], b3 = t[15],
-                a[12] = a00 * b0 + a10 * b1 + a20 * b2 + a30 * b3 , a[13] = a01 * b0 + a11 * b1 + a21 * b2 + a31 * b3, a[14] = a02 * b0 + a12 * b1 + a22 * b2 + a32 * b3, a[15] = a03 * b0 + a13 * b1 + a23 * b2 + a33 * b3;
+
+            tmp0 = m[0], tmp1 = m[1], tmp2 = m[2], tmp3 = m[3];
+            a[0] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3,
+            a[1] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
+            a[2] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
+            a[3] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
+
+            tmp0 = m[4], tmp1 = m[5], tmp2 = m[6], tmp3 = m[7],
+            a[4] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3 ,
+            a[5] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
+            a[6] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
+            a[7] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
+
+            tmp0 = m[8], tmp1 = m[9], tmp2 = m[10], tmp3 = m[11],
+            a[8] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3 ,
+            a[9] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3 ,
+            a[10] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3 ,
+            a[11] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
+
+            tmp0 = m[12], tmp1 = m[13], tmp2 = m[14], tmp3 = m[15],
+            a[12] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3 ,
+            a[13] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
+            a[14] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
+            a[15] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3;
+
             return this;
         }
     })
