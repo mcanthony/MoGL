@@ -75,6 +75,7 @@ var Scene = (function () {
 
         var useTexture = v.material.diffuse ? 1 : 0;
         shading=
+        // v instanceof Point ? "point" : 
         shading == Shading.phong ? useTexture ? 'bitmapPhong' : 'colorPhong' :
         shading == Shading.gouraud ? useTexture ? 'bitmapGouraud' : 'colorGouraud' :
         shading == Shading.toon ? 'toonPhong' :
@@ -104,36 +105,34 @@ var Scene = (function () {
     },
     removeRenderItem = function(v,list){
         var geo, shading;
-        geo = v.geometry;
+        geo = v.geometry,
+            shading = v.material.shading
 
-        if(v.material){
-            shading = v.material.shading;
+        var useTexture = v.material.diffuse ? 1 : 0;
+        shading =
+            // v instanceof Point ? "point" : 
+            shading == Shading.phong ? useTexture ? 'bitmapPhong' : 'colorPhong' :
+            shading == Shading.gouraud ? useTexture ? 'bitmapGouraud' : 'colorGouraud' :
+            shading == Shading.toon ? 'toonPhong' :
+            shading == Shading.blinn ? 'bitmapBlinn' :
+        useTexture ? 'bitmap' : 'color';
 
-            var useTexture = v.material.diffuse ? 1 : 0;
-            shading =
-                shading == Shading.phong ? useTexture ? 'bitmapPhong' : 'colorPhong' :
-                shading == Shading.gouraud ? useTexture ? 'bitmapGouraud' : 'colorGouraud' :
-                shading == Shading.toon ? 'toonPhong' :
-                shading == Shading.blinn ? 'bitmapBlinn' :
-                useTexture ? 'bitmap' : 'color';
-
-            if (v.material.sprite) {
-                if (list.sprite[shading]) {
-                    list.sprite[shading].splice(list.sprite[shading].indexOf(v), 1)
-                }
-            } else {
-                var k, tGeo;
-                tGeo = list[geo];
-                for(k in tGeo){
-                    if (tGeo[k]) {
-                        if(tGeo[k].indexOf(v) > -1){
-                            tGeo[k].splice(tGeo[k].indexOf(v), 1);
-                        }
+        if (v.material.sprite) {
+            if (list.sprite[shading]) {
+                list.sprite[shading].splice(list.sprite[shading].indexOf(v), 1)
+            }
+        } else {
+            var k, tGeo
+            tGeo = list[geo]
+            for(k in tGeo){
+                if (tGeo[k]) {
+                    if(tGeo[k].indexOf(v)>-1){
+                        tGeo[k].splice(tGeo[k].indexOf(v), 1)
                     }
                 }
             }
         }
-    };
+    }
     return MoGL.extend('Scene', {
         description:[
             '실제 렌더링될 구조체는 Scene별로 집결됨.',
@@ -173,6 +172,8 @@ var Scene = (function () {
             this.addVertexShader(Shader.bitmapVertexShaderPhong), this.addFragmentShader(Shader.bitmapFragmentShaderPhong),
             this.addVertexShader(Shader.bitmapVertexShaderBlinn), this.addFragmentShader(Shader.bitmapFragmentShaderBlinn),
             this.addVertexShader(Shader.postBaseVertexShader), this.addFragmentShader(Shader.postBaseFragmentShader);
+            
+            this.addVertexShader(Shader.pointVertexShader), this.addFragmentShader(Shader.pointFragmentShader); // pss
         }
     })
     .field('vertexShaders', {
@@ -229,6 +230,8 @@ var Scene = (function () {
                 this.addMesh(v);
             } else if (v instanceof Camera) {
                 this.addCamera(v);
+            } else if (v instanceof Point) {
+                this.addPoint(v);
             } else this.error(0);
             return this;
         }
@@ -256,6 +259,47 @@ var Scene = (function () {
                 updateList[this].camera.push(target[v] = v);
                 cameraLength[this]++
             }
+            return this;
+        }
+    })
+    .method('addPoint', { // pss
+        description: [
+            'Point객체를 추가함.'
+        ],
+        param: [
+            'point:Point - 메쉬객체'
+        ],
+        ret: [
+            'this - 메서드체이닝을 위해 자신을 반환함.'
+        ],
+        sample: [
+            "var scene = new Scene();",
+            "var geo = new Geometry([],[]);",
+            "var point = new Point(geo, Material);",
+            "scene.addPoint(point);"
+        ],
+        exception: [
+            "'Scene.addPoint:0' - 이미 등록된 포인트 객체를 등록하려고 할 때",
+            "'Scene.addPoint:1' - 포인트객체가  아닌 객체를 등록하려고 할 때"
+        ],
+        value : function(v) {           
+            var target, update;
+            
+            if (!(v instanceof Point)) this.error(1);
+            
+            target = children[this];
+            if (target[v]) {
+                this.error(0);
+            } else {
+                target[v] = v;
+            }
+            
+            target = childrenArray[this];
+            if (target.indexOf(v) == -1) target[target.length] = v;
+            
+            update = updateList[this],
+            update.geometry.push(v.geometry),
+            update.merged.push(v);
             return this;
         }
     })
@@ -443,7 +487,7 @@ var Scene = (function () {
                 if (k == v || p[k].id == v) {
                     childrenArray[this].splice(childrenArray[this].indexOf(p[k]), 1),
                     p[k].removeEventListener(MoGL.changed),
-                    removeRenderItem(v, renderList[this]);
+                    removeRenderItem(v,renderList[this])
                     delete p[k];
                     return true;
                 }
