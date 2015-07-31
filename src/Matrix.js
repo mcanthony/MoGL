@@ -423,7 +423,9 @@ var Matrix = (function () {
         ],
         value:function matQuaternionXYZRotate(rx, ry, rz) {
             var a, q, out;
-            a = rawInit(this, applyTransform != 'false'),
+            // applyTransform is undefined
+            // a = rawInit(this, applyTransform != 'false'),
+            a = rawInit(this, true),
             q = rawInit(Matrix());
 
             var c0, c1, c2, s0, s1, s2;
