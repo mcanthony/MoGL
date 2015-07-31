@@ -421,30 +421,62 @@ var Matrix = (function () {
             'ry:number - y축 기준 회전 값, radian단위',
             'rz:number - z축 기준 회전 값, radian단위'
         ],
-        value:function matQuaternionXYZRotate(rx, ry, rz) {
-            var a, q, out;
-            // applyTransform is undefined
-            // a = rawInit(this, applyTransform != 'false'),
-            a = rawInit(this, true),
-            q = rawInit(Matrix());
+        value:(function(){
+            var mat, out;
+            return function matQuaternionXYZRotate(rx, ry, rz) {
+                var a = rawInit(this),
+                    c0, c1, c2, s0, s1, s2,
+                    x, y, z, w,
+                    tmp0, tmp1, tmp2, tmp3,
+                    a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
+                    a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7],
+                    a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11],
+                    a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15];
 
-            var c0, c1, c2, s0, s1, s2;
-            c0 = COS(rx), c1 = COS(ry), c2 = COS(rz),
-            s0 = SIN(rx), s1 = SIN(ry), s2 = SIN(rz);
-
-            var x, y, z, w;
-            x = c2*c1*s0 + s2*s1*c0,
-            y = c2*s1*c0 - s2*c1*s0,
-            z = s2*c1*c0 + c2*s1*s0,
-            w = c2*c1*c0 - s2*s1*s0;
-
-            q[0] = w*w + x*x - y*y -z*z, q[1] = 2*(x*y - w*z), q[2] = 2*(x*z + w*y), q[3] = 0,
-            q[4] = 2*(x*y + w*z), q[5] = w*w - x*x + y*y - z*z, q[6] = 2*(y*z - w*x), q[7] = 0,
-            q[8] = 2*(x*z - w*y), q[9] = 2*(y*z - w*x), q[10] = w*w - x*x - y*y + z*z, q[11] = 0,
-            q[12] = 0, q[13] = 0, q[14] = 0, q[15] = 1;
-
-            return a.matMultiply(q);
-        }
+                c0 = COS(rx), c1 = COS(ry), c2 = COS(rz),
+                s0 = SIN(rx), s1 = SIN(ry), s2 = SIN(rz);
+    
+                x = c2*c1*s0 + s2*s1*c0,
+                y = c2*s1*c0 - s2*c1*s0,
+                z = s2*c1*c0 + c2*s1*s0,
+                w = c2*c1*c0 - s2*s1*s0;
+    
+                tmp0 = w*w + x*x - y*y -z*z,
+                tmp1 = 2*(x*y - w*z), 
+                tmp2 = 2*(x*z + w*y), 
+                tmp3 = 0,
+                a[0] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3,
+                a[1] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
+                a[2] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
+                a[3] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
+                
+                tmp0 = 2*(x*y + w*z), 
+                tmp1 = w*w - x*x + y*y - z*z, 
+                tmp2 = 2*(y*z - w*x), 
+                tmp3 = 0,
+                a[4] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3,
+                a[5] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
+                a[6] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
+                a[7] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
+                
+                tmp0 = 2*(x*z - w*y), 
+                tmp1 = 2*(y*z - w*x), 
+                tmp2 = w*w - x*x - y*y + z*z, 
+                tmp3 = 0,
+                a[8] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3,
+                a[9] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
+                a[10] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
+                a[11] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
+                
+                tmp0 = tmp1 = tmp2 = 0, tmp3 = 1,
+                a[12] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3,
+                a[13] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
+                a[14] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
+                a[15] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3;
+    
+                return this;
+            };
+        })()
     })
     .method('frustum', {
         description:['보이는 화면 영역'],
