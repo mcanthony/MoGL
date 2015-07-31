@@ -150,7 +150,7 @@ var Matrix = (function () {
         value:(function(applyTransform){
             var out, b;
             return function matClone() {
-                var a = rawInit(this, applyTransform || applyTransform === undefined);
+                var a = rawInit(this, applyTransform != 'false');
                 if (!out) out = Matrix(), b = rawInit(out);
                 b[0] = a[0], b[1] = a[1], b[2] = a[2], b[3] = a[3],
                 b[4] = a[4], b[5] = a[5], b[6] = a[6], b[7] = a[7],
@@ -172,7 +172,7 @@ var Matrix = (function () {
             'matrix:Matrix - 복사 대상 매트릭스'
         ],
         value:function matCopy(t, applyTransform) {
-            var a = rawInit(this, applyTransform || applyTransform === undefined);
+            var a = rawInit(this, applyTransform != 'false');
             t = rawInit(t);
             t[0] = a[0], t[1] = a[1], t[2] = a[2], t[3] = a[3],
             t[4] = a[4], t[5] = a[5], t[6] = a[6], t[7] = a[7],
@@ -190,7 +190,7 @@ var Matrix = (function () {
         ret:'Matrix - 새로 생성된 역행렬',
         param:'matrix:Matrix - 복사 대상 매트릭스',
         value:function matInvert(out, applyTransform) {
-        var a = rawInit(this, applyTransform || applyTransform === undefined), t = rawInit(out),
+        var a = rawInit(this, applyTransform != 'false'), t = rawInit(out),
             a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
             a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7],
             a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11],
@@ -242,8 +242,8 @@ var Matrix = (function () {
             'multiplier:Matrix - 곱할 매트릭스'
         ],
         value:function matMultiply(multiplier, applyTransform) {
-            var a = rawInit(this, applyTransform || applyTransform === undefined),
-                m = rawInit(multiplier, applyTransform || applyTransform === undefined),
+            var a = rawInit(this, applyTransform != 'false'),
+                m = rawInit(multiplier, applyTransform != 'false'),
                 out = rawInit(Matrix()),
                 tmp0, tmp1, tmp2, tmp3,
                 a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
@@ -423,7 +423,7 @@ var Matrix = (function () {
         ],
         value:function matQuaternionXYZRotate(rx, ry, rz) {
             var a, q, out;
-            a = rawInit(this, applyTransform || applyTransform === undefined),
+            a = rawInit(this, applyTransform != 'false'),
             q = rawInit(Matrix());
 
             var c0, c1, c2, s0, s1, s2;
