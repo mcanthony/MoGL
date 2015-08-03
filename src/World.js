@@ -91,7 +91,7 @@ var World = (function (makeUtil) {
                 }
                 camera.resetProjectionMatrix()
                 tProjectionMtx = priRaw[camera.projectionMatrix.uuid];
-                tCameraMtx = priRaw[camera.matrix.uuid];
+                tCameraMtx = priRaw[camera.matCurrent().uuid];
                 //TODO 렌더러 반영하겠금 고쳐야겠고..
                 // 헉!! 프레임 버퍼가 카메라에 종속되있어!!!!!!
                 makeFrameBuffer(gpu[self], camera, cvs);
@@ -241,7 +241,7 @@ var World = (function (makeUtil) {
                     //TODO for k로 돌리니 먼가 쌓이는듯한데?
                     for (k in tCameraList) {
                         tCamera = tCameraList[k],
-                        tCameraMtx = priRaw[tCamera.matrix.uuid],
+                        tCameraMtx = priRaw[tCamera.matCurrent().uuid],
                         tUID_camera = tCamera.uuid;
                         if (!tCamera.visible) continue;
                         //TODO 마우스용 프레임버퍼가 따로 필요하군 현재는 공용이자나!!!
