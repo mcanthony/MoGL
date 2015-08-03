@@ -3,8 +3,6 @@ var World = (function (makeUtil) {
     var getGL, glSetting, glContext, rectMTX = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
     var makeProgram, makeTexture, makeFrameBuffer, makeBOs;
     var baseShaderUpdate, cameraRenderAreaUpdate;
-
-    var priRaw = $getPrivate('Matrix', 'raw');
     var tProjectionMtx, tCameraMtx;
     var totalVertex = 0, totalObject = 0;
     var pRatio = window.devicePixelRatio;
@@ -90,8 +88,7 @@ var World = (function (makeUtil) {
                     camera.renderArea.byAutoArea = true
                 }
                 camera.resetProjectionMatrix()
-                tProjectionMtx = priRaw[camera.projectionMatrix.uuid];
-                tCameraMtx = priRaw[camera.matCurrent().uuid];
+                tProjectionMtx = camera.projectionMatrix;
                 //TODO 렌더러 반영하겠금 고쳐야겠고..
                 // 헉!! 프레임 버퍼가 카메라에 종속되있어!!!!!!
                 makeFrameBuffer(gpu[self], camera, cvs);
@@ -241,7 +238,7 @@ var World = (function (makeUtil) {
                     //TODO for k로 돌리니 먼가 쌓이는듯한데?
                     for (k in tCameraList) {
                         tCamera = tCameraList[k],
-                        tCameraMtx = priRaw[tCamera.matCurrent().uuid],
+                        tCameraMtx = tCamera.raw,
                         tUID_camera = tCamera.uuid;
                         if (!tCamera.visible) continue;
                         //TODO 마우스용 프레임버퍼가 따로 필요하군 현재는 공용이자나!!!
