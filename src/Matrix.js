@@ -87,7 +87,7 @@ var Matrix = (function () {
                 this.rotateX = radianX,
                 this.rotateY = radianY,
                 this.rotateZ = radianZ;
-                return this
+                return this;
             };
         })()
     })
@@ -99,16 +99,15 @@ var Matrix = (function () {
         ],
         ret:'this',
         value:function matCurrent() {
-            var a = raw[this.uuid] || (raw[this.uuid] = new Float32Array(16)),
-                x = this.scaleX, y = this.scaleY, z = this.scaleZ;
+            var a = this, x = a.scaleX, y = a.scaleY, z = a.scaleZ;
             a[0] = a[5] = a[10] = a[15] = 1, 
             a[1] = a[2] = a[3] = a[4] = a[6] = a[7] = a[8] = a[9] = a[11] = 0,
-            a[12] = this.rotateX,  a[13] = this.rotateY,  a[14] = this.rotateZ,
-            this.matQuaternionXYZRotate(this.rotateX, this.rotateY, this.rotateZ),
+            a[12] = a.x,  a[13] = a.y,  a[14] = a.z,
+            this.matQuaternionXYZRotate(a.rotateX, a.rotateY, a.rotateZ),
             a[0] = a[0]*x, a[1] = a[1]*x, a[2] = a[2]*x, a[3] = a[3]*x,
             a[4] = a[4]*y, a[5] = a[5]*y, a[6] = a[6]*y, a[7] = a[7]*y,
             a[8] = a[8]*z, a[9] = a[9]*z, a[10] = a[10]*z, a[11] = a[11]*z;
-            return this;
+            return a;
         }
     })
     .method('matIdentity', {
@@ -119,34 +118,30 @@ var Matrix = (function () {
         ],
         ret:'this',
         value:function matIdentity() {
-            var a = raw[this.uuid] || (raw[this.uuid] = new Float32Array(16));
+            var a = this;
             a[0] = a[5] = a[10] = a[15] = 1, 
             a[1] = a[2] = a[3] = a[4] = a[6] = a[7] = a[8] = a[9] = a[11] = a[12] = a[13] = a[14] = 0;
-            return this;            
+            return a;            
         }
     })
     .method('matClone', {
-        description: '현재 매트릭스를 복제해서 새로 생성된 매트릭스를 반환한다.',
-        sample: [
+        description:'현재 매트릭스를 복제해서 새로 생성된 매트릭스를 반환한다.',
+        sample:[
             'var mtx = new Matrix();',
             'var clonedMatrix = mtx.matClone();'
         ],
         ret:'Matrix - 복제해서 새로 생성한 매트릭스를 반환.',
         value:function matClone() {
-                var a = raw[this.uuid] || (raw[this.uuid] = new Float32Array(16)),
-                    out = Matrix(), 
-                    b  = raw[out.uuid] || (raw[out.uuid] = new Float32Array(16));
-
-                b[0] = a[0], b[1] = a[1], b[2] = a[2], b[3] = a[3],
-                b[4] = a[4], b[5] = a[5], b[6] = a[6], b[7] = a[7],
-                b[8] = a[8], b[9] = a[9], b[10] = a[10], b[11] = a[11],
-                b[12] = a[12], b[13] = a[13], b[14] = a[14], b[15] = a[15];
-                return out;
-            };
-        })()
+            var a = this, b = Matrix();
+            b[0] = a[0], b[1] = a[1], b[2] = a[2], b[3] = a[3],
+            b[4] = a[4], b[5] = a[5], b[6] = a[6], b[7] = a[7],
+            b[8] = a[8], b[9] = a[9], b[10] = a[10], b[11] = a[11],
+            b[12] = a[12], b[13] = a[13], b[14] = a[14], b[15] = a[15];
+            return b;
+        }
     })
     .method('matCopyTo', {
-        description:'현재 매트릭스의 값을 대상 매트릭스에 복사하여 덮어쓴다.',
+        description:'인자로 넘어온 Matrix에 본인을 복사함.',
         sample:[
             'var source = new Matrix();',
             'var target = new Matrix();',
@@ -156,18 +151,17 @@ var Matrix = (function () {
         param:[
             'target:Matrix - 복사될 Matrix객체'
         ],
-        value:function matCopy(target) {
-            var a = raw[this.uuid] || (raw[this.uuid] = new Float32Array(16)),
-                t = raw[target.uuid] || (raw[target.uuid] = new Float32Array(16));
+        value:function matCopy(t) {
+            var a = this;
             t[0] = a[0], t[1] = a[1], t[2] = a[2], t[3] = a[3],
             t[4] = a[4], t[5] = a[5], t[6] = a[6], t[7] = a[7],
             t[8] = a[8], t[9] = a[9], t[10] = a[10], t[11] = a[11],
             t[12] = a[12], t[13] = a[13], t[14] = a[14], t[15] = a[15];
-            return this;
+            return a;
         }
     })
     .method('matCopyFrom', {
-        description:'현재 매트릭스의 값을 대상 매트릭스에 복사하여 덮어쓴다.',
+        description:'인자로 넘어온 Matrix의 정보를 본인에게 복제함.',
         sample:[
             'var source = new Matrix();',
             'var target = new Matrix();',
@@ -175,130 +169,126 @@ var Matrix = (function () {
         ],
         ret:'this',
         param:'source:Matrix - 자신에게 복사할 Matrix객체',
-        value:function matCopy(target) {
-            var a = raw[target.uuid] || (raw[target.uuid] = new Float32Array(16)),
-                t = raw[this.uuid] || (raw[this.uuid] = new Float32Array(16));
+        value:function matCopy(a) {
+            var t = this;
             t[0] = a[0], t[1] = a[1], t[2] = a[2], t[3] = a[3],
             t[4] = a[4], t[5] = a[5], t[6] = a[6], t[7] = a[7],
             t[8] = a[8], t[9] = a[9], t[10] = a[10], t[11] = a[11],
             t[12] = a[12], t[13] = a[13], t[14] = a[14], t[15] = a[15];
-            return this;
+            return t;
         }
     })
     .method('matInvert', {
-        description:'현재 매트릭스의 역행렬을 새로 생성해서 반환한다.',
+        description:'역행렬을 구한다.',
         sample: [
             'var source = new Matrix();',
             'var inverted = source.matInvert();',
         ],
-        ret:'Matrix - 새로 생성된 역행렬',
-        param:'matrix:Matrix - 복사 대상 매트릭스',
-        value:function matInvert(out, applyTransform) {
-        var a = rawInit(this, applyTransform != 'false'), t = rawInit(out),
-            a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
-            a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7],
-            a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11],
-            a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15],
-            b00 = a00 * a11 - a01 * a10,
-            b01 = a00 * a12 - a02 * a10,
-            b02 = a00 * a13 - a03 * a10,
-            b03 = a01 * a12 - a02 * a11,
-            b04 = a01 * a13 - a03 * a11,
-            b05 = a02 * a13 - a03 * a12,
-            b06 = a20 * a31 - a21 * a30,
-            b07 = a20 * a32 - a22 * a30,
-            b08 = a20 * a33 - a23 * a30,
-            b09 = a21 * a32 - a22 * a31,
-            b10 = a21 * a33 - a23 * a31,
-            b11 = a22 * a33 - a23 * a32,
-            det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06; //Calculate the determinant
-        if (!det) return null;
-        det = 1.0 / det;
-        t[0] = (a11 * b11 - a12 * b10 + a13 * b09) * det;
-        t[1] = (a02 * b10 - a01 * b11 - a03 * b09) * det;
-        t[2] = (a31 * b05 - a32 * b04 + a33 * b03) * det;
-        t[3] = (a22 * b04 - a21 * b05 - a23 * b03) * det;
-        t[4] = (a12 * b08 - a10 * b11 - a13 * b07) * det;
-        t[5] = (a00 * b11 - a02 * b08 + a03 * b07) * det;
-        t[6] = (a32 * b02 - a30 * b05 - a33 * b01) * det;
-        t[7] = (a20 * b05 - a22 * b02 + a23 * b01) * det;
-        t[8] = (a10 * b10 - a11 * b08 + a13 * b06) * det;
-        t[9] = (a01 * b08 - a00 * b10 - a03 * b06) * det;
-        t[10] = (a30 * b04 - a31 * b02 + a33 * b00) * det;
-        t[11] = (a21 * b02 - a20 * b04 - a23 * b00) * det;
-        t[12] = (a11 * b07 - a10 * b09 - a12 * b06) * det;
-        t[13] = (a00 * b09 - a01 * b07 + a02 * b06) * det;
-        t[14] = (a31 * b01 - a30 * b03 - a32 * b00) * det;
-        t[15] = (a20 * b03 - a21 * b01 + a22 * b00) * det;
-        return out;
+        ret:'Matrix - this 또는 생성된 행렬',
+        param:'isClone:boolean - 새객체를 반환할 것인지 본인을 역행렬화할것인지 결정함.',
+        value:function matInvert(isClone) {
+            var a = this, t = isClone ? Matrix() : a,
+                a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
+                a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7],
+                a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11],
+                a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15],
+                b00 = a00*a11 - a01*a10,
+                b01 = a00*a12 - a02*a10,
+                b02 = a00*a13 - a03*a10,
+                b03 = a01*a12 - a02*a11,
+                b04 = a01*a13 - a03*a11,
+                b05 = a02*a13 - a03*a12,
+                b06 = a20*a31 - a21*a30,
+                b07 = a20*a32 - a22*a30,
+                b08 = a20*a33 - a23*a30,
+                b09 = a21*a32 - a22*a31,
+                b10 = a21*a33 - a23*a31,
+                b11 = a22*a33 - a23*a32,
+                det = b00*b11 - b01*b10 + b02*b09 + b03*b08 - b04*b07 + b05*b06;
+            if (!det) return null;
+            det = 1 / det;
+            t[0] = (a11*b11 - a12*b10 + a13*b09) * det;
+            t[1] = (a02*b10 - a01*b11 - a03*b09) * det;
+            t[2] = (a31*b05 - a32*b04 + a33*b03) * det;
+            t[3] = (a22*b04 - a21*b05 - a23*b03) * det;
+            t[4] = (a12*b08 - a10*b11 - a13*b07) * det;
+            t[5] = (a00*b11 - a02*b08 + a03*b07) * det;
+            t[6] = (a32*b02 - a30*b05 - a33*b01) * det;
+            t[7] = (a20*b05 - a22*b02 + a23*b01) * det;
+            t[8] = (a10*b10 - a11*b08 + a13*b06) * det;
+            t[9] = (a01*b08 - a00*b10 - a03*b06) * det;
+            t[10] = (a30*b04 - a31*b02 + a33*b00) * det;
+            t[11] = (a21*b02 - a20*b04 - a23*b00) * det;
+            t[12] = (a11*b07 - a10*b09 - a12*b06) * det;
+            t[13] = (a00*b09 - a01*b07 + a02*b06) * det;
+            t[14] = (a31*b01 - a30*b03 - a32*b00) * det;
+            t[15] = (a20*b03 - a21*b01 + a22*b00) * det;
+            return t;
         }
     })
     .method('matMultiply', {
-        description:'현재 매트릭스에 대상 매트릭스를 곱한 값을 새 매트릭스에 담아 새 매트릭스를 반환한다.',
+        description:'인자에 주어진 Matrix에 본인을 행렬곱함.',
         sample: [
-            'var mtx = new Matrix();',
-            'var multiplier = new Matrix();',
-            'var result = mtx.matMultiply(multiplier);  // mtx * multiplier'
+            'var a = new Matrix();',
+            'var b = new Matrix();',
+            'var c = a.matMultiply(b, true);  // a * b 사본반환',
+            'a.matMultiply(b);  // a * b a가 직접 변경됨'
         ],
-        exception:"* 'Matrix.matMultiply:0' - Matrix 객체가 아닌 값을 파라미터로 전달하는 경우",
-        ret: ['Matrix - 곱해 결과로 생성된 새 매트릭스'],
+        exception:"'Matrix.matMultiply:0' - Matrix 객체가 아닌 값을 파라미터로 전달하는 경우",
+        ret:'Matrix - this 또는 생성된 행렬',
         param:[
-            'multiplier:Matrix - 곱할 매트릭스'
+            'target:Matrix - 곱할 매트릭스',
+            '?isClone:boolean - 복제본을 반환할지 여부. 기본값 false',
         ],
-        value:(function(){
-            var out, o;
-            return function matMultiply(multiplier, applyTransform) {
-                var a = rawInit(this, applyTransform),
-                    m = rawInit(multiplier, applyTransform),
-                    tmp0, tmp1, tmp2, tmp3,
-                    a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
-                    a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7],
-                    a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11],
-                    a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15];
-                if (!out) out = Matrix(), o = rawInit(out);
-                out.matIdentity(),
-                tmp0 = m[0], tmp1 = m[1], tmp2 = m[2], tmp3 = m[3];
-                o[0] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3,
-                o[1] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
-                o[2] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
-                o[3] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
-    
-                tmp0 = m[4], tmp1 = m[5], tmp2 = m[6], tmp3 = m[7],
-                o[4] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3 ,
-                o[5] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
-                o[6] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
-                o[7] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
-    
-                tmp0 = m[8], tmp1 = m[9], tmp2 = m[10], tmp3 = m[11],
-                o[8] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3 ,
-                o[9] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3 ,
-                o[10] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3 ,
-                o[11] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
-    
-                tmp0 = m[12], tmp1 = m[13], tmp2 = m[14], tmp3 = m[15],
-                o[12] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3 ,
-                o[13] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
-                o[14] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
-                o[15] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3;
-    
-                return out;
-            };
-        })()
+        value:function matMultiply(m, isClone) {
+            var a = this, o = isClone ? Matrix() : a,
+                tmp0, tmp1, tmp2, tmp3,
+                a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
+                a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7],
+                a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11],
+                a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15];
+
+            tmp0 = m[0], tmp1 = m[1], tmp2 = m[2], tmp3 = m[3];
+            o[0] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3,
+            o[1] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
+            o[2] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
+            o[3] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
+        
+            tmp0 = m[4], tmp1 = m[5], tmp2 = m[6], tmp3 = m[7],
+            o[4] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3 ,
+            o[5] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
+            o[6] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
+            o[7] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
+        
+            tmp0 = m[8], tmp1 = m[9], tmp2 = m[10], tmp3 = m[11],
+            o[8] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3 ,
+            o[9] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3 ,
+            o[10] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3 ,
+            o[11] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
+        
+            tmp0 = m[12], tmp1 = m[13], tmp2 = m[14], tmp3 = m[15],
+            o[12] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3 ,
+            o[13] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
+            o[14] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
+            o[15] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3;
+        
+            return o;
+        };
     })
     .method('matTranslate', {
         description:'현재매트릭스에 x,y,z축 증분 평행이동 ',
-        sample: [
+        sample:[
             'var mtx = new Matrix();',
             'mtx.matTranslate(10,20,30);'
         ],
-        ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
+        ret:'this',
         param:[
             'x:number - x축 증분 이동',
             'y:number - y축 증분 이동',
             'z:number - z축 증분 이동'
         ],
         value:function matTranslate(x, y, z) {
-            var a = rawInit(this);
+            var a = this;
             a[12] = a[0] * x + a[4] * y + a[8] * z + a[12];
             a[13] = a[1] * x + a[5] * y + a[9] * z + a[13];
             a[14] = a[2] * x + a[6] * y + a[10] * z + a[14];
