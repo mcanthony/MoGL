@@ -6,7 +6,7 @@ var Matrix = (function () {
     raw = {},
     useMat = {},
     $setPrivate('Matrix', {
-        raw:raw
+        raw:raw,
         useMat:useMat
     });
     //lib
@@ -32,13 +32,9 @@ var Matrix = (function () {
         };
     },
     rawInit = function rawInit(mat, applyTransform){
-        if (applyTransform) {
-            mat.matIdentity()
-                .matTranslate(mat.x,mat.y,mat.z)
-                .matQuaternionXYZRotate(mat.rotateX, mat.rotateY, mat.rotateZ)
-                .matScale(mat.scaleX,mat.scaleY,mat.scaleZ);
-        }
-        return raw[mat.uuid] || (raw[mat.uuid] = new Float32Array(16));
+        var a = raw[mat.uuid] || (raw[mat.uuid] = new Float32Array(16));
+        if (applyTransform) mat.matCurrent();
+        return a;
     };
     return MoGL.extend('Matrix',{
         description:'4x4행렬을 나타내는 객체. 아핀변환용 x,y,z, rotateX,Y,Z, scaleX,Y,Z 도 지원함',
