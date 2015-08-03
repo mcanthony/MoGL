@@ -1,11 +1,13 @@
 var Matrix = (function () {
     'use strict';
     var temp, setter, getter, rawInit,
-        raw;
+        raw, useMat;
     //private
     raw = {},
+    useMat = {},
     $setPrivate('Matrix', {
         raw:raw
+        useMat:useMat
     });
     //lib
     temp = new Float32Array(16),
@@ -49,21 +51,18 @@ var Matrix = (function () {
             this.scaleX = this.scaleY = this.scaleZ = 1;
         }
     })
-    .field('matrix', {
-        description:'현재 position,rotate,scale을 반영한 4x4행렬을 설정한 뒤 자신을 반환',
+    .field('useMatrix', {
+        description:'GPU로 아핀변환정보를 보낼지 raw타입의 행렬을 보낼지 결정함.',
         sample:[
             'var mtx = new Matrix();',
-            'console.log(mtx.matrix);'
+            'mtx.useMatrix = true;'
         ],
-        get:function matrixGet() {
-            if (!raw[this.uuid]) raw[this.uuid] = new Float32Array(16);
-            this.matIdentity()
-                .matTranslate(this.x, this.y, this.z)
-                .matQuaternionXYZRotate(this.rotateX, this.rotateY, this.rotateZ)
-                .matScale(this.scaleX, this.scaleY, this.scaleZ);
-            return this;
-
-            //return rawInit(this, true);
+        dafaultValue:false,
+        get:function useMatrixGet(){
+            return useMat[this] || false;
+        },
+        set:function useMaterixSet(v){
+            useMat[this] = v ? true : false;
         }
     })
     .field('raw', {
@@ -121,19 +120,36 @@ var Matrix = (function () {
             };
         })()
     })
+    .method('matCurrent', {
+        description:'현재 position,rotate,scale을 반영한 4x4행렬을 설정한 뒤 자신을 반환',
+        sample:[
+            'var mtx = new Matrix();',
+            'console.log(mtx.matCurrent());'
+        ],
+        ret:'this',
+        value:function matCurrent() {
+            var a = raw[mat.uuid] || (raw[mat.uuid] = new Float32Array(16));
+            a[0] = a[5] = a[10] = a[15] = 1, 
+            a[1] = a[2] = a[3] = a[4] = a[6] = a[7] = a[8] = a[9] = a[11] = 0,
+            a[12] = this.rotateX,  a[13] = this.rotateY,  a[14] = this.rotateZ,
+            this.matQuaternionXYZRotate(this.rotateX, this.rotateY, this.rotateZ),
+            a[0] = a[0]*x, a[1] = a[1]*x, a[2] = a[2]*x, a[3] = a[3]*x,
+            a[4] = a[4]*y, a[5] = a[5]*y, a[6] = a[6]*y, a[7] = a[7]*y,
+            a[8] = a[8]*z, a[9] = a[9]*z, a[10] = a[10]*z, a[11] = a[11]*z;
+            return this;
+        }
+    })
     .method('matIdentity', {
         description:'현재 매트릭스를 단위 매트릭스로 초기화한다.',
         sample:[
             'var mtx = new Matrix();',
             'mtx.matIdentity();'
         ],
-        ret: ['this - 메서드체이닝을 위해 매트릭스 자신을 반환함.'],
+        ret:'this',
         value:function matIdentity() {
-            var a = rawInit(this);
-            a[0]  = 1,  a[1]  = 0,  a[2]  = 0,  a[3]  = 0,
-            a[4]  = 0,  a[5]  = 1,  a[6]  = 0,  a[7]  = 0,
-            a[8]  = 0,  a[9]  = 0,  a[10] = 1,  a[11] = 0,
-            a[12] = 0,  a[13] = 0,  a[14] = 0,  a[15] = 1;
+            var a = raw[mat.uuid] || (raw[mat.uuid] = new Float32Array(16));
+            a[0] = a[5] = a[10] = a[15] = 1, 
+            a[1] = a[2] = a[3] = a[4] = a[6] = a[7] = a[8] = a[9] = a[11] = a[12] = a[13] = a[14] = 0;
             return this;            
         }
     })
@@ -241,42 +257,45 @@ var Matrix = (function () {
         param:[
             'multiplier:Matrix - 곱할 매트릭스'
         ],
-        value:function matMultiply(multiplier, applyTransform) {
-            var a = rawInit(this, applyTransform != 'false'),
-                m = rawInit(multiplier, applyTransform != 'false'),
-                out = rawInit(Matrix()),
-                tmp0, tmp1, tmp2, tmp3,
-                a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
-                a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7],
-                a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11],
-                a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15];
-
-            tmp0 = m[0], tmp1 = m[1], tmp2 = m[2], tmp3 = m[3];
-            out[0] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3,
-            out[1] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
-            out[2] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
-            out[3] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
-
-            tmp0 = m[4], tmp1 = m[5], tmp2 = m[6], tmp3 = m[7],
-            out[4] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3 ,
-            out[5] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
-            out[6] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
-            out[7] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
-
-            tmp0 = m[8], tmp1 = m[9], tmp2 = m[10], tmp3 = m[11],
-            out[8] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3 ,
-            out[9] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3 ,
-            out[10] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3 ,
-            out[11] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
-
-            tmp0 = m[12], tmp1 = m[13], tmp2 = m[14], tmp3 = m[15],
-            out[12] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3 ,
-            out[13] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
-            out[14] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
-            out[15] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3;
-
-            return out;
-        }
+        value:(function(){
+            var out, o;
+            return function matMultiply(multiplier, applyTransform) {
+                var a = rawInit(this, applyTransform),
+                    m = rawInit(multiplier, applyTransform),
+                    tmp0, tmp1, tmp2, tmp3,
+                    a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
+                    a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7],
+                    a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11],
+                    a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15];
+                if (!out) out = Matrix(), o = rawInit(out);
+                out.matIdentity(),
+                tmp0 = m[0], tmp1 = m[1], tmp2 = m[2], tmp3 = m[3];
+                o[0] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3,
+                o[1] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
+                o[2] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
+                o[3] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
+    
+                tmp0 = m[4], tmp1 = m[5], tmp2 = m[6], tmp3 = m[7],
+                o[4] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3 ,
+                o[5] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
+                o[6] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
+                o[7] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
+    
+                tmp0 = m[8], tmp1 = m[9], tmp2 = m[10], tmp3 = m[11],
+                o[8] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3 ,
+                o[9] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3 ,
+                o[10] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3 ,
+                o[11] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
+    
+                tmp0 = m[12], tmp1 = m[13], tmp2 = m[14], tmp3 = m[15],
+                o[12] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3 ,
+                o[13] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
+                o[14] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
+                o[15] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3;
+    
+                return out;
+            };
+        })()
     })
     .method('matTranslate', {
         description:'현재매트릭스에 x,y,z축 증분 평행이동 ',
@@ -427,52 +446,42 @@ var Matrix = (function () {
                 var a = rawInit(this),
                     c0, c1, c2, s0, s1, s2,
                     x, y, z, w,
-                    tmp0, tmp1, tmp2, tmp3,
+                    tmp0, tmp1, tmp2,
                     a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
                     a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7],
-                    a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11],
-                    a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15];
+                    a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11];
 
                 c0 = COS(rx), c1 = COS(ry), c2 = COS(rz),
-                s0 = SIN(rx), s1 = SIN(ry), s2 = SIN(rz);
+                s0 = SIN(rx), s1 = SIN(ry), s2 = SIN(rz),
     
                 x = c2*c1*s0 + s2*s1*c0,
                 y = c2*s1*c0 - s2*c1*s0,
                 z = s2*c1*c0 + c2*s1*s0,
-                w = c2*c1*c0 - s2*s1*s0;
+                w = c2*c1*c0 - s2*s1*s0,
     
                 tmp0 = w*w + x*x - y*y -z*z,
                 tmp1 = 2*(x*y - w*z), 
                 tmp2 = 2*(x*z + w*y), 
-                tmp3 = 0,
-                a[0] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3,
-                a[1] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
-                a[2] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
-                a[3] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
+                a[0] = a00*tmp0 + a10*tmp1 + a20*tmp2,
+                a[1] = a01*tmp0 + a11*tmp1 + a21*tmp2,
+                a[2] = a02*tmp0 + a12*tmp1 + a22*tmp2,
+                a[3] = a03*tmp0 + a13*tmp1 + a23*tmp2,
                 
                 tmp0 = 2*(x*y + w*z), 
                 tmp1 = w*w - x*x + y*y - z*z, 
                 tmp2 = 2*(y*z - w*x), 
-                tmp3 = 0,
-                a[4] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3,
-                a[5] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
-                a[6] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
-                a[7] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
+                a[4] = a00*tmp0 + a10*tmp1 + a20*tmp2,
+                a[5] = a01*tmp0 + a11*tmp1 + a21*tmp2,
+                a[6] = a02*tmp0 + a12*tmp1 + a22*tmp2,
+                a[7] = a03*tmp0 + a13*tmp1 + a23*tmp2,
                 
                 tmp0 = 2*(x*z - w*y), 
                 tmp1 = 2*(y*z - w*x), 
                 tmp2 = w*w - x*x - y*y + z*z, 
-                tmp3 = 0,
-                a[8] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3,
-                a[9] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
-                a[10] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
-                a[11] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
-                
-                tmp0 = tmp1 = tmp2 = 0, tmp3 = 1,
-                a[12] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3,
-                a[13] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
-                a[14] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
-                a[15] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3;
+                a[8] = a00*tmp0 + a10*tmp1 + a20*tmp2,
+                a[9] = a01*tmp0 + a11*tmp1 + a21*tmp2,
+                a[10] = a02*tmp0 + a12*tmp1 + a22*tmp2,
+                a[11] = a03*tmp0 + a13*tmp1 + a23*tmp2;
     
                 return this;
             };
