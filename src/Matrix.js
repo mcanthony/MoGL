@@ -1,14 +1,7 @@
 var Matrix = (function () {
     'use strict';
-    var temp, setter, getter, rawInit,
-        raw, useMat;
+    var temp, setter, getter;
     //private
-    raw = {},
-    useMat = {},
-    $setPrivate('Matrix', {
-        raw:raw,
-        useMat:useMat
-    });
     //lib
     temp = new Float32Array(16),
     setter = function(x, y, z){
@@ -30,11 +23,6 @@ var Matrix = (function () {
            result[0] = this[x], result[1] = this[y], result[2] = this[z];
            return result;
         };
-    },
-    rawInit = function rawInit(mat, applyTransform){
-        var a = raw[mat.uuid] || (raw[mat.uuid] = new Float32Array(16));
-        if (applyTransform) mat.matCurrent();
-        return a;
     };
     return MoGL.extend('Matrix',{
         description:'4x4행렬을 나타내는 객체. 아핀변환용 x,y,z, rotateX,Y,Z, scaleX,Y,Z 도 지원함',
@@ -43,34 +31,21 @@ var Matrix = (function () {
             'console.log(mtx.x);'
         ],
         value:function Matrix() {
-            this.x = this.y = this.z = this.rotateX = this.rotateY = this.rotateZ = 0,
-            this.scaleX = this.scaleY = this.scaleZ = 1;
+            var a = this;
+            a.x = a.y = a.z = a.rotateX = a.rotateY = a.rotateZ = 0,
+            a[1] = a[2] = a[3] = a[4] = a[6] = a[7] = a[8] = a[9] = a[11] = a[12] = a[13] = a[14] = 0,
+            a[0] = a[5] = a[10] = a[15] = a.scaleX = a.scaleY = a.scaleZ = 1,
+            a.useMatrix = false;
         }
     })
     .field('useMatrix', {
-        description:'GPU로 아핀변환정보를 보낼지 raw타입의 행렬을 보낼지 결정함.',
+        description:'쉐이더로 아핀변환정보를 보낼지 raw타입의 행렬을 보낼지 결정함.',
         sample:[
             'var mtx = new Matrix();',
             'mtx.useMatrix = true;'
         ],
-        dafaultValue:false,
-        get:function useMatrixGet(){
-            return useMat[this] || false;
-        },
-        set:function useMaterixSet(v){
-            useMat[this] = v ? true : false;
-        }
-    })
-    .field('raw', {
-        description:'현재 매트릭스 객체의 rawData를 Float32Array 형식으로 반환(행렬로 사용한 적이 없으면 null)',
-        sample:[
-            'var mtx = new Matrix();',
-            'console.log(mtx.raw);'
-        ],
-        get:function rawGet(){
-            return raw[this] || null;
-        }
-    })
+        dafaultValue:false
+    }, 1)
     .method('lookAt', {
         description:'현재매트릭스를 대상지점을 바라보도록 변경\n- 현재 매트릭스의 rotateX,rotateY,rotateZ, 속성을 자동으로 변경',
         param:[
@@ -91,7 +66,7 @@ var Matrix = (function () {
                 A[0] = this.x, A[1] = this.y, A[2] = -this.z,
                 B[0] = x, B[1] = y, B[2] = z,
                 this.matLookAt(A, B, axis),
-                d = raw[this],
+                d = this,
                 d11 = d[0], d12 = d[1], d13 = d[2],
                 d21 = d[4], d22 = d[5], d23 = d[6],
                 d31 = d[8], d32 = d[9], d33 = d[10],
@@ -152,19 +127,16 @@ var Matrix = (function () {
     })
     .method('matClone', {
         description: '현재 매트릭스를 복제해서 새로 생성된 매트릭스를 반환한다.',
-        param:[
-            'applyTransform:boolean - 현재의 position,rotate,scale 적용 여부',
-        ],
         sample: [
             'var mtx = new Matrix();',
             'var clonedMatrix = mtx.matClone();'
         ],
-        ret: ['Matrix - 복제해서 새로 생성한 매트릭스를 반환.'],
-        value:(function(applyTransform){
-            var out, b;
-            return function matClone() {
-                var a = rawInit(this, applyTransform != 'false');
-                if (!out) out = Matrix(), b = rawInit(out);
+        ret:'Matrix - 복제해서 새로 생성한 매트릭스를 반환.',
+        value:function matClone() {
+                var a = raw[this.uuid] || (raw[this.uuid] = new Float32Array(16)),
+                    out = Matrix(), 
+                    b  = raw[out.uuid] || (raw[out.uuid] = new Float32Array(16));
+
                 b[0] = a[0], b[1] = a[1], b[2] = a[2], b[3] = a[3],
                 b[4] = a[4], b[5] = a[5], b[6] = a[6], b[7] = a[7],
                 b[8] = a[8], b[9] = a[9], b[10] = a[10], b[11] = a[11],
@@ -173,20 +145,39 @@ var Matrix = (function () {
             };
         })()
     })
-    .method('matCopy', {
+    .method('matCopyTo', {
         description:'현재 매트릭스의 값을 대상 매트릭스에 복사하여 덮어쓴다.',
-        sample: [
+        sample:[
             'var source = new Matrix();',
             'var target = new Matrix();',
-            'source.matCopy(target);  // source의 속성을 target에 복사'
+            'source.matCopyTo(target);  // source의 속성을 target에 복사'
         ],
-        ret: ['this - 메서드체이닝을 위해 자신을 반환함.'],
+        ret:'this',
         param:[
-            'matrix:Matrix - 복사 대상 매트릭스'
+            'target:Matrix - 복사될 Matrix객체'
         ],
-        value:function matCopy(t, applyTransform) {
-            var a = rawInit(this, applyTransform != 'false');
-            t = rawInit(t);
+        value:function matCopy(target) {
+            var a = raw[this.uuid] || (raw[this.uuid] = new Float32Array(16)),
+                t = raw[target.uuid] || (raw[target.uuid] = new Float32Array(16));
+            t[0] = a[0], t[1] = a[1], t[2] = a[2], t[3] = a[3],
+            t[4] = a[4], t[5] = a[5], t[6] = a[6], t[7] = a[7],
+            t[8] = a[8], t[9] = a[9], t[10] = a[10], t[11] = a[11],
+            t[12] = a[12], t[13] = a[13], t[14] = a[14], t[15] = a[15];
+            return this;
+        }
+    })
+    .method('matCopyFrom', {
+        description:'현재 매트릭스의 값을 대상 매트릭스에 복사하여 덮어쓴다.',
+        sample:[
+            'var source = new Matrix();',
+            'var target = new Matrix();',
+            'target.matCopyFrom(source);  // source의 속성을 target에 복사'
+        ],
+        ret:'this',
+        param:'source:Matrix - 자신에게 복사할 Matrix객체',
+        value:function matCopy(target) {
+            var a = raw[target.uuid] || (raw[target.uuid] = new Float32Array(16)),
+                t = raw[this.uuid] || (raw[this.uuid] = new Float32Array(16));
             t[0] = a[0], t[1] = a[1], t[2] = a[2], t[3] = a[3],
             t[4] = a[4], t[5] = a[5], t[6] = a[6], t[7] = a[7],
             t[8] = a[8], t[9] = a[9], t[10] = a[10], t[11] = a[11],
