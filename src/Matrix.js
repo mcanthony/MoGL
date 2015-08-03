@@ -124,7 +124,7 @@ var Matrix = (function () {
         ],
         ret:'this',
         value:function matCurrent() {
-            var a = raw[mat.uuid] || (raw[mat.uuid] = new Float32Array(16));
+            var a = raw[this.uuid] || (raw[this.uuid] = new Float32Array(16));
             a[0] = a[5] = a[10] = a[15] = 1, 
             a[1] = a[2] = a[3] = a[4] = a[6] = a[7] = a[8] = a[9] = a[11] = 0,
             a[12] = this.rotateX,  a[13] = this.rotateY,  a[14] = this.rotateZ,
@@ -143,7 +143,7 @@ var Matrix = (function () {
         ],
         ret:'this',
         value:function matIdentity() {
-            var a = raw[mat.uuid] || (raw[mat.uuid] = new Float32Array(16));
+            var a = raw[this.uuid] || (raw[this.uuid] = new Float32Array(16));
             a[0] = a[5] = a[10] = a[15] = 1, 
             a[1] = a[2] = a[3] = a[4] = a[6] = a[7] = a[8] = a[9] = a[11] = a[12] = a[13] = a[14] = 0;
             return this;            
