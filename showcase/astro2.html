@@ -52,8 +52,8 @@ body {
 <script src="../src/Mesh.js"></script>
 <script src="../src/Group.js"></script>
 <script src="../src/Camera.js"></script>
-<script src="../src/Scene.js"></script>
-<script src="../src/World.js"></script>
+<script src="../src/Scene2.js"></script>
+<script src="../src/World2.js"></script>
 <script src="http://js.bsapi.co/"></script>
 </head>
 <body>
@@ -77,118 +77,100 @@ var init = function(isLoaded, imgs){
         )
         .addChild(//background
             bg = Mesh( 
-                Primitive.cube(), 
+                Primitive.sphere(),
                 Material('#ff2233')
-                    .setProperties({shading:Shading.none})
-                    .addTexture(Texture.diffuse, Texture(imgs[1]))
+                .setProperties({shading:Shading.none})
+                .addTexture(Texture.diffuse, Texture(imgs[1]))
             )
-            .setProperties({z:-370, scaleX:450, scaleY:450})
+            .setProperties({z: camera.z, scaleX: 50, scaleY: 50, scaleZ: 350})
         )
     );
     bs('#preloader').S(null);
-	world.setAutoSize(1) .start();
+	world.setAutoSize(1).start();
 
     var divCurrentFPS, divAverageFPS;
-    divCurrentFPS = bs('#currentFPS')
-    divAverageFPS = bs('#averageFPS')
-    var count222 = 0, sum = 0
+    divCurrentFPS = bs('#currentFPS'),
+    divAverageFPS = bs('#averageFPS');
+    var count222 = 0, sum = 0;
     world.addEventListener(World.renderBefore, function (fps, time, totalVertex, totalObject) {
         var currentFPS = fps;
-        count222++
+        count222++;
         divCurrentFPS.S('html', currentFPS.toFixed(2));
-        divAverageFPS.S('html', ( ( sum += currentFPS ) / count222 ).toFixed(2) + ' / totalVertex : ' + totalVertex + ' / totalObject : ' + totalObject);
-
+        divAverageFPS.S('html', 
+            ((sum += currentFPS) / count222).toFixed(2) + 
+            ' / totalVertex : ' + 
+            totalVertex + ' / totalObject : ' + totalObject);
     });
     (function(){
         var r = 0, x, y;
-        bs.WIN.on('keydown', MoGL.stopInterval, 0, 1);
-        bs.WIN.on('keyup', MoGL.resumeInterval, 0, 1);
         bs.WIN.on('move', function(e){
             var s = bs.WIN.size();
-            camera.x = ((e.x - s.w*.5)*.01).toPrecision(2), 
-            camera.y = ((s.h*.5 - e.y)*.01).toPrecision(2),
-            bg.rotateX = camera.x*.05;
-            bg.rotateZ = camera.y*.05;
-            camera.lookAt(0, 0, -200);
+            camera.x = ((e.x - s.w*.5)*.001).toPrecision(2),
+            camera.y = ((s.h*.5 - e.y)*.001).toPrecision(2),
+            bg.rotateX = camera.x*.005;
+            bg.rotateZ = camera.y*.005;
+            camera.lookAt(0, 0, 0);
         }, 0, 1);
     })();
 	(function(){
-		var loop, i, material, sphere, down, end, ani, prop, boom;
+		var loop, i, material, sphere, down, ani, prop, propOri;
         material = Material('#FFF').setProperties({shading:Shading.phong, specularColor:'#ff2233'})
         material.addTexture(Texture.diffuse, Texture(bs.IMG.crop(imgs[0], 0, 0, 200, 160, true)));
         material.addTexture(Texture.normal, Texture(bs.IMG.crop(imgs[0], 200, 0, 200, 160, true)));
         material.addTexture(Texture.specular, Texture(bs.IMG.crop(imgs[0], 400, 0, 200, 160, true)));
-        boom = Material('#F00').setProperties({shading:Shading.phong, specularColor:'#ff0000'}),
-        boom.wireFrame = 1
         sphere = Primitive.sphere(3,3),
 		down = (function(){
-            var counter = bs('<div style="position:absolute;top:0;left:0;margin:10px;color:#fff">0</div>').S('<','body','this'), count = 0;
-            
+            var counter = bs('<div style="position:absolute;top:0;left:0;margin:10px;color:#fff">0</div>').S('<','body','this'), count = 0;            
             var explosion = Texture(imgs[2]),
                 prop0 = {shading:Shading.phong, sprite:{col:29, row:1, start:0}},
-                propAni = {spriteFrame:27}, 
-                ani = {time:1},
+                propAni = {spriteFrame:27},
+                ani = {time:.7},
                 plane = Primitive.plane(),
-                prop1 = {rotateX:Math.PI/2},
+                prop1 = {billboard:true, alpha:.8},
                 propertyChanged = function(){
                     scene.removeChild(this);
                 };
-                
-            
             return function(e){
                 var mesh, mat;
                 count++;
                 counter.S('html', count);
-                this.material = boom;
                 this.removeEventListener(Mesh.down, down);
-                this.addEventListener(MoGL.propertyRepeated, end);
-                prop1.x = this.x,
-                prop1.y = this.y,
-                prop1.z = this.z,
-                prop1.scaleX = this.scaleX*4,
-                prop1.scaleY = this.scaleY*4,
-                prop1.scaleZ = this.scaleZ*4
+                this.setProperties(null);
+                scene.removeChild(this);
+                prop1.x = this.x, prop1.y = this.y, prop1.z = this.z,
+                prop1.scaleX = this.scaleX*4.5, prop1.scaleY = this.scaleY*4.5, prop1.scaleZ = this.scaleZ*4.5,
                 scene.addChild(
                     mesh = Mesh(
                         plane, 
-                        mat = Material()
+                        mat = Material('#f00')
                         .setProperties(prop0)
                         .setProperties(propAni, ani)
                         .addTexture(Texture.diffuse, explosion)
                     )
                     .setProperties(prop1)
                 ),
-                mesh.alpha = Math.random()
-//                mesh.billboard = 1
                 mat.addEventListener(MoGL.propertyChanged, propertyChanged, mesh);
     		};
         })(),
-        end = function(){
-            this.setProperties(null);
-            this.removeEventListener(MoGL.propertyRepeated, end);
-            scene.removeChild(this);
-        },
 		ani = {time:3, repeat:-1},
-		prop = {},
-        i = 500;
+		prop = {alpha:2.5},
+        propOri = {alpha:0, z:-450},
+        i = 50;
 		setTimeout(loop = function(){
-            var a
             var size = bs.randf(1.7, 2.2);//bs.randf(.7, 1.2);
             ani.time = bs.randf(3,6), ani.delay = bs.randf(0,10),
 			prop.x = bs.randf(-25,25), prop.y = bs.randf(-25,25), prop.z = bs.randf(10,200),
             prop.rotateX = bs.randf(360,1000)*toRadian,
             prop.rotateY = bs.randf(360,1000)*toRadian,
             prop.rotateZ = bs.randf(360,1000)*toRadian,
+            propOri.scaleX = propOri.scaleY = propOri.scaleZ = size,
+            propOri.x = bs.randf(-20, 20), propOri.y = bs.randf(-20, 20),
 			scene.addChild(
-                a = Mesh(sphere, material)
-                .setProperties({
-                    scaleX:size, scaleY:size, scaleZ:size,
-                    x:bs.randf(-20, 20), y:bs.randf(-20, 20), z:-450
-                })
+                Mesh(sphere, material)
+                .setProperties(propOri)
                 .setProperties(prop, ani)
                 .addEventListener(Mesh.down, down)
             );
-//            a.billboard = 1
 			if (i--) setTimeout(loop, 1);
 		}, 1);
 	})();
