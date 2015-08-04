@@ -1,60 +1,60 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <title>Astro</title>
-    <meta charset="utf-8"/>
-    <meta property="og:title" content="Cubelic"/>
-    <meta property="og:description" content="Cubelic"/>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <meta name="format-detection" content="telephone=no"/>
-    <meta name="apple-mobile-web-app-capable" content="yes"/>
-    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
-    <style>
-        body {
-            background-color: #000;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            height: 100%;
-        }
-        #preloader{
-            position:absolute;
-            top:50%;
-            width:100%;
-            margin:0 auto;
-            color:#fff;
-            text-align:center;
-        }
-        .FPS {
-            color: #FFF;
-            left: 0px;
-            top: 0px;
-            font-size: 11px;
-            position: absolute
-        }
-    </style>
-    <script src="../src/$.js"></script>
-    <script src="../src/make.js"></script>
-    <script src="../src/MoGL.js"></script>
-    <script src="../src/Vector.js"></script>
-    <script src="../src/Filter.js"></script>
-    <script src="../src/Vertex.js"></script>
-    <script src="../src/BlendMode.js"></script>
-    <script src="../src/Primitive.js"></script>
-    <script src="../src/Shading.js"></script>
-    <script src="../src/VertexShaderFunctions.js"></script>
-    <script src="../src/Shader.js"></script>
-    <script src="../src/Matrix.js"></script>
-    <script src="../src/Texture.js"></script>
-    <script src="../src/Geometry.js"></script>
-    <script src="../src/Material.js"></script>
-    <script src="../src/Mesh.js"></script>
-    <script src="../src/Group.js"></script>
-    <script src="../src/Camera.js"></script>
-    <script src="../src/Scene.js"></script>
-    <script src="../src/World.js"></script>
-    <script src="http://js.bsapi.co/"></script>
+<title>Astro</title>
+<meta charset="utf-8"/>
+<meta property="og:title" content="Cubelic"/>
+<meta property="og:description" content="Cubelic"/>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="format-detection" content="telephone=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+<style>
+body {
+	background-color: #000;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	height: 100%;
+}
+#preloader{
+	position:absolute;
+	top:50%;
+	width:100%;
+	margin:0 auto;
+	color:#fff;
+	text-align:center;
+}
+.FPS {
+    color: #FFF;
+    left: 0px;
+    top: 0px;
+    font-size: 11px;
+    position: absolute
+}
+</style>
+<script src="../src/$.js"></script>
+<script src="../src/make.js"></script>
+<script src="../src/MoGL.js"></script>
+<script src="../src/Vector.js"></script>
+<script src="../src/Filter.js"></script>
+<script src="../src/Vertex.js"></script>
+<script src="../src/BlendMode.js"></script>
+<script src="../src/Primitive.js"></script>
+<script src="../src/Shading.js"></script>
+<script src="../src/VertexShaderFunctions.js"></script>
+<script src="../src/Shader.js"></script>
+<script src="../src/Matrix.js"></script>
+<script src="../src/Texture.js"></script>
+<script src="../src/Geometry.js"></script>
+<script src="../src/Material.js"></script>
+<script src="../src/Mesh.js"></script>
+<script src="../src/Group.js"></script>
+<script src="../src/Camera.js"></script>
+<script src="../src/Scene.js"></script>
+<script src="../src/World.js"></script>
+<script src="http://js.bsapi.co/"></script>
 </head>
 <body>
 <canvas id="stage"></canvas>
@@ -64,128 +64,128 @@
     Average FPS: <span id="averageFPS"></span>
 </div>
 <script>
-    'use strict';
-    var init = function(isLoaded, imgs){
-        var world, scene, camera, toRadian = bs.toradian;
-        if (!isLoaded) return;
-        MoGL.classes(window);
-        world = World('stage').addScene(
-                scene = Scene()
-                        .addChild(//main camera
-                        camera = Camera()
-                                .setProperties({fov:[bs('#stage').S('w'), bs('#stage').S('h'), 45]})
-                )
-        );
-        bs('#preloader').S(null);
-        world.setAutoSize(1).start();
-        var mesh1 = Mesh(Primitive.cube(), Material('#ff0').setProperties({shading:Shading.phong}).addTexture(Texture.diffuse, Texture(bs.IMG.crop(imgs[0], 0, 0, 200, 160, true))));
-        var mesh2 = Mesh(Primitive.cube(), Material('#00f').setProperties({shading:Shading.phong}).addTexture(Texture.diffuse, Texture(bs.IMG.crop(imgs[0], 0, 0, 200, 160, true))));
-        mesh1.setProperties({useMatrix:true});
-        mesh2.setProperties({useMatrix:true});
-        scene.addChild(mesh1).addChild(mesh2);
-
-
-        var mat1 = Matrix(), mat2 = Matrix();
-        mat1.x = -1, mat2.x = 1;
-        mat1.matCurrent(), mat2.matCurrent();
-
-        var group = Matrix();
-
-
-
-        world.addEventListener(World.renderBefore, function (fps, time, totalVertex, totalObject) {
-            //mesh1.matRotateY(.01).matRotateX(.01);
-            //mesh2.matRotateY(-.01).matRotateX(-.01);
-            //return;
-            /*
-             mat1.matRotateY(.01).matRotateX(.01);
-             mat2.matRotateY(-.01).matRotateX(-.01);
-             group.matRotateY(.01).matRotateZ(.01);
-             //*/
-//*
-            mat1.matQuaternionXYZRotate(.01, .01, 0)
-            mat2.matQuaternionXYZRotate(-.01, -.01, 0)
-            group.matQuaternionXYZRotate(0, .01, .01)
+'use strict';
+var init = function(isLoaded, imgs){
+	var world, scene, camera, toRadian = bs.toradian;
+    if (!isLoaded) return;
+	MoGL.classes(window);
+    world = World('stage').addScene(
+        scene = Scene()
+        .addChild(//main camera
+            camera = Camera()
+            .setProperties({fov:[bs('#stage').S('w'), bs('#stage').S('h'), 45]})
+        )
+    );
+    bs('#preloader').S(null);
+	world.setAutoSize(1).start();
+    var mesh1 = Mesh(Primitive.cube(), Material('#ff0').setProperties({shading:Shading.phong}).addTexture(Texture.diffuse, Texture(bs.IMG.crop(imgs[0], 0, 0, 200, 160, true))));
+    var mesh2 = Mesh(Primitive.cube(), Material('#00f').setProperties({shading:Shading.phong}).addTexture(Texture.diffuse, Texture(bs.IMG.crop(imgs[0], 0, 0, 200, 160, true))));
+    mesh1.setProperties({useMatrix:true});
+    mesh2.setProperties({useMatrix:true});
+    scene.addChild(mesh1).addChild(mesh2);
+    
+    
+    var mat1 = Matrix(), mat2 = Matrix();
+    mat1.x = -1, mat2.x = 1;
+    mat1.matCurrent(), mat2.matCurrent();
+    
+    var group = Matrix();
+    
+    
+    
+    world.addEventListener(World.renderBefore, function (fps, time, totalVertex, totalObject) {
+        //mesh1.matRotateY(.01).matRotateX(.01);
+        //mesh2.matRotateY(-.01).matRotateX(-.01);
+        //return;
+/*        
+        mat1.matRotateY(.01).matRotateX(.01);
+        mat2.matRotateY(-.01).matRotateX(-.01);
+        group.matRotateY(.01).matRotateZ(.01); 
+*/
+///*
+        mat1.matQuaternionXYZRotate(.01, .01, 0)
+        mat2.matQuaternionXYZRotate(-.01, -.01, 0)
+        group.matQuaternionXYZRotate(0, .01, .01)
 //*/      
-            mesh1.matCopyFrom(group.matMultiply(mat1, 1));
-            mesh2.matCopyFrom(group.matMultiply(mat2, 1));
-        });
-        return;
-        (function(){
-            var r = 0, x, y;
-            bs.WIN.on('move', function(e){
-                var s = bs.WIN.size();
-                camera.x = ((e.x - s.w*.5)*.001).toPrecision(2),
-                        camera.y = ((s.h*.5 - e.y)*.001).toPrecision(2),
-                        bg.rotateX = camera.x*.005;
-                bg.rotateZ = camera.y*.005;
-                camera.lookAt(0, 0, 0);
-            }, 0, 1);
-        })();
-        (function(){
-            var loop, i, material, sphere, down, ani, prop, propOri;
-            material = Material('#FFF').setProperties({shading:Shading.phong, specularColor:'#ff2233'})
-            material.addTexture(Texture.diffuse, Texture(bs.IMG.crop(imgs[0], 0, 0, 200, 160, true)));
-            material.addTexture(Texture.normal, Texture(bs.IMG.crop(imgs[0], 200, 0, 200, 160, true)));
-            material.addTexture(Texture.specular, Texture(bs.IMG.crop(imgs[0], 400, 0, 200, 160, true)));
-            sphere = Primitive.sphere(3,3),
-                    down = (function(){
-                        var counter = bs('<div style="position:absolute;top:0;left:0;margin:10px;color:#fff">0</div>').S('<','body','this'), count = 0;
-                        var explosion = Texture(imgs[2]),
-                                prop0 = {shading:Shading.phong, sprite:{col:29, row:1, start:0}},
-                                propAni = {spriteFrame:27},
-                                ani = {time:.7},
-                                plane = Primitive.plane(),
-                                prop1 = {billboard:true, alpha:.8},
-                                propertyChanged = function(){
-                                    scene.removeChild(this);
-                                };
-                        return function(e){
-                            var mesh, mat;
-                            count++;
-                            counter.S('html', count);
-                            this.removeEventListener(Mesh.down, down);
-                            this.setProperties(null);
-                            scene.removeChild(this);
-                            prop1.x = this.x, prop1.y = this.y, prop1.z = this.z,
-                                    prop1.scaleX = this.scaleX*4.5, prop1.scaleY = this.scaleY*4.5, prop1.scaleZ = this.scaleZ*4.5,
-                                    scene.addChild(
-                                            mesh = Mesh(
-                                                    plane,
-                                                    mat = Material('#f00')
-                                                            .setProperties(prop0)
-                                                            .setProperties(propAni, ani)
-                                                            .addTexture(Texture.diffuse, explosion)
-                                            )
-                                                    .setProperties(prop1)
-                                    ),
-                                    mat.addEventListener(MoGL.propertyChanged, propertyChanged, mesh);
-                        };
-                    })(),
-                    ani = {time:3, repeat:-1},
-                    prop = {alpha:2.5},
-                    propOri = {alpha:0, z:-450},
-                    i = 50;
-            setTimeout(loop = function(){
-                var size = bs.randf(1.7, 2.2);//bs.randf(.7, 1.2);
-                ani.time = bs.randf(3,6), ani.delay = bs.randf(0,10),
-                        prop.x = bs.randf(-25,25), prop.y = bs.randf(-25,25), prop.z = bs.randf(10,200),
-                        prop.rotateX = bs.randf(360,1000)*toRadian,
-                        prop.rotateY = bs.randf(360,1000)*toRadian,
-                        prop.rotateZ = bs.randf(360,1000)*toRadian,
-                        propOri.scaleX = propOri.scaleY = propOri.scaleZ = size,
-                        propOri.x = bs.randf(-20, 20), propOri.y = bs.randf(-20, 20),
-                        scene.addChild(
-                                Mesh(sphere, material)
-                                        .setProperties(propOri)
-                                        .setProperties(prop, ani)
-                                        .addEventListener(Mesh.down, down)
-                        );
-                if (i--) setTimeout(loop, 1);
-            }, 1);
-        })();
-    };
-    bs.IMG.load(init, 'astro/map.png', 'astro/bg.jpg', 'astro/explosion.png');
+        mesh1.matCopyFrom(group.matMultiply(mat1, 1));
+        mesh2.matCopyFrom(group.matMultiply(mat2, 1));
+    });
+    return;
+    (function(){
+        var r = 0, x, y;
+        bs.WIN.on('move', function(e){
+            var s = bs.WIN.size();
+            camera.x = ((e.x - s.w*.5)*.001).toPrecision(2),
+            camera.y = ((s.h*.5 - e.y)*.001).toPrecision(2),
+            bg.rotateX = camera.x*.005;
+            bg.rotateZ = camera.y*.005;
+            camera.lookAt(0, 0, 0);
+        }, 0, 1);
+    })();
+	(function(){
+		var loop, i, material, sphere, down, ani, prop, propOri;
+        material = Material('#FFF').setProperties({shading:Shading.phong, specularColor:'#ff2233'})
+        material.addTexture(Texture.diffuse, Texture(bs.IMG.crop(imgs[0], 0, 0, 200, 160, true)));
+        material.addTexture(Texture.normal, Texture(bs.IMG.crop(imgs[0], 200, 0, 200, 160, true)));
+        material.addTexture(Texture.specular, Texture(bs.IMG.crop(imgs[0], 400, 0, 200, 160, true)));
+        sphere = Primitive.sphere(3,3),
+		down = (function(){
+            var counter = bs('<div style="position:absolute;top:0;left:0;margin:10px;color:#fff">0</div>').S('<','body','this'), count = 0;            
+            var explosion = Texture(imgs[2]),
+                prop0 = {shading:Shading.phong, sprite:{col:29, row:1, start:0}},
+                propAni = {spriteFrame:27},
+                ani = {time:.7},
+                plane = Primitive.plane(),
+                prop1 = {billboard:true, alpha:.8},
+                propertyChanged = function(){
+                    scene.removeChild(this);
+                };
+            return function(e){
+                var mesh, mat;
+                count++;
+                counter.S('html', count);
+                this.removeEventListener(Mesh.down, down);
+                this.setProperties(null);
+                scene.removeChild(this);
+                prop1.x = this.x, prop1.y = this.y, prop1.z = this.z,
+                prop1.scaleX = this.scaleX*4.5, prop1.scaleY = this.scaleY*4.5, prop1.scaleZ = this.scaleZ*4.5,
+                scene.addChild(
+                    mesh = Mesh(
+                        plane, 
+                        mat = Material('#f00')
+                        .setProperties(prop0)
+                        .setProperties(propAni, ani)
+                        .addTexture(Texture.diffuse, explosion)
+                    )
+                    .setProperties(prop1)
+                ),
+                mat.addEventListener(MoGL.propertyChanged, propertyChanged, mesh);
+    		};
+        })(),
+		ani = {time:3, repeat:-1},
+		prop = {alpha:2.5},
+        propOri = {alpha:0, z:-450},
+        i = 50;
+		setTimeout(loop = function(){
+            var size = bs.randf(1.7, 2.2);//bs.randf(.7, 1.2);
+            ani.time = bs.randf(3,6), ani.delay = bs.randf(0,10),
+			prop.x = bs.randf(-25,25), prop.y = bs.randf(-25,25), prop.z = bs.randf(10,200),
+            prop.rotateX = bs.randf(360,1000)*toRadian,
+            prop.rotateY = bs.randf(360,1000)*toRadian,
+            prop.rotateZ = bs.randf(360,1000)*toRadian,
+            propOri.scaleX = propOri.scaleY = propOri.scaleZ = size,
+            propOri.x = bs.randf(-20, 20), propOri.y = bs.randf(-20, 20),
+			scene.addChild(
+                Mesh(sphere, material)
+                .setProperties(propOri)
+                .setProperties(prop, ani)
+                .addEventListener(Mesh.down, down)
+            );
+			if (i--) setTimeout(loop, 1);
+		}, 1);
+	})();
+};
+bs.IMG.load(init, 'astro/map.png', 'astro/bg.jpg', 'astro/explosion.png');
 </script>
 </body>
 </html>
