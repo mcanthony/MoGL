@@ -67,7 +67,7 @@ var Scene = (function () {
             }
             return false;
         }
-    };
+    },
     (function(){
         var sort = [['culling',0],['geometry',0],['diffuse',0],['shading',0]], data = {};
         data = {
@@ -76,103 +76,36 @@ var Scene = (function () {
             material:$getPrivate('Mesh', 'material'),
             diffuse:$getPrivate('Material', 'diffuse'),
             shading:$getPrivate('Material', 'shading')
-
-        };
-
+        },
         addRenderList = function (v, list) {
             var target, ref, i, j
-            var curr, sep, key,diffuse;
+            var curr, sep, key, diffuse;
             target = list;
             for (i = 0, j = sort.length; i < j; i++) {
-                curr = sort[i];
-                ref = v;
-
+                curr = sort[i],
+                ref = v,
                 key = ''
                 if (i > 1) {
                     ref = data.material[ref.uuid]
                 }
                 if (i == 2) {
                     diffuse = data.diffuse[ref.uuid]
-                    if (diffuse) key = 'useTexture' + diffuse[0].tex.uuid
+                    if (diffuse) key = 'useTexture_' + diffuse[0].tex.uuid
                     else key = 'noTexture'
                     sep = key
+                    if (ref.sprite) sep = 'sprite_' + sep
                 } else {
                     sep = ref[curr[0]]
                 }
-
                 if (!target[sep]) target[sep] = i == j - 1 ? [] : {};
                 target = target[sep];
             }
             if(target.indexOf(v)==-1) target[target.length] = v;
-            console.log(list)
         }
-
     })(),
-
-
-    //addRenderList = function(v,list){
-    //    var geo, shading;
-    //    geo = v.geometry,
-    //    shading = v.material.shading
-    //
-    //    var useTexture = v.material.diffuse ? 1 : 0;
-    //    shading=
-    //    shading == Shading.phong ? useTexture ? 'bitmapPhong' : 'colorPhong' :
-    //    shading == Shading.gouraud ? useTexture ? 'bitmapGouraud' : 'colorGouraud' :
-    //    shading == Shading.toon ? 'toonPhong' :
-    //    shading == Shading.blinn ? 'bitmapBlinn' :
-    //    useTexture ? 'bitmap' : 'color';
-    //
-    //    if(v.material.sprite){
-    //        if(!list.sprite){
-    //            list.sprite = {
-    //                geo : geo
-    //            }
-    //        }
-    //        if(!list.sprite[shading]){
-    //            list.sprite[shading] = []
-    //        }
-    //        list.sprite[shading].push(v)
-    //    }else{
-    //        if(!list[geo]){
-    //            list[geo] = {}
-    //        }
-    //        if(!list[geo][shading]){
-    //            list[geo][shading] = []
-    //        }
-    //        list[geo][shading].push(v)
-    //    }
-    //
-    //},
     removeRenderItem = function(v,list){
-        var geo, shading;
-        geo = v.geometry,
-        shading = v.material.shading
 
-        var useTexture = v.material.diffuse ? 1 : 0;
-        shading =
-        shading == Shading.phong ? useTexture ? 'bitmapPhong' : 'colorPhong' :
-        shading == Shading.gouraud ? useTexture ? 'bitmapGouraud' : 'colorGouraud' :
-        shading == Shading.toon ? 'toonPhong' :
-        shading == Shading.blinn ? 'bitmapBlinn' :
-        useTexture ? 'bitmap' : 'color';
-
-        if (v.material.sprite) {
-            if (list.sprite[shading]) {
-                list.sprite[shading].splice(list.sprite[shading].indexOf(v), 1)
-            }
-        } else {
-            var k, tGeo
-            tGeo = list[geo]
-            for(k in tGeo){
-                if (tGeo[k]) {
-                    if(tGeo[k].indexOf(v)>-1){
-                        tGeo[k].splice(tGeo[k].indexOf(v), 1)
-                    }
-                }
-            }
-        }
-    }
+    };
     return MoGL.extend('Scene', {
         description:[
             '실제 렌더링될 구조체는 Scene별로 집결됨.',
@@ -200,7 +133,6 @@ var Scene = (function () {
             },
             baseLightRotate[this] = [0, -1, -1],
             this.updateList = updateList[this],
-            this.addVertexShader(Shader.colorMergeVShader), this.addFragmentShader(Shader.colorMergeFShader),
             this.addVertexShader(Shader.mouseVertexShader), this.addFragmentShader(Shader.mouseFragmentShader),
             this.addVertexShader(Shader.colorVertexShader), this.addFragmentShader(Shader.colorFragmentShader),
             this.addVertexShader(Shader.wireFrameVertexShader), this.addFragmentShader(Shader.wireFrameFragmentShader),
@@ -210,7 +142,6 @@ var Scene = (function () {
             this.addVertexShader(Shader.colorVertexShaderPhong), this.addFragmentShader(Shader.colorFragmentShaderPhong),
             this.addVertexShader(Shader.toonVertexShaderPhong), this.addFragmentShader(Shader.toonFragmentShaderPhong),
             this.addVertexShader(Shader.bitmapVertexShaderPhong), this.addFragmentShader(Shader.bitmapFragmentShaderPhong),
-            this.addVertexShader(Shader.bitmapVertexShaderBlinn), this.addFragmentShader(Shader.bitmapFragmentShaderBlinn),
             this.addVertexShader(Shader.postBaseVertexShader), this.addFragmentShader(Shader.postBaseFragmentShader);
         }
     })
@@ -482,7 +413,7 @@ var Scene = (function () {
                 if (k == v || p[k].id == v) {
                     childrenArray[this].splice(childrenArray[this].indexOf(p[k]), 1),
                     p[k].removeEventListener(MoGL.changed),
-                    removeRenderItem(v,renderList[this])
+                    removeRenderItem(v, renderList[this]);
                     delete p[k];
                     return true;
                 }

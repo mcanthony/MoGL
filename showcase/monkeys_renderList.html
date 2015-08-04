@@ -108,8 +108,12 @@
 //            var m = a
             item = new Mesh(geo, m);
             m.shading = Shading.phong
-            item.position = [Math.random() * 50 - 25, Math.random() * 50 - 25, Math.random() * 50 - 25]
-            item.rotate = [Math.random() * PI2, Math.random() * PI2, Math.random() * PI2];
+            item.x = Math.random() * 50 - 25,
+            item.y = Math.random() * 50 - 25,
+            item.z = Math.random() * 50 - 25
+
+            item.rotateX = Math.random() * PI2
+
             scene.addChild(item);
             meshs.push(item);
 

@@ -90,10 +90,10 @@ var init = function(isLoaded, imgs){
     world.addEventListener(World.renderBefore, function (fps, time, totalVertex, totalObject) {
         group.rotateY = r;
         r += .01;
-        temp.matCopy(group);
-        mesh1.matCopy(temp.matMultiply(mat1));
-        temp.matCopy(group);
-        mesh2.matCopy(temp.matMultiply(mat2));
+        temp.matCopyTo(group);
+        mesh1.matCopyTo(temp.matMultiply(mat1));
+        temp.matCopyTo(group);
+        mesh2.matCopyTo(temp.matMultiply(mat2));
     });
     return;
     (function(){
