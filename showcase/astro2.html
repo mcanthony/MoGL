@@ -52,8 +52,8 @@ body {
 <script src="../src/Mesh.js"></script>
 <script src="../src/Group.js"></script>
 <script src="../src/Camera.js"></script>
-<script src="../src/Scene2.js"></script>
-<script src="../src/World2.js"></script>
+<script src="../src/Scene.js"></script>
+<script src="../src/World.js"></script>
 <script src="http://js.bsapi.co/"></script>
 </head>
 <body>
@@ -109,7 +109,7 @@ var init = function(isLoaded, imgs){
             camera.y = ((s.h*.5 - e.y)*.001).toPrecision(2),
             bg.rotateX = camera.x*.005;
             bg.rotateZ = camera.y*.005;
-            camera.lookAt(0, 0, 0);
+//            camera.lookAt(0, 0, 0);
         }, 0, 1);
     })();
 	(function(){
@@ -138,7 +138,7 @@ var init = function(isLoaded, imgs){
                 this.setProperties(null);
                 scene.removeChild(this);
                 prop1.x = this.x, prop1.y = this.y, prop1.z = this.z,
-                prop1.scaleX = this.scaleX*4.5, prop1.scaleY = this.scaleY*4.5, prop1.scaleZ = this.scaleZ*4.5,
+                prop1.scaleX = 10.0, prop1.scaleY = 10.0, prop1.scaleZ = 10.0,
                 scene.addChild(
                     mesh = Mesh(
                         plane, 
@@ -155,7 +155,7 @@ var init = function(isLoaded, imgs){
 		ani = {time:3, repeat:-1},
 		prop = {alpha:2.5},
         propOri = {alpha:0, z:-450},
-        i = 50;
+        i = 500;
 		setTimeout(loop = function(){
             var size = bs.randf(1.7, 2.2);//bs.randf(.7, 1.2);
             ani.time = bs.randf(3,6), ani.delay = bs.randf(0,10),
