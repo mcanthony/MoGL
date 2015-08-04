@@ -409,24 +409,21 @@ var World = (function (makeUtil) {
                                         }
                                         tIBO = tGPU.ibo[tGeo],
                                         tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO);
-
-                                        //텍스쳐
+                                        ///////////////////////////////////////////////////////////////
+                                        // 디퓨즈 or 컬러설정
                                         if (useTexture) {
-                                            //디퓨즈
                                             tMesh = sortList[0],
-                                            tUID_Mesh = tMesh.uuid;
+                                            tUID_Mesh = tMesh.uuid,
                                             tCull = gCull[tUID_Mesh],
                                             tMaterial = gMat[tUID_Mesh],
                                             tUID_mat = tMaterial.uuid,
                                             tShading = gMatShading[tUID_mat],
                                             tDiffuseMaps = gMatDiffuseMaps[tUID_mat],
-                                            tDiffuse = tTextures[tDiffuseMaps[tDiffuseMaps.length - 1].tex.uuid];
+                                            tDiffuse = tTextures[tDiffuseMaps[tDiffuseMaps.length - 1].tex.uuid],
                                             tGL.activeTexture(tGL.TEXTURE0),
                                             tGL.bindTexture(tGL.TEXTURE_2D, tDiffuse),
                                             tGL.uniform1i(tProgram.uSampler, 0);
                                         } else {
-                                            ///////////////////////////////////////////////////////////////
-                                            //색상
                                             tColor2 = gMatColor[tUID_mat],
                                             fs[0] = tColor2[0],
                                             fs[1] = tColor2[1],
@@ -434,6 +431,7 @@ var World = (function (makeUtil) {
                                             fs[3] = tColor2[3]
                                         }
                                         while (i2--) {
+                                            // 현재 대상 관련 정보 추출
                                             tMesh = sortList[i2],
                                             tUID_Mesh = tMesh.uuid;
                                             if (!gVisible[tUID_Mesh]) continue;
@@ -465,10 +463,7 @@ var World = (function (makeUtil) {
                                             }
 
                                             ///////////////////////////////////////////////////////////////
-                                            //총정점수계산
                                             //스프라이트
-                                            ///////////////////////////////////////////////////////////////
-
                                             if (useSheet) {
                                                 sheetInfo = gMatSprite[tUID_mat],
                                                 vs[18] = sheetInfo._col,
@@ -539,6 +534,9 @@ var World = (function (makeUtil) {
                                             tGL.uniform1fv(tProgram.uFS, fs),
                                             tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0),
                                             pCull = tCull, pNormal = tNormal, pSpecular = tSpecular, pUUID_mat = tUID_mat
+                                        }
+                                        if (useSheet) {
+                                            tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.LESS) // 스프라이트일 경우 기본상태로 되돌림
                                         }
                                     }
                                 }
