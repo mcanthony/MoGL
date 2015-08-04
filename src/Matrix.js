@@ -1,5 +1,6 @@
 var Matrix = (function () {
     'use strict';
+    '깃 세팅 테스트';
     return MoGL.extend('Matrix',{
         description:'4x4행렬을 나타내는 객체. 아핀변환용 x,y,z, rotateX,Y,Z, scaleX,Y,Z 도 지원함',
         sample:[
