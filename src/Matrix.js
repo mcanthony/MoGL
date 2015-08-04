@@ -174,28 +174,28 @@ var Matrix = (function () {
                 a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15];
 
             tmp0 = m[0], tmp1 = m[1], tmp2 = m[2], tmp3 = m[3];
-            o[0] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3,
-            o[1] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
-            o[2] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
-            o[3] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
+            o[0] = a00*tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3,
+            o[1] = a01*tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
+            o[2] = a02*tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
+            o[3] = a03*tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
         
             tmp0 = m[4], tmp1 = m[5], tmp2 = m[6], tmp3 = m[7],
-            o[4] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3 ,
-            o[5] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
-            o[6] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
-            o[7] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
+            o[4] = a00*tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3,
+            o[5] = a01*tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
+            o[6] = a02*tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
+            o[7] = a03*tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
         
             tmp0 = m[8], tmp1 = m[9], tmp2 = m[10], tmp3 = m[11],
-            o[8] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3 ,
-            o[9] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3 ,
-            o[10] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3 ,
-            o[11] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
+            o[8] = a00*tmp0 + a10*tmp1 + a20*tmp2 + a30*tmp3,
+            o[9] = a01*tmp0 + a11*tmp1 + a21*tmp2 + a31*tmp3,
+            o[10] = a02*tmp0 + a12*tmp1 + a22*tmp2 + a32*tmp3,
+            o[11] = a03*tmp0 + a13*tmp1 + a23*tmp2 + a33*tmp3,
         
             tmp0 = m[12], tmp1 = m[13], tmp2 = m[14], tmp3 = m[15],
-            o[12] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3 ,
-            o[13] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
-            o[14] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
-            o[15] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3;
+            o[12] = a00*tmp0 + a10*tmp1 + a20*tmp2 + a30*tmp3,
+            o[13] = a01*tmp0 + a11*tmp1 + a21*tmp2 + a31*tmp3,
+            o[14] = a02*tmp0 + a12*tmp1 + a22*tmp2 + a32*tmp3,
+            o[15] = a03*tmp0 + a13*tmp1 + a23*tmp2 + a33*tmp3;
         
             return o;
         }
@@ -270,7 +270,7 @@ var Matrix = (function () {
             */
                 var c0, c1, c2, s0, s1, s2,
                     x, y, z, w;
-                    
+                rx *= .5, ry *= .5, rz *= .5
                 c0 = COS(rx), c1 = COS(ry), c2 = COS(rz),
                 s0 = SIN(rx), s1 = SIN(ry), s2 = SIN(rz);
     
@@ -281,7 +281,7 @@ var Matrix = (function () {
     
                 a[0] = w*w + x*x - y*y -z*z, a[1] = 2*(x*y - w*z), a[2] = 2*(x*z + w*y), a[3] = 0,
                 a[4] = 2*(x*y + w*z), a[5] = w*w - x*x + y*y - z*z, a[6] = 2*(y*z - w*x), a[7] = 0,
-                a[8] = 2*(x*z - w*y), a[9] = 2*(y*z - w*x), a[10] = w*w - x*x - y*y + z*z, a[11] = 0,
+                a[8] = 2*(x*z - w*y), a[9] = 2*(y*z + w*x), a[10] = w*w - x*x - y*y + z*z, a[11] = 0,
                 a[12] = 0, a[13] = 0, a[14] = 0, a[15] = 1;
                 return this.matMultiply(a);
             };
