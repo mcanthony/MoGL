@@ -78,22 +78,28 @@ var init = function(isLoaded, imgs){
     );
     bs('#preloader').S(null);
 	world.setAutoSize(1).start();
-
-    
-    
     var mesh1 = Mesh(Primitive.cube(), Material('#f00').setProperties({shading:Shading.phong}));
     var mesh2 = Mesh(Primitive.cube(), Material('#00f').setProperties({shading:Shading.phong}));
+    mesh1.setProperties({useMatrix:true, x:-1});
+    mesh2.setProperties({useMatrix:true, x:1});
+    scene.addChild(mesh1).addChild(mesh2);
+    
+    
     var mat1 = Matrix(), mat2 = Matrix();
     mat1.x = -1, mat2.x = 1;
-    scene.addChild(mesh1).addChild(mesh2);
     var group = Matrix(), temp = Matrix(), r = 0;
     world.addEventListener(World.renderBefore, function (fps, time, totalVertex, totalObject) {
-        group.rotateY = r;
+        mesh1.matRotateY(.01).matRotateX(.01);
+        mesh2.matRotateY(-.01).matRotateX(-.01);
+        return;
+        group.matRotateY(.01);
         r += .01;
-        temp.matCopyTo(group);
-        mesh1.matCopyTo(temp.matMultiply(mat1));
-        temp.matCopyTo(group);
-        mesh2.matCopyTo(temp.matMultiply(mat2));
+        temp.matCopyFrom(group);
+        temp.matMultiply(mat1);
+        mesh1.matCopyFrom(mat1);
+        temp.matCopyFrom(group);
+        temp.matMultiply(mat2);
+        mesh2.matCopyFrom(mat2);
     });
     return;
     (function(){
