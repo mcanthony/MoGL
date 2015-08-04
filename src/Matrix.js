@@ -233,7 +233,10 @@ var Matrix = (function () {
             'ry:number - y축 기준 회전 값, radian단위',
             'rz:number - z축 기준 회전 값, radian단위'
         ],
-        value:function matQuaternionXYZRotate(rx, ry, rz) {
+        value:(function(){
+            var a = {};
+            return function matQuaternionXYZRotate(rx, ry, rz) {
+            /*
             var a = this, c0, c1, c2, s0, s1, s2,
                 x, y, z, w, tmp0, tmp1, tmp2,
                 a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
@@ -263,9 +266,26 @@ var Matrix = (function () {
             a[9] = a01*tmp0 + a11*tmp1 + a21*tmp2,
             a[10] = a02*tmp0 + a12*tmp1 + a22*tmp2,
             a[11] = a03*tmp0 + a13*tmp1 + a23*tmp2;
-
             return a;
-        }
+            */
+                var c0, c1, c2, s0, s1, s2,
+                    x, y, z, w;
+                    
+                c0 = COS(rx), c1 = COS(ry), c2 = COS(rz),
+                s0 = SIN(rx), s1 = SIN(ry), s2 = SIN(rz);
+    
+                x = c2*c1*s0 + s2*s1*c0,
+                y = c2*s1*c0 - s2*c1*s0,
+                z = s2*c1*c0 + c2*s1*s0,
+                w = c2*c1*c0 - s2*s1*s0;
+    
+                a[0] = w*w + x*x - y*y -z*z, a[1] = 2*(x*y - w*z), a[2] = 2*(x*z + w*y), a[3] = 0,
+                a[4] = 2*(x*y + w*z), a[5] = w*w - x*x + y*y - z*z, a[6] = 2*(y*z - w*x), a[7] = 0,
+                a[8] = 2*(x*z - w*y), a[9] = 2*(y*z - w*x), a[10] = w*w - x*x - y*y + z*z, a[11] = 0,
+                a[12] = 0, a[13] = 0, a[14] = 0, a[15] = 1;
+                return this.matMultiply(a);
+            };
+        })()
     })
     .method('matScale', {
         description:'현재매트릭스에 x,y,z축 증분 확대 ',
