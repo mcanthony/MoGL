@@ -274,10 +274,10 @@ var Matrix = (function () {
                 c0 = COS(rx), c1 = COS(ry), c2 = COS(rz),
                 s0 = SIN(rx), s1 = SIN(ry), s2 = SIN(rz);
     
-                x = c2*c1*s0 + s2*s1*c0,
-                y = c2*s1*c0 - s2*c1*s0,
-                z = s2*c1*c0 + c2*s1*s0,
-                w = c2*c1*c0 - s2*s1*s0;
+                x = c2*c1*s0 - s2*s1*c0,
+                y = c2*s1*c0 + s2*c1*s0,
+                z = s2*c1*c0 - c2*s1*s0,
+                w = c2*c1*c0 + s2*s1*s0;
     
                 a[0] = w*w + x*x - y*y -z*z, a[1] = 2*(x*y - w*z), a[2] = 2*(x*z + w*y), a[3] = 0,
                 a[4] = 2*(x*y + w*z), a[5] = w*w - x*x + y*y - z*z, a[6] = 2*(y*z - w*x), a[7] = 0,
