@@ -70,6 +70,9 @@ var Scene = (function () {
     },
     (function(){
         var sort = [['culling',0],['geometry',0],['diffuse',0],['shading',0]], data = {};
+        var target, ref, i, j
+        var curr, sep, key, diffuse;
+
         data = {
             culling:$getPrivate('Mesh', 'culling'),
             geometry:$getPrivate('Mesh', 'geometry'),
@@ -78,8 +81,6 @@ var Scene = (function () {
             shading:$getPrivate('Material', 'shading')
         },
         addRenderList = function (v, list) {
-            var target, ref, i, j
-            var curr, sep, key, diffuse;
             target = list;
             for (i = 0, j = sort.length; i < j; i++) {
                 curr = sort[i],
@@ -101,18 +102,20 @@ var Scene = (function () {
                 target = target[sep];
             }
             if(target.indexOf(v)==-1) target[target.length] = v;
+        },
+        removeRenderItem = function(v,list) {
+            var checkList, k, tList;
+            var tGeo, tMat,tShading;
+            tGeo = data.geometry[v.uuid],
+            tMat = data.material[v.uuid],
+            tShading = data.shading[tMat]
+            checkList = list[v.culling][tGeo]
+            for (k in checkList) {
+                tList = checkList[k][tShading],
+                tList.splice(tList.indexOf(v),1)
+            }
         }
-    })(),
-    removeRenderItem = function(v,list) {
-        var checkList = list[v.culling][v.geometry.uuid], k,tList
-        //for (k in checkList) {
-        //    if (checkList[k].indexOf(v.uuid) > -1) {
-        //        tList = checkList[k][v.material.shading]
-        //
-        //        tList.splice(tList.indexOf(v.uuid),1)
-        //    }
-        //}
-    }
+    })()
 
     return MoGL.extend('Scene', {
         description:[
