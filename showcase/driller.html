@@ -78,8 +78,8 @@ var init = function(isLoaded, imgs){
     );
     bs('#preloader').S(null);
 	world.setAutoSize(1).start();
-    var mesh1 = Mesh(Primitive.cube(), Material('#f00').setProperties({shading:Shading.phong}));
-    var mesh2 = Mesh(Primitive.cube(), Material('#00f').setProperties({shading:Shading.phong}));
+    var mesh1 = Mesh(Primitive.cube(), Material('#f00000').setProperties({shading:Shading.phong}));
+    var mesh2 = Mesh(Primitive.cube(), Material('#00f000').setProperties({shading:Shading.phong}));
     mesh1.setProperties({useMatrix:true, x:-1});
     mesh2.setProperties({useMatrix:true, x:1});
     scene.addChild(mesh1).addChild(mesh2);

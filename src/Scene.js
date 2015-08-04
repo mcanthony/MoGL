@@ -104,10 +104,13 @@ var Scene = (function () {
         }
     })(),
     removeRenderItem = function(v,list) {
-        //var checkList = list[v.culling][v.geometry.uuid]
+        var checkList = list[v.culling][v.geometry.uuid], k,tList
         //for (k in checkList) {
-        //    console.log(k)
-        //    if (checkList[k].indexOf(v.uuid) > -1) delete checkList[k]
+        //    if (checkList[k].indexOf(v.uuid) > -1) {
+        //        tList = checkList[k][v.material.shading]
+        //
+        //        tList.splice(tList.indexOf(v.uuid),1)
+        //    }
         //}
     }
 

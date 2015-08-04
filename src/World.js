@@ -358,6 +358,7 @@ var World = (function (makeUtil) {
                                 // 지오가 바뀌는 시점
                                 pShading = pUUID_mat = tProgram = null
                                 for (sortDiffuse in sortGeoList) {
+                                    useTexture = 0,
                                     sortDiffuseList = sortGeoList[sortDiffuse]
                                     if (sortDiffuse.indexOf('useTexture') > -1){
                                         useTexture = 1 // 텍스쳐를 사용함
@@ -411,13 +412,13 @@ var World = (function (makeUtil) {
                                         tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO);
                                         ///////////////////////////////////////////////////////////////
                                         // 디퓨즈 or 컬러설정
+                                        tMesh = sortList[0],
+                                        tUID_Mesh = tMesh.uuid,
+                                        tCull = gCull[tUID_Mesh],
+                                        tMaterial = gMat[tUID_Mesh],
+                                        tUID_mat = tMaterial.uuid,
+                                        tShading = gMatShading[tUID_mat]
                                         if (useTexture) {
-                                            tMesh = sortList[0],
-                                            tUID_Mesh = tMesh.uuid,
-                                            tCull = gCull[tUID_Mesh],
-                                            tMaterial = gMat[tUID_Mesh],
-                                            tUID_mat = tMaterial.uuid,
-                                            tShading = gMatShading[tUID_mat],
                                             tDiffuseMaps = gMatDiffuseMaps[tUID_mat],
                                             tDiffuse = tTextures[tDiffuseMaps[tDiffuseMaps.length - 1].tex.uuid],
                                             tGL.activeTexture(tGL.TEXTURE0),
