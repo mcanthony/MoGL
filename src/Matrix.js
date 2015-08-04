@@ -271,9 +271,9 @@ var Matrix = (function () {
                 var c0, c1, c2, s0, s1, s2,
                     x, y, z, w;
                 rx *= .5, ry *= .5, rz *= .5
-                c0 = COS(rx), c1 = COS(ry), c2 = COS(rz),
-                s0 = SIN(rx), s1 = SIN(ry), s2 = SIN(rz);
-    
+                c0 = COS(-rx), c1 = COS(-ry), c2 = COS(-rz),
+                s0 = SIN(-rx), s1 = SIN(-ry), s2 = SIN(-rz);
+
                 x = c2*c1*s0 - s2*s1*c0,
                 y = c2*s1*c0 + s2*c1*s0,
                 z = s2*c1*c0 - c2*s1*s0,

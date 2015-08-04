@@ -97,16 +97,16 @@
             //mesh1.matRotateY(.01).matRotateX(.01);
             //mesh2.matRotateY(-.01).matRotateX(-.01);
             //return;
-///*        
-            mat1.matRotateY(.01).matRotateX(.01);
-            mat2.matRotateY(-.01).matRotateX(-.01);
-            group.matRotateY(.01).matRotateZ(.01);
-//*/
             /*
-             mat1.matQuaternionXYZRotate(.01, .01, 0)
-             mat2.matQuaternionXYZRotate(-.01, -.01, 0)
-             group.matQuaternionXYZRotate(0, .01, .01)
-             */
+             mat1.matRotateY(.01).matRotateX(.01);
+             mat2.matRotateY(-.01).matRotateX(-.01);
+             group.matRotateY(.01).matRotateZ(.01);
+             //*/
+//*
+            mat1.matQuaternionXYZRotate(.01, .01, 0)
+            mat2.matQuaternionXYZRotate(-.01, -.01, 0)
+            group.matQuaternionXYZRotate(0, .01, .01)
+//*/      
             mesh1.matCopyFrom(group.matMultiply(mat1, 1));
             mesh2.matCopyFrom(group.matMultiply(mat2, 1));
         });
