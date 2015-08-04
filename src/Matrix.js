@@ -221,7 +221,7 @@ var Matrix = (function () {
             return a;
         }
     })
-    .method('matQuaternionZYXRotate', {
+    .method('matQuaternionXYZRotate', {
         description:'X, Y, Z축 순서 기준의 4원수로 회전시킨 결과 매트릭스를 반환한다.',
         sample:[
             'var mtx = new Matrix();',
@@ -235,7 +235,7 @@ var Matrix = (function () {
         ],
         value:(function(){
             var a = {};
-            return function matQuaternionZYXRotate(rx, ry, rz) {
+            return function matQuaternionXYZRotate(rx, ry, rz) {
             /*
             var a = this, c0, c1, c2, s0, s1, s2,
                 x, y, z, w, tmp0, tmp1, tmp2,
