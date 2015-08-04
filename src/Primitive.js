@@ -37,7 +37,7 @@ var Primitive = (function () {
                 for (var xi = 0; xi <= _splitX; ++xi) {
                     x = (xi / _splitX - .5), //*_width;
                         y = (yi / _splitY - .5), //*_height;
-                        vs[index++] = x, vs[index++] = 0, vs[index++] = y, // x,y,z
+                        vs[index++] = -x, vs[index++] = y, vs[index++] = 0, // x,y,z
                         vs[index++] = (xi / _splitX), vs[index++] = yi / _splitY; // u,v
                     if (xi != _splitX && yi != _splitY) {
                         base = xi + yi * tw;

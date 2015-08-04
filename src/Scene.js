@@ -68,72 +68,55 @@ var Scene = (function () {
             return false;
         }
     },
-    addRenderList = function(v,list){
-        var geo, shading;
-        geo = v.geometry,
-        shading = v.material.shading
+    (function(){
+        var sort = [['culling',0],['geometry',0],['diffuse',0],['shading',0]], data = {};
+        var target, ref, i, j
+        var curr, sep, key, diffuse;
 
-        var useTexture = v.material.diffuse ? 1 : 0;
-        shading=
-        shading == Shading.phong ? useTexture ? 'bitmapPhong' : 'colorPhong' :
-        shading == Shading.gouraud ? useTexture ? 'bitmapGouraud' : 'colorGouraud' :
-        shading == Shading.toon ? 'toonPhong' :
-        shading == Shading.blinn ? 'bitmapBlinn' :
-        useTexture ? 'bitmap' : 'color';
-
-        if(v.material.sprite){
-            if(!list.sprite){
-                list.sprite = {
-                    geo : geo
+        data = {
+            culling:$getPrivate('Mesh', 'culling'),
+            geometry:$getPrivate('Mesh', 'geometry'),
+            material:$getPrivate('Mesh', 'material'),
+            diffuse:$getPrivate('Material', 'diffuse'),
+            shading:$getPrivate('Material', 'shading')
+        },
+        addRenderList = function (v, list) {
+            target = list;
+            for (i = 0, j = sort.length; i < j; i++) {
+                curr = sort[i],
+                ref = v,
+                key = ''
+                if (i > 1) {
+                    ref = data.material[ref.uuid]
                 }
-            }
-            if(!list.sprite[shading]){
-                list.sprite[shading] = []
-            }
-            list.sprite[shading].push(v)
-        }else{
-            if(!list[geo]){
-                list[geo] = {}
-            }
-            if(!list[geo][shading]){
-                list[geo][shading] = []
-            }
-            list[geo][shading].push(v)
-        }
-
-    },
-    removeRenderItem = function(v,list){
-        var geo, shading;
-        geo = v.geometry;
-
-        if(v.material){
-            shading = v.material.shading;
-
-            var useTexture = v.material.diffuse ? 1 : 0;
-            shading =
-                shading == Shading.phong ? useTexture ? 'bitmapPhong' : 'colorPhong' :
-                shading == Shading.gouraud ? useTexture ? 'bitmapGouraud' : 'colorGouraud' :
-                shading == Shading.toon ? 'toonPhong' :
-                shading == Shading.blinn ? 'bitmapBlinn' :
-                useTexture ? 'bitmap' : 'color';
-
-            if (v.material.sprite) {
-                if (list.sprite[shading]) {
-                    list.sprite[shading].splice(list.sprite[shading].indexOf(v), 1)
+                if (i == 2) {
+                    diffuse = data.diffuse[ref.uuid]
+                    if (diffuse) key = 'useTexture_' + diffuse[0].tex.uuid
+                    else key = 'noTexture'
+                    sep = key
+                    if (ref.sprite) sep = 'sprite_' + sep
+                } else {
+                    sep = ref[curr[0]]
                 }
-            } else {
-                var k, tGeo;
-                tGeo = list[geo];
-                for(k in tGeo){
-                    if (tGeo[k]) {
-                        if(tGeo[k].indexOf(v) > -1){
-                            tGeo[k].splice(tGeo[k].indexOf(v), 1);
-                        }
-                    }
-                }
+                if (!target[sep]) target[sep] = i == j - 1 ? [] : {};
+                target = target[sep];
+            }
+            if(target.indexOf(v)==-1) target[target.length] = v;
+        },
+        removeRenderItem = function(v,list) {
+            var checkList, k, tList;
+            var tGeo, tMat,tShading;
+            tGeo = data.geometry[v.uuid],
+            tMat = data.material[v.uuid],
+            tShading = data.shading[tMat]
+            checkList = list[v.culling][tGeo]
+            for (k in checkList) {
+                tList = checkList[k][tShading],
+                tList.splice(tList.indexOf(v),1)
             }
         }
-    };
+    })()
+
     return MoGL.extend('Scene', {
         description:[
             '실제 렌더링될 구조체는 Scene별로 집결됨.',
