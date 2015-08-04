@@ -362,7 +362,7 @@ var World = (function (makeUtil) {
                                     if (sortDiffuse.indexOf('useTexture') > -1){
                                         useTexture = 1 // 텍스쳐를 사용함
                                         // 시트냐 아니냐
-                                        if( sortDiffuse.indexOf('sprite_') ){
+                                        if (sortDiffuse.indexOf('sprite_') > -1) {
                                             tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.ALWAYS),
                                             useSheet = true
                                         }else{
