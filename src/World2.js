@@ -361,6 +361,14 @@ var World = (function (makeUtil) {
                                     sortDiffuseList = sortGeoList[sortDiffuse]
                                     if (sortDiffuse.indexOf('useTexture') > -1){
                                         useTexture = 1 // 텍스쳐를 사용함
+                                        // 시트냐 아니냐
+                                        if( sortDiffuse.indexOf('sprite_') ){
+                                            tGL.enable(tGL.DEPTH_TEST), tGL.depthFunc(tGL.ALWAYS),
+                                            useSheet = true
+                                        }else{
+                                            useSheet = false
+                                        }
+
                                     }
                                     for (sortShading in sortDiffuseList) {
                                         useNormalBuffer = 1,
@@ -376,8 +384,6 @@ var World = (function (makeUtil) {
                                         sortShading == Shading.toon ? 'toonPhong' :
                                         sortShading == Shading.blinn ? 'bitmapBlinn' :
                                                        useTexture ? 'bitmap' : 'color';
-
-                                        useSheet = sortShading.indexOf('sprite') > -1 ? 1.0 : 0.0, // 시트냐 아니냐
                                         tProgram = tGPU.programs[sortShading],
                                         tGL.useProgram(tProgram);
                                         ///////////////////////////////////////////////////////////////
@@ -403,8 +409,6 @@ var World = (function (makeUtil) {
                                         }
                                         tIBO = tGPU.ibo[tGeo],
                                         tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO);
-
-
 
                                         //텍스쳐
                                         if (useTexture) {
@@ -445,7 +449,7 @@ var World = (function (makeUtil) {
                                             ///////////////////////////////////////////////////////////////
                                             //아핀관련정보 입력
                                             if (gBillboard[tUID_Mesh]) {
-                                                tMesh.lookAt(tCamera.x, tCamera.y, -tCamera.z).rotateX = propLookAt.rotateX;
+                                                //tMesh.lookAt(tCamera.x, tCamera.y, -tCamera.z).rotateX = propLookAt.rotateX;
                                             }
                                             if(tMesh.useMatrix){
                                                 vs[0] = tMesh[0], vs[1] = tMesh[1], vs[2] = tMesh[2], vs[3] = tMesh[3],
@@ -465,14 +469,14 @@ var World = (function (makeUtil) {
                                             //스프라이트
                                             ///////////////////////////////////////////////////////////////
 
-                                            if ( vs[17] = useSheet) {
+                                            if (useSheet) {
                                                 sheetInfo = gMatSprite[tUID_mat],
                                                 vs[18] = sheetInfo._col,
                                                 vs[19] = sheetInfo._row,
                                                 vs[20] = sheetInfo.curr % sheetInfo.col,
                                                 vs[21] = parseInt(sheetInfo.curr / sheetInfo.col)
                                             }
-
+                                            vs[17] = useSheet
                                             if (tUID_mat != pUUID_mat) {
                                                 ///////////////////////////////////////////////////////////////
                                                 //노말
