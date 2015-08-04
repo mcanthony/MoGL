@@ -53,7 +53,6 @@ var World = (function (makeUtil) {
         makeProgram(gpu, 'colorPhong', vS.colorVertexShaderPhong, fS.colorFragmentShaderPhong),
         makeProgram(gpu, 'toonPhong', vS.toonVertexShaderPhong, fS.toonFragmentShaderPhong),
         makeProgram(gpu, 'bitmapPhong', vS.bitmapVertexShaderPhong, fS.bitmapFragmentShaderPhong),
-        makeProgram(gpu, 'bitmapBlinn', vS.bitmapVertexShaderBlinn, fS.bitmapFragmentShaderBlinn),
         makeProgram(gpu, 'postBase', vS.postBaseVertexShader, fS.postBaseFragmentShader);
     },
     cameraRenderAreaUpdate = function (self) {
@@ -163,7 +162,7 @@ var World = (function (makeUtil) {
             var tMouse;
 
             // 묶음 정보들
-            var vs = new Float32Array(20), fs = new Float32Array(22);
+            var vs = new Float32Array(25), fs = new Float32Array(22);
 
             gListener = $getPrivate('MoGL', 'listener'),
             gCameraProperty = $getPrivate('Camera', 'property'),
@@ -247,8 +246,8 @@ var World = (function (makeUtil) {
                             tGL.uniformMatrix4fv(tProgram.uPixelMatrix, false, tProjectionMtx),
                             tGL.uniformMatrix4fv(tProgram.uCameraMatrix, false, tCameraMtx);
                             if (tProgram['uDLite']) tGL.uniform3fv(tProgram.uDLite, baseLightRotate);
-                            vs[14] = tCvsW
-                            vs[15] = tCvsH
+                            vs[22] = tCvsW
+                            vs[23] = tCvsH
                         }
                         // mouse Start
                         tProgram = tGPU.programs['mouse'],
@@ -408,9 +407,19 @@ var World = (function (makeUtil) {
                                     if (gBillboard[tUID_Item]) {
                                         tMesh.lookAt(tCamera.x, tCamera.y, -tCamera.z).rotateX = propLookAt.rotateX;
                                     }
-                                    vs[0] = tMesh.x, vs[1] = tMesh.y, vs[2] = tMesh.z,
-                                    vs[3] = tMesh.rotateX, vs[4] = tMesh.rotateY, vs[5] = tMesh.rotateZ,
-                                    vs[6] = tMesh.scaleX, vs[7] = tMesh.scaleY, vs[8] = tMesh.scaleZ,
+                                    if(tMesh.useMatrix){
+                                        vs[0] = tMesh[0], vs[1] = tMesh[1], vs[2] = tMesh[2], vs[3] = tMesh[3],
+                                        vs[4] = tMesh[4], vs[5] = tMesh[5], vs[6] = tMesh[6], vs[7] = tMesh[7],
+                                        vs[8] = tMesh[8], vs[9] = tMesh[9], vs[10] = tMesh[10], vs[11] = tMesh[11],
+                                        vs[12] = tMesh[12], vs[13] = tMesh[13], vs[14] = tMesh[14], vs[15] = tMesh[15],
+                                        vs[16] = 1.0 // 행렬정보 사용
+                                    }else{
+                                        vs[0] = tMesh.x, vs[1] = tMesh.y, vs[2] = tMesh.z,
+                                        vs[3] = tMesh.rotateX, vs[4] = tMesh.rotateY, vs[5] = tMesh.rotateZ,
+                                        vs[6] = tMesh.scaleX, vs[7] = tMesh.scaleY, vs[8] = tMesh.scaleZ
+                                        vs[16] = 0.0 // 행렬정보 사용 안함
+                                    }
+
                                     ///////////////////////////////////////////////////////////////
                                     //총정점수계산
                                     // TODO 컬링 별로도 리스트를 나눠줘야하는군
@@ -423,13 +432,13 @@ var World = (function (makeUtil) {
                                     //스프라이트
                                     ///////////////////////////////////////////////////////////////
                                     if (sheetInfo = gMatSprite[tUID_mat]) {
-                                        vs[9] = 1.0 // 사용여부
-                                        vs[10] = sheetInfo._col,
-                                        vs[11] = sheetInfo._row,
-                                        vs[12] = sheetInfo.curr % sheetInfo.col,
-                                        vs[13] = parseInt(sheetInfo.curr / sheetInfo.col)
+                                        vs[17] = 1.0 // 사용여부
+                                        vs[18] = sheetInfo._col,
+                                        vs[19] = sheetInfo._row,
+                                        vs[20] = sheetInfo.curr % sheetInfo.col,
+                                        vs[21] = parseInt(sheetInfo.curr / sheetInfo.col)
                                     } else {
-                                        vs[9] = 0.0
+                                        vs[17] = 0.0
                                     }
                                     if (tUID_mat != pUUID_mat) {
                                         ///////////////////////////////////////////////////////////////
