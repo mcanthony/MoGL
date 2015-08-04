@@ -101,39 +101,10 @@ var Scene = (function () {
                 target = target[sep];
             }
             if(target.indexOf(v)==-1) target[target.length] = v;
-            console.log(list)
         }
     })(),
     removeRenderItem = function(v,list){
-        //var geo, shading;
-        //geo = v.geometry;
-        //
-        //if(v.material){
-        //    shading = v.material.shading;
-        //
-        //    var useTexture = v.material.diffuse ? 1 : 0;
-        //    shading =
-        //        shading == Shading.phong ? useTexture ? 'bitmapPhong' : 'colorPhong' :
-        //        shading == Shading.gouraud ? useTexture ? 'bitmapGouraud' : 'colorGouraud' :
-        //        shading == Shading.toon ? 'toonPhong' :
-        //        useTexture ? 'bitmap' : 'color';
-        //
-        //    if (v.material.sprite) {
-        //        if (list.sprite[shading]) {
-        //            list.sprite[shading].splice(list.sprite[shading].indexOf(v), 1)
-        //        }
-        //    } else {
-        //        var k, tGeo;
-        //        tGeo = list[geo];
-        //        for(k in tGeo){
-        //            if (tGeo[k]) {
-        //                if(tGeo[k].indexOf(v) > -1){
-        //                    tGeo[k].splice(tGeo[k].indexOf(v), 1);
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
+
     };
     return MoGL.extend('Scene', {
         description:[

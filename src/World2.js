@@ -125,10 +125,10 @@ var World = (function (makeUtil) {
             var tGPU, tGL, tScene, tSceneList, tCameraList, tCamera, tChild, tChildArray, tRenderList;
             var tCvs, tCvsW, tCvsH;
             var tMesh, tMaterial;
-            var tUID, tUID_camera, tUID_Item, tUID_mat, pUUID_mat, tUID_Scene;
+            var tUID, tUID_camera, tUID_Mesh, tUID_mat, pUUID_mat, tUID_Scene;
             var tGeo, tBgColor, tColor2, tDiffuseMaps, tNormalMaps, tSpecularMaps;
             var tCull, tVBO, tVNBO, tUVBO, tIBO, tDiffuse, tNormal, tSpecular, tShading, tFrameBuffer, tProgram;
-            var pCull, pDiffuse, pNormal, pSpecular, pShading;
+            var pCull, pNormal, pSpecular, pShading;
             var tListener;
             var tTextures;
 
@@ -253,6 +253,7 @@ var World = (function (makeUtil) {
                         // mouse Start
                         tProgram = tGPU.programs['mouse'],
                         tGL.useProgram(tProgram),
+                        vs[17] = 0.0
                         useNormalBuffer = useTexture = mousePickLength = 0;
                         if (mouseCheck = !mouseCheck) {
                             // TODO 이놈도 지오별로 렌더하게 변경해야함
@@ -266,17 +267,18 @@ var World = (function (makeUtil) {
                             for (k2 in gPickMeshs) {
                                 mousePickLength++,
                                 tMesh = gPickMeshs[k2].mesh,
-                                tUID_Item = tMesh.uuid,
-                                tGeo = gGeo[tUID_Item].uuid,
+                                tUID_Mesh = tMesh.uuid
+                                if (!gVisible[tUID_Mesh]) continue;
+                                tGeo = gGeo[tUID_Mesh].uuid,
                                 tVBO = tGPU.vbo[tGeo],
                                 tIBO = tGPU.ibo[tGeo],
-                                tCull = gCull[tUID_Item];
+                                tCull = gCull[tUID_Mesh];
                                 if (tVBO != pVBO) {
                                     tGL.bindBuffer(tGL.ARRAY_BUFFER, tVBO),
                                     tGL.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, tGL.FLOAT, false, 0, 0),
                                     tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO);
                                 }
-                                tGL.uniform4fv(tProgram.uColor, gPickColors[tUID_Item]),
+                                tGL.uniform4fv(tProgram.uColor, gPickColors[tUID_Mesh]),
                                 tGL.uniform3fv(tProgram.uAffine,
                                     (
                                         f9[0] = tMesh.x, f9[1] = tMesh.y, f9[2] = tMesh.z,
@@ -365,6 +367,8 @@ var World = (function (makeUtil) {
                                         useNormalBuffer = (sortShading == 'bitmap' || sortShading == 'color') ? 0 : 1 // 노멀 버퍼를 사용할지 결정함
                                         pShading = null,
                                         sortList = sortDiffuseList[sortShading],
+                                        i2 = sortList.length;
+                                        if (!i2) continue
 
                                         sortShading=
                                         sortShading == Shading.phong ? useTexture ? 'bitmapPhong' : 'colorPhong' :
@@ -400,23 +404,47 @@ var World = (function (makeUtil) {
                                         tIBO = tGPU.ibo[tGeo],
                                         tGL.bindBuffer(tGL.ELEMENT_ARRAY_BUFFER, tIBO);
 
-                                        i2 = sortList.length;
+
+
+                                        //텍스쳐
+                                        if (useTexture) {
+                                            //디퓨즈
+                                            tMesh = sortList[0],
+                                            tUID_Mesh = tMesh.uuid;
+                                            tCull = gCull[tUID_Mesh],
+                                            tMaterial = gMat[tUID_Mesh],
+                                            tUID_mat = tMaterial.uuid,
+                                            tShading = gMatShading[tUID_mat],
+                                            tDiffuseMaps = gMatDiffuseMaps[tUID_mat],
+                                            tDiffuse = tTextures[tDiffuseMaps[tDiffuseMaps.length - 1].tex.uuid];
+                                            tGL.activeTexture(tGL.TEXTURE0),
+                                            tGL.bindTexture(tGL.TEXTURE_2D, tDiffuse),
+                                            tGL.uniform1i(tProgram.uSampler, 0);
+                                        } else {
+                                            ///////////////////////////////////////////////////////////////
+                                            //색상
+                                            tColor2 = gMatColor[tUID_mat],
+                                            fs[0] = tColor2[0],
+                                            fs[1] = tColor2[1],
+                                            fs[2] = tColor2[2],
+                                            fs[3] = tColor2[3]
+                                        }
                                         while (i2--) {
                                             tMesh = sortList[i2],
-                                            tUID_Item = tMesh.uuid;
-                                            if (!gVisible[tUID_Item]) continue;
-                                            tCull = gCull[tUID_Item],
-                                            tMaterial = gMat[tUID_Item],
+                                            tUID_Mesh = tMesh.uuid;
+                                            if (!gVisible[tUID_Mesh]) continue;
+                                            tCull = gCull[tUID_Mesh],
+                                            tMaterial = gMat[tUID_Mesh],
                                             tUID_mat = tMaterial.uuid,
                                             tShading = gMatShading[tUID_mat],
                                             tDiffuseMaps = gMatDiffuseMaps[tUID_mat],
                                             ///////////////////////////////////////////////////////////////
                                             //총정점수계산
                                             totalObject++,
-                                            totalVertex += gGeoVertexCount[tGeo = gGeo[tUID_Item].uuid];
+                                            totalVertex += gGeoVertexCount[tGeo = gGeo[tUID_Mesh].uuid];
                                             ///////////////////////////////////////////////////////////////
                                             //아핀관련정보 입력
-                                            if (gBillboard[tUID_Item]) {
+                                            if (gBillboard[tUID_Mesh]) {
                                                 tMesh.lookAt(tCamera.x, tCamera.y, -tCamera.z).rotateX = propLookAt.rotateX;
                                             }
                                             if(tMesh.useMatrix){
@@ -436,8 +464,9 @@ var World = (function (makeUtil) {
                                             //총정점수계산
                                             //스프라이트
                                             ///////////////////////////////////////////////////////////////
-                                            vs[17] = useSheet
-                                            if (sheetInfo = gMatSprite[tUID_mat]) {
+
+                                            if ( vs[17] = useSheet) {
+                                                sheetInfo = gMatSprite[tUID_mat],
                                                 vs[18] = sheetInfo._col,
                                                 vs[19] = sheetInfo._row,
                                                 vs[20] = sheetInfo.curr % sheetInfo.col,
@@ -445,25 +474,6 @@ var World = (function (makeUtil) {
                                             }
 
                                             if (tUID_mat != pUUID_mat) {
-                                                ///////////////////////////////////////////////////////////////
-                                                //텍스쳐
-                                                if (useTexture) {
-                                                    //디퓨즈
-                                                    tDiffuse = tTextures[tDiffuseMaps[tDiffuseMaps.length - 1].tex.uuid];
-                                                    if (tDiffuse != pDiffuse && tDiffuse != null) {
-                                                        tGL.activeTexture(tGL.TEXTURE0),
-                                                        tGL.bindTexture(tGL.TEXTURE_2D, tDiffuse),
-                                                        tGL.uniform1i(tProgram.uSampler, 0);
-                                                    }
-                                                } else {
-                                                    ///////////////////////////////////////////////////////////////
-                                                    //색상
-                                                    tColor2 = gMatColor[tUID_mat],
-                                                    fs[0] = tColor2[0],
-                                                    fs[1] = tColor2[1],
-                                                    fs[2] = tColor2[2],
-                                                    fs[3] = tColor2[3]
-                                                }
                                                 ///////////////////////////////////////////////////////////////
                                                 //노말
                                                 if (useNormalBuffer) {
@@ -507,24 +517,24 @@ var World = (function (makeUtil) {
                                             }
                                             ///////////////////////////////////////////////////////////////
                                             // 드로우
-                                            fs[9] = gAlpha[tUID_Item] // 메쉬의 알파
+                                            fs[9] = gAlpha[tUID_Mesh] // 메쉬의 알파
                                             tGL.uniform1fv(tProgram.uVS, vs),
-                                                ///////////////////////////////////////////////////////////////
-                                                //와이어프레임 그리기
-                                                gMatWire[tUID_mat] ? (
-                                                    tColor2 = priMatWireColor[tUID_mat],
-                                                    fs[4] = 1.0,
-                                                    fs[5] = tColor2[0],
-                                                    fs[6] = tColor2[1],
-                                                    fs[7] = tColor2[2],
-                                                    fs[8] = tColor2[3],
-                                                    tGL.uniform1fv(tProgram.uFS, fs),
-                                                    tGL.drawElements(tGL.LINES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0),
-                                                    fs[4] = 0.0
-                                                ) : 0,
+                                            ///////////////////////////////////////////////////////////////
+                                            //와이어프레임 그리기
+                                            gMatWire[tUID_mat] ? (
+                                                tColor2 = priMatWireColor[tUID_mat],
+                                                fs[4] = 1.0,
+                                                fs[5] = tColor2[0],
+                                                fs[6] = tColor2[1],
+                                                fs[7] = tColor2[2],
+                                                fs[8] = tColor2[3],
                                                 tGL.uniform1fv(tProgram.uFS, fs),
-                                                tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0),
-                                                pCull = tCull, pDiffuse = tDiffuse, pNormal = tNormal, pSpecular = tSpecular, pUUID_mat = tUID_mat
+                                                tGL.drawElements(tGL.LINES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0),
+                                                fs[4] = 0.0
+                                            ) : 0,
+                                            tGL.uniform1fv(tProgram.uFS, fs),
+                                            tGL.drawElements(tGL.TRIANGLES, tIBO.numItem, tGL.UNSIGNED_SHORT, 0),
+                                            pCull = tCull, pNormal = tNormal, pSpecular = tSpecular, pUUID_mat = tUID_mat
                                         }
                                     }
                                 }
@@ -532,7 +542,7 @@ var World = (function (makeUtil) {
                         }
 
                         if (cameraLength > 1) {
-                            tGL.bindFramebuffer(tGL.FRAMEBUFFER, pDiffuse = pNormal = pSpecular = pShading = pUUID_mat = null);
+                            tGL.bindFramebuffer(tGL.FRAMEBUFFER, pNormal = pSpecular = pShading = pUUID_mat = null);
                         }
                     }
                 }
