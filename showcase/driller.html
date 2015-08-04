@@ -102,11 +102,11 @@ var init = function(isLoaded, imgs){
         mat2.matRotateY(-.01).matRotateX(-.01);
         group.matRotateY(.01).matRotateZ(.01);
 */
-
-        mat1.matQuaternionXYZRotate(mat1.rotateX+=.01, mat1.rotateY+=.01, 0)
-        mat2.matQuaternionXYZRotate(mat2.rotateX-=.01, mat2.rotateY-=.01, 0)
-        group.matQuaternionXYZRotate(0, group.rotateY+=.01, group.rotateZ+=.01)
-        
+///*
+        mat1.matQuaternionXYZRotate(.01, .01, 0)
+        mat2.matQuaternionXYZRotate(-.01, -.01, 0)
+        group.matQuaternionXYZRotate(0, .01, .01)
+//*/      
         mesh1.matCopyFrom(group.matMultiply(mat1, 1));
         mesh2.matCopyFrom(group.matMultiply(mat2, 1));
     });
