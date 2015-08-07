@@ -448,7 +448,7 @@ var World = (function (makeUtil) {
                                             ///////////////////////////////////////////////////////////////
                                             //아핀관련정보 입력
                                             if (gBillboard[tUID_Mesh]) {
-                                                //tMesh.lookAt(tCamera.x, tCamera.y, -tCamera.z).rotateX = propLookAt.rotateX;
+                                                tMesh.lookAt(tCamera.x, tCamera.y, -tCamera.z).rotateX = propLookAt.rotateX;
                                             }
                                             if(tMesh.useMatrix){
                                                 vs[0] = tMesh[0], vs[1] = tMesh[1], vs[2] = tMesh[2], vs[3] = tMesh[3],

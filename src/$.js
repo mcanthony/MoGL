@@ -100,8 +100,23 @@ $color = (function(){
 })();
 //수학함수
 GLMAT_EPSILON = 0.000001,
-SIN = Math.sin, COS = Math.cos, TAN = Math.tan, ATAN = Math.atan, ATAN2 = Math.atan2, ASIN = Math.asin,
+TAN = Math.tan, ATAN = Math.atan, ATAN2 = Math.atan2, ASIN = Math.asin,
 SQRT = Math.sqrt, CEIL = Math.ceil, ABS = Math.abs, PI = Math.PI, PIH = PI * 0.5, PID = PI * 2, D2R = PI / 180, R2D = 180 / PI;
+
+
+SIN = (function(){
+    var sin = Math.sin, s = {};
+    return function(r){
+        return s[r] || (s[r] = sin(r));
+    };
+})(),
+COS = (function(){
+    var cos = Math.cos, c = {};
+    return function(r){
+        return c[r] || (c[r] = cos(r));
+    };
+})(),
+
 //markdown
 $md = function(classes){
     var list, val, func, sort, toStr, fieldDetail, methodDetail;

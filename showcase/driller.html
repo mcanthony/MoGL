@@ -103,9 +103,9 @@ var init = function(isLoaded, imgs){
         group.matRotateY(.01).matRotateZ(.01); 
 */
 ///*
-        mat1.matQuaternionXYZRotate(.01, .01, 0)
-        mat2.matQuaternionXYZRotate(-.01, -.01, 0)
-        group.matQuaternionXYZRotate(0, .01, .01)
+        mat1.matRotate(1, 1, 0)
+        mat2.matRotate(-1, -1, 0)
+        group.matRotate(0, 1, 1)
 //*/      
         mesh1.matCopyFrom(group.matMultiply(mat1, 1));
         mesh2.matCopyFrom(group.matMultiply(mat2, 1));
