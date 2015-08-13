@@ -209,52 +209,28 @@ var makeUtil = (function(){
                 };
             }
         },
-        vertexShaderParser: function vertexShaderParser(source) {
-            var i, temp, str, resultObject, code;
-            code = source.code,
-            resultObject = {
-                uniforms: [],
-                attributes: [],
-                id: code.id,
-                shaderStr: null,
-                uniformArrays : []
-            },
-            str = "",
-            temp = code.attributes,
-            i = temp.length;
-            while (i--) {
-                str += 'attribute ' + temp[i] + ';\n',
-                resultObject.attributes.push(temp[i].split(' ')[1]);
-            }
-            temp = code.uniforms,
-            i = temp.length;
-            while (i--) {
-                //if(temp[i].indexOf('[')>-1){
-                //    str += 'uniform ' + temp[i].split('[')[0] + ';\n'
-                //    var t = temp[i].split('[')[0]
-                //    console.log(t)
-                //    resultObject.uniforms.push(t.split(' ')[1]);
-                //}else{
-                //    str += 'uniform ' + temp[i] + ';\n'
-                //    resultObject.uniforms.push(temp[i].split(' ')[1]);
-                //}
-                str += 'uniform ' + temp[i] + ';\n'
-                resultObject.uniforms.push(temp[i].split(' ')[1]);
-            }
-
-
-            temp = code.varyings,
-            i = temp.length;
-            while (i--) {
-                str += 'varying ' + temp[i] + ';\n';
-            }
-            str += VertexShader.baseFunction,
-            str += 'void main(void){\n',
-            str += code.main + ';\n',
-            str += '}\n'
-            resultObject.shaderStr = str
-            return resultObject;
-        },
+        vertexShaderParser:(function(){
+            var cat = 'attribute,uniform,varying'.split(',');
+            return function vertexShaderParser(source) {
+                var i, temp, str, resultObject, code;
+                code = source.code,
+                resultObject = {id:code.id},
+                str = "", i = cat.length;
+                while (i--) {
+                    temp = code[cat[i]], j = temp.length,
+                    resultObject[cat[i]] = [];
+                    while (j--) {
+                        str += cat[i] + ' ' + temp[j] + ';\n',
+                        resultObject[cat[i]].push(temp[j].split(' ')[1]);
+                    }
+                }
+                resultObject.shaderStr = str + VertexShader.baseFunction + 
+                    'void main(void){\n' + 
+                        code.main.join('\n') + 
+                    '\n}';
+                return resultObject;
+            };
+        })(),
         fragmentShaderParser : function fragmentShaderParser(source) {
             var i, temp, str, resultObject, code;
             code = source.code,

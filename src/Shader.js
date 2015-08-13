@@ -5,73 +5,180 @@ var Shader = (function () {
     code = {};
     $setPrivate('Shader', {});
     return MoGL.extend('Shader', {
-            description: "쉐이더 클래스. 버텍스쉐이더와 프레그먼트 쉐이더를 생성.",
-            param: [
-                "1. v:Object - 오브젝트 형태로 쉐이더 정보를 입력",
-                "2. 버텍스쉐이더 - { id:'', attributes:[], uniforms:[], varyings[], function:[], main[]",
-                "3. 프레그먼트쉐이더 - { id:'', uniforms:[], varyings[], function:[], main[]"
-            ],
-            sample: [
-                "var shader = new Shader();"
-            ],
-            value: function Shader(v) {
-                code[this] = v;
+        description:"GLSL Shader를 보다 쉽게 작성하게 도와주는 헬퍼클래스",
+        param:[
+            "type:string - Shader.vertex 또는 Shader.fragment로 타입을 지정함",
+            "description:Object - 오브젝트 형태로 shader의 내용을 기술함",
+            "* vertex - {id:'', attribute:['타입 변수명',...], uniforms:['타입 변수명',...], varying:['타입 변수명',...], main:[코드]}",
+            "* fragment - {id:'', uniform:['타입 변수명',...], varying:['타입 변수명',...], main:['코드'], precision}"
+        ],
+        exception:[
+            "0 - type이 'vertex' 또는 'fragment'가 아님"
+        ],
+        sample:[
+            "var shader = new Shader(Shader.vertex, {",
+            "    id:'mouseVertexShader',",
+            "    attribute:['vec3 aVertexPosition'],",
+            "    uniform:['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uAffine[3]', 'vec4 uColor'],",
+            "    varying:['vec4 vColor'],",
+            "    main:[",
+            "        'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uAffine[0])*quaternionXYZ(uAffine[1])*scaleMTX(uAffine[2])*vec4(aVertexPosition, 1.0);',",
+            "        'vColor = uColor;'",
+            "    ]",
+            "});"
+        ],
+        value:(function(){
+            var vertexVar = 'attribute,uniform,varying'.split(','), 
+                fragmentVar = 'uniform,varying'.split(',');
+            return function Shader(type, v) {
+                var vars, result, temp, info, str = '', i, j;
+                if (type == Shader.vertex) {
+                    vars = vertexVar;
+                } else if (type == Shader.fragment) {
+                    vars = fragmentVar,
+                    str += 'precision ' + (v.precision || 'mediump float') + ';\n';
+                } else {
+                    this.error(0);
+                }
+                code[this] = result = {id:v.id}, i = vars.length;
+                while (i--) {
+                    result[vars[i]] = info = [],
+                    temp = v[vars[i]], j = temp.length;
+                    while (j--) {
+                        str += vars[i] + ' ' + temp[j] + ';\n',
+                        info[info.length] = temp[j].split(' ')[1];
+                    }
+                }
+                result.program = str + VertexShader.baseFunction + 
+                    'void main(void){\n' + 
+                        v.main.join('\n') + 
+                    '\n}';
+            };
+        })()
+    })
+    .field('code', {
+        description:'쉐이더 구성정보 코드(JS)를 반환',
+        sample:[
+            "var shader = new Shader();",
+            "console.log(shader.code);"
+        ],
+        get:$getter(code)
+    })
+    .constant('vertex', {
+        description:"버텍스 쉐이더 타입",
+        value:{}
+    })
+    .constant('fragment', {
+        description:"프레그먼트 쉐이더 타입",
+        value:{}
+    })
+    .constant('mouseVertexShader', {
+        description:"마우스 버텍스 쉐이더",
+        sample:"console.log(Shader.mouseVertexShader);",
+        get:(function () {
+            var cache;
+            return function () {
+                return cache || (cache = Shader({
+                    id:'mouseVertexShader',
+                    attribute:['vec3 aVertexPosition'],
+                    uniform:[
+                        'mat4 uPixelMatrix',
+                        'mat4 uCameraMatrix',
+                        'vec3 uAffine[3]',
+                        'vec4 uColor'
+                    ],
+                    varying:['vec4 vColor'],
+                    main:[
+                        'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uAffine[0])*quaternionXYZ(uAffine[1])*scaleMTX(uAffine[2])*vec4(aVertexPosition, 1.0);\n' +
+                        'vColor = uColor;'
+                    ]
+                }))
             }
-        }
-    )
-        .field('code', {
-            description: '쉐이더 구성정보 코드(JS)를 반환',
-            get: $getter(code),
-            sample: [
-                "var shader = new Shader();",
-                "console.log(shader.code);"
-            ]
-        }
-    )
-        .constant('mouseVertexShader', {
-            description: "마우스 버텍스 쉐이더",
-            sample: [
-                "console.log(Shader.mouseVertexShader);"
-            ],
-            get: (function () {
-                var cache;
-                return function () {
-                    return cache || (cache = new Shader({
-                            id: 'mouseVertexShader',
-                            attributes: ['vec3 aVertexPosition'],
-                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uAffine[3]', 'vec4 uColor'],
-                            varyings: ['vec4 vColor'],
-                            function: [VertexShader.baseFunction],
-                            main: [
-                                'gl_Position = uPixelMatrix * uCameraMatrix * positionMTX( uAffine[0] ) * quaternionXYZ( uAffine[1] ) * scaleMTX( uAffine[2] ) * vec4(aVertexPosition, 1.0);\n' +
-                                'vColor = uColor;'
-                            ]
-                        }))
-                }
-            })()
-        })
-        .constant('mouseFragmentShader', {
-            description: "마우스 프레그먼트 쉐이더",
-            sample: [
-                "console.log(Shader.mouseFragmentShader);"
-            ],
-            get: (function () {
-                var cache;
-                return function () {
-                    return cache || (cache = new Shader({
-                            id: 'mouseFragmentShader',
-                            precision: 'lowp float',
-                            uniforms: [],
-                            varyings: ['vec4 vColor'],
-                            function: [],
-                            main: [
-                                'gl_FragColor =  vColor;'
-                            ]
-                        }))
-                }
-            })()
-        })
-        .constant('colorVertexShader', {
+        })()
+    })
+    
+    .constant('BaseVertexShader', {
+        description: "기본 내장 버텍스 쉐이더",
+        sample:"console.log(Shader.BaseVertexShaderPhong);",
+        get: (function () {
+            var cache;
+            return function () {
+                return cache || (cache = Shader({
+                    id:'BaseVertexShader',
+                    attributes:[
+                        'vec3 aVertexPosition',
+                        'vec2 aUV',
+                        'vec3 aVertexNormal'
+                    ],
+                    uniforms:[
+                        'mat4 uPixelMatrix',
+                        'mat4 uCameraMatrix',
+                        'float uVS[30]'
+                    ],
+                    varyings: [
+                        'vec2 vUV',
+                        'vec3 vNormal',
+                        'vec3 vPosition',
+                        'float isDiscard'
+                    ],
+                    main: [
+                        'mat4 mv;',
+                        'if (uVS[16] == 1.0) {',
+                            'mv = uCameraMatrix*mat4(uVS[0],uVS[1],uVS[2],uVS[3],uVS[4],uVS[5],uVS[6],uVS[7],uVS[8],uVS[9],uVS[10],uVS[11],uVS[12],uVS[13],uVS[14],uVS[15]);',
+                        '} else {',
+                            'mv = uCameraMatrix*positionMTX(vec3(uVS[0],uVS[1],uVS[2]))*quaternionXYZ(vec3(uVS[3],uVS[4],uVS[5]))*scaleMTX(vec3(uVS[6],uVS[7],uVS[8]));',
+                        '}',
+                        'vec4 position = mv*vec4(aVertexPosition,1.0);',
+                        //GL출력
+                        'gl_Position = uPixelMatrix*position;',
+                        'vPosition = position.xyz;',
+                        //프레그먼트를 처리할 필요가 없는 경우
+                        'if (gl_Position.x < -uVS[22]*1.0 || gl_Position.x > uVS[22]*1.0 || vPosition.y < -uVS[23]*1.0  || vPosition.y > uVS[23]*1.0) {',
+                            'isDiscard = 1.0;',
+                        '} else {',
+                            'isDiscard = 0.0;',
+                        '}',
+                        'vNormal = (mv*vec4(-aVertexNormal,0.0)).xyz;',
+                        'if (uVS[17] == 1.0) {',
+                            'vUV = vec2(aUV.x*uVS[18]+uVS[18]*uVS[20], aUV.y*uVS[19]+uVS[19]*uVS[21]);',
+                        '} else {',
+                            'vUV = aUV;',
+                        '}'
+                    ]
+                }));
+            };
+        })()
+    })
+
+        ////////////////////
+
+        //vs[0~2] = x,y,z
+        //vs[3~5] = rx,ry,rz
+        //vs[6~8] = sx,sy,sz
+        //vs[9] - 시트 사용여부 1.0 or 0.0
+        //vs[10~13] - 시트 정보
+        //
+        //fs[0~3] - 컬러 정보
+        //fs[4] - 와이어 사용여부 1.0 or 0.0
+        //fs[5~8] - 와이어 컬러
+        //fs[9] - 메쉬 알파
+        //
+        //fs[10] = gMatLambert[tUID_mat] // 램버트 강도 설정
+        //fs[11] = gMatSpecularPower[tUID_mat], // 스페큘라 파워
+        //fs[12] =  tColor2[0], // 스페큘라 컬러 r
+        //fs[13] =  tColor2[1], // 스페큘라 컬러 g
+        //fs[14] =  tColor2[2], // 스페큘라 컬러 b
+        //fs[15] =  tColor2[3], // 스페큘라 컬러 a
+        //
+        //fs[16] = 1.0, // 노말맵 사용여부
+        //fs[17] = gMatNormalPower[tUID_mat] // 노말맵강도
+        //
+        //fs[18] = 1.0, // 스페큘러맵사용여부
+        //fs[19] = gMatSpecularMapPower[tUID_mat] // 스페큘러맵 강도
+
+        ////////////////  
+    
+    .constant('colorVertexShader', {
             description: "컬러 버텍스 쉐이더",
             sample: [
                 "console.log(Shader.colorVertexShader);"
@@ -99,28 +206,8 @@ var Shader = (function () {
                 }
             })()
         })
-        .constant('colorFragmentShader', {
-            description: "컬러 프레그먼트 쉐이더",
-            sample: [
-                "console.log(Shader.colorFragmentShader);"
-            ],
-            get: (function () {
-                var cache;
-                return function () {
-                    return cache || (cache = new Shader({
-                            id: 'colorFragmentShader',
-                            precision: 'lowp float',
-                            uniforms: [],
-                            varyings: ['vec4 vColor'],
-                            function: [],
-                            main: [
-                                'gl_FragColor =  vColor;'
-                            ]
-                        }))
-                }
-            })()
-        })
-        .constant('wireFrameVertexShader', {
+        
+  .constant('wireFrameVertexShader', {
             description: "와이어프레임 버텍스 쉐이더",
             sample: [
                 "console.log(Shader.wireFrameVertexShader);"
@@ -147,29 +234,8 @@ var Shader = (function () {
                         }))
                 }
             })()
-        })
-        .constant('wireFrameFragmentShader', {
-            description: "와이어프레임 프레그먼트 쉐이더",
-            sample: [
-                "console.log(Shader.wireFrameFragmentShader);"
-            ],
-            get: (function () {
-                var cache;
-                return function () {
-                    return cache || (cache = new Shader({
-                            id: 'wireFrameFragmentShader',
-                            precision: 'lowp float',
-                            uniforms: [],
-                            varyings: ['vec4 vColor'],
-                            function: [],
-                            main: [
-                                'gl_FragColor =  vColor;'
-                            ]
-                        }))
-                }
-            })()
-        })
-        .constant('bitmapVertexShader', {
+        })       
+     .constant('bitmapVertexShader', {
             description: "비트맵 버텍스 쉐이더",
             sample: [
                 "console.log(Shader.bitmapVertexShader);"
@@ -199,28 +265,7 @@ var Shader = (function () {
                         }))
                 }
             })()
-        })
-        .constant('bitmapFragmentShader', {
-            description: "비트맵 프레그먼트 쉐이더",
-            sample: [
-                "console.log(Shader.bitmapFragmentShader);"
-            ],
-            get: (function () {
-                var cache;
-                return function () {
-                    return cache || (cache = new Shader({
-                            id: 'bitmapFragmentShader',
-                            precision: 'lowp float',
-                            uniforms: ['sampler2D uSampler'],
-                            varyings: ['vec2 vUV'],
-                            function: [],
-                            main: [
-                                'gl_FragColor =  texture2D(uSampler, vec2(vUV.s, vUV.t));\n'
-                            ]
-                        }))
-                }
-            })()
-        })
+        })         
         .constant('colorVertexShaderGouraud', {
             description: "컬러 고라우드 버텍스 쉐이더",
             sample: [
@@ -251,29 +296,8 @@ var Shader = (function () {
                         }))
                 }
             })()
-        })
-        .constant('colorFragmentShaderGouraud', {
-            description: "컬러 고라우드 프레그먼트 쉐이더",
-            sample: [
-                "console.log(Shader.colorFragmentShaderGouraud);"
-            ],
-            get: (function () {
-                var cache;
-                return function () {
-                    return cache || (cache = new Shader({
-                            id: 'colorFragmentShaderGouraud',
-                            precision: 'lowp float',
-                            uniforms: ['sampler2D uSampler'],
-                            varyings: ['vec4 vColor'],
-                            function: [],
-                            main: [
-                                'gl_FragColor =  vColor;\n'
-                            ]
-                        }))
-                }
-            })()
-        })
-        .constant('bitmapVertexShaderGouraud', {
+        })        
+           .constant('bitmapVertexShaderGouraud', {
             description: "비트맵 고라우드 버텍스 쉐이더",
             sample: [
                 "console.log(Shader.bitmapVertexShaderGouraud);"
@@ -305,30 +329,7 @@ var Shader = (function () {
                 }
             })()
         })
-        .constant('bitmapFragmentShaderGouraud', {
-            description: "비트맵 고라우드 프레그먼트 쉐이더",
-            sample: [
-                "console.log(Shader.bitmapFragmentShaderGouraud);"
-            ],
-            get: (function () {
-                var cache;
-                return function () {
-                    return cache || (cache = new Shader({
-                            id: 'bitmapFragmentShaderGouraud',
-                            precision: 'lowp float',
-                            uniforms: ['sampler2D uSampler'],
-                            varyings: ['vec2 vUV', 'vec4 vLight'],
-                            function: [],
-                            main: [
-                                'vec4 diffuse = texture2D(uSampler, vec2(vUV.s, vUV.t));\n' +
-                                'gl_FragColor = diffuse * vLight;\n' +
-                                'gl_FragColor.a = diffuse[3];'
-                            ]
-                        }))
-                }
-            })()
-        })
-        .constant('colorVertexShaderPhong', {
+         .constant('colorVertexShaderPhong', {
             description: "컬러 퐁 버텍스 쉐이더",
             sample: [
                 "console.log(Shader.colorVertexShaderPhong);"
@@ -352,7 +353,194 @@ var Shader = (function () {
                         }))
                 }
             })()
+        })       
+        .constant('toonVertexShaderPhong', {
+            description: "툰 퐁 버텍스 쉐이더",
+            sample: [
+                "console.log(Shader.toonVertexShaderPhong);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'toonVertexShaderPhong',
+                            attributes: ['vec3 aVertexPosition', 'vec3 aVertexNormal'],
+                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'float uVS[30]', 'vec4 uColor'],
+                            varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec4 vColor'],
+                            function: [VertexShader.baseFunction],
+                            main: [
+                                'mat4 mv;\n' +
+                                'if( uVS[16] == 1.0 ){\n'+
+                                'mv = uCameraMatrix * mat4(uVS[0],uVS[1],uVS[2],uVS[3],uVS[4],uVS[5],uVS[6],uVS[7],uVS[8],uVS[9],uVS[10],uVS[11],uVS[12],uVS[13],uVS[14],uVS[15]);\n'+
+                                '} else {\n' +
+                                'mv = uCameraMatrix * positionMTX( vec3(uVS[0], uVS[1], uVS[2]) )*quaternionXYZ( vec3(uVS[3], uVS[4], uVS[5]) )*scaleMTX( vec3(uVS[6], uVS[7], uVS[8]) );\n'+
+                                '}\n'+
+                                'vec4 position = mv * vec4(aVertexPosition, 1.0);\n' +
+                                'gl_Position = uPixelMatrix*position;\n' +
+                                'vPosition = position.xyz;\n' +
+                                'vNormal =  (mv * vec4(-aVertexNormal, 0.0)).xyz;\n' +
+                                'vColor = uColor;'
+                            ]
+                        }))
+                }
+            })()
+        })        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+             
+        
+        
+        .constant('mouseFragmentShader', {
+            description: "마우스 프레그먼트 쉐이더",
+            sample: [
+                "console.log(Shader.mouseFragmentShader);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'mouseFragmentShader',
+                            precision: 'lowp float',
+                            uniforms: [],
+                            varyings: ['vec4 vColor'],
+                            function: [],
+                            main: [
+                                'gl_FragColor =  vColor;'
+                            ]
+                        }))
+                }
+            })()
         })
+       
+        .constant('colorFragmentShader', {
+            description: "컬러 프레그먼트 쉐이더",
+            sample: [
+                "console.log(Shader.colorFragmentShader);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'colorFragmentShader',
+                            precision: 'lowp float',
+                            uniforms: [],
+                            varyings: ['vec4 vColor'],
+                            function: [],
+                            main: [
+                                'gl_FragColor =  vColor;'
+                            ]
+                        }))
+                }
+            })()
+        })
+       
+        .constant('wireFrameFragmentShader', {
+            description: "와이어프레임 프레그먼트 쉐이더",
+            sample: [
+                "console.log(Shader.wireFrameFragmentShader);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'wireFrameFragmentShader',
+                            precision: 'lowp float',
+                            uniforms: [],
+                            varyings: ['vec4 vColor'],
+                            function: [],
+                            main: [
+                                'gl_FragColor =  vColor;'
+                            ]
+                        }))
+                }
+            })()
+        })
+   
+        .constant('bitmapFragmentShader', {
+            description: "비트맵 프레그먼트 쉐이더",
+            sample: [
+                "console.log(Shader.bitmapFragmentShader);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'bitmapFragmentShader',
+                            precision: 'lowp float',
+                            uniforms: ['sampler2D uSampler'],
+                            varyings: ['vec2 vUV'],
+                            function: [],
+                            main: [
+                                'gl_FragColor =  texture2D(uSampler, vec2(vUV.s, vUV.t));\n'
+                            ]
+                        }))
+                }
+            })()
+        })
+
+        .constant('colorFragmentShaderGouraud', {
+            description: "컬러 고라우드 프레그먼트 쉐이더",
+            sample: [
+                "console.log(Shader.colorFragmentShaderGouraud);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'colorFragmentShaderGouraud',
+                            precision: 'lowp float',
+                            uniforms: ['sampler2D uSampler'],
+                            varyings: ['vec4 vColor'],
+                            function: [],
+                            main: [
+                                'gl_FragColor =  vColor;\n'
+                            ]
+                        }))
+                }
+            })()
+        })
+
+        .constant('bitmapFragmentShaderGouraud', {
+            description: "비트맵 고라우드 프레그먼트 쉐이더",
+            sample: [
+                "console.log(Shader.bitmapFragmentShaderGouraud);"
+            ],
+            get: (function () {
+                var cache;
+                return function () {
+                    return cache || (cache = new Shader({
+                            id: 'bitmapFragmentShaderGouraud',
+                            precision: 'lowp float',
+                            uniforms: ['sampler2D uSampler'],
+                            varyings: ['vec2 vUV', 'vec4 vLight'],
+                            function: [],
+                            main: [
+                                'vec4 diffuse = texture2D(uSampler, vec2(vUV.s, vUV.t));\n' +
+                                'gl_FragColor = diffuse * vLight;\n' +
+                                'gl_FragColor.a = diffuse[3];'
+                            ]
+                        }))
+                }
+            })()
+        })
+
         .constant('colorFragmentShaderPhong', {
             description: "컬러 퐁 프레그먼트 쉐이더",
             sample: [
@@ -394,37 +582,7 @@ var Shader = (function () {
                 }
             })()
         })
-        .constant('toonVertexShaderPhong', {
-            description: "툰 퐁 버텍스 쉐이더",
-            sample: [
-                "console.log(Shader.toonVertexShaderPhong);"
-            ],
-            get: (function () {
-                var cache;
-                return function () {
-                    return cache || (cache = new Shader({
-                            id: 'toonVertexShaderPhong',
-                            attributes: ['vec3 aVertexPosition', 'vec3 aVertexNormal'],
-                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'float uVS[30]', 'vec4 uColor'],
-                            varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec4 vColor'],
-                            function: [VertexShader.baseFunction],
-                            main: [
-                                'mat4 mv;\n' +
-                                'if( uVS[16] == 1.0 ){\n'+
-                                'mv = uCameraMatrix * mat4(uVS[0],uVS[1],uVS[2],uVS[3],uVS[4],uVS[5],uVS[6],uVS[7],uVS[8],uVS[9],uVS[10],uVS[11],uVS[12],uVS[13],uVS[14],uVS[15]);\n'+
-                                '} else {\n' +
-                                'mv = uCameraMatrix * positionMTX( vec3(uVS[0], uVS[1], uVS[2]) )*quaternionXYZ( vec3(uVS[3], uVS[4], uVS[5]) )*scaleMTX( vec3(uVS[6], uVS[7], uVS[8]) );\n'+
-                                '}\n'+
-                                'vec4 position = mv * vec4(aVertexPosition, 1.0);\n' +
-                                'gl_Position = uPixelMatrix*position;\n' +
-                                'vPosition = position.xyz;\n' +
-                                'vNormal =  (mv * vec4(-aVertexNormal, 0.0)).xyz;\n' +
-                                'vColor = uColor;'
-                            ]
-                        }))
-                }
-            })()
-        })
+
         .constant('toonFragmentShaderPhong', {
             description: "툰 퐁 프레그먼트 쉐이더",
             sample: [
