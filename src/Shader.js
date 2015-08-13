@@ -72,33 +72,9 @@ var Shader = (function () {
         description:"프레그먼트 쉐이더 타입",
         value:{}
     })
-    .constant('mouseVertexShader', {
-        description:"마우스 버텍스 쉐이더",
-        sample:"console.log(Shader.mouseVertexShader);",
-        get:(function () {
-            var cache;
-            return function () {
-                return cache || (cache = Shader({
-                    id:'mouseVertexShader',
-                    attribute:['vec3 aVertexPosition'],
-                    uniform:[
-                        'mat4 uPixelMatrix',
-                        'mat4 uCameraMatrix',
-                        'vec3 uAffine[3]',
-                        'vec4 uColor'
-                    ],
-                    varying:['vec4 vColor'],
-                    main:[
-                        'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uAffine[0])*quaternionXYZ(uAffine[1])*scaleMTX(uAffine[2])*vec4(aVertexPosition, 1.0);\n' +
-                        'vColor = uColor;'
-                    ]
-                }))
-            }
-        })()
-    })
-    
+
     .constant('BaseVertexShader', {
-        description: "기본 내장 버텍스 쉐이더",
+        description:"기본 내장 버텍스 쉐이더",
         sample:"console.log(Shader.BaseVertexShaderPhong);",
         get: (function () {
             var cache;
@@ -106,50 +82,143 @@ var Shader = (function () {
                 return cache || (cache = Shader({
                     id:'BaseVertexShader',
                     attributes:[
-                        'vec3 aVertexPosition',
+                        'vec3 aPosition',
+                        'vec4 aColor',
                         'vec2 aUV',
-                        'vec3 aVertexNormal'
+                        'vec3 aNormal'
                     ],
                     uniforms:[
-                        'mat4 uPixelMatrix',
-                        'mat4 uCameraMatrix',
-                        'float uVS[30]'
+                        'mat4 uPixel',
+                        'mat4 uCamera',
+                        /*
+                        16 : 행렬모드인 경우 1, 아핀모드인 경우 0
+                        행렬모드 : 0~15 - 행렬값
+                        아핀모드 : 0~2 위치, 3~5 회전, 6~8 스케일
+                        17,18,19 : 드로우영역 x,y,z
+                        20 : 스프라이트사용여부
+                        21~24 : 스프라이트정보
+                        25 : 프레그먼트모드 0.0 - 통컬러, 1.0 - 버텍스당컬러, 2.0 - 비트맵, 3.0 - 이벤트용
+                        26~29 : 메쉬당 통컬러
+                        30~33 : 이벤트용 컬러
+                        */
+                        'float uMesh[30]'
                     ],
-                    varyings: [
+                    varyings:[
                         'vec2 vUV',
                         'vec3 vNormal',
                         'vec3 vPosition',
-                        'float isDiscard'
+                        'vec4 vColor',
+                        'float vIsCancel'
                     ],
-                    main: [
+                    main:[
                         'mat4 mv;',
                         'if (uVS[16] == 1.0) {',
-                            'mv = uCameraMatrix*mat4(uVS[0],uVS[1],uVS[2],uVS[3],uVS[4],uVS[5],uVS[6],uVS[7],uVS[8],uVS[9],uVS[10],uVS[11],uVS[12],uVS[13],uVS[14],uVS[15]);',
+                            'mv = uCamera*mat4(uMesh[0],uMesh[1],uMesh[2],uMesh[3],uMesh[4],uMesh[5],uMesh[6],uMesh[7],uMesh[8],uMesh[9],uMesh[10],uMesh[11],uMesh[12],uMesh[13],uMesh[14],uMesh[15]);',
                         '} else {',
-                            'mv = uCameraMatrix*positionMTX(vec3(uVS[0],uVS[1],uVS[2]))*quaternionXYZ(vec3(uVS[3],uVS[4],uVS[5]))*scaleMTX(vec3(uVS[6],uVS[7],uVS[8]));',
+                            'mv = uCamera*positionMTX(vec3(uMesh[0],uMesh[1],uMesh[2]))*quaternionXYZ(vec3(uMesh[3],uMesh[4],uMesh[5]))*scaleMTX(vec3(uMesh[6],uMesh[7],uMesh[8]));',
                         '}',
-                        'vec4 position = mv*vec4(aVertexPosition,1.0);',
+                        'vec4 position = mv*vec4(aPosition,1.0);',
                         //GL출력
-                        'gl_Position = uPixelMatrix*position;',
+                        'gl_Position = uPixel*position;',
                         'vPosition = position.xyz;',
-                        //프레그먼트를 처리할 필요가 없는 경우
-                        'if (gl_Position.x < -uVS[22]*1.0 || gl_Position.x > uVS[22]*1.0 || vPosition.y < -uVS[23]*1.0  || vPosition.y > uVS[23]*1.0) {',
-                            'isDiscard = 1.0;',
-                        '} else {',
-                            'isDiscard = 0.0;',
+                        'vUV = aUV;',
+                        //베어링컬러처리
+                        'if (vMesh[25] == 1.0) {', //점당처리
+                            'vColor = aColor;',
+                        '} else if (vMesh[25] == 3.0) {', //이벤트처리
+                            'vColor = vec4(uMesh[30],uMesh[31],uMesh[32],uMesh[33]);',
+                        '} else {', //기타
+                            'vColor = vec4(uMesh[26],uMesh[27],uMesh[28],uMesh[29]);',
                         '}',
-                        'vNormal = (mv*vec4(-aVertexNormal,0.0)).xyz;',
-                        'if (uVS[17] == 1.0) {',
-                            'vUV = vec2(aUV.x*uVS[18]+uVS[18]*uVS[20], aUV.y*uVS[19]+uVS[19]*uVS[21]);',
-                        '} else {',
-                            'vUV = aUV;',
+                        //프레그먼트를 처리여부 판정
+                        'if (gl_Position.x < -uMesh[17]*1.0 || gl_Position.x > uMesh[17]*1.0 || ',
+                            'vPosition.y < -uMesh[18]*1.0  || vPosition.y > uMesh[18]*1.0) {',
+                            'vIsCancel = 0.0;',
+                            'vNormal = (mv*vec4(-aNormal,0.0)).xyz;',
+                            //스프라이트처리
+                            'if (uVS[20] == 1.0) {',
+                                'vUV = vec2(aUV.x*uMesh[21]+uMesh[21]*uMesh[23], aUV.y*uMesh[22]+uMesh[22]*uMesh[24]);',
+                            '}',
+                        '} else {', //안그리는 경우
+                            'vIsCancel = 1.0;',
+                            'vNormal = aNormal;',
                         '}'
                     ]
                 }));
             };
         })()
     })
+    .constant('BaseFragmentShader', {
+        description:"기본 내장 프레그먼트 쉐이더",
+        sample:"console.log(Shader.BaseFragmentShaderPhong);",
+        get: (function () {
+            var cache;
+            return function () {
+                return cache || (cache = new Shader({
+                    id:'BaseFragmentShader',
+                    precision:'lowp float',
+                    uniforms:[
+                        'sampler2D uSampler',
+                        'sampler2D uNormalSampler',
+                        'sampler2D uSpecularSampler',
+                        'vec3 uDLite',
+                        'float uFS[22]'
+                    ],
+                    varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition' ,'float isDiscard'],
+                    function: [],
+                    main: [
 
+                        'if( uFS[9] == 0.0 || isDiscard >0.0  ) discard;\n' +
+                        //'if( uFS[9] == 0.0 || isDiscard >0.0  ) gl_FragColor = vec4(0.1,0.5,0.2,1.0);\n' +
+                        //'else if( gl_Position.x < -uFS[20]*0.65 || vPosition.x > uFS[20]*0.65) {\n' +
+                        //    'if( vPosition.y < -uFS[21]*0.65 || vPosition.y > uFS[21]*0.65) {\n' +
+                        //        'discard;\n' +
+                        //    '};\n' +
+                        //'}\n' +
+                        'else {\n'+
+                            'if( uFS[4] == 1.0 ){\n' +
+                                'gl_FragColor = vec4(uFS[5],uFS[6],uFS[7],uFS[8])*uFS[9];\n' +
+                            '}else{\n' +
+                                'vec4 diffuse = texture2D( uSampler, vUV );\n' + // 디퓨즈를 계산함
+                                'float alpha = diffuse[3];\n' + // 디퓨즈를 계산함
+                                'if(alpha==0.0) discard;\n'+
+                                'else {\n'+
+                                    'vec4 ambientColor = vec4(1.0, 1.0, 1.0, 1.0);\n' +
+                                    'vec4 specColor = vec4(uFS[12],uFS[13],uFS[14],uFS[15]);\n' +
+
+                                    'vec3 position = normalize(vPosition);\n' +
+                                    'vec3 normal = normalize(vNormal);\n' +
+                                    'vec3 lightDir = normalize(uDLite);\n' +
+                                    'vec3 reflectDir = reflect(-lightDir, normal);\n' +
+                                    'float light = max( 0.05, dot(normal,lightDir) * uFS[10]);\n' + // 라이트강도 구하고
+
+                                    'float specular\n;' +
+                                    'if( uFS[16] == 1.0 ){\n' +
+                                    '   vec4 bump = texture2D( uNormalSampler, vUV );\n' +
+                                    '   bump.rgb= bump.rgb*2.0-1.0 ;\n' + // 범프값을 -1~1로 교정
+                                    '   float normalSpecular = max( dot(reflectDir, normalize(position-bump.rgb)), 0.3 );\n' + // 맵에서 얻어낸 노말 스페큘라
+                                    '   specular = pow(normalSpecular,uFS[11])*specColor[3];\n' + // 스페큘라
+                                    '   gl_FragColor = ( diffuse *light * ambientColor * ambientColor[3] + specular * specColor ) + normalSpecular * bump.g * uFS[17]  ;\n' +
+                                    '}else{' +
+                                    '   specular = max( dot(reflectDir, position), 0.5 );\n' +
+                                    '   specular = pow(specular,uFS[11])*specColor[3];\n' +
+                                    '   gl_FragColor = diffuse *light * ambientColor * ambientColor[3] + specular * specColor ;\n' +
+                                    '}\n' +
+                                    'if( uFS[18] == 1.0 ){\n' +
+                                    '   specular = max( dot(reflectDir, position), 0.5 );\n' +
+                                    '   specular = pow(specular,texture2D( uSpecularSampler, vUV ).a);\n' +
+                                    '   gl_FragColor = gl_FragColor + gl_FragColor * specColor * specular * texture2D( uSpecularSampler, vUV ) * uFS[19];\n' +
+                                    '}\n' +
+                                    'gl_FragColor.a = alpha*uFS[9];\n'+
+                                '}\n'+
+                            '};\n'+
+                        '};\n'
+
+                    ]
+                }));
+            };
+        })()
+    })
         ////////////////////
 
         //vs[0~2] = x,y,z
@@ -177,7 +246,31 @@ var Shader = (function () {
         //fs[19] = gMatSpecularMapPower[tUID_mat] // 스페큘러맵 강도
 
         ////////////////  
-    
+     .constant('mouseVertexShader', {
+        description:"마우스 버텍스 쉐이더",
+        sample:"console.log(Shader.mouseVertexShader);",
+        get:(function () {
+            var cache;
+            return function () {
+                return cache || (cache = Shader({
+                    id:'mouseVertexShader',
+                    attribute:['vec3 aVertexPosition'],
+                    uniform:[
+                        'mat4 uPixelMatrix',
+                        'mat4 uCameraMatrix',
+                        'vec3 uAffine[3]',
+                        'vec4 uColor'
+                    ],
+                    varying:['vec4 vColor'],
+                    main:[
+                        'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uAffine[0])*quaternionXYZ(uAffine[1])*scaleMTX(uAffine[2])*vec4(aVertexPosition, 1.0);\n' +
+                        'vColor = uColor;'
+                    ]
+                }))
+            }
+        })()
+    })
+       
     .constant('colorVertexShader', {
             description: "컬러 버텍스 쉐이더",
             sample: [
