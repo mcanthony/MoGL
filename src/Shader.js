@@ -205,7 +205,6 @@ var Shader = (function () {
                         */
                         'float uMesh[22]'
                     ],
-                    function: [],
                     main: [
 
                         'if (uMesh[0] == 0.0 || vIsCancel == 1.0) {',
@@ -221,42 +220,96 @@ var Shader = (function () {
                             'if (diffuse[3] == 0.0){', //결정된 디퓨즈 알파가 0이면 종결
                                 'vIsCancel;',
                             '} else {',
-                                'float shading = uMesh[2];',
-                                'if (shading == 4.0) {',
-                                'vec4 ambientColor = vec4(1.0, 1.0, 1.0, 1.0);\n' +
-                                'vec4 specColor = vec4(uFS[12],uFS[13],uFS[14],uFS[15]);\n' +
-                                'vec3 position = normalize(vPosition);\n' +
-                                'vec3 normal = normalize(vNormal);\n' +
-                                'vec3 lightDir = normalize(uDLite);\n' +
-                                'vec3 reflectDir = reflect(-lightDir, normal);\n' +
-                                'float light = max( 0.05, dot(normal,lightDir) * uFS[10]);\n' + // 라이트강도 구하고
-
-                                'float specular\n;' +
-                                'if( uFS[16] == 1.0 ){\n' +
-                                '   vec4 bump = texture2D( uNormalSampler, vUV );\n' +
-                                '   bump.rgb= bump.rgb*2.0-1.0 ;\n' + // 범프값을 -1~1로 교정
-                                '   float normalSpecular = max( dot(reflectDir, normalize(position-bump.rgb)), 0.3 );\n' + // 맵에서 얻어낸 노말 스페큘라
-                                '   specular = pow(normalSpecular,uFS[11])*specColor[3];\n' + // 스페큘라
-                                '   gl_FragColor = ( diffuse *light * ambientColor * ambientColor[3] + specular * specColor ) + normalSpecular * bump.g * uFS[17]  ;\n' +
-                                '}else{' +
-                                '   specular = max( dot(reflectDir, position), 0.5 );\n' +
-                                '   specular = pow(specular,uFS[11])*specColor[3];\n' +
-                                '   gl_FragColor = diffuse *light * ambientColor * ambientColor[3] + specular * specColor ;\n' +
-                                '}\n' +
-                                'if( uFS[18] == 1.0 ){\n' +
-                                '   specular = max( dot(reflectDir, position), 0.5 );\n' +
-                                '   specular = pow(specular,texture2D( uSpecularSampler, vUV ).a);\n' +
-                                '   gl_FragColor = gl_FragColor + gl_FragColor * specColor * specular * texture2D( uSpecularSampler, vUV ) * uFS[19];\n' +
-                                '}\n' +
-                                'gl_FragColor.a = alpha*uFS[9];\n'+
-                            '}\n'+
-                        '};\n'
+                                'float shading = uMesh[2];', //쉐이딩모드
+                                
+                                
+                                
+                                'if (shading == 1.0) {', //플랫쉐이딩
+                                    'gl_FragColor = diffuse;',
+                                '} else if (shading == 2.0) {', //툰쉐이딩
+                                    //다중 라이팅모델 반영해야함
+                                    /*
+                                    'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
+                                    'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
+                                    'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
+    
+                                    'vec3 position = normalize(vPosition);\n' +
+                                    'vec3 normal = normalize(vNormal);\n' +
+                                    'vec3 lightDir = normalize(uDLite);\n' +
+                                    'vec3 reflectDir = reflect(-lightDir, normal);\n' +
+                                    'float specular = max( dot(reflectDir, position), 0.0 );\n' +
+                                    'specular = pow(specular,20.0);\n' +
+    
+                                    'float light = max( 0.05, dot(normal,lightDir) * uLambert);\n' +
+                                    'gl_FragColor = vColor*light*vec4( ambientColor + diffuseColor + specular*specColor , 1.0);\n' +
+    
+                                    ' if(light>0.95-0.5) gl_FragColor.rgb*=0.95;\n' +
+                                    ' else if(light>0.4-0.5) gl_FragColor.rgb*=0.5;\n' +
+                                    ' else if(light>0.3-0.5) gl_FragColor.rgb*=0.3;\n' +
+                                    ' else gl_FragColor.rgb*=0.1;\n' +
+                                    'gl_FragColor.a = vColor[3];'
+                                    */
+                                    'gl_FragColor = diffuse;',
+                                '} else if (shading == 3.0) {', //고라우드쉐이딩
+                                    //다중 라이팅모델 반영해야함
+                                    /*
+                                    'gl_FragColor = diffuse * vLight;\n' +
+                                    'gl_FragColor.a = diffuse[3];'
+                                    */
+                                    'gl_FragColor = diffuse;',
+                                'if (shading == 4.0) {', //퐁쉐이딩
+                                    /*
+                                    'vec4 ambientColor = vec4(1.0, 1.0, 1.0, 1.0);',
+                                    'vec4 specColor = vec4(uFS[12],uFS[13],uFS[14],uFS[15]);',
+                                    'vec3 position = normalize(vPosition);',
+                                    'vec3 normal = normalize(vNormal);',
+                                    'vec3 lightDir = normalize(uDLite);',
+                                    'vec3 reflectDir = reflect(-lightDir, normal);',
+                                    // 라이트강도 구하고
+                                    'float light = max( 0.05, dot(normal,lightDir) * uFS[10]);',
+                                    'float specular\n;',
+                                    'if (uFS[16] == 1.0) {',
+                                        'vec4 bump = texture2D( uNormalSampler, vUV );',
+                                        // 범프값을 -1~1로 교정
+                                        'bump.rgb= bump.rgb*2.0-1.0;',
+                                        // 맵에서 얻어낸 노말 스페큘라
+                                        'float normalSpecular = max( dot(reflectDir, normalize(position-bump.rgb)), 0.3 );',
+                                        // 스페큘라
+                                        'specular = pow(normalSpecular,uFS[11])*specColor[3];',
+                                        'gl_FragColor = ( diffuse *light * ambientColor * ambientColor[3] + specular * specColor ) + normalSpecular * bump.g * uFS[17];',
+                                    '} else {',
+                                        'specular = max( dot(reflectDir, position), 0.5 );',
+                                        'specular = pow(specular,uFS[11])*specColor[3];',
+                                        'gl_FragColor = diffuse *light * ambientColor * ambientColor[3] + specular * specColor;',
+                                    '}',
+                                    'if (uFS[18] == 1.0) {',
+                                        'specular = max( dot(reflectDir, position), 0.5 );',
+                                        'specular = pow(specular,texture2D( uSpecularSampler, vUV ).a);',
+                                        'gl_FragColor = gl_FragColor + gl_FragColor * specColor * specular * texture2D( uSpecularSampler, vUV ) * uFS[19];',
+                                    '}',
+                                    'gl_FragColor.a = alpha*uFS[9];',
+                                    */
+                                    'gl_FragColor = diffuse;',
+                                '}',
+                        '}'
 
                     ]
                 }));
             };
         })()
     })
+    
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
      .constant('mouseVertexShader', {
         description:"마우스 버텍스 쉐이더",
