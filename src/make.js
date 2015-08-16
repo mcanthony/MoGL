@@ -212,7 +212,7 @@ var makeUtil = (function(){
         vertexShaderParser:(function(){
             var cat = 'attribute,uniform,varying'.split(',');
             return function vertexShaderParser(source) {
-                var i, temp, str, resultObject, code;
+                var i, j, temp, str, resultObject, code;
                 code = source.code,
                 resultObject = {id:code.id},
                 str = "", i = cat.length;
