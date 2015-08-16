@@ -108,8 +108,7 @@ var makeUtil = (function(){
             fShader.name = fSource.id,
             program.name = name;
             gl.useProgram(program),
-            tList = vSource.attributes;
-
+            tList = vSource.attribute;
             if(tList){
                 len = tList.length;
                 for (i = 0; i < len; i++) {
@@ -119,7 +118,7 @@ var makeUtil = (function(){
                     gl.bindBuffer(gl.ARRAY_BUFFER, null);
                 }
             }
-            tList = vSource.uniforms;
+            tList = vSource.uniform;
             if(tList){
                 i = tList.length;
                 while (i--) {
@@ -131,7 +130,7 @@ var makeUtil = (function(){
                     }
                 }
             }
-            tList = fSource.uniforms;
+            tList = fSource.uniform;
             if(tList){
                 i = tList.length;
                 while (i--) {
@@ -225,7 +224,7 @@ var makeUtil = (function(){
                     resultObject[cat[i]] = [];
                     while (j--) {
                         str += cat[i] + ' ' + temp[j] + ';\n',
-                        resultObject[cat[i]].push(temp[j].split(' ')[1]);
+                        resultObject[cat[i]].push(temp[j]);
                     }
                 }
                 resultObject.shaderStr = str + 
