@@ -224,9 +224,11 @@ var makeUtil = (function(){
                         resultObject[cat[i]].push(temp[j].split(' ')[1]);
                     }
                 }
+                console.log(code);
                 resultObject.shaderStr = str + VertexShader.baseFunction + 
                     'void main(void){\n' + 
-                        code.main.join('\n') + 
+                        // code.main.join('\n') + 
+                        code.program + '\n' +
                     '\n}';
                 return resultObject;
             };
