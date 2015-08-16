@@ -1,5 +1,6 @@
 var Matrix = (function () {
     'use strict';
+    var toR = Math.PI / 180;
     return MoGL.extend('Matrix',{
         description:'4x4행렬을 나타내는 객체. 아핀변환용 x,y,z, rotateX,Y,Z, scaleX,Y,Z 도 지원함',
         sample:[
@@ -34,7 +35,7 @@ var Matrix = (function () {
             a[0] = a[5] = a[10] = a[15] = 1, 
             a[1] = a[2] = a[3] = a[4] = a[6] = a[7] = a[8] = a[9] = a[11] = 0,
             a[12] = a.x,  a[13] = a.y,  a[14] = a.z,
-            this.matQuaternionXYZRotate(a.rotateX, a.rotateY, a.rotateZ),
+            this.matRotate(a.rotateX, a.rotateY, a.rotateZ),
             a[0] = a[0]*x, a[1] = a[1]*x, a[2] = a[2]*x, a[3] = a[3]*x,
             a[4] = a[4]*y, a[5] = a[5]*y, a[6] = a[6]*y, a[7] = a[7]*y,
             a[8] = a[8]*z, a[9] = a[9]*z, a[10] = a[10]*z, a[11] = a[11]*z;
@@ -72,7 +73,7 @@ var Matrix = (function () {
         }
     })
     .method('matCopyTo', {
-        description:'인자로 넘어온 Matrix에 본인을 복사함.',
+        description:'인자로 넘어온 Matrix에 본인을 복사함. 아핀정보는 복사안함.',
         sample:[
             'var source = new Matrix();',
             'var target = new Matrix();',
@@ -92,7 +93,7 @@ var Matrix = (function () {
         }
     })
     .method('matCopyFrom', {
-        description:'인자로 넘어온 Matrix의 정보를 본인에게 복제함.',
+        description:'인자로 넘어온 Matrix의 정보를 본인에게 복제함. 아핀정보는 복사안함.',
         sample:[
             'var source = new Matrix();',
             'var target = new Matrix();',
@@ -159,7 +160,6 @@ var Matrix = (function () {
             'var c = a.matMultiply(b, true);  // a * b 사본반환',
             'a.matMultiply(b);  // a * b a가 직접 변경됨'
         ],
-        exception:"'Matrix.matMultiply:0' - Matrix 객체가 아닌 값을 파라미터로 전달하는 경우",
         ret:'Matrix - this 또는 생성된 행렬',
         param:[
             'target:Matrix - 곱할 매트릭스',
@@ -174,30 +174,77 @@ var Matrix = (function () {
                 a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15];
 
             tmp0 = m[0], tmp1 = m[1], tmp2 = m[2], tmp3 = m[3];
-            o[0] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3,
-            o[1] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
-            o[2] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
-            o[3] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
+            o[0] = a00*tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3,
+            o[1] = a01*tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
+            o[2] = a02*tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
+            o[3] = a03*tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
         
             tmp0 = m[4], tmp1 = m[5], tmp2 = m[6], tmp3 = m[7],
-            o[4] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3 ,
-            o[5] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
-            o[6] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
-            o[7] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
+            o[4] = a00*tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3,
+            o[5] = a01*tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
+            o[6] = a02*tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
+            o[7] = a03*tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
         
             tmp0 = m[8], tmp1 = m[9], tmp2 = m[10], tmp3 = m[11],
-            o[8] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3 ,
-            o[9] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3 ,
-            o[10] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3 ,
-            o[11] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
+            o[8] = a00*tmp0 + a10*tmp1 + a20*tmp2 + a30*tmp3,
+            o[9] = a01*tmp0 + a11*tmp1 + a21*tmp2 + a31*tmp3,
+            o[10] = a02*tmp0 + a12*tmp1 + a22*tmp2 + a32*tmp3,
+            o[11] = a03*tmp0 + a13*tmp1 + a23*tmp2 + a33*tmp3,
         
             tmp0 = m[12], tmp1 = m[13], tmp2 = m[14], tmp3 = m[15],
-            o[12] = a00 * tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3 ,
-            o[13] = a01 * tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
-            o[14] = a02 * tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
-            o[15] = a03 * tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3;
+            o[12] = a00*tmp0 + a10*tmp1 + a20*tmp2 + a30*tmp3,
+            o[13] = a01*tmp0 + a11*tmp1 + a21*tmp2 + a31*tmp3,
+            o[14] = a02*tmp0 + a12*tmp1 + a22*tmp2 + a32*tmp3,
+            o[15] = a03*tmp0 + a13*tmp1 + a23*tmp2 + a33*tmp3;
         
             return o;
+        }
+    })
+    .method('matMultiplyTo', {
+        description:'인자가 주어진 Matrix에 본인을 행렬곱한 결과가 됨.',
+        sample:[
+            'var a = new Matrix();',
+            'var b = new Matrix();',
+            'a.matMultiplyTo(b);  // a * b b가 직접 변경됨',
+        ],
+        exception:"'Matrix.matMultiply:0' - Matrix 객체가 아닌 값을 파라미터로 전달하는 경우",
+        ret:'Matrix - 인자로 주어졌던 Matrix',
+        param:[
+            'target:Matrix - 곱할 매트릭스',
+        ],
+        value:function matMultiplyTo(m) {
+            var a = this,
+                tmp0, tmp1, tmp2, tmp3,
+                a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
+                a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7],
+                a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11],
+                a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15];
+
+            tmp0 = m[0], tmp1 = m[1], tmp2 = m[2], tmp3 = m[3];
+            m[0] = a00*tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3,
+            m[1] = a01*tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
+            m[2] = a02*tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
+            m[3] = a03*tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
+        
+            tmp0 = m[4], tmp1 = m[5], tmp2 = m[6], tmp3 = m[7],
+            m[4] = a00*tmp0 + a10 * tmp1 + a20 * tmp2 + a30 * tmp3,
+            m[5] = a01*tmp0 + a11 * tmp1 + a21 * tmp2 + a31 * tmp3,
+            m[6] = a02*tmp0 + a12 * tmp1 + a22 * tmp2 + a32 * tmp3,
+            m[7] = a03*tmp0 + a13 * tmp1 + a23 * tmp2 + a33 * tmp3,
+        
+            tmp0 = m[8], tmp1 = m[9], tmp2 = m[10], tmp3 = m[11],
+            m[8] = a00*tmp0 + a10*tmp1 + a20*tmp2 + a30*tmp3,
+            m[9] = a01*tmp0 + a11*tmp1 + a21*tmp2 + a31*tmp3,
+            m[10] = a02*tmp0 + a12*tmp1 + a22*tmp2 + a32*tmp3,
+            m[11] = a03*tmp0 + a13*tmp1 + a23*tmp2 + a33*tmp3,
+        
+            tmp0 = m[12], tmp1 = m[13], tmp2 = m[14], tmp3 = m[15],
+            m[12] = a00*tmp0 + a10*tmp1 + a20*tmp2 + a30*tmp3,
+            m[13] = a01*tmp0 + a11*tmp1 + a21*tmp2 + a31*tmp3,
+            m[14] = a02*tmp0 + a12*tmp1 + a22*tmp2 + a32*tmp3,
+            m[15] = a03*tmp0 + a13*tmp1 + a23*tmp2 + a33*tmp3;
+        
+            return m;
         }
     })
     .method('matTranslate', {
@@ -221,51 +268,40 @@ var Matrix = (function () {
             return a;
         }
     })
-    .method('matQuaternionXYZRotate', {
+    .method('matRotate', {
         description:'X, Y, Z축 순서 기준의 4원수로 회전시킨 결과 매트릭스를 반환한다.',
         sample:[
             'var mtx = new Matrix();',
-            'var mtxQuaternionRotate = mtx.matQuaternionXYZRotate(2, 1, 4);'
+            'var mtxQuaternionRotate = mtx.matRotate(2, 1, 4);'
         ],
         ret:'this',
         param:[
-            'rx:number - x축 기준 회전 값, radian단위',
-            'ry:number - y축 기준 회전 값, radian단위',
-            'rz:number - z축 기준 회전 값, radian단위'
+            'rx:number - x축 기준 회전 증분값, 기본 degree단위',
+            'ry:number - y축 기준 회전 증분값, 기본 degree단위',
+            'rz:number - z축 기준 회전 증분값, 기본 degree단위',
+            '?isRadian:boolean - 라디안으로 보내는 경우.',
         ],
-        value:function matQuaternionXYZRotate(rx, ry, rz) {
-            var a = this, c0, c1, c2, s0, s1, s2,
-                x, y, z, w, tmp0, tmp1, tmp2,
-                a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
-                a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7],
-                a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11];
+        value:(function(){
+            var a = {};
+            return function matRotate(rx, ry, rz, isRadian) {
+                var c0, c1, c2, s0, s1, s2, r,
+                    x, y, z, w;
+                r = isRadian ? 1 : toR,
+                c0 = COS(rx *= r*-.5), c1 = COS(ry *= r*-.5), c2 = COS(rz *= r*-.5),
+                s0 = SIN(rx), s1 = SIN(ry), s2 = SIN(rz),
 
-            c0 = COS(rx), c1 = COS(ry), c2 = COS(rz),
-            s0 = SIN(rx), s1 = SIN(ry), s2 = SIN(rz),
-
-            x = c2*c1*s0 + s2*s1*c0, y = c2*s1*c0 - s2*c1*s0,
-            z = s2*c1*c0 + c2*s1*s0, w = c2*c1*c0 - s2*s1*s0,
-
-            tmp0 = w*w + x*x - y*y -z*z, tmp1 = 2*(x*y - w*z), tmp2 = 2*(x*z + w*y), 
-            a[0] = a00*tmp0 + a10*tmp1 + a20*tmp2,
-            a[1] = a01*tmp0 + a11*tmp1 + a21*tmp2,
-            a[2] = a02*tmp0 + a12*tmp1 + a22*tmp2,
-            a[3] = a03*tmp0 + a13*tmp1 + a23*tmp2,
-            
-            tmp0 = 2*(x*y + w*z), tmp1 = w*w - x*x + y*y - z*z, tmp2 = 2*(y*z - w*x), 
-            a[4] = a00*tmp0 + a10*tmp1 + a20*tmp2,
-            a[5] = a01*tmp0 + a11*tmp1 + a21*tmp2,
-            a[6] = a02*tmp0 + a12*tmp1 + a22*tmp2,
-            a[7] = a03*tmp0 + a13*tmp1 + a23*tmp2,
-            
-            tmp0 = 2*(x*z - w*y), tmp1 = 2*(y*z - w*x), tmp2 = w*w - x*x - y*y + z*z, 
-            a[8] = a00*tmp0 + a10*tmp1 + a20*tmp2,
-            a[9] = a01*tmp0 + a11*tmp1 + a21*tmp2,
-            a[10] = a02*tmp0 + a12*tmp1 + a22*tmp2,
-            a[11] = a03*tmp0 + a13*tmp1 + a23*tmp2;
-
-            return a;
-        }
+                x = c2*c1*s0 - s2*s1*c0,
+                y = c2*s1*c0 + s2*c1*s0,
+                z = s2*c1*c0 - c2*s1*s0,
+                w = c2*c1*c0 + s2*s1*s0,
+    
+                a[0] = w*w + x*x - y*y -z*z, a[1] = 2*(x*y - w*z), a[2] = 2*(x*z + w*y), a[3] = 0,
+                a[4] = 2*(x*y + w*z), a[5] = w*w - x*x + y*y - z*z, a[6] = 2*(y*z - w*x), a[7] = 0,
+                a[8] = 2*(x*z - w*y), a[9] = 2*(y*z + w*x), a[10] = w*w - x*x - y*y + z*z, a[11] = 0,
+                a[12] = 0, a[13] = 0, a[14] = 0, a[15] = 1;
+                return this.matMultiply(a);
+            };
+        })()
     })
     .method('matScale', {
         description:'현재매트릭스에 x,y,z축 증분 확대 ',
@@ -294,11 +330,16 @@ var Matrix = (function () {
             'mtx.matRotateX(0.3);'
         ],
         ret:'this',
-        param:'rad:number - x축 증분 회전 값, radian단위로 입력',
-        value: function matRotateX(rad) {
-            var a = this, s = SIN(rad), c = COS(rad), 
+        param:[
+            'rx:number - x축 증분 회전 값, 기본 degree단위',
+            '?isRadian:boolean - 라디안으로 보내는 경우.'
+        ],
+        value: function matRotateX(rx, isRadian) {
+            var a = this, s, c,
                 a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7],
                 a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11];
+                
+            rx *= isRadian ? 1 : toR, s = SIN(rx), c = COS(rx),
             a[4] = a10*c + a20*s, a[5] = a11*c + a21*s,
             a[6] = a12*c + a22*s, a[7] = a13*c + a23*s,
             a[8] = a20*c - a10*s, a[9] = a21*c - a11*s,
@@ -313,11 +354,15 @@ var Matrix = (function () {
             'mtx.matRotateY(0.3);'
         ],
         ret:'this',
-        param:'rad:number - y축 증분 회전 값, radian단위로 입력',
-        value:function matRotateY(rad) {
-            var a = this, s = SIN(rad), c = COS(rad),
+        param:[
+            'ry:number - y축 증분 회전 값, 기본 degree단위',
+            '?isRadian:boolean - 라디안으로 보내는 경우.'
+        ],
+        value:function matRotateY(ry, isRadian) {
+            var a = this, s, c,
                 a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
                 a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11];
+            ry *= isRadian ? 1 : toR, s = SIN(ry), c = COS(ry),
             a[0] = a00*c - a20*s, a[1] = a01*c - a21*s,
             a[2] = a02*c - a22*s, a[3] = a03*c - a23*s,
             a[8] = a00*s + a20*c, a[9] = a01*s + a21*c,
@@ -332,53 +377,22 @@ var Matrix = (function () {
             'mtx.matRotateZ(0.3);'
         ],
         ret:'this',
-        param:'rad:number - z축 증분 회전 값, radian단위로 입력',
-        value:function matRotateZ(rad) {
-            var a = this, s = SIN(rad), c = COS(rad),
+        param:[
+            'rz:number - z축 증분 회전 값, 기본 degree단위',
+            '?isRadian:boolean - 라디안으로 보내는 경우.'
+        ],
+        value:function matRotateZ(rz, isRadian) {
+            var a = this, s, c,
                 a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
                 a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7];
+            rz *= isRadian ? 1 : toR, s = SIN(rz), c = COS(rz),
             a[0] = a00*c + a10*s, a[1] = a01*c + a11*s,
             a[2] = a02*c + a12*s, a[3] = a03*c + a13*s,
             a[4] = a10*c - a00*s, a[5] = a11*c - a01*s,
             a[6] = a12*c - a02*s, a[7] = a13*c - a03*s;
             return a;
         }
-    })
-    .method('matRotate', {
-        description:'현재 매트릭스를 특정축을 기준으로 증분 회전 ',
-        sample: [
-            'var mtx = new Matrix();',
-            'mtx.matRotate(0.3,[0,1,2]);'
-        ],
-        ret:'this',
-        param:[
-            'rad:number - z축 증분 회전 값, radian단위로 입력',
-            'axis:Array - 기준 회전축을 입력',
-        ],
-        value:function matRotate(rad, axis) {
-            var a = rawInit(this), x = axis[0], y = axis[1], z = axis[2],
-                len = SQRT(x * x + y * y + z * z), s, c, t, 
-                a00, a01, a02, a03, a10, a11, a12, a13, a20, a21, a22, a23, 
-                b00, b01, b02, b10, b11, b12, b20, b21, b22;
-            if (ABS(len) < GLMAT_EPSILON) return null;
-            len = 1 / len, x *= len, y *= len, z *= len,
-            s = SIN(rad), c = COS(rad), t = 1 - c,
-            a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3], 
-            a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7], 
-            a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11],
-            b00 = x * x * t + c, b01 = y * x * t + z * s, b02 = z * x * t - y * s,
-            b10 = x * y * t - z * s, b11 = y * y * t + c, b12 = z * y * t + x * s,
-            b20 = x * z * t + y * s, b21 = y * z * t - x * s, b22 = z * z * t + c,
-            a[0] = a00 * b00 + a10 * b01 + a20 * b02, a[1] = a01 * b00 + a11 * b01 + a21 * b02,
-            a[2] = a02 * b00 + a12 * b01 + a22 * b02, a[3] = a03 * b00 + a13 * b01 + a23 * b02,
-            a[4] = a00 * b10 + a10 * b11 + a20 * b12, a[5] = a01 * b10 + a11 * b11 + a21 * b12,
-            a[6] = a02 * b10 + a12 * b11 + a22 * b12, a[7] = a03 * b10 + a13 * b11 + a23 * b12,
-            a[8] = a00 * b20 + a10 * b21 + a20 * b22, a[9] = a01 * b20 + a11 * b21 + a21 * b22,
-            a[10] = a02 * b20 + a12 * b21 + a22 * b22, a[11] = a03 * b20 + a13 * b21 + a23 * b22;
-            if (a !== a) a[12] = a[12], a[13] = a[13], a[14] = a[14], a[15] = a[15];
-            return this;
-        }
-    })    
+    })   
     .method('matPerspective', {
         description:'퍼스펙티브 매트릭스',
         sample:[
@@ -441,7 +455,10 @@ var Matrix = (function () {
         }
     })
     .method('lookAt', {
-        description:'현재매트릭스를 대상지점을 바라보도록 변경\n- 현재 매트릭스의 rotateX,rotateY,rotateZ, 속성을 자동으로 변경',
+        description:[
+            '현재매트릭스를 대상지점을 바라보도록 변경',
+            '현재 매트릭스의 rotateX,rotateY,rotateZ, 속성을 자동으로 변경'
+        ],
         param:[
             'x:number - 바라볼 x위치',
             'y:number - 바라볼 y위치',
@@ -512,3 +529,4 @@ var Matrix = (function () {
     })
     .build();
 })();
+

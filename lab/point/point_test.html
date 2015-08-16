@@ -38,6 +38,7 @@
     <script src="./../../src/Material.js"></script>
     <script src="./../../src/Mesh.js"></script>
     <script src="Point.js"></script>
+    <script src="Path.js"></script>
     <script src="./../../src/Group.js"></script>
     <script src="./../../src/Camera.js"></script>
     <!--<script src="./src/Scene.js"></script>-->
@@ -72,14 +73,34 @@
 
         var imgTag = document.createElement('img');
         imgTag.src = '../../showcase/monkey/Suzanne.jpg';
-        // var mat = new Material();
-        // var texture = new Texture(imgTag);
-        // mat.addTexture(Texture.diffuse, texture);
-        var mat = new Material("#333");
+         var mat = new Material();
+         var texture = new Texture(imgTag);
+         mat.addTexture(Texture.diffuse, texture);
         mat.wireFrame = 1;
         mat.shading = Shading.phong;
 
-        var xmlhttp = new XMLHttpRequest();
+
+       var mat2 = new Material("#fff");
+       mat2.addTexture(Texture.diffuse, texture);
+       mat2.shading = Shading.phong;
+
+       var mat3 = new Material("#999");
+       mat3.shading = Shading.phong;
+
+       var mat4 = new Material("#00f");
+       mat4.shading = Shading.phong;
+
+       var mat5 = new Material("#f00");
+       mat5.shading = Shading.phong;
+
+       var mat6 = new Material("#f0f");
+       mat6.shading = Shading.phong;
+
+       var mat7 = new Material("#ff0");
+       mat7.shading = Shading.phong;
+
+
+       var xmlhttp = new XMLHttpRequest();
 
         xmlhttp.open('GET', '../../showcase/monkey/monkey.json', true);
         xmlhttp.onreadystatechange = function () {
@@ -136,19 +157,64 @@
             var geo = new Geometry(vertex, index, [Vertex.x, Vertex.y, Vertex.z, Vertex.normalX, Vertex.normalY, Vertex.normalZ, Vertex.u, Vertex.v]);
             var geo2 = new Geometry([-1,1,0, 1,1,0, -1,-1,0, 1,-1,0], [0,1,2,1,2,3]);
 
+
+            var point = new Point(geo, mat3);
+            point.x = -3;
+            point.z = 3;
+            point.y = 1.5;
+            point.pointsize = 3.0;
+            scene.addChild(point);
+
+            var point2 = new Point(geo, mat2);
+            point2.rotateY = 2;
+            point2.z = 3;
+            point2.y = 1.5;
+            point2.pointsize = 9.0;
+            scene.addChild(point2);
+
+
             var mesh = new Mesh(geo, mat);
             mesh.rotateY = 2.9;
             mesh.z = 3;
-            mesh.x = 2;
+            mesh.x = 3;
+            mesh.y = 1.5;
             scene.addChild(mesh);
 
-            var mat2 = new Material("#5ff");
-            var point = new Point(geo, mat2);
-            point.x = -3;
-            point.z = 3;
-            // point.pointsize = 3;
-            scene.addChild(point);
-          
+
+//            var mesh2 = new Mesh(geo, mat7);
+//            mesh2.x = -3;
+//            mesh2.z = 3;
+//            mesh2.y = -1;
+//            scene.addChild(mesh2);
+
+//            var mesh3 = new Mesh(geo, mat3);
+//            mesh3.rotateY = 2;
+//            mesh3.z = 3;
+//            mesh3.y = -1;
+//            scene.addChild(mesh3);
+
+            var path = new Path(geo, mat3);
+            path.x = -3;
+            path.z = 3;
+            path.y = -1;
+            path.pathtype = 3;
+            scene.addChild(path);
+
+            var path2 = new Path(geo, mat2);
+            path2.rotateY = 2;
+            path2.z = 3;
+            path2.y = -1;
+            path2.pathtype = 3;
+            scene.addChild(path2);
+
+            var path3 = new Path(geo, mat2);
+            path3.rotateY = 2.9;
+            path3.z = 3;
+            path3.x = 3;
+            path3.y = -1;
+            path3.pathtype = 1;
+            scene.addChild(path3);
+
             var sum = 0, count = 1;
 
             function render( currTime ) {
@@ -159,7 +225,14 @@
                 divAverageFPS.textContent = ( ( sum += currentFPS ) / count++ ).toFixed( 2 );
 
                 mesh.rotateY -= 0.05;
+//                mesh2.rotateY -= 0.05;
+//                mesh3.rotateY -= 0.05;
                 point.rotateY -= 0.05;
+                point2.rotateY -= 0.05;
+
+                path.rotateY -= 0.05;
+                path2.rotateY -= 0.05;
+                path3.rotateY -= 0.05;
 
                 world.render();
                 requestAnimationFrame( render );

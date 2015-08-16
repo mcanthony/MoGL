@@ -91,7 +91,7 @@ var makeUtil = (function(){
                 ], 2),
                 makeUtil.makeIBO(gpu, '_FRAMERECT_', [0, 1, 2, 1, 2, 3], 1);
             }
-            var gl, vShader, fShader, program, i, len, tList;
+            var gl, vShader, fShader, program, i, len, tList, key;
             gl = gpu.gl,
             vShader = gl.createShader(gl.VERTEX_SHADER),
             fShader = gl.createShader(gl.FRAGMENT_SHADER),
@@ -107,38 +107,44 @@ var makeUtil = (function(){
             vShader.name = vSource.id,
             fShader.name = fSource.id,
             program.name = name;
-
-
             gl.useProgram(program),
-            tList = vSource.attributes,
-            len = tList.length;
-            for (i = 0; i < len; i++) {
-                gl.bindBuffer(gl.ARRAY_BUFFER, gpu.vbo['null']),
-                gl.enableVertexAttribArray(program[tList[i]] = gl.getAttribLocation(program, tList[i])),
-                gl.vertexAttribPointer(program[tList[i]], gpu.vbo['null'].stride, gl.FLOAT, false, 0, 0),
-                gl.bindBuffer(gl.ARRAY_BUFFER, null);
-            }
-            tList = vSource.uniforms,
-            i = tList.length;
-            while (i--) {
-                if(tList[i].indexOf('[')>-1) {
-                    var t = tList[i].split('[')
-                    program[t[0]] = gl.getUniformLocation(program, t[0]);
-                }else{
-                    program[tList[i]] = gl.getUniformLocation(program, tList[i]);
+            tList = vSource.attribute;
+            if(tList){
+                len = tList.length;
+                for (i = 0; i < len; i++) {
+                    key = tList[i].split(' ')[1],
+                    gl.bindBuffer(gl.ARRAY_BUFFER, gpu.vbo['null']),
+                    gl.enableVertexAttribArray(program[key] = gl.getAttribLocation(program, key)),
+                    gl.vertexAttribPointer(program[key], gpu.vbo['null'].stride, gl.FLOAT, false, 0, 0),
+                    gl.bindBuffer(gl.ARRAY_BUFFER, null);
                 }
             }
-            tList = fSource.uniforms,
-            i = tList.length;
-            while (i--) {
-                if(tList[i].indexOf('[')>-1) {
-                    var t = tList[i].split('[')
-                    program[t[0]] = gl.getUniformLocation(program, t[0]);
-                }else{
-                    program[tList[i]] = gl.getUniformLocation(program, tList[i]);
+            tList = vSource.uniform;
+            if(tList){
+                i = tList.length;
+                while (i--) {
+                    key = tList[i].split(' ')[1];
+                    if(key.indexOf('[')>-1) {
+                        var t = key.split('[')
+                        program[t[0]] = gl.getUniformLocation(program, t[0]);
+                    }else{
+                        program[key] = gl.getUniformLocation(program, key);
+                    }
                 }
             }
-
+            tList = fSource.uniform;
+            if(tList){
+                i = tList.length;
+                while (i--) {
+                    key = tList[i].split(' ')[1];
+                    if(tList[i].indexOf('[')>-1) {
+                        var t = key.split('[')
+                        program[t[0]] = gl.getUniformLocation(program, t[0]);
+                    }else{
+                        program[key] = gl.getUniformLocation(program, key);
+                    }
+                }
+            }
             if(!gl.getProgramParameter(program, gl.LINK_STATUS)) {
                 // MoGL error를 사용할 수 없을까.
                 alert(gl.getShaderInfoLog(vShader));
@@ -209,52 +215,25 @@ var makeUtil = (function(){
                 };
             }
         },
-        vertexShaderParser: function vertexShaderParser(source) {
-            var i, temp, str, resultObject, code;
-            code = source.code,
-            resultObject = {
-                uniforms: [],
-                attributes: [],
-                id: code.id,
-                shaderStr: null,
-                uniformArrays : []
-            },
-            str = "",
-            temp = code.attributes,
-            i = temp.length;
-            while (i--) {
-                str += 'attribute ' + temp[i] + ';\n',
-                resultObject.attributes.push(temp[i].split(' ')[1]);
-            }
-            temp = code.uniforms,
-            i = temp.length;
-            while (i--) {
-                //if(temp[i].indexOf('[')>-1){
-                //    str += 'uniform ' + temp[i].split('[')[0] + ';\n'
-                //    var t = temp[i].split('[')[0]
-                //    console.log(t)
-                //    resultObject.uniforms.push(t.split(' ')[1]);
-                //}else{
-                //    str += 'uniform ' + temp[i] + ';\n'
-                //    resultObject.uniforms.push(temp[i].split(' ')[1]);
-                //}
-                str += 'uniform ' + temp[i] + ';\n'
-                resultObject.uniforms.push(temp[i].split(' ')[1]);
-            }
-
-
-            temp = code.varyings,
-            i = temp.length;
-            while (i--) {
-                str += 'varying ' + temp[i] + ';\n';
-            }
-            str += VertexShader.baseFunction,
-            str += 'void main(void){\n',
-            str += code.main + ';\n',
-            str += '}\n'
-            resultObject.shaderStr = str
-            return resultObject;
-        },
+        vertexShaderParser:(function(){
+            var cat = 'attribute,uniform,varying'.split(',');
+            return function vertexShaderParser(source) {
+                var i, j, temp, str, resultObject, code;
+                code = source.code,
+                resultObject = {id:code.id},
+                str = '', i = cat.length;
+                while (i--) {
+                    temp = code[cat[i]], j = temp.length,
+                    resultObject[cat[i]] = [];
+                    while (j--) {
+                        str += cat[i] + ' ' + temp[j] + ';\n',
+                        resultObject[cat[i]].push(temp[j]);
+                    }
+                }
+                resultObject.shaderStr = code.program;
+                return resultObject;
+            };
+        })(),
         fragmentShaderParser : function fragmentShaderParser(source) {
             var i, temp, str, resultObject, code;
             code = source.code,
@@ -270,21 +249,22 @@ var makeUtil = (function(){
             else {
                 str += 'precision mediump float;\n';
             }
-            temp = code.uniforms,
-            i = temp.length;
-            while (i--) {
-                str += 'uniform ' + temp[i] + ';\n',
-                resultObject.uniforms.push(temp[i].split(' ')[1]);
+            temp = code.uniforms;
+            if(temp){
+                i = temp.length;
+                while (i--) {
+                    str += 'uniform ' + temp[i] + ';\n',
+                    resultObject.uniforms.push(temp[i].split(' ')[1]);
+                }
             }
-            temp = code.varyings,
-            i = temp.length;
-            while (i--) {
-                str += 'varying ' + temp[i] + ';\n';
+            temp = code.varyings;
+            if(temp){
+                i = temp.length;
+                while (i--) {
+                    str += 'varying ' + temp[i] + ';\n';
+                }
             }
-            str += 'void main(void){\n',
-            str += code.main + ';\n',
-            str += '}\n'
-            resultObject.shaderStr = str
+            resultObject.shaderStr = code.program;
             return resultObject;
         }
     };

@@ -1,42 +1,46 @@
-var Point = (function () {
+var Path = (function () {
     'use strict';
     // var geometry, material, pointSize;
-    var pointsize;
+    var pathtype, typetable;
     
     // geometry = {},
     // material = {},
-    pointsize = {};
+    pathtype = {};
+    //typetable = {
+    //    "solid" : 3,
+    //    "dash" : 1,
+    //};
       
-    $setPrivate('Point', {
+    $setPrivate('Path', {
         // geometry : geometry,
         // material : material,
-        pointsize : pointsize
+        pathtype : pathtype,
+        //typetable : typetable,
     });
     // return Matrix.extend('Point',{
-    return Mesh.extend('Point',{
-        description:"점을 이루는 Mesh",
+    return Mesh.extend('Path',{
+        description:"선을 이루는 Mesh",
         param:[
+
         ],
         sample:[
-            "var pt1 = new Point(geometry, material);",
+            "var path = new Path(geometry, material);",
             "//팩토리함수로도 사용가능",
-            "var pt5 = Point(geometry, material);"
+            "var path2 = Path(geometry, material);"
         ],
-        value:function Point(geometry, material) {
-            // this.geometry = geometry;
-            // this.material = material;
-            pointsize[this] = 1;
+        value:function Path(geometry, material) {
+            pathtype[this] = 2;
         }
     })
-    .field('pointsize', {
-        description: "점의 크기",
+    .field('pathtype', {
+        description: "선의 종류",
         sample: [
-            '// 미구현상태임'
+            '// dash, solid'
         ],
-        defaultValue: 1,
-        get:$getter(pointsize),
-        set:function pointsizeSet(v) {
-            pointsize[this] = v;
+        defaultValue: 2,
+        get:$getter(pathtype),
+        set:function pathTypeSet(v) {
+            pathtype[this] = v;
         }
     })
     // .field('geometry', {

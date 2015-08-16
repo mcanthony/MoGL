@@ -78,28 +78,37 @@ var init = function(isLoaded, imgs){
     );
     bs('#preloader').S(null);
 	world.setAutoSize(1).start();
-    var mesh1 = Mesh(Primitive.cube(), Material('#f00000').setProperties({shading:Shading.phong}));
-    var mesh2 = Mesh(Primitive.cube(), Material('#00f000').setProperties({shading:Shading.phong}));
-    mesh1.setProperties({useMatrix:true, x:-1});
-    mesh2.setProperties({useMatrix:true, x:1});
+    var mesh1 = Mesh(Primitive.cube(), Material('#ff0').setProperties({shading:Shading.phong}).addTexture(Texture.diffuse, Texture(bs.IMG.crop(imgs[0], 0, 0, 200, 160, true))));
+    var mesh2 = Mesh(Primitive.cube(), Material('#00f').setProperties({shading:Shading.phong}).addTexture(Texture.diffuse, Texture(bs.IMG.crop(imgs[0], 0, 0, 200, 160, true))));
+    mesh1.setProperties({useMatrix:true});
+    mesh2.setProperties({useMatrix:true});
     scene.addChild(mesh1).addChild(mesh2);
     
     
     var mat1 = Matrix(), mat2 = Matrix();
     mat1.x = -1, mat2.x = 1;
-    var group = Matrix(), temp = Matrix(), r = 0;
+    mat1.matCurrent(), mat2.matCurrent();
+    
+    var group = Matrix();
+    
+    
+    
     world.addEventListener(World.renderBefore, function (fps, time, totalVertex, totalObject) {
-        mesh1.matRotateY(.01).matRotateX(.01);
-        mesh2.matRotateY(-.01).matRotateX(-.01);
-        return;
-        group.matRotateY(.01);
-        r += .01;
-        temp.matCopyFrom(group);
-        temp.matMultiply(mat1);
-        mesh1.matCopyFrom(mat1);
-        temp.matCopyFrom(group);
-        temp.matMultiply(mat2);
-        mesh2.matCopyFrom(mat2);
+        //mesh1.matRotateY(.01).matRotateX(.01);
+        //mesh2.matRotateY(-.01).matRotateX(-.01);
+        //return;
+/*        
+        mat1.matRotateY(.01).matRotateX(.01);
+        mat2.matRotateY(-.01).matRotateX(-.01);
+        group.matRotateY(.01).matRotateZ(.01); 
+*/
+///*
+        mat1.matRotate(1, 1, 0)
+        mat2.matRotate(-1, -1, 0)
+        group.matRotate(0, 1, 1)
+//*/      
+        mesh1.matCopyFrom(group.matMultiply(mat1, 1));
+        mesh2.matCopyFrom(group.matMultiply(mat2, 1));
     });
     return;
     (function(){
