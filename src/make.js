@@ -91,7 +91,7 @@ var makeUtil = (function(){
                 ], 2),
                 makeUtil.makeIBO(gpu, '_FRAMERECT_', [0, 1, 2, 1, 2, 3], 1);
             }
-            var gl, vShader, fShader, program, i, len, tList;
+            var gl, vShader, fShader, program, i, len, tList, key;
             gl = gpu.gl,
             vShader = gl.createShader(gl.VERTEX_SHADER),
             fShader = gl.createShader(gl.FRAGMENT_SHADER),
@@ -112,9 +112,10 @@ var makeUtil = (function(){
             if(tList){
                 len = tList.length;
                 for (i = 0; i < len; i++) {
+                    key = tList[i].split(' ')[1],
                     gl.bindBuffer(gl.ARRAY_BUFFER, gpu.vbo['null']),
-                    gl.enableVertexAttribArray(program[tList[i]] = gl.getAttribLocation(program, tList[i])),
-                    gl.vertexAttribPointer(program[tList[i]], gpu.vbo['null'].stride, gl.FLOAT, false, 0, 0),
+                    gl.enableVertexAttribArray(program[key] = gl.getAttribLocation(program, key)),
+                    gl.vertexAttribPointer(program[key], gpu.vbo['null'].stride, gl.FLOAT, false, 0, 0),
                     gl.bindBuffer(gl.ARRAY_BUFFER, null);
                 }
             }
@@ -122,11 +123,12 @@ var makeUtil = (function(){
             if(tList){
                 i = tList.length;
                 while (i--) {
-                    if(tList[i].indexOf('[')>-1) {
-                        var t = tList[i].split('[')
+                    key = tList[i].split(' ')[1];
+                    if(key.indexOf('[')>-1) {
+                        var t = key.split('[')
                         program[t[0]] = gl.getUniformLocation(program, t[0]);
                     }else{
-                        program[tList[i]] = gl.getUniformLocation(program, tList[i]);
+                        program[key] = gl.getUniformLocation(program, key);
                     }
                 }
             }
@@ -134,11 +136,12 @@ var makeUtil = (function(){
             if(tList){
                 i = tList.length;
                 while (i--) {
+                    key = tList[i].split(' ')[1];
                     if(tList[i].indexOf('[')>-1) {
-                        var t = tList[i].split('[')
+                        var t = key.split('[')
                         program[t[0]] = gl.getUniformLocation(program, t[0]);
                     }else{
-                        program[tList[i]] = gl.getUniformLocation(program, tList[i]);
+                        program[key] = gl.getUniformLocation(program, key);
                     }
                 }
             }
