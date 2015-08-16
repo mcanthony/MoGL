@@ -228,11 +228,11 @@ var makeUtil = (function(){
                         resultObject[cat[i]].push(temp[j].split(' ')[1]);
                     }
                 }
-                resultObject.shaderStr = str + VertexShader.baseFunction + 
-                    'void main(void){\n' + 
+                resultObject.shaderStr = str + 
+                    // 'void main(void){\n' + 
                         // code.main.join('\n') + 
-                        code.program + '\n' +
-                    '\n}';
+                        code.program + '\n';
+                    // '\n}';
                 return resultObject;
             };
         })(),
