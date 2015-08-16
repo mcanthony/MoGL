@@ -261,10 +261,7 @@ var makeUtil = (function(){
                     str += 'varying ' + temp[i] + ';\n';
                 }
             }
-            str += 'void main(void){\n',
-            str += code.main + ';\n',
-            str += '}\n'
-            resultObject.shaderStr = str
+            resultObject.shaderStr = code.program;
             return resultObject;
         }
     };
