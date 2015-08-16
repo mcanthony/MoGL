@@ -42,8 +42,9 @@ var Shader = (function () {
                 }
                 code[this] = result = {id:v.id}, i = vars.length;
                 while (i--) {
-                    result[vars[i]] = info = [],
-                    temp = v[vars[i]], j = temp.length;
+                    result[vars[i]] = info = [];
+                    if(temp = v[vars[i]]) j = temp.length;
+                    else continue;
                     while (j--) {
                         str += vars[i] + ' ' + temp[j] + ';\n',
                         info[info.length] = temp[j].split(' ')[1];
