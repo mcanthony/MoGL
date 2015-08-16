@@ -218,7 +218,7 @@ var makeUtil = (function(){
                 var i, j, temp, str, resultObject, code;
                 code = source.code,
                 resultObject = {id:code.id},
-                str = "", i = cat.length;
+                str = '', i = cat.length;
                 while (i--) {
                     temp = code[cat[i]], j = temp.length,
                     resultObject[cat[i]] = [];
@@ -227,11 +227,7 @@ var makeUtil = (function(){
                         resultObject[cat[i]].push(temp[j]);
                     }
                 }
-                resultObject.shaderStr = str + 
-                    // 'void main(void){\n' + 
-                        // code.main.join('\n') + 
-                        code.program + '\n';
-                    // '\n}';
+                resultObject.shaderStr = code.program;
                 return resultObject;
             };
         })(),

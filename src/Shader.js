@@ -47,7 +47,7 @@ var Shader = (function () {
                     else continue;
                     while (j--) {
                         str += vars[i] + ' ' + temp[j] + ';\n',
-                        info[info.length] = temp[j].split(' ')[1];
+                        info[info.length] = temp[j];
                     }
                 }
                 result.program = str + f + 
