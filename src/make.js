@@ -107,38 +107,42 @@ var makeUtil = (function(){
             vShader.name = vSource.id,
             fShader.name = fSource.id,
             program.name = name;
-
-
             gl.useProgram(program),
-            tList = vSource.attributes,
-            len = tList.length;
-            for (i = 0; i < len; i++) {
-                gl.bindBuffer(gl.ARRAY_BUFFER, gpu.vbo['null']),
-                gl.enableVertexAttribArray(program[tList[i]] = gl.getAttribLocation(program, tList[i])),
-                gl.vertexAttribPointer(program[tList[i]], gpu.vbo['null'].stride, gl.FLOAT, false, 0, 0),
-                gl.bindBuffer(gl.ARRAY_BUFFER, null);
-            }
-            tList = vSource.uniforms,
-            i = tList.length;
-            while (i--) {
-                if(tList[i].indexOf('[')>-1) {
-                    var t = tList[i].split('[')
-                    program[t[0]] = gl.getUniformLocation(program, t[0]);
-                }else{
-                    program[tList[i]] = gl.getUniformLocation(program, tList[i]);
-                }
-            }
-            tList = fSource.uniforms,
-            i = tList.length;
-            while (i--) {
-                if(tList[i].indexOf('[')>-1) {
-                    var t = tList[i].split('[')
-                    program[t[0]] = gl.getUniformLocation(program, t[0]);
-                }else{
-                    program[tList[i]] = gl.getUniformLocation(program, tList[i]);
-                }
-            }
+            tList = vSource.attributes;
 
+            if(tList){
+                len = tList.length;
+                for (i = 0; i < len; i++) {
+                    gl.bindBuffer(gl.ARRAY_BUFFER, gpu.vbo['null']),
+                    gl.enableVertexAttribArray(program[tList[i]] = gl.getAttribLocation(program, tList[i])),
+                    gl.vertexAttribPointer(program[tList[i]], gpu.vbo['null'].stride, gl.FLOAT, false, 0, 0),
+                    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+                }
+            }
+            tList = vSource.uniforms;
+            if(tList){
+                i = tList.length;
+                while (i--) {
+                    if(tList[i].indexOf('[')>-1) {
+                        var t = tList[i].split('[')
+                        program[t[0]] = gl.getUniformLocation(program, t[0]);
+                    }else{
+                        program[tList[i]] = gl.getUniformLocation(program, tList[i]);
+                    }
+                }
+            }
+            tList = fSource.uniforms;
+            if(tList){
+                i = tList.length;
+                while (i--) {
+                    if(tList[i].indexOf('[')>-1) {
+                        var t = tList[i].split('[')
+                        program[t[0]] = gl.getUniformLocation(program, t[0]);
+                    }else{
+                        program[tList[i]] = gl.getUniformLocation(program, tList[i]);
+                    }
+                }
+            }
             if(!gl.getProgramParameter(program, gl.LINK_STATUS)) {
                 // MoGL error를 사용할 수 없을까.
                 alert(gl.getShaderInfoLog(vShader));
@@ -224,7 +228,6 @@ var makeUtil = (function(){
                         resultObject[cat[i]].push(temp[j].split(' ')[1]);
                     }
                 }
-                console.log(code);
                 resultObject.shaderStr = str + VertexShader.baseFunction + 
                     'void main(void){\n' + 
                         // code.main.join('\n') + 
@@ -248,16 +251,20 @@ var makeUtil = (function(){
             else {
                 str += 'precision mediump float;\n';
             }
-            temp = code.uniforms,
-            i = temp.length;
-            while (i--) {
-                str += 'uniform ' + temp[i] + ';\n',
-                resultObject.uniforms.push(temp[i].split(' ')[1]);
+            temp = code.uniforms;
+            if(temp){
+                i = temp.length;
+                while (i--) {
+                    str += 'uniform ' + temp[i] + ';\n',
+                    resultObject.uniforms.push(temp[i].split(' ')[1]);
+                }
             }
-            temp = code.varyings,
-            i = temp.length;
-            while (i--) {
-                str += 'varying ' + temp[i] + ';\n';
+            temp = code.varyings;
+            if(temp){
+                i = temp.length;
+                while (i--) {
+                    str += 'varying ' + temp[i] + ';\n';
+                }
             }
             str += 'void main(void){\n',
             str += code.main + ';\n',
