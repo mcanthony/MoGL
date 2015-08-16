@@ -81,13 +81,13 @@ var Shader = (function () {
             return function () {
                 return cache || (cache = Shader(Shader.vertex, {
                     id:'BaseVertexShader',
-                    attributes:[
+                    attribute:[
                         'vec3 aPosition',
                         'vec4 aColor',
                         'vec2 aUV',
                         'vec3 aNormal'
                     ],
-                    uniforms:[
+                    uniform:[
                         'mat4 uPixel',
                         'mat4 uCamera',
                         /*
@@ -106,7 +106,7 @@ var Shader = (function () {
                         */
                         'float uMesh[30]'
                     ],
-                    varyings:[
+                    varying:[
                         'vec2 vUV',
                         'vec3 vNormal',
                         'vec3 vPosition',
@@ -162,7 +162,7 @@ var Shader = (function () {
                 return cache || (cache = new Shader(Shader.fragment, {
                     id:'BaseFragmentShader',
                     precision:'lowp float',
-                    varyings:[
+                    varying:[
                         'vec2 vUV',
                         'vec3 vNormal',
                         'vec3 vPosition',
@@ -170,7 +170,7 @@ var Shader = (function () {
                         'float vMode',
                         'float vIsCancel'
                     ],
-                    uniforms:[
+                    uniform:[
                         'sampler2D uDiffuse',
                         'sampler2D uNormal',
                         'sampler2D uSpecular',
@@ -330,22 +330,22 @@ var Shader = (function () {
                 var cache;
                 return function () {
                     return cache || (cache = new Shader(Shader.vertex, {
-                            id: 'colorVertexShader',
-                            attributes: ['vec3 aVertexPosition'],
-                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'float uVS[30]', 'vec4 uColor'],
-                            varyings: ['vec4 vColor'],
-                            function: [VertexShader.baseFunction],
-                            main: [
-                                'mat4 mv;\n' +
-                                'if( uVS[16] == 1.0 ){\n'+
-                                    'mv = uCameraMatrix * mat4(uVS[0],uVS[1],uVS[2],uVS[3],uVS[4],uVS[5],uVS[6],uVS[7],uVS[8],uVS[9],uVS[10],uVS[11],uVS[12],uVS[13],uVS[14],uVS[15]);\n'+
-                                '} else {\n' +
-                                    'mv = uCameraMatrix * positionMTX( vec3(uVS[0], uVS[1], uVS[2]) )*quaternionXYZ( vec3(uVS[3], uVS[4], uVS[5]) )*scaleMTX( vec3(uVS[6], uVS[7], uVS[8]) );\n'+
-                                '}\n'+
-                                'gl_Position = uPixelMatrix * mv * vec4(aVertexPosition, 1.0);\n' +
-                                'vColor = uColor;'
-                            ]
-                        }))
+                        id: 'colorVertexShader',
+                        attribute: ['vec3 aVertexPosition'],
+                        uniform: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'float uVS[30]', 'vec4 uColor'],
+                        varying: ['vec4 vColor'],
+                        function: [VertexShader.baseFunction],
+                        main: [
+                            'mat4 mv;\n' +
+                            'if( uVS[16] == 1.0 ){\n'+
+                                'mv = uCameraMatrix * mat4(uVS[0],uVS[1],uVS[2],uVS[3],uVS[4],uVS[5],uVS[6],uVS[7],uVS[8],uVS[9],uVS[10],uVS[11],uVS[12],uVS[13],uVS[14],uVS[15]);\n'+
+                            '} else {\n' +
+                                'mv = uCameraMatrix * positionMTX( vec3(uVS[0], uVS[1], uVS[2]) )*quaternionXYZ( vec3(uVS[3], uVS[4], uVS[5]) )*scaleMTX( vec3(uVS[6], uVS[7], uVS[8]) );\n'+
+                            '}\n'+
+                            'gl_Position = uPixelMatrix * mv * vec4(aVertexPosition, 1.0);\n' +
+                            'vColor = uColor;'
+                        ]
+                    }))
                 }
             })()
         })
@@ -360,9 +360,9 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader(Shader.vertex, {
                             id: 'wireFrameVertexShader',
-                            attributes: ['vec3 aVertexPosition'],
-                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'float uVS[30]', 'vec4 uColor'],
-                            varyings: ['vec4 vColor'],
+                            attribute: ['vec3 aVertexPosition'],
+                            uniform: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'float uVS[30]', 'vec4 uColor'],
+                            varying: ['vec4 vColor'],
                             function: [VertexShader.baseFunction],
                             main: [
                                 'mat4 mv;\n' +
@@ -388,12 +388,12 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader(Shader.vertex, {
                             id: 'bitmapVertexShader',
-                            attributes: ['vec3 aVertexPosition', 'vec2 aUV'],
-                            uniforms: [
+                            attribute: ['vec3 aVertexPosition', 'vec2 aUV'],
+                            uniform: [
                                 'mat4 uPixelMatrix', 'mat4 uCameraMatrix',
                                 'float uVS[30]'
                             ],
-                            varyings: ['vec2 vUV'],
+                            varying: ['vec2 vUV'],
                             function: [VertexShader.baseFunction],
                             main: [
                                 'mat4 mv;\n' +
@@ -419,9 +419,9 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader(Shader.vertex, {
                             id: 'colorVertexShaderGouraud',
-                            attributes: ['vec3 aVertexPosition', 'vec3 aVertexNormal'],
-                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uDLite', 'float uLambert', 'float uVS[30]', 'vec4 uColor'],
-                            varyings: ['vec4 vColor'],
+                            attribute: ['vec3 aVertexPosition', 'vec3 aVertexNormal'],
+                            uniform: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uDLite', 'float uLambert', 'float uVS[30]', 'vec4 uColor'],
+                            varying: ['vec4 vColor'],
                             function: [VertexShader.baseFunction],
                             main: [
                                 'mat4 mv;\n' +
@@ -450,9 +450,9 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader(Shader.vertex, {
                             id: 'bitmapVertexShaderGouraud',
-                            attributes: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
-                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uDLite', 'float uLambert', 'float uVS[30]'],
-                            varyings: ['vec2 vUV', 'vec4 vLight'],
+                            attribute: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
+                            uniform: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uDLite', 'float uLambert', 'float uVS[30]'],
+                            varying: ['vec2 vUV', 'vec4 vLight'],
                             function: [VertexShader.baseFunction],
                             main: [
                                 'mat4 mv;\n' +
@@ -482,9 +482,9 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader(Shader.vertex, {
                             id: 'colorVertexShaderPhong',
-                            attributes: ['vec3 aVertexPosition', 'vec3 aVertexNormal'],
-                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'float uVS[30]'],
-                            varyings: ['vec3 vNormal', 'vec3 vPosition'],
+                            attribute: ['vec3 aVertexPosition', 'vec3 aVertexNormal'],
+                            uniform: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'float uVS[30]'],
+                            varying: ['vec3 vNormal', 'vec3 vPosition'],
                             function: [VertexShader.baseFunction],
                             main: ['' +
                             'mat4 mv = uCameraMatrix* positionMTX( vec3(uVS[0], uVS[1], uVS[2]) ) * quaternionXYZ( vec3(uVS[3], uVS[4], uVS[5]) ) * scaleMTX( vec3(uVS[6], uVS[7], uVS[8]) ) ;\n' +
@@ -507,9 +507,9 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader(Shader.vertex, {
                             id: 'toonVertexShaderPhong',
-                            attributes: ['vec3 aVertexPosition', 'vec3 aVertexNormal'],
-                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'float uVS[30]', 'vec4 uColor'],
-                            varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec4 vColor'],
+                            attribute: ['vec3 aVertexPosition', 'vec3 aVertexNormal'],
+                            uniform: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'float uVS[30]', 'vec4 uColor'],
+                            varying: ['vec3 vNormal', 'vec3 vPosition', 'vec4 vColor'],
                             function: [VertexShader.baseFunction],
                             main: [
                                 'mat4 mv;\n' +
@@ -539,8 +539,8 @@ var Shader = (function () {
                     return cache || (cache = new Shader(Shader.fragment, {
                             id: 'mouseFragmentShader',
                             precision: 'lowp float',
-                            uniforms: [],
-                            varyings: ['vec4 vColor'],
+                            uniform: [],
+                            varying: ['vec4 vColor'],
                             function: [],
                             main: [
                                 'gl_FragColor =  vColor;'
@@ -560,8 +560,8 @@ var Shader = (function () {
                     return cache || (cache = new Shader(Shader.fragment, {
                             id: 'colorFragmentShader',
                             precision: 'lowp float',
-                            uniforms: [],
-                            varyings: ['vec4 vColor'],
+                            uniform: [],
+                            varying: ['vec4 vColor'],
                             function: [],
                             main: [
                                 'gl_FragColor =  vColor;'
@@ -581,8 +581,8 @@ var Shader = (function () {
                     return cache || (cache = new Shader(Shader.fragment, {
                             id: 'wireFrameFragmentShader',
                             precision: 'lowp float',
-                            uniforms: [],
-                            varyings: ['vec4 vColor'],
+                            uniform: [],
+                            varying: ['vec4 vColor'],
                             function: [],
                             main: [
                                 'gl_FragColor =  vColor;'
@@ -602,8 +602,8 @@ var Shader = (function () {
                     return cache || (cache = new Shader(Shader.fragment, {
                             id: 'bitmapFragmentShader',
                             precision: 'lowp float',
-                            uniforms: ['sampler2D uSampler'],
-                            varyings: ['vec2 vUV'],
+                            uniform: ['sampler2D uSampler'],
+                            varying: ['vec2 vUV'],
                             function: [],
                             main: [
                                 'gl_FragColor =  texture2D(uSampler, vec2(vUV.s, vUV.t));\n'
@@ -623,8 +623,8 @@ var Shader = (function () {
                     return cache || (cache = new Shader(Shader.fragment, {
                             id: 'colorFragmentShaderGouraud',
                             precision: 'lowp float',
-                            uniforms: ['sampler2D uSampler'],
-                            varyings: ['vec4 vColor'],
+                            uniform: ['sampler2D uSampler'],
+                            varying: ['vec4 vColor'],
                             function: [],
                             main: [
                                 'gl_FragColor =  vColor;\n'
@@ -644,8 +644,8 @@ var Shader = (function () {
                     return cache || (cache = new Shader(Shader.fragment, {
                             id: 'bitmapFragmentShaderGouraud',
                             precision: 'lowp float',
-                            uniforms: ['sampler2D uSampler'],
-                            varyings: ['vec2 vUV', 'vec4 vLight'],
+                            uniform: ['sampler2D uSampler'],
+                            varying: ['vec2 vUV', 'vec4 vLight'],
                             function: [],
                             main: [
                                 'vec4 diffuse = texture2D(uSampler, vec2(vUV.s, vUV.t));\n' +
@@ -667,11 +667,11 @@ var Shader = (function () {
                     return cache || (cache = new Shader(Shader.fragment, {
                             id: 'colorFragmentShaderPhong',
                             precision: 'lowp float',
-                            uniforms: [
+                            uniform: [
                                 'vec3 uDLite',
                                 'float uFS[22]'
                             ],
-                            varyings: ['vec3 vNormal', 'vec3 vPosition'],
+                            varying: ['vec3 vNormal', 'vec3 vPosition'],
                             function: [],
                             main: [
                                 'if( uFS[4] == 1.0 ){\n' +
@@ -708,8 +708,8 @@ var Shader = (function () {
                     return cache || (cache = new Shader(Shader.fragment, {
                             id: 'toonFragmentShaderPhong',
                             precision: 'lowp float',
-                            uniforms: ['float uLambert', 'vec3 uDLite'],
-                            varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec4 vColor'],
+                            uniform: ['float uLambert', 'vec3 uDLite'],
+                            varying: ['vec3 vNormal', 'vec3 vPosition', 'vec4 vColor'],
                             function: [],
                             main: [
                                 'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
@@ -747,12 +747,12 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader(Shader.vertex, {
                             id: 'bitmapVertexShaderPhong',
-                            attributes: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
-                            uniforms: [
+                            attribute: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
+                            uniform: [
                                 'mat4 uPixelMatrix', 'mat4 uCameraMatrix',
                                 'float uVS[30]'
                             ],
-                            varyings: [
+                            varying: [
                                 'vec2 vUV', 'vec3 vNormal', 'vec3 vPosition','float isDiscard'
 
                             ],
@@ -825,14 +825,14 @@ var Shader = (function () {
                 return cache || (cache = new Shader(Shader.fragment, {
                         id: 'bitmapFragmentShaderPhong',
                         precision: 'lowp float',
-                        uniforms: [
+                        uniform: [
                             'sampler2D uSampler',
                             'sampler2D uNormalSampler',
                             'sampler2D uSpecularSampler',
                             'vec3 uDLite',
                             'float uFS[22]'
                         ],
-                        varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition' ,'float isDiscard'],
+                        varying: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition' ,'float isDiscard'],
                         function: [],
                         main: [
                             'if( uFS[9] == 0.0 || isDiscard >0.0  ) discard;\n' +
@@ -896,9 +896,9 @@ var Shader = (function () {
                 return function () {
                     return cache || (cache = new Shader(Shader.vertex, {
                             id: 'postBaseVertexShader',
-                            attributes: ['vec3 aVertexPosition', 'vec2 aUV'],
-                            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'float uVS[30]'],
-                            varyings: ['vec2 vUV'],
+                            attribute: ['vec3 aVertexPosition', 'vec2 aUV'],
+                            uniform: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'float uVS[30]'],
+                            varying: ['vec2 vUV'],
                             function: [VertexShader.baseFunction],
                             main: ['' +
                             'gl_Position = uPixelMatrix*uCameraMatrix* positionMTX( vec3(uVS[0], uVS[1], uVS[2]) ) * quaternionXYZ( vec3(uVS[3], uVS[4], uVS[5]) ) * scaleMTX( vec3(uVS[6], uVS[7], uVS[8]) ) *vec4(aVertexPosition, 1.0);\n' +
@@ -919,8 +919,8 @@ var Shader = (function () {
                     return cache || (cache = new Shader(Shader.fragment, {
                             id: 'postBaseFragmentShader',
                             precision: 'lowp float',
-                            uniforms: ['sampler2D uSampler', 'vec2 uTexelSize', 'int uFXAA'],
-                            varyings: ['vec2 vUV'],
+                            uniform: ['sampler2D uSampler', 'vec2 uTexelSize', 'int uFXAA'],
+                            varying: ['vec2 vUV'],
                             function: [],
                             main: ['' +
                             'if(uFXAA==1){\n' +
