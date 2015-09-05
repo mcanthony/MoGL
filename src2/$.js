@@ -32,7 +32,13 @@
 //defineProperty helper
 var $writable, $readonly, $getter, $setter;
 $writable = {value:true, writable:true},
-$readonly = {value:null},
+$readonly = (function(){
+    var o = {value:null};
+    return function(v){
+        o.value = v;
+        return o;
+    };
+})(),
 $getter = function(prop, key){
     var defaultValue = arguments.length == 3 ? arguments[2] : null;
     if (key) {

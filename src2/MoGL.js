@@ -86,7 +86,7 @@ var MoGL = (function() {//<--
         Object.freeze(this);
     },
     build = (function(){
-        var empty, wrap, method, prev, readonly, writable, isFactory, isSuperChain,
+        var empty, wrap, method, prev, isFactory, isSuperChain,
             inheritedStatic, md,
             uuid, allInstance, ids, classes;
         empty = function(){return '';},
@@ -96,7 +96,6 @@ var MoGL = (function() {//<--
         classes = {},
         isFactory = {factory:1},//enum for factory
         isSuperChain = {superChain:1},//enum for constructor chaining
-        readonly = {}, writable = {writable:true},
         prev = [], //error stack
         md = {//<--
             '*description':'Print markdown document for class',
@@ -310,11 +309,11 @@ var MoGL = (function() {//<--
             classes[this._construct.name] = {cls:cls, define:this};
             fn = parent ? Object.create(parent.prototype) : cls.prototype;
 
-            readonly.value = cls.uuid = 'uuid:' + (uuid++),
-            Object.defineProperty(fn, 'classId', readonly);
+            $readonly.value = cls.uuid = 'uuid:' + (uuid++),
+            Object.defineProperty(fn, 'classId', $readonly);
             
-            readonly.value = cls.className = this._construct.name,
-            Object.defineProperty(fn, 'className', readonly);
+            $readonly.value = cls.className = this._construct.name,
+            Object.defineProperty(fn, 'className', $readonly);
             
             k = inheritedStatic.length;
             while (k--) this.static(inheritedStatic[k]);
