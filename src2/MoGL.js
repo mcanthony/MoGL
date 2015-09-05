@@ -1,7 +1,7 @@
 var MoGL = (function() {//<--
     'use strict';//-->
     var Builder, build, checker,
-        MoGL, idProp, destroy, classGet, error,
+        MoGL, _MoGL, idProp, destroy, classGet, error,
         addInterval, removeInterval, resumeInterval, stopInterval, stopDelay, resumeDelay;
 
     //global interval manager
@@ -101,7 +101,7 @@ var MoGL = (function() {//<--
             '*description':'Print markdown document for class',
             '*return':'[#string] - Markdown document',//-->
             name:'md',
-			value:$md ? $md(classes) : empty
+			value:window['$md'] ? $md(classes) : empty
         },
         inheritedStatic = [
             {//<--
@@ -166,7 +166,7 @@ var MoGL = (function() {//<--
                 '*sample':[
                     "Mesh.share('listeners', {});",
                     "var listeners = Mesh.share('listeners');"
-                ]//-->
+                ],//-->
                 name:'share',
                 value:(function () {
                     var v = {};
@@ -245,7 +245,7 @@ var MoGL = (function() {//<--
         error = function error(id, msg) {
             throw new Error(this.className + '.' + method + ':' + id + (msg ? '-' + msg : ''));
         },
-        MoGL = function MoGL() {
+        _MoGL = function MoGL() {
             $readonly.value = 'uuid:' + (uuid++),
             Object.defineProperty(this, 'uuid', $readonly), //객체고유아이디
             allInstance[this.uuid] = this,
@@ -272,7 +272,7 @@ var MoGL = (function() {//<--
                         if (!unwrap) {
                             if (v.get) v.get = wrap(k + 'Get', v.get);
                             if (v.set) v.set = wrap(k + 'Set', v.set);
-                            if (v.value) = wrap(k, v.value),
+                            if (v.value) v.value = wrap(k, v.value);
                         }
                         Object.defineProperty(target, k, v);
                     }
@@ -333,13 +333,14 @@ var MoGL = (function() {//<--
         var keys = 'configurable,enumerable,writable,get,set,value'.split(','),
             val = function(type){
                 return {value:function(v, isdoc){
-                    var p, i;
+                    var p, k, i;
+                    k = v.name;
                     if (!isdoc) {
-                        this[type][v.name] = p = {},
+                        this[type][k] = p = {},
                         i = keys.length;
                         while (i--) if (keys[i] in v) p[keys[i]] = v[keys[i]];
                     }
-                    this._info[type][v.name] = v;
+                    this._info[type][k] = v;
                     if (!isdoc && 'value' in this[type][k]) this._info[type][k].value = this[type][k].value;
                     return this;
                 }};
@@ -356,13 +357,13 @@ var MoGL = (function() {//<--
     Object.freeze(Builder),
     Object.freeze(Builder.prototype),
     MoGL = (function(){
-        var MoGL, init, listener;
+        var MoGL, listener;
         listener = {},
-        init = new Builder({//<--
+        MoGL = new Builder({//<--
             '*description':'Base class of all MoGL classes',
             '*sample':"var instance = new MoGL();",//-->
             nama:'MoGL',
-            value:MoGL
+            value:_MoGL
         }, null, checker)
         .field(idProp)
         .field({//<--
@@ -401,7 +402,8 @@ var MoGL = (function() {//<--
             ],
             '*param':[
                 'id:[#int] - unique id of an error',
-                '?msg:[#string] - message of an error',
+                '?msg:[#string] - message of an error'
+            ],
             '*sample':[
                 "fn.action = function(a){",
                 "    if(!a) this.error(0);",
@@ -589,7 +591,7 @@ var MoGL = (function() {//<--
                 "//2 remove by function name",
                 "scene.removeEventListener(MoGL.propertyChanged, 'test');",
                 "//3 remove by event type",
-                "scene.removeEventListener(MoGL.propertyChanged);"
+                "scene.removeEventListener(MoGL.propertyChanged);",
                 "//4 remove all listeners",
                 "scene.removeEventListener();"
             ],//-->
@@ -643,7 +645,7 @@ var MoGL = (function() {//<--
             '*return':'[#string] - unique key',
             '*sample':[
                 "var loop = function(time){",
-                "  console.log('tick');"
+                "  console.log('tick');",
                 "};",
                 "//add and remove with a generated key",
                 "var id = MoGL.addInterval(loop);",
@@ -682,7 +684,7 @@ var MoGL = (function() {//<--
                 "MoGL.addInterval(loop);",
                 "MoGL.stopInterval();",
                 "MoGL.resumeInterval(1);"
-            ],-->
+            ],//-->
             'name':'resumeInterval',
             value:resumeInterval
         })
@@ -692,7 +694,7 @@ var MoGL = (function() {//<--
             '*sample':[
                 "MoGL.addInterval(loop);",
                 "MoGL.stopInterval(2);"
-            ],-->
+            ],//-->
             name:'stopInterval',
             value:stopInterval
         })
@@ -770,8 +772,8 @@ var MoGL = (function() {//<--
             ],//-->
             name:'propertyRepeated',
             value:'propertyRepeated'
-        });
-        MoGL = init.build(),
+        })
+        .build(),
         MoGL.share('listener', listener);
         return MoGL;
     })(),
