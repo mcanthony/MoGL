@@ -74,7 +74,7 @@ var MoGL = (function() {//<--
     checker = {},
     Builder = function(v, parent, check){
         var p, i;
-        if (check !== checker) throw new Error('Builder only called by extend');
+        if (check !== checker) throw new Error('Builder should be called only by extend()');
         this.parent = parent,
         this._construct = v,
         this._info = {_method:{},_static:{},_field:{},_constant:{},_event:{}},
@@ -106,7 +106,7 @@ var MoGL = (function() {//<--
         inheritedStatic = [
             {//<--
                 '*description':[
-                    'Get class Builder builds a inherited sub class of this class',
+                    'Get class Builder which builds an inherited subclass of this class',
                     '',
                     '**Methods of class Builder**',
                     '',
@@ -118,15 +118,15 @@ var MoGL = (function() {//<--
                     "* constant(meta) - define const",
                     "* event(meta) - define event",
                     "* static(meta) - define static method",
-                    "* build() - build class with meta datas",
+                    "* build() - build a class with meta data",
                     '',
                     '**Meta descriptor**',
                     '',
-                    "Object descriptor extended from property descriptor or accessor descriptor for Object.defineProperty describes a part of class(field,methods..)",
+                    "Object descriptor extended from property descriptor or accessor descriptor for Object.defineProperty which describes a part of class(field,methods..)",
                     "ex) meta = {'*name':'extend', '*description':['...'], ...}",
                     '',
                     "* '*description':[#string]|[#array] - description of target",
-                    "* '*param':[#string]|[#array] - parameter of method(orderd)",
+                    "* '*param':[#string]|[#array] - parameter of method(ordered)",
                     "* '*return':[#string]|[#array] - return value of method",
                     "* '*type':[#string] - type of field or const",
                     "* '*default':* - default value of field(field only)",
@@ -142,9 +142,9 @@ var MoGL = (function() {//<--
                 }
             },
             {//<--
-                '*description':'Get instance with uuid or id of instance',
+                '*description':'Get an instance with its uuid or id',
                 '*param':'uuid:[#string] - uuid or id of the instance',
-                '*return':'* - instance of class. return null if no founded',
+                '*return':'* - instance of a class. return null if not founded',
                 '*sample':"var instance = Mesh.getInstance(uuid);",//-->
                 name:'getInstance',
                 value:function getInstance(v) {
@@ -157,18 +157,18 @@ var MoGL = (function() {//<--
                 }
             },
             {//<--
-                '*description':'Get/Set share class storage vars',
+                '*description':'Getter or setter for variables which can be shared among the same class',
                 '*param':[
                     'key:[#string] - identified key',
-                    '?val:* - value for set. if skipped, may act get'
+                    '?val:* - value for the key. If omitted, this share function acts as a getter' // omw <- share가 사용자 입장에서는 그냥 함수이므로 class라 안하고 걍 function으로..
                 ],
-                '*return':'* - get/set value for key',
+                '*return':'* - get/set value for the key',
                 '*sample':[
                     "Mesh.share('listeners', {});",
                     "var listeners = Mesh.share('listeners');"
                 ]//-->
                 name:'share',
-                value:(function() {
+                value:(function () {
                     var v = {};
                     return function(key) {
                         var cls = this.uuid, t = v[cls] || (v[cls] = {});
@@ -180,9 +180,9 @@ var MoGL = (function() {//<--
                 })()
             },
             {//<--
-                '*description':'standard error processing in static method',
+                '*description':'Standard error handler for methods',
                 '*param':[
-                    'methodName:[#string] - static method name an exception occurred',
+                    'methodName:[#string] - name of the static method where an exception occurred',
                     'id:[#int] - exception unique id'
                 ],
                 '*sample':[
@@ -200,7 +200,7 @@ var MoGL = (function() {//<--
             ,md//-->
         ],
         idProp = {//<--
-            '*description':'user custom id. id is unique in same class. if set null, delete id',
+            '*description':'User defined custom id. The id is unique in the same class. If set null, the id will be deleted',
             '*type':'string',
             '*default':'null', 
             '*sample':[
@@ -359,14 +359,14 @@ var MoGL = (function() {//<--
         var MoGL, init, listener;
         listener = {},
         init = new Builder({//<--
-            '*description':'base class of all MoGL classes',
+            '*description':'Base class of all MoGL classes',
             '*sample':"var instance = new MoGL();",//-->
             nama:'MoGL',
             value:MoGL
         }, null, checker)
         .field(idProp)
         .field({//<--
-            '*description':'unique id of instance',
+            '*description':'Unique id of an instance',
             '*type':'string',
             '*sample':[
                 "var scene = new Scene();",
@@ -375,7 +375,7 @@ var MoGL = (function() {//<--
             name:'uuid'
         }, true)
         .field({//<--
-            '*description':'class name of instance',
+            '*description':'Class name of an instance',
             '*type':'string',
             '*sample':[
                 "var scene = new Scene();",
@@ -384,7 +384,7 @@ var MoGL = (function() {//<--
             name:'className'
         }, true)
         .field({//<--
-            '*description':'uuid of class',
+            '*description':'uuid of a class',
             '*type':'string',
             '*sample':[
                 "var scene = new Scene();",
@@ -394,14 +394,14 @@ var MoGL = (function() {//<--
         }, true)
         .method({//<--
             '*description':[
-                'standard error processing of MoGL',
+                'Standard error handler of MoGL',
                 '',
                 "* error printed - className + '.' + methodName + ':' + id",
-                '* use in class method'
+                '* used in class method'
             ],
             '*param':[
-                'id:[#int] - unique id of error',
-                '?msg:[#string] - message of error',
+                'id:[#int] - unique id of an error',
+                '?msg:[#string] - message of an error',
             '*sample':[
                 "fn.action = function(a){",
                 "    if(!a) this.error(0);",
@@ -410,7 +410,7 @@ var MoGL = (function() {//<--
             name:'error'
         }, true)
         .method({//<--
-            '*description':"all instance based on MoGL print 'uuid:XXX'(- same as this.uuid) when called toString",
+            '*description':"All instances based on MoGL can print 'uuid:XXX'(- same as this.uuid) when invoked as a toString() method",
             '*return':"[#string] - same value as this.uuid formatted 'uuid:XXX'",
             '*sample':[
                 "var mat = new Matrix();",
@@ -420,9 +420,9 @@ var MoGL = (function() {//<--
         }, true)
         .method({//<--
             '*description':[
-                'cleanup instance(listener, idcahce, instanceCache, isAlive)',
+                'Cleanup an instance(listener, idcahce, instanceCache, isAlive)',
                 '',
-                '* cannot use the instance after destroy'
+                '* cannot use the instance after destroying it'
             ],
             '*sample':[
                 "var city1 = Scene();",
@@ -433,18 +433,18 @@ var MoGL = (function() {//<--
         })
         .method({//<--
             '*description':[
-               'set properties use param object at once',
+               'Set properties at a time using param object ',
                '',
-                '* when call with second param(ani), process automaticaly interpolize animation'
+                '* when invoked with the second parameter, ani, it will automatically interpolate the animation according to the second parameter'
             ],
             '*param':[
-                'vo:[#object] - value object for setting',
-                '?ani:[#object] - value object for animation. only use below keys',
+                'vo:[#object] - value object for a setting',
+                '?ani:[#object] - value object for an animation. Keys below are only permitted',
                 '* "time":[#number] - animation time(second)',
                 '* "delay":[#number] - first delay time(second)',
-                '* "repeat":[#int] - loop count of animation. -1 is endless loop',
-                '* "yoyo":[#boolean] - when loop, switch start value to end value',
-                '* "ease":[#string] - interpolize function name(linear, backIn, backOut, backInOut, bounceOut, sineIn, sineOut, sineInOut, circleIn, circleOut, circleInOut, quadraticIn, quadraticOut)'
+                '* "repeat":[#int] - loop count of an animation. -1 is endless loop',
+                '* "yoyo":[#boolean] - when loop, switch start value with end value',
+                '* "ease":[#string] - interpolation function name(linear, backIn, backOut, backInOut, bounceOut, sineIn, sineOut, sineInOut, circleIn, circleOut, circleInOut, quadraticIn, quadraticOut)'
             ],
             '*return':'this',
             '*sample':[
@@ -452,7 +452,7 @@ var MoGL = (function() {//<--
                 "//set immediately",
                 "mat.setProperties({x:10, y:20, z:30});",
                 "",
-                "//run interpolize animation",
+                "//run interpolated animation",
                 "var vo = {x:0, y:0, z:0};",
                 "var ani = {time:1, delay:2, repeat:1, ease:'sineOut'};",
                 "mat.setProperties(vo, ani);"
@@ -533,12 +533,12 @@ var MoGL = (function() {//<--
             })()
         })
         .method({//<--
-            '*description':'add event listener',
+            '*description':'Add an event listener',
             '*param':[
                 'event:[#string] - event type name',
                 'listener:[#function] - event listener',
-                '?context:* - object mapping "this" in listener(default is the instance. false for ignore)',
-                '?...arg:* - added parameter for listener'
+                '?context:* - object mapping "this" in listener(default is the instance. false to ignore)',
+                '?...arg:* - added parameter for the event listener'
             ],
             '*return':'this',
             '*sample':[
@@ -572,10 +572,10 @@ var MoGL = (function() {//<--
             }
         })
         .method({//<--
-            '*description':'remove event listener',
+            '*description':'Remove an event listener',
             '*param':[
-                '?event:[#string] - event type name. if skipped, remove all event listener',
-                '?listener:[#string] | [#function] - target listener. if string, search by function name. if skipped, remove all listeners of event type'
+                '?event:[#string] - event type name. If skipped, remove all event listener',
+                '?listener:[#string] | [#function] - target listener. If string, the target listener will be searched by function name. If omitted, remove all listeners of that event type'
             ],
             '*return':'this',
             '*sample':[
@@ -609,7 +609,7 @@ var MoGL = (function() {//<--
             }
         })
         .method({//<--
-            '*description':'fire event for registed listeners(with additional arguments optionly.',
+            '*description':'Fire an event for registered listeners(with additional arguments optionally.',
             '*param':[
                 'event:[#string] - event type name',
                 '?...arg - additional arguments'
@@ -635,23 +635,23 @@ var MoGL = (function() {//<--
             }
         })
         .static({//<--
-            '*description':'add function at single interval managed MoGL',
+            '*description':'Add an interval function managed by MoGL',
             '*param':[
                 'target:[#function] - target listener',
-                '?key:[#string] - key for removing. if skipped, generate random key'
+                '?key:[#string] - key for the target listener. If omitted, a random key will be generated'
             ],
             '*return':'[#string] - unique key',
             '*sample':[
                 "var loop = function(time){",
                 "  console.log('tick');"
                 "};",
-                "//remove with generated key",
+                "//add and remove with a generated key",
                 "var id = MoGL.addInterval(loop);",
                 "MoGL.removeInterval(id);",
-                "//remove with declared key",
+                "//add and remove with a declared key",
                 "MoGL.addInterval(loop, 'test');",
                 "MoGL.removeInterval('test');",
-                "//remove with function ref",
+                "//add and remove with a function reference",
                 "MoGL.addInterval(loop);",
                 "MoGL.removeInterval(loop);"
             ],//-->
@@ -659,23 +659,24 @@ var MoGL = (function() {//<--
             value:addInterval
         })
         .static({//<--
-            '*description':'remove function at single interval managed MoGL',
+            '*description':'Remove an interval function managed MoGL',
             '*param':'target:[#function] | [#string] - target function or id or function name',
             '*sample':[
                 "var loop = function test(time){};",
+                "//add with an id",
                 "var id = MoGL.addInterval(loop);",
-                "//remove with id",
+                "//remove with an id",
                 "MoGL.removeInterval(id);",
-                "//remove with function ref",
+                "//remove with a function reference",
                 "MoGL.removeInterval(loop);",
-                "//remove with function name",
+                "//remove with a function name",
                 "MoGL.removeInterval('test');"
             ],//-->
             name:'removeInterval',
             value:removeInterval
         })
         .static({//<--
-            '*description':'revive interval stoped by MoGL.stopInterval.',
+            '*description':'Resume an interval stopped by MoGL.stopInterval().',
             '*param':'?delay:[#number] - optional delay time(secone)',
             '*sample':[
                 "MoGL.addInterval(loop);",
@@ -686,8 +687,8 @@ var MoGL = (function() {//<--
             value:resumeInterval
         })
         .static({//<--
-            '*description':'stop interval',
-            '*param':'?delay:[#number] - optional delay time(secone)',
+            '*description':'Stop an interval',
+            '*param':'?delay:[#number] - optional delay time(second)',
             '*sample':[
                 "MoGL.addInterval(loop);",
                 "MoGL.stopInterval(2);"
@@ -697,19 +698,19 @@ var MoGL = (function() {//<--
         })
         .static({//<--
             '*description':[
-                'copy all sub classes of MoGL to target object',
+                'Copy all subclasses of MoGL to a target object',
                 '',
-                '* default namespace is unconvience like "new MoGL.Mesh()"',
-                '* after classes copy, code may be like "new Mesh()"'
+                '* default namespace such as "new MoGL.Mesh() is inconvenient "',
+                '* after copying classes, it is easier to write the code, for example, the code can be like "new Mesh()"'
             ],
-            '*param':'?context:[#object] - object to copy classes. if skipped, use new object',
-            '*return':'[#object] - object passed as arguments or new object if skipped',
+            '*param':'?context:[#object] - object to copy classes. if omitted, a new object will be used',
+            '*return':'[#object] - object passed as arguments or new object if omitted',
             '*sample':[
-                "//copy to target object",
+                "//copy to a target object",
                 "var $ = MoGL.classes();",
                 "var scene = new $.Scene();",
                 "",
-                "//copy to global",
+                "//copy to the global object",
                 "MoGL.classes(window);",
                 "var scene = new Scene();"
             ],//-->
@@ -718,7 +719,7 @@ var MoGL = (function() {//<--
         })
         .event({//<--
             '*description':[
-                '* when - event listener added or removed',
+                '* fired when - an event listener is added or removed',
                 '* listener - function(MoGL.eventChanged, changedEventListenerCount)',
                 '    1. MoGL.eventChanged - changed event name',
                 '    2. changedEventListenerCount:[#int] - count of listener in MoGL.eventChanged',
@@ -738,7 +739,7 @@ var MoGL = (function() {//<--
         })
         .event({//<--
             '*description':[
-                '* when - completed setProperties',
+                '* fired when - setting properties is completed',
                 '    *. if animation case, occur after the animation ends',
                 '* listener - function()'
             ],
@@ -755,7 +756,7 @@ var MoGL = (function() {//<--
         })
         .event({//<--
             '*description':[
-                '* when - each animation repeated',
+                '* fired when - each animation is repeated',
                 '* listener - function()'
             ],
             '*type':'string',
