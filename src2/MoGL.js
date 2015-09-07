@@ -110,7 +110,7 @@ var MoGL = (function() {//<--
                     '',
                     '**Methods of class Builder**',
                     '',
-                    'All methods are chaining method',
+                    'All methods are chaining method\n',
                     "ex) Matrix = MoGL.extend(meta).static(...).field(...).method(...)....build();",
                     '',
                     "* field(meta) - define property",
@@ -123,7 +123,7 @@ var MoGL = (function() {//<--
                     '**Meta descriptor**',
                     '',
                     "Object descriptor extended from property descriptor or accessor descriptor for Object.defineProperty which describes a part of class(field,methods..)",
-                    "ex) meta = {'*name':'extend', '*description':['...'], ...}",
+                    "\nex) meta = {'*name':'extend', '*description':['...'], ...}",
                     '',
                     "* '*description':[#string]|[#array] - description of target",
                     "* '*param':[#string]|[#array] - parameter of method(ordered)",
@@ -362,7 +362,7 @@ var MoGL = (function() {//<--
         MoGL = new Builder({//<--
             '*description':'Base class of all MoGL classes',
             '*sample':"var instance = new MoGL();",//-->
-            nama:'MoGL',
+            name:'MoGL',
             value:_MoGL
         }, null, checker)
         .field(idProp)
