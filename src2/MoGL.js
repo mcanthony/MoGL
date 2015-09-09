@@ -1,7 +1,7 @@
 var MoGL = (function() {//<--
     'use strict';//-->
     var Builder, build, checker,
-        MoGL, _MoGL, idProp, destroy, classGet, error,
+        MoGL, _MoGL, idProp, destroy, classGet, error, invoker,
         addInterval, removeInterval, resumeInterval, stopInterval, stopDelay, resumeDelay;
 
     //global interval manager
@@ -86,7 +86,9 @@ var MoGL = (function() {//<--
         Object.freeze(this);
     },
     build = (function(){
-        var empty, wrap, method, prev, isFactory, isSuperChain,
+        var empty, wrap, method, prev,
+            isInvoke,
+            isFactory, isSuperChain,//enum
             inheritedStatic, md,
             uuid, allInstance, ids, classes;
         empty = function(){return '';},
@@ -247,18 +249,70 @@ var MoGL = (function() {//<--
         },
         _MoGL = function MoGL() {
             $readonly.value = 'uuid:' + (uuid++),
-            Object.defineProperty(this, 'uuid', $readonly), //객체고유아이디
+            Object.defineProperty(this, 'uuid', $readonly), //unique id
             allInstance[this.uuid] = this,
             $writable.value = true,
             Object.defineProperty(this, 'isAlive', $writable);
-        },
+        },        
+        isInvoke = {}, //command pattern process for wrap function
+        invoker = (function() {
+            var fn, record, invokers, factory;
+            record = {},
+            fn = {
+                start:function(key, copyClone) {
+                    var uuid = this.uuid;
+                    if (isInvoke[uuid]) this.stop();
+                    (isInvoke[uuid] = record[uuid][key] || (record[uuid][key] = [])).length = 0;
+                    isInvoke[uuid].shot = null;
+                    if (copyClone && this.clonable) isInvoke[uuid].shot = this.target.save();
+                },
+                stop:function(){
+                    var uuid = this.uuid;
+                    if (!isInvoke[uuid]) return;
+                    isInvoke[uuid] = null;
+                },
+                play:function(key){
+                    var uuid = this.uuid, target, commands, i, j;
+                    if (isInvoke[uuid]) this.stop();
+                    if (commands = record[uuid][key]){
+                        target = this.target, i = 0, j = commands.length;
+                        while (i < j) {
+                            if (!target.isAlive) throw new Error('Destroyed Object:' + this);
+                            prev[prev.length] = method,
+                            method = key,
+                            commands[i++].apply(target, commands[i++]),
+                            method = prev.pop();
+                        }
+                    }
+                },
+                restore:function(key){
+                    var uuid = this.uuid, saved;
+                    if (isInvoke[uuid]) this.stop();
+                    if (saved = record[uuid][key].shot) this.target.restore(saved);
+                }
+            };
+            Object.freeze(fn),
+            invokers = {},
+            factory = function(target){
+                var inst = Object.create(fn);
+                inst.clonable = target.save && target.restore,
+                inst.target =  target,
+                record[inst.uuid = target.uuid] = {},
+                Object.freeze(inst);
+                return inst;
+            };
+            return function(){
+                return invokers[this.uuid] || (invokers[this.uuid] = factory(this));
+            };
+        })(),
         wrap = (function(){
             var wrap = function wrap(key, f) {//name and method created
                 return function() {
                     var result;
                     if (!this.isAlive) throw new Error('Destroyed Object:' + this);
                     prev[prev.length] = method,//error stack initilize
-                    method = key,//method name of currently called
+                    method = key;//method name of currently called
+                    if (result = isInvoke[this.uuid]) result.push(f, arguments); //record command
                     result = f.apply(this, arguments),
                     method = prev.pop();
                     return result;
@@ -357,8 +411,9 @@ var MoGL = (function() {//<--
     Object.freeze(Builder),
     Object.freeze(Builder.prototype),
     MoGL = (function(){
-        var MoGL, listener;
+        var MoGL, listener, invoker;
         listener = {},
+        invoker = {},
         MoGL = new Builder({//<--
             '*description':'Base class of all MoGL classes',
             '*sample':"var instance = new MoGL();",//-->
@@ -392,6 +447,40 @@ var MoGL = (function() {//<--
                 "console.log(scene.classId); // 'uuid:22'"
             ],//-->
             name:'classId'
+        }, true)
+        .field({//<--
+            '*description':[
+                '[#Invoker] managing common command pattern for instance',
+                '',
+                '* methods of [#Invoker]',
+                '* start(key:[#string], ?copySnapshot:[#boolean]) - start recording called method and arguments',
+                '    * when other recording, auto stop previous record',
+                '* stop(key:[#string]) - stop recoding',
+                '* play(key:[#string]) - play recorded commands of key',
+                '    * when other recording, auto stop previous record',
+                '* restore(key:[#string]) - restore state at start point(copySnapshot value should have been "true" at start point and the instance must have "save", "restore" method)',
+                '    * when other recording, auto stop previous record'
+            ],
+            '*type':'Invoker',
+            '*sample':[
+                "var mat = Matrix();",
+                "//start recording with snapshot",
+                "mat.invoker.start('test', true);",
+                "",
+                "//act some",
+                "mat.setProperties({x:10, y:20, z:30});",
+                "mat.setProperties({rotateX:10});",
+                "",
+                "//stop recording",
+                "mat.invoker.stop('test');",
+                "",
+                "//replay record",
+                "mat.invoker.play('test');",
+                "",
+                "//rollback record starting time",
+                "mat.invoker.restore('test');",
+            ],//-->
+            name:'invoker'
         }, true)
         .method({//<--
             '*description':[
@@ -783,6 +872,7 @@ var MoGL = (function() {//<--
         fn.toString = function(){
             return this.uuid;
         },
+        Object.defineProperty(fn, 'invoker', {get:invoker});
         Object.freeze(fn);
     })();
     return MoGL;

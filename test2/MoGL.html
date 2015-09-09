@@ -30,7 +30,45 @@ bsTest('basic',
         
         return inst.test();
     }, 3
-)
+);
+(function(){
+    var a = MoGL.extend({name:'a', value:function(a){this.a = a;}})
+        .method({
+            name:'plus',
+            value:function(a){this.a += a;}
+        })
+        .method({
+            name:'save',
+            value:function(){return this.a;}
+        })
+        .method({
+            name:'restore',
+            value:function(a){this.a = a;}
+        })
+        .build();
+    var inst = new a(3);
+    
+    bsTest('invoker',
+        function () {
+            
+            inst.invoker.start('test',true);
+
+            inst.plus(1);
+            inst.plus(2);
+            
+            inst.invoker.stop();
+            return inst.a;
+        }, 6,
+        function(){
+            inst.invoker.restore('test');
+            return inst.a;
+        }, 3,
+        function () {
+            inst.invoker.play('test');
+            return inst.a;
+        }, 6
+    );
+})();
 </script>
 </body>
 </html>
