@@ -1,8 +1,8 @@
 //markdown
 $md = function(classes){
     var list, val, func, sort, toStr, toValue, fieldDetail, methodDetail;
-    sort = function(a,b){
-        return a.name < b.name;
+    sort = function(a, b){
+        return a.name > b.name ? 1 : a.name < b.name ? -1 : 0;
     },
     list = function(type, md, v){
         var d, i, j;
@@ -12,7 +12,7 @@ $md = function(classes){
             for (i = 0, j = v.length; i < j; i++){
                 d = v[i]['*description'],
                 md[md.length] = '* [' + v[i].name + '](#' + v[i].name + ') - ' + 
-                    d.split('\n')[0].replace(/^[*] /,'').substr(0, 20).trim() + (d.length > 20 ? '...' : '');
+                    d.split('\n')[0].replace(/^[*] |<[^<]*>/,'').substr(0, 20).trim() + (d.length > 20 ? '...' : '');
             }
         }
     },
@@ -28,36 +28,44 @@ $md = function(classes){
         return v;
     },
     val = function(type, md, ref){
-            var v = [], temp = ref._info['_'+type], temp1 = ref['_'+type], k;
-            for (k in temp) {
-                if (!temp[k]._checked) {
-                    temp[k]._checked = true;
-                    temp[k]['*type'] = temp[k]['*type'] || '?',
-                    temp[k]['*default'] = temp[k]['*default'] || 'undefined',
-                    temp[k]['*sample'] = toStr(temp[k]['*sample']) || '//none',
-                    temp[k]['*description'] = toStr(temp[k]['*description']),
-                    temp[k]['*enumerable'] = temp1[k] && temp1[k].enumerable || false, 
-                    temp[k]['*configurable'] = temp1[k] && temp1[k].configurable || false;
-                    temp[k]['*writable'] =  temp1[k] ? ('writable' in temp1[k]) || ('set' in temp1[k]) : false;
-                    //temp[k]['*exception'] = toStr(temp[k].exception || 'none');
+            var v = [], temp = ref._info['_'+type], temp1 = ref['_'+type], t, i, j, k;
+            t = [];
+            for (k in temp) t.push(temp[k]);
+            t.sort(sort);
+            temp = t;
+            for (i = 0, j = temp.length; i < j; i++) {
+                k = temp[i];
+                if (!k._checked) {
+                    k._checked = true;
+                    k['*type'] = k['*type'] || '?',
+                    k['*default'] = k['*default'] || 'undefined',
+                    k['*sample'] = toStr(k['*sample']) || '//none',
+                    k['*description'] = toStr(k['*description']),
+                    k['*enumerable'] = temp1[i] && temp1[i].enumerable || false, 
+                    k['*configurable'] = temp1[i] && temp1[i].configurable || false;
+                    k['*writable'] =  temp1[i] ? ('writable' in temp1[i]) || ('set' in temp1[i]) : false;
                 }
-                v[v.length] = temp[k];
+                v[v.length] = k;
             }
             list(type, md, v);
             return v;
     }
     func = function(type, md, ref){
-        var v = [], temp = ref._info['_'+type], temp1 = ref['_'+type], k;
-        for (k in temp) {
-            if (!temp[k]._checked) {
-                temp[k]._checked = true;
-                temp[k]['*description'] = toStr(temp[k]['*description'] || 'prepare document');
-                temp[k]['*param'] = toStr(temp[k]['*param']) || 'none';
-                temp[k]['*return'] = toStr(temp[k]['*return']) || 'none';
-                temp[k]['*sample'] = toStr(temp[k]['*sample']) || '//none';
-                //temp[k].exception = toStr(temp[k].exception || 'none');
+        var v = [], temp = ref._info['_'+type], temp1 = ref['_'+type], t, i, j, k;
+        t = [];
+        for (k in temp) t.push(temp[k]);
+        t.sort(sort);
+        temp = t;
+        for (i = 0, j = temp.length; i < j; i++) {
+            k = temp[i];
+            if (!k._checked) {
+                k._checked = true;
+                k['*description'] = toStr(k['*description'] || 'prepare document');
+                k['*param'] = toStr(k['*param']) || 'none';
+                k['*return'] = toStr(k['*return']) || 'none';
+                k['*sample'] = toStr(k['*sample']) || '//none';
             }
-            v[v.length] = temp[k];
+            v[v.length] = k;
         }
         list(type, md, v);
         return v;

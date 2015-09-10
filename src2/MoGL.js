@@ -1,9 +1,8 @@
 var MoGL = (function() {//<--
     'use strict';//-->
-    var Builder, build, checker,
-        MoGL, _MoGL, idProp, destroy, classGet, error, invoker,
+    var Builder, build, checker, 
+        MoGL, _MoGL, idProp, destroy, classGet, error, invoker, _super,
         addInterval, removeInterval, resumeInterval, stopInterval, stopDelay, resumeDelay;
-
     //global interval manager
     (function() {
         var intervalId = -1, interpolate = 0, pause = 0, interval = [], len = 0, 
@@ -86,11 +85,17 @@ var MoGL = (function() {//<--
         Object.freeze(this);
     },
     build = (function(){
-        var empty, wrap, method, prev,
+        var empty, wrap, method, prev, superMethod, smethod,
+            binder,
             isInvoke,
             isFactory, isSuperChain,//enum
             inheritedStatic, md,
             uuid, allInstance, ids, classes;
+        
+        binder = function(){//generic binder
+            binder.act.apply(binder.context, arguments),
+            binder.context.super = null;
+        },
         empty = function(){return '';},
         uuid = 0,
         allInstance = {},
@@ -99,6 +104,7 @@ var MoGL = (function() {//<--
         isFactory = {factory:1},//enum for factory
         isSuperChain = {superChain:1},//enum for constructor chaining
         prev = [], //error stack
+        superMethod = [], //super stack
         md = {//<--
             '*description':'Print markdown document for class',
             '*return':'[#string] - Markdown document',//-->
@@ -244,46 +250,72 @@ var MoGL = (function() {//<--
             for (k in classes)  if (classes.hasOwnProperty(k)) context[k] = classes[k].cls;
             return context;
         },
-        error = function error(id, msg) {
-            throw new Error(this.className + '.' + method + ':' + id + (msg ? '-' + msg : ''));
-        },
         _MoGL = function MoGL() {
             $readonly.value = 'uuid:' + (uuid++),
             Object.defineProperty(this, 'uuid', $readonly), //unique id
             allInstance[this.uuid] = this,
             $writable.value = true,
             Object.defineProperty(this, 'isAlive', $writable);
+            $writable.value = null,
+            Object.defineProperty(this, 'super', $writable);
         },        
-        isInvoke = {}, //command pattern process for wrap function
+        isInvoke = {save:1, restore:1}, //command pattern process for wrap function
         invoker = (function() {
             var fn, record, invokers, factory;
             record = {},
             fn = {
-                start:function(key, copyClone) {
-                    var uuid = this.uuid;
+                start:function(key, copyClone, isSupportUndo) {
+                    var uuid = this.uuid, curr;
                     if (isInvoke[uuid]) this.stop();
-                    (isInvoke[uuid] = record[uuid][key] || (record[uuid][key] = [])).length = 0;
-                    isInvoke[uuid].shot = null;
-                    if (copyClone && this.clonable) isInvoke[uuid].shot = this.target.save();
+                    (isInvoke[uuid] = curr = record[uuid][key] || (record[uuid][key] = [])).length = 0,
+                    curr.key = key,
+                    curr.shot = null;
+                    if (this.clonable && copyClone || isSupportUndo) isInvoke[uuid].shot = this.target.save();
+                    if (curr.isUndo = isSupportUndo) {
+                        (curr.undo || (curr.undo = [])).length = 0,
+                        curr.undo[0] = curr.shot,
+                        curr.undo.cursor = 0;
+                    }
                 },
-                stop:function(){
-                    var uuid = this.uuid;
+                stop:function(isDeleteRecord){
+                    var uuid = this.uuid, curr;
                     if (!isInvoke[uuid]) return;
+                    if (isDeleteRecord) delete record[uuid][isInvoke[uuid].key]
                     isInvoke[uuid] = null;
                 },
                 play:function(key){
                     var uuid = this.uuid, target, commands, i, j;
                     if (isInvoke[uuid]) this.stop();
                     if (commands = record[uuid][key]){
-                        target = this.target, i = 0, j = commands.length;
+                        target = this.target;
+                        if (!target.isAlive) throw new Error('Destroyed Object:' + this);
+                        i = 0, j = commands.length;
                         while (i < j) {
-                            if (!target.isAlive) throw new Error('Destroyed Object:' + this);
+                            if (binder.act = commands[i++]) {
+                                binder.context = target,
+                                target.super = binder;
+                            }
                             prev[prev.length] = method,
                             method = key,
                             commands[i++].apply(target, commands[i++]),
-                            method = prev.pop();
+                            method = prev.pop(),
+                            target.super = null;
                         }
                     }
+                },
+                undo:function(){
+                    var uuid = this.uuid, curr, target;
+                    if (!(curr = isInvoke[uuid]) || !curr.isUndo || !curr.undo.cursor) return;
+                    target = this.target;
+                    if (!target.isAlive) throw new Error('Destroyed Object:' + this);
+                    target.restore(curr.undo[--curr.undo.cursor]);
+                },
+                redo:function(){
+                    var uuid = this.uuid, curr, target;
+                    if (!(curr = isInvoke[uuid]) || !curr.isUndo || curr.undo.cursor == curr.undo.length - 1) return;
+                    target = this.target;
+                    if (!target.isAlive) throw new Error('Destroyed Object:' + this);
+                    target.restore(curr.undo[++curr.undo.cursor]);
                 },
                 restore:function(key){
                     var uuid = this.uuid, saved;
@@ -296,7 +328,7 @@ var MoGL = (function() {//<--
             factory = function(target){
                 var inst = Object.create(fn);
                 inst.clonable = target.save && target.restore,
-                inst.target =  target,
+                inst.target = target,
                 record[inst.uuid = target.uuid] = {},
                 Object.freeze(inst);
                 return inst;
@@ -305,20 +337,37 @@ var MoGL = (function() {//<--
                 return invokers[this.uuid] || (invokers[this.uuid] = factory(this));
             };
         })(),
+        error = function error(id, msg) {
+            throw new Error(this.className + '.' + method + ':' + id + (msg ? '-' + msg : ''));
+        },
         wrap = (function(){
-            var wrap = function wrap(key, f) {//name and method created
-                return function() {
-                    var result;
+            var wrap, empty;
+            empty = function(){},
+            wrap = function wrap(key, f, parent) {//name and method created
+                var self = function() {
+                    var result, inv;
                     if (!this.isAlive) throw new Error('Destroyed Object:' + this);
+                    if (binder.act = self.__super) {//super method
+                        binder.context = this,
+                        this.super = binder;
+                    }
                     prev[prev.length] = method,//error stack initilize
                     method = key;//method name of currently called
-                    if (result = isInvoke[this.uuid]) result.push(f, arguments); //record command
-                    result = f.apply(this, arguments),
+                    if (!isInvoke[method] && (inv = isInvoke[this.uuid])) inv.push(self.__super, f, arguments);//record command
+                    result = f.apply(this, arguments);
+                    if (inv && inv.isUndo) { //record undo
+                        inv = inv.undo;
+                        if (inv.cursor != inv.length - 1) inv.length = inv.cursor + 1;
+                        inv[++inv.cursor] = this.save();
+                    }
                     method = prev.pop();
+                    this.super = null;
                     return result;
                 };
+                self.__super = parent ? parent[key] || empty : null;
+                return self;
             };
-            return function(target, prop, unwrap) {
+            return function(target, prop, unwrap, parent) {
                 var k, v;
                 for (k in prop) {
                     if (prop.hasOwnProperty(k)) {
@@ -326,7 +375,7 @@ var MoGL = (function() {//<--
                         if (!unwrap) {
                             if (v.get) v.get = wrap(k + 'Get', v.get);
                             if (v.set) v.set = wrap(k + 'Set', v.set);
-                            if (v.value) v.value = wrap(k, v.value);
+                            if (v.value) v.value = wrap(k, v.value, parent);
                         }
                         Object.defineProperty(target, k, v);
                     }
@@ -345,17 +394,13 @@ var MoGL = (function() {//<--
                     if (parent) parent.call(this, isSuperChain, arguments[1]);
                     child.apply(this, arguments[1]);
                 } else if (this instanceof cls) {
-                    if (arg0 === isFactory) {
-                        arg = arguments[1];
-                    } else {
-                        arg = arguments;
-                    }
+                    arg = arg0 === isFactory ? arguments[1] : arguments;
                     if (parent) parent.call(this, isSuperChain, arg),
                     child.apply(this, arg),
                     Object.seal(this),
                     result = this;
                 } else {
-                    result = cls.call(Object.create(cls.prototype), isFactory, arguments);
+                    result = cls.call(Object.create(fn), isFactory, arguments);
                 }
                 method = prev.pop();
                 return result;
@@ -373,11 +418,12 @@ var MoGL = (function() {//<--
             while (k--) this.static(inheritedStatic[k]);
             
             wrap(fn, this._field),
-            wrap(fn, this._method),
+            wrap(fn, this._method, false, cls.className != 'MoGL' && parent.prototype),
             wrap(cls, this._constant, true),
             wrap(cls, this._event, true),
             wrap(cls, this._static, true),
             cls.prototype = fn,
+            
             Object.freeze(cls);
             if (parent) Object.freeze(fn); //except MoGL
             return cls;
@@ -453,23 +499,29 @@ var MoGL = (function() {//<--
                 '[#Invoker] managing common command pattern for instance',
                 '',
                 '* methods of [#Invoker]',
-                '* start(key:[#string], ?copySnapshot:[#boolean]) - start recording called method and arguments',
+                '* start(key:[#string], ?copySnapshot:[#boolean], ?isSupportUndo:[#boolean]) - start recording called method and arguments',
                 '    * when other recording, auto stop previous record',
-                '* stop(key:[#string]) - stop recoding',
+                '* stop(?isDeleteRecord:[#boolean]) - stop recoding',
                 '* play(key:[#string]) - play recorded commands of key',
                 '    * when other recording, auto stop previous record',
                 '* restore(key:[#string]) - restore state at start point(copySnapshot value should have been "true" at start point and the instance must have "save", "restore" method)',
-                '    * when other recording, auto stop previous record'
+                '    * when other recording, auto stop previous record',
+                '* undo() - undo(isSupportUndo value should have been "true" at start point and the instance must have "save", "restore" method)',,
+                '* redo() - redo(isSupportUndo value should have been "true" at start point and the instance must have "save", "restore" method)'
             ],
             '*type':'Invoker',
             '*sample':[
                 "var mat = Matrix();",
                 "//start recording with snapshot",
-                "mat.invoker.start('test', true);",
+                "mat.invoker.start('test', true, true);",
                 "",
                 "//act some",
                 "mat.setProperties({x:10, y:20, z:30});",
                 "mat.setProperties({rotateX:10});",
+                '',
+                "//undo, redo",
+                "mat.undo();",
+                "mat.redo();",
                 "",
                 "//stop recording",
                 "mat.invoker.stop('test');",
@@ -481,6 +533,41 @@ var MoGL = (function() {//<--
                 "mat.invoker.restore('test');",
             ],//-->
             name:'invoker'
+        }, true)
+        .method({//<--
+            '*description':[
+                'parent method as same name',
+                '',
+                "* use only inside method body",
+                "* if no super method, may happen nothing"
+            ],
+            '*return':'[#*] - returned value of parent method',
+            '*sample':[
+                "fn.action = function(a){",
+                "    this.super(a);",
+                "};"
+            ],//-->
+            name:'super'
+        }, true)
+        .method({//<--
+            '*description':'save current state',
+            '*return':'[#object] - empty object',
+            '*sample':[
+                "var mat = Matrix()",
+                "var saved = mat.save();",
+                "mat.restore(saved);",
+            ],//-->
+            name:'save'
+        }, true)
+        .method({//<--
+            '*description':'restore state from snapshot but MoGL may do nothing',
+            '*parem':'data:[#object] - data for restore',
+            '*sample':[
+                "var mat = Matrix()",
+                "var saved = mat.save();",
+                "mat.restore(saved);",
+            ],//-->
+            name:'restore'
         }, true)
         .method({//<--
             '*description':[
@@ -872,6 +959,8 @@ var MoGL = (function() {//<--
         fn.toString = function(){
             return this.uuid;
         },
+        fn.save = function(){return {};},
+        fn.restore = function(){},
         Object.defineProperty(fn, 'invoker', {get:invoker});
         Object.freeze(fn);
     })();
